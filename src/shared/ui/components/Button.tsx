@@ -1,0 +1,56 @@
+import React from 'react';
+import type { ButtonProps } from '../../model/buttonProps';
+
+export const Button = ({
+  children,
+  onClick,
+  type = 'button',
+  disabled = false,
+  className = '',
+  to,
+}: ButtonProps) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+    if (onClick) {
+      onClick(e);
+    }
+    if (to) {
+      window.location.href = to;
+    }
+  };
+
+  const baseClasses = `
+    relative
+    text-white
+    text-base
+    font-semibold
+    cursor-pointer
+    border-0
+    rounded-lg
+    transition-all
+    duration-200
+    transform
+    translate-y-0
+    shadow-[0_8px_0_0_#3d9ec4]
+    bg-[#4bbce8]
+    hover:bg-[#4bc7e8]
+    active:shadow-[0_1px_0_0_#3d9ec4]
+    active:translate-y-1.5
+    disabled:bg-[#a0a0a0]
+    disabled:shadow-[0_8px_0_0_#7a7a7a]
+    disabled:hover:bg-[#a0a0a0]
+    disabled:active:shadow-[0_8px_0_0_#7a7a7a]
+    disabled:active:translate-y-0
+  `;
+
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      className={`${baseClasses} ${className}`}
+      onClick={handleClick}
+    >
+      {children}
+    </button>
+  );
+};
