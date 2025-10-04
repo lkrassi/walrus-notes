@@ -1,0 +1,19 @@
+import { Provider } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
+import { NotificationsContainer, store } from 'widgets';
+import { appRoutesConfig } from './router/config';
+
+export const App = () => {
+  return (
+    <Provider store={store}>
+      <div className='h-screen bg-gradient'>
+        <Routes>
+          {appRoutesConfig.map(route => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Routes>
+        <NotificationsContainer />
+      </div>
+    </Provider>
+  );
+};
