@@ -1,7 +1,12 @@
 import { Eye, EyeOff } from 'lucide-react';
 import React from 'react';
 import { Button } from 'shared';
-import type { PasswordVisibilityToggleProps } from '../../model/types';
+
+type PasswordVisibilityToggleProps = {
+  isVisible: boolean;
+  onToggle: () => void;
+  className?: string;
+};
 
 export const PasswordVisibilityToggle: React.FC<
   PasswordVisibilityToggleProps

@@ -24,10 +24,4 @@ export type RegisterData = {
 
 export type RefreshData = AuthTokens;
 
-export type PasswordVisibilityToggleProps = {
-  isVisible: boolean;
-  onToggle: () => void;
-  className?: string;
-};
-
 export type RequestFunction<T> = (tokens: AuthTokens) => Promise<T>;

@@ -6,7 +6,7 @@ import { login } from '../../api/login';
 import { usePasswordVisibility } from '../../hooks/usePasswordVisibility';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
 
-interface LoginProps {
+type LoginProps = {
   onSwitchToRegister?: () => void;
 }
 

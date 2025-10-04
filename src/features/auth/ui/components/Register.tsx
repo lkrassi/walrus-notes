@@ -5,7 +5,7 @@ import { register } from '../../api/register';
 import { usePasswordVisibility } from '../../hooks/usePasswordVisibility';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
 
-interface RegisterProps {
+type RegisterProps = {
   onSwitchToLogin?: () => void;
 }
 
