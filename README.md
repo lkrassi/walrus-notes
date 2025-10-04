@@ -24,18 +24,14 @@
 - **Навигация по графам** - интерактивное исследование отношений
 - **Автоматическое построение** - система сама определяет связи
 
-## 🚀 Быстрый старт
-
-### Предварительные требования
-- Node.js 18+
-- npm или yarn
-- Git
 
 ### Установка и запуск
 
 ```bash
 git clone https://github.com/lkrassi/walrus-notes.git
-cd walrus-notes
+cd walrus_notes
+
+pnpm i
 
 npm install
 
