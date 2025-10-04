@@ -2,7 +2,7 @@ import type {
   ErrorResponse,
   RegisterData,
   RegisterResponse,
-} from '../model/types';
+} from 'shared/model/types';
 
 export const register = async (
   data: RegisterData

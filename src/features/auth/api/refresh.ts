@@ -1,4 +1,4 @@
-import type { AuthResponse, ErrorResponse, RefreshData } from '../model/types';
+import type { AuthResponse, ErrorResponse, RefreshData } from 'shared/model/types';
 
 export const refreshTokens = async (
   data: RefreshData

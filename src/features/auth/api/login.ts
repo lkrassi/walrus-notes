@@ -1,4 +1,4 @@
-import type { AuthResponse, ErrorResponse, LoginData } from '../model/types';
+import type { AuthResponse, ErrorResponse, LoginData } from 'shared/model/types';
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
   const response = await fetch(

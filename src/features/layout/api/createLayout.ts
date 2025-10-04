@@ -1,10 +1,11 @@
-import { authRequest } from '../../auth/model/authRequest';
 import type {
   AuthTokens,
   BaseResponse,
   CreateLayoutRequest,
   CreateLayoutResponse,
-} from '../model/types';
+} from 'shared/model/types';
+
+import { authRequest } from '../../auth/model/authRequest';
 
 export const createLayout = async (
   data: CreateLayoutRequest
