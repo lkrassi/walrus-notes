@@ -28,15 +28,12 @@ export const Button = ({
         text-base
         font-semibold
         cursor-pointer
-        border-2
-        border-border dark:border-dark-border
         rounded-lg
         transition-all
         duration-200
         transform
         translate-y-0
         bg-transparent
-        hover:bg-border/10 dark:hover:bg-dark-border/10
         active:translate-y-0.5
         disabled:opacity-50
         disabled:cursor-not-allowed
@@ -49,7 +46,6 @@ export const Button = ({
       text-base
       font-semibold
       cursor-pointer
-      border-0
       rounded-lg
       transition-all
       duration-200

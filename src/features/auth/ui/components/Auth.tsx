@@ -42,7 +42,7 @@ export const Auth = () => {
         <LanguageSwitcher />
       </div>
 
-      <div className='flex items-center justify-center min-h-screen sm:mt-20 max-sm:mt-20'>
+      <div className='flex items-center justify-center min-h-screen max-sm:mt-20'>
         <div className='max-w-md w-full'>
           <div className='flex max-sm:flex-col max-sm:gap-y-5 p-2 mb-8 gap-x-5'>
             <Button

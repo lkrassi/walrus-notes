@@ -30,9 +30,11 @@
       "widgets": ["./src/widgets"],
       "widgets/*": ["./src/widgets/*"],
       "features": ["./src/features"],
-      "features/*": ["./src/features/*"]
+      "features/*": ["./src/features/*"],
+      "public": ["./public"],
+      "public/*": ["./public/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "public/**/*"],
   "exclude": ["node_modules", "dist"]
 }

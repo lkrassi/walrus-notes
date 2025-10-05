@@ -17,6 +17,8 @@ export default defineConfig({
       'widgets/*': fileURLToPath(new URL('./src/widgets/*', import.meta.url)),
       features: fileURLToPath(new URL('./src/features', import.meta.url)),
       'features/*': fileURLToPath(new URL('./src/features/*', import.meta.url)),
+      public: fileURLToPath(new URL('./public', import.meta.url)),
+      'public/*': fileURLToPath(new URL('./public/*', import.meta.url)),
     },
   },
   server: {
