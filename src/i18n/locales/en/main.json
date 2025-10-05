@@ -1,0 +1,24 @@
+{
+  "header": {
+    "title": "Walrus Notes"
+  },
+  "hero": {
+    "titleLine1": "Dive into the",
+    "titleLine2": "world of ideas",
+    "description": "The deep ocean of your thoughts awaits exploration. Create, connect, and discover ideas with the power of marine intelligence!",
+    "getStarted": "Start Journey"
+  },
+  "features": {
+    "intuitiveLinking": "Intuitive note linking like ocean currents",
+    "deepSearch": "Deep search in the ocean of your knowledge",
+    "productivity": "Ride the waves of productivity with ease"
+  },
+  "preview": {
+    "placeholder": {
+      "line1": "Welcome to your notes",
+      "line2": "Organize your thoughts",
+      "line3": "Connect ideas seamlessly",
+      "line4": "Discover new insights"
+    }
+  }
+}

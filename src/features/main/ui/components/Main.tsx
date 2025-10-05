@@ -1,8 +1,9 @@
-import React from 'react';
-
 import { motion } from 'framer-motion';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
-import { ThemeSwitcher } from 'widgets';
+import { LanguageSwitcher, ThemeSwitcher } from 'widgets';
+import { useLocalization } from 'widgets/hooks/useLocalization';
 
 import {
   fadeInUp,
@@ -14,23 +15,25 @@ import {
 } from 'features/main/models';
 
 export const Main: React.FC = () => {
+  const navigate = useNavigate();
+
   const handleGetStarted = () => {
-    window.location.href = '/auth';
+    navigate('/auth');
   };
+
+  const { t } = useLocalization();
+
+  const features = [
+    t('main:features.intuitiveLinking'),
+    t('main:features.deepSearch'),
+    t('main:features.productivity'),
+  ];
 
   return (
     <div className='min-h-screen bg-gradient overflow-x-hidden'>
-      <motion.header
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className='px-4 sm:px-6 py-4 sm:py-6 flex justify-between'
-      >
+      <header className='px-4 sm:px-6 py-4 sm:py-6 flex justify-between'>
         <div>
-          <motion.div
-            className='flex items-center space-x-3 sm:space-x-4'
-            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-          >
+          <div className='flex items-center space-x-3 sm:space-x-4'>
             <motion.div
               className='w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-primary to-primary-gradient rounded-2xl flex items-center justify-center shadow-lg'
               whileHover={{ rotate: 360 }}
@@ -39,12 +42,15 @@ export const Main: React.FC = () => {
               <span>🐋</span>
             </motion.div>
             <span className='text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary-gradient bg-clip-text text-transparent'>
-              Walrus Notes
+              {t('main:header.title')}
             </span>
-          </motion.div>
+          </div>
         </div>
-        <ThemeSwitcher />
-      </motion.header>
+        <div className='flex gap-x-5'>
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+        </div>
+      </header>
 
       <main className='px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-20'>
         <motion.div
@@ -62,12 +68,12 @@ export const Main: React.FC = () => {
                 variants={fadeInUp}
                 className='text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-text dark:text-dark-text leading-tight'
               >
-                Погрузитесь в
+                {t('main:hero.titleLine1')}
                 <motion.span
                   className='block bg-gradient-to-r from-primary to-primary-gradient bg-clip-text text-transparent'
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  мир идей
+                  {t('main:hero.titleLine2')}
                 </motion.span>
               </motion.h1>
             </motion.div>
@@ -76,19 +82,14 @@ export const Main: React.FC = () => {
               variants={fadeInUp}
               className='text-lg sm:text-xl lg:text-2xl text-secondary dark:text-dark-secondary leading-relaxed'
             >
-              Глубокий океан ваших мыслей ждет исследования. Создавайте,
-              связывайте и открывайте идеи с мощью морского интеллекта! 🦭
+              {t('main:hero.description')}
             </motion.p>
 
             <motion.div variants={fadeInUp} className='space-y-3 sm:space-y-4'>
-              {[
-                'Интуитивное связывание заметок как морские течения',
-                'Глубокий поиск в океане ваших знаний',
-                'Плывите по волнам продуктивности с легкостью',
-              ].map((feature, index) => (
+              {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  className='flex items-center space-x-3 sm:space-x-4 p-3 '
+                  className='flex items-center space-x-3 sm:space-x-4 p-3'
                   whileHover={{ x: 10 }}
                 >
                   <div className='w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-primary to-primary-gradient rounded-full flex items-center justify-center shadow-md flex-shrink-0'>
@@ -107,7 +108,7 @@ export const Main: React.FC = () => {
             >
               <motion.div variants={scaleIn}>
                 <Button onClick={handleGetStarted} className='p-3'>
-                  Начать путешествие
+                  {t('main:hero.getStarted')}
                 </Button>
               </motion.div>
             </motion.div>

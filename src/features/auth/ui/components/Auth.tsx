@@ -6,8 +6,12 @@ import { ThemeSwitcher } from 'widgets';
 import { Login } from 'features/auth/ui/components/Login';
 import { Register } from 'features/auth/ui/components/Register';
 
+import { LanguageSwitcher } from 'widgets';
+import { useLocalization } from 'widgets/hooks/useLocalization';
+
 export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');
+  const { t } = useLocalization();
 
   const activeClasses = `
     bg-[#4bbce8]
@@ -32,12 +36,13 @@ export const Auth = () => {
   };
 
   return (
-    <>
-      <div className='fixed p-5 top-0 right-0 w-fit max-sm:left-0 max-sm:mx-auto'>
+    <main className='py-5'>
+      <div className='flex gap-x-5 justify-end pr-5 max-sm:justify-center max-sm:pr-0'>
         <ThemeSwitcher />
+        <LanguageSwitcher />
       </div>
 
-      <div className='flex items-center justify-center min-h-screen'>
+      <div className='flex items-center justify-center min-h-screen sm:mt-20 max-sm:mt-20'>
         <div className='max-w-md w-full'>
           <div className='flex max-sm:flex-col max-sm:gap-y-5 p-2 mb-8 gap-x-5'>
             <Button
@@ -47,7 +52,7 @@ export const Auth = () => {
                 activeForm === 'login' ? activeClasses : inactiveClasses
               }`}
             >
-              Вход
+              {t('auth:common.loginTab')}
             </Button>
             <Button
               type='button'
@@ -56,7 +61,7 @@ export const Auth = () => {
                 activeForm === 'register' ? activeClasses : inactiveClasses
               }`}
             >
-              Регистрация
+              {t('auth:common.registerTab')}
             </Button>
           </div>
 
@@ -71,8 +76,8 @@ export const Auth = () => {
           <div className='text-center mt-8'>
             <p className='text-sm text-secondary'>
               {activeForm === 'login'
-                ? 'Ещё нет аккаунта? '
-                : 'Уже есть аккаунт? '}
+                ? t('auth:login.noAccount')
+                : t('auth:register.haveAccount')}
               <button
                 type='button'
                 onClick={() =>
@@ -80,12 +85,14 @@ export const Auth = () => {
                 }
                 className='text-primary hover:underline focus:underline font-medium transition-colors duration-300 bg-transparent p-0'
               >
-                {activeForm === 'login' ? 'Зарегистрироваться' : 'Войти'}
+                {activeForm === 'login'
+                  ? t('auth:login.switchToRegister')
+                  : t('auth:register.switchToLogin')}
               </button>
             </p>
           </div>
         </div>
       </div>
-    </>
+    </main>
   );
 };

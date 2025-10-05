@@ -7,6 +7,8 @@ import { register } from 'features/auth/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 
+import { useLocalization } from 'widgets/hooks/useLocalization';
+
 type RegisterProps = {
   onSwitchToLogin?: () => void;
 };
@@ -20,6 +22,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useNotifications();
   const passwordVisibility = usePasswordVisibility();
+  const { t } = useLocalization();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -36,7 +39,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     try {
       const response = await register(formData);
       localStorage.setItem('userId', response.data.userId);
-      showSuccess('Аккаунт успешно создан! Теперь вы можете войти.');
+      showSuccess(t('auth:register.success'));
 
       setFormData({
         email: '',
@@ -48,7 +51,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         onSwitchToLogin();
       }
     } catch (error) {
-      showError('Ошибка при регистрации. Попробуйте еще раз.');
+      showError(t('auth:register.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +63,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       className='rounded-2xl shadow-sm border border-border dark:border-dark-border p-8 backdrop-blur-sm bg-gradient'
     >
       <h2 className='text-3xl font-light text-text dark:text-dark-text text-center mb-8 tracking-tight'>
-        Создание аккаунта
+        {t('auth:register.title')}
       </h2>
 
       <div className='space-y-6'>
@@ -69,7 +72,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             htmlFor='email'
             className='text-sm font-medium text-secondary dark:text-dark-secondary'
           >
-            E-mail
+            {t('auth:register.email')}
           </label>
           <input
             type='email'
@@ -77,7 +80,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             value={formData.email}
             onChange={handleChange}
             className='px-4 py-3 border-2 rounded-xl text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus transition-all duration-300 placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder'
-            placeholder='your@email.com'
+            placeholder={t('auth:register.emailPlaceholder')}
           />
         </div>
         <div className='flex flex-col gap-3'>
@@ -85,7 +88,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             htmlFor='username'
             className='text-sm font-medium text-secondary dark:text-dark-secondary'
           >
-            Имя пользователя
+            {t('auth:register.username')}
           </label>
           <input
             type='text'
@@ -93,7 +96,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             value={formData.username}
             onChange={handleChange}
             className='px-4 py-3 border-2 rounded-xl text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus transition-all duration-300 placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder'
-            placeholder='Придумайте имя'
+            placeholder={t('auth:register.usernamePlaceholder')}
           />
         </div>
         <div className='flex flex-col gap-3'>
@@ -101,7 +104,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             htmlFor='password'
             className='text-sm font-medium text-secondary dark:text-dark-secondary'
           >
-            Пароль
+            {t('auth:register.password')}
           </label>
           <div className='relative'>
             <input
@@ -110,7 +113,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               value={formData.password}
               onChange={handleChange}
               className='w-full px-4 py-3 border-2 rounded-xl text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus transition-all duration-300 placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder pr-12'
-              placeholder='Введите пароль'
+              placeholder={t('auth:register.passwordPlaceholder')}
             />
             <div className='absolute right-3 top-1/2 transform -translate-y-2/3'>
               <PasswordVisibilityToggle
@@ -128,10 +131,10 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           {isSubmitting ? (
             <div className='flex items-center justify-center'>
               <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2'></div>
-              Регистрация...
+              {t('auth:register.submitting')}
             </div>
           ) : (
-            'Зарегистрироваться'
+            t('auth:register.submit')
           )}
         </Button>
       </div>

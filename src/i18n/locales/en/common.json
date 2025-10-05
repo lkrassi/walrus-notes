@@ -1,0 +1,14 @@
+{
+  "welcome": "Welcome to our application!",
+  "description": "This is a sample application with internationalization",
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  }
+}

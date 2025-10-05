@@ -1,11 +1,15 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
+
+import { useLocalization } from 'widgets/hooks/useLocalization';
+import { LanguageSwitcher } from 'widgets/ui/components/LanguageSwitcher';
 import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLocalization();
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -27,12 +31,14 @@ export const Header: React.FC = () => {
         </div>
 
         <div className='flex items-center space-x-4'>
+          <LanguageSwitcher />
           <ThemeSwitcher />
           <Button
             onClick={handleLogout}
-            className='w-5 h-10 flex justify-center items-center px-8 py-5'
+            className='px-4 py-2 text-sm'
+            variant='outline'
           >
-            Выйти
+            {t('common:buttons.logout')}
           </Button>
         </div>
       </div>

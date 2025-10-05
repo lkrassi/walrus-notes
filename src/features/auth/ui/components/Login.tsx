@@ -8,11 +8,13 @@ import { login } from 'features/auth/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 
+import { useLocalization } from 'widgets/hooks/useLocalization';
+
 type LoginProps = {
   onSwitchToRegister?: () => void;
 };
 
-export const Login: React.FC<LoginProps> = () => {
+export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -22,6 +24,8 @@ export const Login: React.FC<LoginProps> = () => {
 
   const navigate = useNavigate();
   const passwordVisibility = usePasswordVisibility();
+
+  const { t } = useLocalization();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -39,10 +43,10 @@ export const Login: React.FC<LoginProps> = () => {
       const response = await login(formData);
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
-      showSuccess('Вход выполнен успешно!');
+      showSuccess(t('auth:login.success'));
       navigate('/dashboard');
     } catch (error) {
-      showError('Неверный email или пароль');
+      showError(t('auth:login.error'));
     } finally {
       setIsSubmitting(false);
     }
@@ -54,7 +58,7 @@ export const Login: React.FC<LoginProps> = () => {
       className='rounded-2xl shadow-sm border border-border dark:border-dark-border p-8 backdrop-blur-sm bg-gradient'
     >
       <h2 className='text-3xl font-light text-text dark:text-dark-text text-center mb-8 tracking-tight'>
-        Вход в аккаунт
+        {t('auth:login.title')}
       </h2>
 
       <div className='space-y-6'>
@@ -63,7 +67,7 @@ export const Login: React.FC<LoginProps> = () => {
             htmlFor='email'
             className='text-sm font-medium text-secondary dark:text-dark-secondary'
           >
-            E-mail
+            {t('auth:login.email')}
           </label>
           <input
             type='email'
@@ -71,7 +75,7 @@ export const Login: React.FC<LoginProps> = () => {
             value={formData.email}
             onChange={handleChange}
             className='px-4 py-3 border-2 rounded-xl text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus transition-all duration-300 placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder'
-            placeholder='your@email.com'
+            placeholder={t('auth:login.emailPlaceholder')}
           />
         </div>
 
@@ -80,7 +84,7 @@ export const Login: React.FC<LoginProps> = () => {
             htmlFor='password'
             className='text-sm font-medium text-secondary dark:text-dark-secondary'
           >
-            Пароль
+            {t('auth:login.password')}
           </label>
           <div className='relative'>
             <input
@@ -89,7 +93,7 @@ export const Login: React.FC<LoginProps> = () => {
               value={formData.password}
               onChange={handleChange}
               className='w-full px-4 py-3 border-2 rounded-xl text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus transition-all duration-300 placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder pr-12'
-              placeholder='Введите пароль'
+              placeholder={t('auth:login.passwordPlaceholder')}
             />
             <div className='absolute right-3 top-1/2 transform -translate-y-2/3'>
               <PasswordVisibilityToggle
@@ -106,9 +110,12 @@ export const Login: React.FC<LoginProps> = () => {
           className='w-full py-3 px-8'
         >
           {isSubmitting ? (
-            <div className='flex items-center justify-center'>Вход...</div>
+            <div className='flex items-center justify-center'>
+              <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2'></div>
+              {t('auth:login.submitting')}
+            </div>
           ) : (
-            'Войти'
+            t('auth:login.submit')
           )}
         </Button>
       </div>

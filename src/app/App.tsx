@@ -6,7 +6,7 @@ import { NotificationsContainer, store } from 'widgets';
 export const App = () => {
   return (
     <Provider store={store}>
-      <div className='h-screen bg-gradient'>
+      <div className='bg-gradient'>
         <Routes>
           {appRoutesConfig.map(route => (
             <Route key={route.path} path={route.path} element={route.element} />
