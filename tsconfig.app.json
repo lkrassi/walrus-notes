@@ -19,18 +19,18 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noUncheckedSideEffectImports": true,
-    "baseUrl": "src",
+
     "paths": {
-      "app": ["./app"],
-      "app/*": ["./app/*"],
-      "pages": ["./pages"],
-      "pages/*": ["./pages/*"],
-      "shared": ["./shared"],
-      "shared/*": ["./shared/*"],
-      "widgets": ["./widgets"],
-      "widgets/*": ["./widgets/*"],
-      "features": ["./features"],
-      "features/*": ["./features/*"]
+      "app": ["./src/app"],
+      "app/*": ["./src/app/*"],
+      "pages": ["./src/pages"],
+      "pages/*": ["./src/pages/*"],
+      "shared": ["./src/shared"],
+      "shared/*": ["./src/shared/*"],
+      "widgets": ["./src/widgets"],
+      "widgets/*": ["./src/widgets/*"],
+      "features": ["./src/features"],
+      "features/*": ["./src/features/*"]
     }
   },
   "include": ["src"],
