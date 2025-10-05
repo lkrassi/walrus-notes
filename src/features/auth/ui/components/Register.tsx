@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+
 import { Button } from 'shared';
 import { useNotifications } from 'widgets';
-import { register } from '../../api/register';
-import { usePasswordVisibility } from '../../hooks/usePasswordVisibility';
-import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
+
+import { register } from 'features/auth/api';
+import { usePasswordVisibility } from 'features/auth/hooks';
+import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 
 type RegisterProps = {
   onSwitchToLogin?: () => void;
-}
+};
 
 export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [formData, setFormData] = useState({

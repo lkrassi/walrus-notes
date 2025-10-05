@@ -1,6 +1,7 @@
-import { Eye, EyeOff } from 'lucide-react';
 import React from 'react';
+
 import { Button } from 'shared';
+import { Eye, EyeOff } from 'lucide-react';
 
 type PasswordVisibilityToggleProps = {
   isVisible: boolean;

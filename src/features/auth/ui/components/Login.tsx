@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
 import { useNotifications } from 'widgets';
-import { login } from '../../api/login';
-import { usePasswordVisibility } from '../../hooks/usePasswordVisibility';
-import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
+
+import { login } from 'features/auth/api';
+import { usePasswordVisibility } from 'features/auth/hooks';
+import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
-}
+};
 
 export const Login: React.FC<LoginProps> = () => {
   const [formData, setFormData] = useState({

@@ -1,5 +1,6 @@
-import { callWithRefresh } from '../model/refreshUtils';
-import type { AuthTokens, RequestFunction } from 'shared/model/types';
+import type { AuthTokens, RequestFunction } from 'shared/model';
+
+import { callWithRefresh } from 'shared/api/refreshUtils';
 
 export const authRequest = async <T>(
   requestFn: RequestFunction<T>

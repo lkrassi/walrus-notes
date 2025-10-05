@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import notificationsReducer from './slices/notificationsSlice';
+import notificationsReducer from 'widgets/model/stores/slices/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -9,3 +9,5 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export type NotificationsState = RootState['notifications'];

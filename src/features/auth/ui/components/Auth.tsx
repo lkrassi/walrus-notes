@@ -1,8 +1,10 @@
 import { useState } from 'react';
+
 import { Button } from 'shared';
 import { ThemeSwitcher } from 'widgets';
-import { Login } from './Login';
-import { Register } from './Register';
+
+import { Login } from 'features/auth/ui/components/Login';
+import { Register } from 'features/auth/ui/components/Register';
 
 export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');

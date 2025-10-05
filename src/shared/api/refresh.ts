@@ -1,14 +1,10 @@
-import type {
-  ErrorResponse,
-  RegisterData,
-  RegisterResponse,
-} from 'shared/model';
+import type { AuthResponse, ErrorResponse, RefreshData } from 'shared/model';
 
-export const register = async (
-  data: RegisterData
-): Promise<RegisterResponse> => {
+export const refreshTokens = async (
+  data: RefreshData
+): Promise<AuthResponse> => {
   const response = await fetch(
-    `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/auth/register`,
+    `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/auth/refresh`,
     {
       method: 'POST',
       headers: {
@@ -21,7 +17,7 @@ export const register = async (
 
   if (!response.ok) {
     const errorData: ErrorResponse = await response.json();
-    throw new Error(errorData.meta.message || 'Registration failed');
+    throw new Error(errorData.meta.message || 'Token refresh failed');
   }
 
   return response.json();

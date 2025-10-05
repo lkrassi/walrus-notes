@@ -1,4 +1,4 @@
-import type { BaseResponse } from './api';
+import type { BaseResponse } from 'shared/model/types/api';
 
 export type AuthTokens = {
   accessToken: string;

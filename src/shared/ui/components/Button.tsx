@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ButtonProps } from '../../model/buttonProps';
+import type { ButtonProps } from 'shared/model';
 
 export const Button = ({
   children,
@@ -7,6 +7,7 @@ export const Button = ({
   type = 'button',
   disabled = false,
   className = '',
+  variant = 'default',
   to,
 }: ButtonProps) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -19,29 +20,55 @@ export const Button = ({
     }
   };
 
-  const baseClasses = `
-    relative
-    text-white
-    text-base
-    font-semibold
-    cursor-pointer
-    border-0
-    rounded-lg
-    transition-all
-    duration-200
-    transform
-    translate-y-0
-    shadow-[0_8px_0_0_#3d9ec4]
-    bg-[#4bbce8]
-    hover:bg-[#4bc7e8]
-    active:shadow-[0_1px_0_0_#3d9ec4]
-    active:translate-y-1.5
-    disabled:bg-[#a0a0a0]
-    disabled:shadow-[0_8px_0_0_#7a7a7a]
-    disabled:hover:bg-[#a0a0a0]
-    disabled:active:shadow-[0_8px_0_0_#7a7a7a]
-    disabled:active:translate-y-0
-  `;
+  const getVariantClasses = () => {
+    if (variant === 'outline') {
+      return `
+        relative
+        text-text dark:text-dark-text
+        text-base
+        font-semibold
+        cursor-pointer
+        border-2
+        border-border dark:border-dark-border
+        rounded-lg
+        transition-all
+        duration-200
+        transform
+        translate-y-0
+        bg-transparent
+        hover:bg-border/10 dark:hover:bg-dark-border/10
+        active:translate-y-0.5
+        disabled:opacity-50
+        disabled:cursor-not-allowed
+      `;
+    }
+
+    return `
+      relative
+      text-white
+      text-base
+      font-semibold
+      cursor-pointer
+      border-0
+      rounded-lg
+      transition-all
+      duration-200
+      transform
+      translate-y-0
+      shadow-[0_8px_0_0_#3d9ec4]
+      bg-[#4bbce8]
+      hover:bg-[#4bc7e8]
+      active:shadow-[0_1px_0_0_#3d9ec4]
+      active:translate-y-1.5
+      disabled:bg-[#a0a0a0]
+      disabled:shadow-[0_8px_0_0_#7a7a7a]
+      disabled:hover:bg-[#a0a0a0]
+      disabled:active:shadow-[0_8px_0_0_#7a7a7a]
+      disabled:active:translate-y-0
+    `;
+  };
+
+  const baseClasses = getVariantClasses();
 
   return (
     <button

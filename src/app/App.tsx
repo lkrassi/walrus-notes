@@ -1,7 +1,7 @@
+import { appRoutesConfig } from 'app/router/config';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { NotificationsContainer, store } from 'widgets';
-import { appRoutesConfig } from './router/config';
 
 export const App = () => {
   return (

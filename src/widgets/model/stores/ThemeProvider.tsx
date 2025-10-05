@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from 'react';
 import type { ReactNode } from 'react';
 
-interface ThemeContextType {
+type ThemeContextType = {
   theme: string;
   toggleTheme: () => void;
 }

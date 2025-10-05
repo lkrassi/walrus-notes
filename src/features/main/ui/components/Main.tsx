@@ -1,7 +1,9 @@
-import { motion } from 'framer-motion';
 import React from 'react';
+
+import { motion } from 'framer-motion';
 import { Button } from 'shared';
 import { ThemeSwitcher } from 'widgets';
+
 import {
   fadeInUp,
   floatAnimation,
@@ -9,7 +11,7 @@ import {
   slideInFromLeft,
   slideInFromRight,
   staggerContainer,
-} from '../models/animation-variants';
+} from 'features/main/models';
 
 export const Main: React.FC = () => {
   const handleGetStarted = () => {

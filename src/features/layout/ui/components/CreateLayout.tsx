@@ -1,7 +1,9 @@
 import { useState } from 'react';
+
 import { useNotifications } from 'widgets';
-import { Button } from '../../../../shared';
-import { createLayout } from '../../api/createLayout';
+
+import { createLayout } from 'features/layout/api';
+import { Button } from 'shared';
 
 export const CreateLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +13,7 @@ export const CreateLayout = () => {
     setIsLoading(true);
 
     try {
-      const response = await createLayout({
+      await createLayout({
         title: 'Мой новый layout',
       });
 

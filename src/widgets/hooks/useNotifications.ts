@@ -1,11 +1,11 @@
 import { useCallback, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import type { Notification } from 'widgets/model/stores/slices/notificationsSlice';
 import {
   addNotification,
-  removeNotification,
   clearAllNotifications,
-} from '../model/stores/slices/notificationsSlice';
-import type { Notification } from '../model/stores/slices/notificationsSlice';
-import { useAppDispatch, useAppSelector } from './redux';
+  removeNotification,
+} from 'widgets/model/stores/slices/notificationsSlice';
 
 export const useNotifications = () => {
   const dispatch = useAppDispatch();

@@ -1,22 +1,20 @@
+import { authRequest } from 'shared/api';
 import type {
   AuthTokens,
-  BaseResponse,
-  CreateLayoutRequest,
-  CreateLayoutResponse,
+  GetNotesApiResponse,
+  GetNotesRequest,
 } from 'shared/model';
 
-import { authRequest } from 'shared/api';
-
-export const createLayout = async (
-  data: CreateLayoutRequest
-): Promise<BaseResponse<CreateLayoutResponse>> => {
+export const getNotes = async (
+  data: GetNotesRequest
+): Promise<GetNotesApiResponse> => {
   const requestFn = async (
     tokens: AuthTokens
-  ): Promise<BaseResponse<CreateLayoutResponse>> => {
+  ): Promise<GetNotesApiResponse> => {
     const response = await fetch(
-      `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/layout/create`,
+      `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/notes/layout`,
       {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-Request-Id': crypto.randomUUID(),

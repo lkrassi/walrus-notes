@@ -1,5 +1,5 @@
 import { Button } from 'shared';
-import { useTheme } from '../../hooks/useTheme';
+import { useTheme } from 'widgets/hooks';
 import { Sun, Moon } from 'lucide-react';
 
 export const ThemeSwitcher = () => {
