@@ -107,7 +107,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='w-full py-3 px-8'
+          className='bg-btn-bg hover:bg-btn-hover w-full py-3 px-8'
         >
           {isSubmitting ? (
             <div className='flex items-center justify-center'>

@@ -14,15 +14,16 @@ export const Auth = () => {
   const { t } = useLocalization();
 
   const activeClasses = `
-    bg-[#4bbce8]
-    shadow-[0_8px_0_0_#3d9ec4]
-    hover:bg-[#4bc7e8]
+    bg-btn-bg
+    shadow-[0_8px_0_0_#6f46d0]
+    hover:bg-btn-hover
   `;
 
   const inactiveClasses = `
     bg-[#a0a0a0]
     shadow-[0_8px_0_0_#7a7a7a]
     hover:bg-[#909090]
+    active:bg-btn-bg
     active:shadow-[0_1px_0_0_#7a7a7a]
     active:translate-y-1.5
   `;
@@ -42,7 +43,7 @@ export const Auth = () => {
         <LanguageSwitcher />
       </div>
 
-      <div className='flex items-center justify-center min-h-screen max-sm:mt-20'>
+      <div className='flex items-center justify-center min-h-screen max-sm:min-h-full max-sm:mt-10'>
         <div className='max-w-md w-full'>
           <div className='flex max-sm:flex-col max-sm:gap-y-5 p-2 mb-8 gap-x-5'>
             <Button
@@ -57,7 +58,7 @@ export const Auth = () => {
             <Button
               type='button'
               onClick={() => setActiveForm('register')}
-              className={`flex-1 text-sm font-medium py-4 px-8 ${
+              className={`focus:bg-btn-bg flex-1 text-sm font-medium py-4 px-8 ${
                 activeForm === 'register' ? activeClasses : inactiveClasses
               }`}
             >
@@ -71,25 +72,6 @@ export const Auth = () => {
             ) : (
               <Register onSwitchToLogin={handleSwitchToLogin} />
             )}
-          </div>
-
-          <div className='text-center mt-8'>
-            <p className='text-sm text-secondary'>
-              {activeForm === 'login'
-                ? t('auth:login.noAccount')
-                : t('auth:register.haveAccount')}
-              <button
-                type='button'
-                onClick={() =>
-                  setActiveForm(activeForm === 'login' ? 'register' : 'login')
-                }
-                className='text-primary hover:underline focus:underline font-medium transition-colors duration-300 bg-transparent p-0'
-              >
-                {activeForm === 'login'
-                  ? t('auth:login.switchToRegister')
-                  : t('auth:register.switchToLogin')}
-              </button>
-            </p>
           </div>
         </div>
       </div>

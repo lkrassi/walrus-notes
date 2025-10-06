@@ -18,25 +18,26 @@ export const LanguageSwitcher: React.FC = () => {
     {
       code: 'en',
       name: 'EN',
-      flag: <UKFlagIcon className="w-20 h-20" />,
+      flag: <UKFlagIcon className='w-20 h-20' />,
     },
     {
       code: 'ru',
       name: 'RU',
-      flag: <RussianFlagIcon className="w-20 h-20" />,
+      flag: <RussianFlagIcon className='w-20 h-20' />,
     },
   ];
 
   const activeClasses = `
-    bg-[#4bbce8]
-    shadow-[0_8px_0_0_#3d9ec4]
-    hover:bg-[#4bc7e8]
+    bg-btn-bg
+    shadow-[0_8px_0_0_#6f46d0]
+    hover:bg-btn-hover
   `;
 
   const inactiveClasses = `
     bg-[#a0a0a0]
     shadow-[0_8px_0_0_#7a7a7a]
     hover:bg-[#909090]
+    active:bg-btn-bg
     active:shadow-[0_1px_0_0_#7a7a7a]
     active:translate-y-1.5
   `;
@@ -81,7 +82,7 @@ export const LanguageSwitcher: React.FC = () => {
     <div className='relative' ref={dropdownRef}>
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className='w-5 h-10 flex justify-center items-center px-8 py-5 gap-2 group'
+        className='bg-btn-bg hover:bg-btn-hover w-5 h-10 flex justify-center items-center px-8 py-5 gap-2 group'
       >
         <div className='flex flex-col items-center justify-center'>
           <div className='w-6 h-4 flex items-center justify-center'>

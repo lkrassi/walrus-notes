@@ -17,35 +17,51 @@ button {
 }
 
 @theme {
+  /* Основные цвета */
   --color-bg: #ffffff;
   --color-dark-bg: #0f172a;
   --color-text: #1e293b;
   --color-dark-text: #f1f5f9;
-  --color-primary: #4bbce8;
-  --color-dark-primary: #4bbce8;
 
-  --color-primary-dark: #197498;
-  --color-dark-primary-dark: #197498;
+  /* Основной фиолетовый акцент (вместо синего) */
+  --color-primary: #8b5cf6;
+  --color-dark-primary: #a78bfa;
 
-  --color-primary-gradient: #44acd5;
-  --color-dark-primary-gradient: #44acd5;
-  --color-secondary: #64748b;
-  --color-dark-secondary: #94a3b8;
+  /* Темные варианты фиолетового */
+  --color-primary-dark: #7c3aed;
+  --color-dark-primary-dark: #8b5cf6;
 
-  --color-border: #e2e8f0;
-  --color-dark-border: #334155;
+  /* Градиентные цвета */
+  --color-primary-gradient: #a78bfa;
+  --color-dark-primary-gradient: #c4b5fd;
 
+  /* Вторичные цвета */
+  --color-secondary: #6b7280;
+  --color-dark-secondary: #9ca3af;
+
+  /* Границы */
+  --color-border: #e5e7eb;
+  --color-dark-border: #374151;
+
+  /* Плейсхолдеры */
   --color-input-placeholder: #9ca3af;
   --color-dark-input-placeholder: #6b7280;
 
-  --color-border-focus: #4bbce8;
-  --color-dark-border-focus: #4bbce8;
+  /* Фокус состояния */
+  --color-border-focus: #8b5cf6;
+  --color-dark-border-focus: #a78bfa;
+
+  --color-btn-bg: #8b5cf6;
+  --color-btn-hover: #9771f1;
+  --color-btn-active: #a88aec;
+  --color-btn-shadow: #8b5cf6;
 }
 
 .bg-gradient {
-  @apply bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-gray-900 dark:via-blue-950 dark:to-cyan-900;
+  @apply bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50
+         dark:from-gray-900 dark:via-purple-950 dark:to-violet-900;
 }
 
 .ewq {
-  color: #197498;
+  color: #8f8f8f;
 }

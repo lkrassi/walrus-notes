@@ -51,10 +51,9 @@ export const Button = ({
       duration-200
       transform
       translate-y-0
-      shadow-[0_8px_0_0_#3d9ec4]
-      bg-[#4bbce8]
-      hover:bg-[#4bc7e8]
-      active:shadow-[0_1px_0_0_#3d9ec4]
+      shadow-[0_8px_0_0_#6f46d0]
+
+      active:shadow-[0_1px_0_0_#9d7ee4]
       active:translate-y-1.5
       disabled:bg-[#a0a0a0]
       disabled:shadow-[0_8px_0_0_#7a7a7a]

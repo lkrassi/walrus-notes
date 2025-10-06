@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import logo from 'public/logo.svg';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
 import { LanguageSwitcher, ThemeSwitcher } from 'widgets';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -31,19 +32,12 @@ export const Main: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gradient overflow-x-hidden'>
-      <header className='px-4 sm:px-6 py-4 sm:py-6 flex justify-between'>
+      <header className='px-6 flex justify-between items-center'>
         <div>
-          <div className='flex items-center space-x-3 sm:space-x-4'>
-            <motion.div
-              className='w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-primary to-primary-gradient rounded-2xl flex items-center justify-center shadow-lg'
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-            >
-              <span>🐋</span>
-            </motion.div>
-            <span className='text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary-gradient bg-clip-text text-transparent'>
-              {t('main:header.title')}
-            </span>
+          <div className='w-35 h-35 flex items-center justify-center'>
+            <Link to={'/'}>
+              <img src={logo} alt='logo'></img>
+            </Link>
           </div>
         </div>
         <div className='flex gap-x-5'>
@@ -107,7 +101,7 @@ export const Main: React.FC = () => {
               className='flex flex-col sm:flex-row gap-3 sm:gap-4'
             >
               <motion.div variants={scaleIn}>
-                <Button onClick={handleGetStarted} className='p-3'>
+                <Button onClick={handleGetStarted} className='bg-btn-bg hover:bg-btn-hover p-3'>
                   {t('main:hero.getStarted')}
                 </Button>
               </motion.div>
@@ -136,13 +130,6 @@ export const Main: React.FC = () => {
                 <div className='h-3 sm:h-4 bg-primary dark:bg-dark-primary rounded-lg w-5/6'></div>
                 <div className='h-3 sm:h-4 bg-primary-dark dark:bg-dark-primary-dark rounded-lg w-2/3'></div>
               </div>
-
-              <motion.div
-                whileHover={{ scale: 1.2, rotate: 360 }}
-                className='absolute -top-4 -right-4 sm:-top-6 sm:-right-6 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-primary to-primary-gradient rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-lg'
-              >
-                🐋
-              </motion.div>
             </motion.div>
 
             <motion.div

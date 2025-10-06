@@ -8,7 +8,7 @@ export const ThemeSwitcher = () => {
   return (
     <Button
       onClick={toggleTheme}
-      className="w-5 h-10 flex justify-center items-center px-8 py-5"
+      className="bg-btn-bg hover:bg-btn-hover w-5 h-10 flex justify-center items-center px-8 py-5"
       aria-label={`Переключить на ${
         theme === 'dark' ? 'светлую' : 'тёмную'
       } тему`}
