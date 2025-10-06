@@ -4,7 +4,6 @@
     "lib": ["ES2022"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": false,
     "outDir": "./dist-server",
@@ -18,7 +17,8 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["server/**/*"],
   "exclude": ["node_modules", "dist", "dist-server", "src"]
