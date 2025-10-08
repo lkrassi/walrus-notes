@@ -7,7 +7,6 @@ export const Button = ({
   type = 'button',
   disabled = false,
   className = '',
-  variant = 'default',
   to,
 }: ButtonProps) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,32 +20,12 @@ export const Button = ({
   };
 
   const getVariantClasses = () => {
-    if (variant === 'outline') {
-      return `
-        relative
-        text-text dark:text-dark-text
-        text-base
-        font-semibold
-        cursor-pointer
-        rounded-lg
-        transition-all
-        duration-200
-        transform
-        translate-y-0
-        bg-transparent
-        active:translate-y-0.5
-        disabled:opacity-50
-        disabled:cursor-not-allowed
-      `;
-    }
-
     return `
       relative
       text-white
       text-base
       font-semibold
       cursor-pointer
-      rounded-lg
       transition-all
       duration-200
       transform

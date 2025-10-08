@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button } from 'shared';
 import { Eye, EyeOff } from 'lucide-react';
+import { Button } from 'shared';
 
 type PasswordVisibilityToggleProps = {
   isVisible: boolean;
@@ -16,8 +16,7 @@ export const PasswordVisibilityToggle: React.FC<
     <Button
       type='button'
       onClick={onToggle}
-      variant='default'
-      className={`${className} bg-btn-bg hover:bg-btn-hover px-2 py-1 flex justify-center items-center`}
+      className={`${className} bg-btn-bg hover:bg-btn-hover flex items-center justify-center px-2 py-1`}
       aria-label={isVisible ? 'Скрыть пароль' : 'Показать пароль'}
     >
       {isVisible ? (
