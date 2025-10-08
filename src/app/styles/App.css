@@ -1,67 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Mono&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700');
+
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
   @apply box-border;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'PT Mono', monospace;
+
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  @apply outline-0;
 }
 
 button {
   @apply cursor-pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 input,
+textarea,
 button {
   @apply outline-0;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
+}
+
+input,
+textarea {
+  font-size: 16px;
+}
+
+@media (pointer: coarse) {
+  button,
+  [role='button'],
+  .btn,
+  input[type='submit'],
+  input[type='button'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  a {
+    padding: 8px 4px;
+    margin: -8px -4px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button,
+  [role='button'],
+  a {
+    -webkit-touch-callout: none;
+  }
+}
+
+input:focus-visible,
+button:focus-visible,
+textarea:focus-visible {
+  @apply ring-border-focus ring-2 ring-offset-2;
+}
+
+@variant dark {
+  input:focus-visible,
+  button:focus-visible,
+  textarea:focus-visible {
+    @apply ring-dark-border-focus;
+  }
 }
 
 @theme {
-  /* Основные цвета */
+  /* основные цвета */
   --color-bg: #ffffff;
   --color-dark-bg: #0f172a;
   --color-text: #1e293b;
   --color-dark-text: #f1f5f9;
 
-  /* Основной фиолетовый акцент (вместо синего) */
+  /* акцентный цвет */
   --color-primary: #8b5cf6;
   --color-dark-primary: #a78bfa;
 
-  /* Темные варианты фиолетового */
+  /* темные варианты фиолетового */
   --color-primary-dark: #7c3aed;
   --color-dark-primary-dark: #8b5cf6;
 
-  /* Градиентные цвета */
+  /* градиентные цвета */
   --color-primary-gradient: #a78bfa;
   --color-dark-primary-gradient: #c4b5fd;
 
-  /* Вторичные цвета */
+  /* вторичные цвета */
   --color-secondary: #6b7280;
   --color-dark-secondary: #9ca3af;
 
-  /* Границы */
+  /* границы */
   --color-border: #e5e7eb;
   --color-dark-border: #374151;
 
-  /* Плейсхолдеры */
+  /* плейсхолдеры */
   --color-input-placeholder: #9ca3af;
   --color-dark-input-placeholder: #6b7280;
 
-  /* Фокус состояния */
+  /* фокус состояния */
   --color-border-focus: #8b5cf6;
   --color-dark-border-focus: #a78bfa;
 
+  /* кнопки */
   --color-btn-bg: #8b5cf6;
   --color-btn-hover: #9771f1;
   --color-btn-active: #a88aec;
   --color-btn-shadow: #8b5cf6;
+
+  /* Мобильные улучшения - добавляем утилиты */
+  --color-tap-highlight: transparent;
 }
 
 .bg-gradient {
-  @apply bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50
-         dark:from-gray-900 dark:via-purple-950 dark:to-violet-900;
-}
-
-.ewq {
-  color: #8f8f8f;
+  @apply bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 dark:from-gray-900 dark:via-purple-950 dark:to-violet-900;
 }
