@@ -97,7 +97,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
               id='password'
               value={formData.password}
               onChange={handleChange}
-              className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder  w-full rounded-xl border-2 px-4 py-3 pr-12 transition-all duration-300'
+              className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder w-full rounded-xl border-2 px-4 py-3 pr-12 transition-all duration-300'
               placeholder={t('auth:login.passwordPlaceholder')}
               autoComplete='current-password'
               enterKeyHint='done'

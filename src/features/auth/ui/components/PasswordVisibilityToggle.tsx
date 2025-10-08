@@ -16,7 +16,7 @@ export const PasswordVisibilityToggle: React.FC<
     <Button
       type='button'
       onClick={onToggle}
-      className={`${className} bg-btn-bg hover:bg-btn-hover flex items-center justify-center px-2 py-1`}
+      className={`${className} bg-btn-bg hover:bg-btn-hover flex items-center justify-center px-2 py-1 max-sm:px-1 max-sm:py-[2px]`}
       aria-label={isVisible ? 'Скрыть пароль' : 'Показать пароль'}
     >
       {isVisible ? (
