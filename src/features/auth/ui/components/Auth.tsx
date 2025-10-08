@@ -1,13 +1,12 @@
 import { useState } from 'react';
 
 import { Button } from 'shared';
-import { ThemeSwitcher } from 'widgets';
 
 import { Login } from 'features/auth/ui/components/Login';
 import { Register } from 'features/auth/ui/components/Register';
-
-import { LanguageSwitcher } from 'widgets';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+
+import { PublicHeader } from 'widgets/ui/components';
 
 export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');
@@ -37,19 +36,16 @@ export const Auth = () => {
   };
 
   return (
-    <main className='py-5'>
-      <div className='flex gap-x-5 justify-end pr-5 max-sm:justify-center max-sm:pr-0'>
-        <ThemeSwitcher />
-        <LanguageSwitcher />
-      </div>
+    <main>
+      <PublicHeader />
 
-      <div className='flex items-center justify-center min-h-screen max-sm:min-h-full max-sm:mt-10'>
-        <div className='max-w-md w-full'>
-          <div className='flex max-sm:flex-col max-sm:gap-y-5 p-2 mb-8 gap-x-5'>
+      <div className='flex items-center justify-center max-sm:min-h-full max-sm:py-10'>
+        <div className='w-full max-w-md'>
+          <div className='mb-8 flex gap-x-5 p-2 max-sm:flex-col max-sm:gap-y-5'>
             <Button
               type='button'
               onClick={() => setActiveForm('login')}
-              className={`flex-1 text-sm font-medium py-4 px-8 ${
+              className={`flex-1 px-8 py-4 text-sm font-medium ${
                 activeForm === 'login' ? activeClasses : inactiveClasses
               }`}
             >
@@ -58,7 +54,7 @@ export const Auth = () => {
             <Button
               type='button'
               onClick={() => setActiveForm('register')}
-              className={`focus:bg-btn-bg flex-1 text-sm font-medium py-4 px-8 ${
+              className={`focus:bg-btn-bg flex-1 px-8 py-4 text-sm font-medium ${
                 activeForm === 'register' ? activeClasses : inactiveClasses
               }`}
             >
