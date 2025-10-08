@@ -4,6 +4,5 @@ export type ButtonProps = {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   className?: string;
-  variant?: 'default' | 'outline';
   to?: string;
 };

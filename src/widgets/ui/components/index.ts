@@ -1,4 +1,5 @@
-export { Header } from './header/Header';
-export { Notification } from './notifications/Notification';
-export { NotificationsContainer } from './notifications/NotificationsContainer';
-export { ThemeSwitcher } from './theme/ThemeSwitcher';
+export * from './header/PrivateHeader';
+export * from './header/PublicHeader';
+export * from './notifications/Notification';
+export * from './notifications/NotificationsContainer';
+export * from './theme/ThemeSwitcher';
