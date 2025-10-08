@@ -9,5 +9,9 @@
   "arrowParens": "avoid",
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "jsxSingleQuote": true
+  "jsxSingleQuote": true,
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindAttributes": ["className", "class"],
+  "tailwindFunctions": ["clsx", "cn", "tw"],
+  "tailwindConfig": "./tailwind.config.js"
 }
