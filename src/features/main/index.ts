@@ -1,1 +1,1 @@
-export { Main } from './ui/components/Main';
+export * from './ui/components/Main';
