@@ -18,12 +18,12 @@ export const LanguageSwitcher: React.FC = () => {
     {
       code: 'en',
       name: 'EN',
-      flag: <UKFlagIcon className='w-20 h-20' />,
+      flag: <UKFlagIcon className='h-20 w-20' />,
     },
     {
       code: 'ru',
       name: 'RU',
-      flag: <RussianFlagIcon className='w-20 h-20' />,
+      flag: <RussianFlagIcon className='h-20 w-20' />,
     },
   ];
 
@@ -82,17 +82,17 @@ export const LanguageSwitcher: React.FC = () => {
     <div className='relative' ref={dropdownRef}>
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className='bg-btn-bg hover:bg-btn-hover w-5 h-10 flex justify-center items-center px-8 py-5 gap-2 group'
+        className='bg-btn-bg hover:bg-btn-hover group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'
       >
         <div className='flex flex-col items-center justify-center'>
-          <div className='w-6 h-4 flex items-center justify-center'>
+          <div className='flex h-4 w-6 items-center justify-center'>
             {currentLang.name}
           </div>
           <div className='relative'>
             <ChevronDown
-              className={`w-4 h-4 transition-all duration-300 ${
+              className={`h-4 w-4 transition-all duration-300 ${
                 isOpen
-                  ? 'rotate-180 translate-y-0.5'
+                  ? 'translate-y-0.5 rotate-180'
                   : 'group-hover:translate-y-0.5'
               }`}
             />
@@ -101,23 +101,18 @@ export const LanguageSwitcher: React.FC = () => {
       </Button>
 
       <div
-        className={`
-        absolute top-full right-0 mt-2
-        transition-all duration-300 ease-out
-        z-60
-        ${
+        className={`absolute top-full right-0 z-60 mt-2 transition-all duration-300 ease-out ${
           isOpen
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
-        }
-      `}
+            ? 'translate-y-0 scale-100 opacity-100'
+            : 'pointer-events-none -translate-y-4 scale-95 opacity-0'
+        } `}
       >
-        <div className='py-1 flex flex-col gap-y-5'>
-          {languages.map((language, index) => (
+        <div className='flex flex-col gap-y-5 py-1'>
+          {languages.map(language => (
             <Button
               key={language.code}
               onClick={() => handleLanguageSelect(language.code)}
-              className={`w-5 h-10 flex justify-center items-center px-8 py-5 transition-all duration-200 ${
+              className={`flex h-10 w-5 items-center justify-center px-8 py-5 transition-all duration-200 ${
                 effectiveLanguage === language.code
                   ? activeClasses
                   : inactiveClasses
@@ -125,7 +120,7 @@ export const LanguageSwitcher: React.FC = () => {
                 isOpen ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}
             >
-              <div className='flex items-center justify-center w-6 h-4'>
+              <div className='flex h-4 w-6 items-center justify-center'>
                 {language.flag}
               </div>
             </Button>

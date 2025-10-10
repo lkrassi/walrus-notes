@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   Plus,
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useLocalization } from 'widgets/hooks';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 
@@ -17,10 +18,9 @@ interface FileTreeItemProps {
   isSelected: boolean;
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
-  onContextMenu: (e: React.MouseEvent, item: FileTreeItemType) => void;
   onCreateNote: (layoutId: string) => void;
-  onShowActions: (e: React.MouseEvent, item: FileTreeItemType) => void;
-  children?: React.ReactNode;
+  childrenItems?: FileTreeItemType[];
+  renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
 }
 
 export const FileTreeItem = ({
@@ -30,10 +30,9 @@ export const FileTreeItem = ({
   isSelected,
   hasChildren,
   onItemClick,
-  onContextMenu,
   onCreateNote,
-  onShowActions,
-  children,
+  childrenItems,
+  renderChild,
 }: FileTreeItemProps) => {
   const { t } = useLocalization();
   return (
@@ -46,7 +45,6 @@ export const FileTreeItem = ({
         } `}
         style={{ paddingLeft: `${level * 1.5 + 0.75}rem` }}
         onClick={() => onItemClick(item)}
-        onContextMenu={e => onContextMenu(e, item)}
       >
         {item.type === 'layout' && (
           <div className='flex h-4 w-4 flex-shrink-0 items-center justify-center'>
@@ -94,7 +92,6 @@ export const FileTreeItem = ({
             <button
               onClick={e => {
                 e.stopPropagation();
-                onShowActions(e, item);
               }}
               className='rounded p-1 transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-700'
               title={t('fileTree:actions')}
@@ -105,7 +102,19 @@ export const FileTreeItem = ({
         </div>
       </div>
 
-      {children}
+      <AnimatePresence>
+        {isExpanded && hasChildren && childrenItems && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            {childrenItems.map(child => renderChild?.(child, level + 1))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

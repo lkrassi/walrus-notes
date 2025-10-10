@@ -40,16 +40,6 @@ export const useFileTree = () => {
       }
       const layouts = layoutsResponse.data;
 
-      const treeItems: FileTreeItem[] = layouts.map(layout => ({
-        id: layout.id,
-        type: 'layout' as const,
-        title: layout.title,
-        children: [],
-        createdAt: layout.createdAt,
-        updatedAt: layout.updatedAt,
-        isNotesLoaded: false,
-      }));
-
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layouts });
       showSuccess('Лэйауты загружены');
     } catch (error) {

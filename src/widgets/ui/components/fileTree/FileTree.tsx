@@ -1,5 +1,4 @@
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
-import { useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useLocalization } from 'widgets/hooks';
@@ -8,7 +7,6 @@ import {
   FileTreeItem,
   FileTreeLoading,
   FileTreeEmpty,
-  FileTreeContextMenu,
 } from './index';
 
 interface FileTreeProps {
@@ -33,11 +31,6 @@ export const FileTree = ({
 }: FileTreeProps) => {
   const { t } = useLocalization();
   const { openModal } = useModalContext();
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    item: FileTreeItemType;
-  } | null>(null);
 
   const handleItemClick = (item: FileTreeItemType) => {
     if (item.type === 'layout') {
@@ -46,19 +39,7 @@ export const FileTree = ({
     onItemSelect?.(item);
   };
 
-  const handleContextMenu = (e: React.MouseEvent, item: FileTreeItemType) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setContextMenu({
-      x: e.clientX,
-      y: e.clientY,
-      item,
-    });
-  };
 
-  const closeContextMenu = () => {
-    setContextMenu(null);
-  };
 
   const handleCreateNote = (layoutId: string) => {
     openModal(
@@ -71,12 +52,8 @@ export const FileTree = ({
         size: 'lg',
       }
     );
-    closeContextMenu();
   };
 
-  const handleShowActions = (e: React.MouseEvent, item: FileTreeItemType) => {
-    handleContextMenu(e, item);
-  };
 
   const renderTreeItem = (item: FileTreeItemType, level: number = 0) => {
     const isExpanded = expandedItems.has(item.id);
@@ -92,16 +69,10 @@ export const FileTree = ({
         isSelected={isSelected}
         hasChildren={hasChildren}
         onItemClick={handleItemClick}
-        onContextMenu={handleContextMenu}
         onCreateNote={handleCreateNote}
-        onShowActions={handleShowActions}
-      >
-        {item.type === 'layout' && isExpanded && hasChildren && (
-          <div>
-            {item.children?.map((child) => renderTreeItem(child, level + 1))}
-          </div>
-        )}
-      </FileTreeItem>
+        childrenItems={item.children}
+        renderChild={renderTreeItem}
+      />
     );
   };
 
@@ -121,14 +92,6 @@ export const FileTree = ({
           </div>
         )}
       </div>
-
-      {contextMenu && (
-        <FileTreeContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          onClose={closeContextMenu}
-        />
-      )}
     </div>
   );
 };
