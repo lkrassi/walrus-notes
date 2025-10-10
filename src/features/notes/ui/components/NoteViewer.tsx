@@ -3,7 +3,7 @@ import { Edit3, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from 'shared';
 import type { Note } from 'shared/model/types/layouts';
-import { useAppDispatch, useNotifications, useLocalization } from 'widgets';
+import { useAppDispatch, useLocalization, useNotifications } from 'widgets';
 
 interface NoteViewerProps {
   note: Note;
@@ -44,11 +44,14 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
     setIsLoading(true);
 
     try {
-      await updateNote({
-        noteId: note.id,
-        title: title.trim(),
-        payload: payload.trim(),
-      }, dispatch);
+      await updateNote(
+        {
+          noteId: note.id,
+          title: title.trim(),
+          payload: payload.trim(),
+        },
+        dispatch
+      );
 
       const updatedNote: Note = {
         ...note,
@@ -80,6 +83,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               onChange={e => setTitle(e.target.value)}
               className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary w-full rounded border-none bg-transparent text-xl font-bold outline-none focus:ring-2'
               disabled={isLoading}
+              autoFocus
             />
           ) : (
             <h1 className='text-text dark:text-dark-text text-xl font-bold'>
@@ -109,15 +113,13 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               </Button>
             </>
           ) : (
-            <>
-              <Button
-                onClick={handleEdit}
-                className='bg-btn-bg px-3 py-2 hover:opacity-90'
-                title={t('notes:edit')}
-              >
-                <Edit3 className='h-4 w-4' />
-              </Button>
-            </>
+            <Button
+              onClick={handleEdit}
+              className='bg-btn-bg px-3 py-2 hover:opacity-90'
+              title={t('notes:edit')}
+            >
+              <Edit3 className='h-4 w-4' />
+            </Button>
           )}
         </div>
       </div>
@@ -127,12 +129,13 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary h-full min-h-full w-full flex-1 resize-none border-none bg-transparent outline-none focus:ring-2'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none border-none bg-transparent outline-none focus:ring-2 overflow-y-auto'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
+            autoFocus
           />
         ) : (
-          <div className='h-full min-h-full flex-1 overflow-y-auto'>
+          <div className='h-full overflow-y-auto p-4'>
             <div className='prose dark:prose-invert max-w-none'>
               {payload ? (
                 <div
@@ -145,7 +148,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
                 <p className='text-secondary dark:text-dark-secondary italic'>
                   {t('notes:emptyNoteMessage')}
                 </p>
-              )}{' '}
+              )}
             </div>
           </div>
         )}

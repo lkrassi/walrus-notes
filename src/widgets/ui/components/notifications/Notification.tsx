@@ -16,17 +16,18 @@ const NOTIFICATION_STYLES = {
 export const Notification: React.FC<NotificationProps> = ({ notification }) => {
   const type = notification.type || 'default';
 
-  const getStyles = () => {
-    const baseStyles =
-      'flex items-start p-4 rounded-xl shadow-lg min-w-[300px] max-w-[400px] border';
-    return `${baseStyles} ${NOTIFICATION_STYLES[type]}`;
-  };
+  const baseStyles = `
+    flex items-start p-4 rounded-xl shadow-lg
+    border
+    w-full
+    max-w-full
+  `;
 
   return (
-    <div className={getStyles()}>
-      <div className='flex-1 min-w-0'>
+    <div className={`${baseStyles} ${NOTIFICATION_STYLES[type]}`}>
+      <div className=''>
         {notification.title && (
-          <h3 className='font-semibold text-sm mb-1'>{notification.title}</h3>
+          <h3 className='mb-1 text-sm font-semibold'>{notification.title}</h3>
         )}
         <p className='text-sm leading-relaxed'>{notification.message}</p>
       </div>

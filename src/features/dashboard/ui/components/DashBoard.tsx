@@ -1,12 +1,27 @@
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
+  const sidebarRef = useRef<{ updateNoteInTree: (noteId: string, updates: Partial<Note>) => void }>(null);
   const [selectedItem, setSelectedItem] = useState<FileTreeItem | null>(null);
+
+  const handleNoteUpdated = useCallback((noteId: string, updates: Partial<Note>) => {
+    sidebarRef.current?.updateNoteInTree(noteId, updates);
+    setSelectedItem(prev => {
+      if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
+        return {
+          ...prev,
+          note: { ...prev.note, ...updates },
+          title: updates.title || prev.title, // Update title in fileTree item
+        };
+      }
+      return prev;
+    });
+  }, []);
 
   const handleItemSelect = (item: FileTreeItem) => {
     setSelectedItem(item);
@@ -51,8 +66,12 @@ export const DashBoard = () => {
         <div className='flex-1'>
           <NoteViewer
             note={note}
-            onNoteUpdated={(updatedNote: Note) => {
-            }}
+            onNoteUpdated={updatedNote =>
+              handleNoteUpdated(updatedNote.id, {
+                title: updatedNote.title,
+                payload: updatedNote.payload,
+              })
+            }
             onNoteDeleted={(noteId: string) => {
               setSelectedItem(null);
             }}
@@ -83,9 +102,9 @@ export const DashBoard = () => {
   return (
     <div className='bg-gradient min-h-screen'>
       <PrivateHeader />
-      <div className='grid h-[calc(100vh-4rem)] grid-cols-[auto_1fr] max-md:block'>
-        <Sidebar onItemSelect={handleItemSelect} />
-        <main className='flex h-full flex-col'>
+      <div className='flex h-[calc(100vh-4rem)] max-md:flex-col'>
+        <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />
+        <main className='flex h-full w-full min-w-0 flex-col overflow-hidden'>
           {renderContent()}
         </main>
       </div>

@@ -1,6 +1,6 @@
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState, type Ref } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
@@ -9,10 +9,9 @@ import { useModalContext } from '../modal';
 
 interface SidebarProps {
   onItemSelect?: (item: FileTreeItem) => void;
-  onNoteUpdated?: (noteId: string, updatedNote: Partial<Note>) => void;
 }
 
-export const Sidebar = ({ onItemSelect }: SidebarProps) => {
+const SidebarComponent = ({ onItemSelect }: SidebarProps, ref: Ref<{ updateNoteInTree: (noteId: string, updates: Partial<Note>) => void }>) => {
   const { t } = useLocalization();
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
@@ -26,6 +25,9 @@ export const Sidebar = ({ onItemSelect }: SidebarProps) => {
     addNoteToTree,
     reloadLayouts,
   } = useFileTree();
+
+  useImperativeHandle(ref, () => ({ updateNoteInTree }), [updateNoteInTree]);
+
 
   const handleCreateLayout = () => {
     openModal(<CreateLayoutForm onLayoutCreated={reloadLayouts} />, {
@@ -113,3 +115,5 @@ export const Sidebar = ({ onItemSelect }: SidebarProps) => {
     </>
   );
 };
+
+export const Sidebar = forwardRef(SidebarComponent);

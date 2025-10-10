@@ -1,7 +1,13 @@
 import { appRoutesConfig } from 'app/router/config';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { LoaderContainer, ModalProvider, NotificationsContainer, SidebarProvider, store } from 'widgets';
+import {
+  LoaderContainer,
+  ModalProvider,
+  NotificationsContainer,
+  SidebarProvider,
+  store,
+} from 'widgets';
 
 export const App = () => {
   return (
@@ -11,7 +17,11 @@ export const App = () => {
           <div className='bg-gradient min-h-screen'>
             <Routes>
               {appRoutesConfig.map(route => (
-                <Route key={route.path} path={route.path} element={route.element} />
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
               ))}
             </Routes>
             <NotificationsContainer />

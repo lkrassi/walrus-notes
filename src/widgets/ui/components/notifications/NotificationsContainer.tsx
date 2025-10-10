@@ -28,9 +28,11 @@ export const NotificationsContainer: React.FC = () => {
   }
 
   return (
-    <div className='fixed top-4 right-4 z-51 flex flex-col gap-3'>
+    <div
+      className={`fixed top-4 right-4 z-51 flex flex-col gap-3 max-md:top-auto max-md:right-4 max-md:bottom-4`}
+    >
       {notifications.map(notification => (
-        <div key={notification.id}>
+        <div key={notification.id} className='w-full'>
           <Notification notification={notification} />
         </div>
       ))}
