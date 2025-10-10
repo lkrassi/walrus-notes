@@ -45,7 +45,7 @@ export const Auth = () => {
             <Button
               type='button'
               onClick={() => setActiveForm('login')}
-              className={`flex-1 px-8 py-4 text-sm font-medium ${
+              className={`focus:bg-btn-bg flex-1 px-8 py-4 text-sm font-medium ${
                 activeForm === 'login' ? activeClasses : inactiveClasses
               }`}
             >
