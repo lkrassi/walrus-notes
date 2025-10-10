@@ -4,12 +4,10 @@ import logo from '../../../../assets/logo.png';
 
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
-import { RegisterForm } from './Component';
 
 export const PublicHeader = () => {
   return (
     <header className='flex items-center justify-between p-15 max-sm:flex-col max-sm:gap-y-10'>
-      <RegisterForm />
       <Link to={'/'}>
         <div className='flex items-center gap-x-5 max-sm:flex-col max-sm:gap-y-5'>
           <img
