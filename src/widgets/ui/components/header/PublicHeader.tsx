@@ -1,26 +1,28 @@
 import { Link } from 'react-router-dom';
 
-import logo from 'public/logo.svg';
+import logo from '../../../../assets/logo.png';
 
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
+import { RegisterForm } from './Component';
 
 export const PublicHeader = () => {
   return (
-    <header className='flex justify-between items-center p-15 max-sm:flex-col max-sm:gap-y-10'>
+    <header className='flex items-center justify-between p-15 max-sm:flex-col max-sm:gap-y-10'>
+      <RegisterForm />
       <Link to={'/'}>
         <div className='flex items-center gap-x-5 max-sm:flex-col max-sm:gap-y-5'>
           <img
             src={logo}
             alt='Walrus Notes logo'
-            className='w-25 h-25 max-sm:w-20 max-sm:h-20'
+            className='h-25 w-25 max-sm:h-20 max-sm:w-20'
             loading='lazy'
           />
           <div className='flex gap-x-2'>
-            <h1 className='text-text dark:text-dark-text font-bold text-4xl max-sm:text-2xl'>
+            <h1 className='text-text dark:text-dark-text text-4xl font-bold max-sm:text-2xl'>
               Walrus
             </h1>
-            <h1 className='bg-gradient-to-r from-primary to-primary-gradient font-bold bg-clip-text text-transparent text-4xl max-sm:text-2xl'>
+            <h1 className='from-primary to-primary-gradient bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent max-sm:text-2xl'>
               Notes
             </h1>
           </div>
