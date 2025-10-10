@@ -1,3 +1,4 @@
+import type { AppDispatch } from 'widgets/model/stores';
 import type {
   AuthTokens,
   BaseResponse,
@@ -8,7 +9,8 @@ import type {
 import { authRequest } from 'shared/api';
 
 export const createLayout = async (
-  data: CreateLayoutRequest
+  data: CreateLayoutRequest,
+  dispatch: AppDispatch
 ): Promise<BaseResponse<CreateLayoutResponse>> => {
   const requestFn = async (
     tokens: AuthTokens
@@ -38,5 +40,5 @@ export const createLayout = async (
     return response.json();
   };
 
-  return authRequest(requestFn);
+  return authRequest(requestFn, dispatch);
 };

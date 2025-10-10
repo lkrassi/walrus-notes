@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
-import { useNotifications } from 'widgets';
+import { useAppDispatch, useNotifications } from 'widgets';
 
 import { login } from 'features/auth/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
@@ -21,6 +21,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useNotifications();
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
   const passwordVisibility = usePasswordVisibility();
@@ -41,7 +42,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await login(formData);
+      const response = await login(formData, dispatch);
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
       showSuccess(t('auth:login.success'));

@@ -1,0 +1,6 @@
+{
+  "selectFileOrFolder": "Select a file or folder",
+  "selectItemDescription": "Select an item in the file tree on the left to view its contents",
+  "noteLoadError": "Error loading note",
+  "layoutFolderDescription": "Layout folder. Select a note to view its contents."
+}

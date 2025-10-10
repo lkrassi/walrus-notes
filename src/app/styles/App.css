@@ -20,7 +20,6 @@ a {
 
 button {
   @apply cursor-pointer;
-  -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
@@ -28,10 +27,8 @@ input,
 textarea,
 button {
   @apply outline-0;
-  -webkit-tap-highlight-color: transparent;
   border-radius: 0;
 }
-
 
 @media (hover: none) and (pointer: coarse) {
   button,
@@ -42,15 +39,13 @@ button {
 }
 
 input:focus-visible,
-button:focus-visible,
-textarea:focus-visible {
+button:focus-visible {
   @apply ring-border-focus ring-2 ring-offset-2;
 }
 
 @variant dark {
   input:focus-visible,
-  button:focus-visible,
-  textarea:focus-visible {
+  button:focus-visible {
     @apply ring-dark-border-focus;
   }
 }
@@ -92,14 +87,24 @@ textarea:focus-visible {
 
   /* кнопки */
   --color-btn-bg: #8b5cf6;
-  --color-btn-hover: #9771f1;
-  --color-btn-active: #a88aec;
-  --color-btn-shadow: #8b5cf6;
+  --color-btn-delete: #da1010;
+  --color-btn-cancel: #bda9a9;
+}
 
-  /* Мобильные улучшения - добавляем утилиты */
-  --color-tap-highlight: transparent;
+.ewq {
+  background-color: #9f9090;
 }
 
 .bg-gradient {
   @apply bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 dark:from-gray-900 dark:via-purple-950 dark:to-violet-900;
+}
+
+aside::-webkit-resizer {
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: ew-resize;
+  background: transparent;
 }

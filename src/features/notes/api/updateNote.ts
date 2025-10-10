@@ -1,3 +1,4 @@
+import type { AppDispatch } from 'widgets/model/stores';
 import { authRequest } from 'shared/api';
 import type {
   AuthTokens,
@@ -6,7 +7,8 @@ import type {
 } from 'shared/model';
 
 export const updateNote = async (
-  data: UpdateNoteRequest
+  data: UpdateNoteRequest,
+  dispatch: AppDispatch
 ): Promise<UpdateNoteApiResponse> => {
   const requestFn = async (
     tokens: AuthTokens
@@ -36,5 +38,5 @@ export const updateNote = async (
     return response.json();
   };
 
-  return authRequest(requestFn);
+  return authRequest(requestFn, dispatch);
 };

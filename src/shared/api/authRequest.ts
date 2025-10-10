@@ -1,9 +1,12 @@
+import type { AppDispatch } from 'widgets/model/stores';
 import type { AuthTokens, RequestFunction } from 'shared/model';
 
 import { callWithRefresh } from 'shared/api/refreshUtils';
+import { startLoading, stopLoading } from 'widgets/model/stores/slices/loaderSlice';
 
 export const authRequest = async <T>(
-  requestFn: RequestFunction<T>
+  requestFn: RequestFunction<T>,
+  dispatch: AppDispatch
 ): Promise<T> => {
   const getCurrentTokens = (): AuthTokens | null => {
     if (typeof window === 'undefined') return null;
@@ -18,5 +21,11 @@ export const authRequest = async <T>(
     throw new Error('No authentication tokens found');
   }
 
-  return callWithRefresh(requestFn, tokens);
+  dispatch(startLoading());
+  try {
+    const result = await callWithRefresh(requestFn, tokens);
+    return result;
+  } finally {
+    dispatch(stopLoading());
+  }
 };

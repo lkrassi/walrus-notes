@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
+import loaderReducer from 'widgets/model/stores/slices/loaderSlice';
 import notificationsReducer from 'widgets/model/stores/slices/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
+    loader: loaderReducer,
     notifications: notificationsReducer,
   },
 });
@@ -10,4 +12,5 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
+export type LoaderState = RootState['loader'];
 export type NotificationsState = RootState['notifications'];

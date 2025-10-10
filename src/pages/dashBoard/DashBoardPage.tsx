@@ -1,9 +1,5 @@
-import { CreateLayout } from 'features';
+import { DashBoard } from 'features';
 
 export const DashBoardPage = () => {
-  return (
-    <main>
-      <CreateLayout />
-    </main>
-  );
+  return <DashBoard />;
 };

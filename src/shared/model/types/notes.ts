@@ -12,7 +12,7 @@ export type DeleteNoteRequest = {
 
 export type GetNotesRequest = {
   layoutId: string;
-  page?: number;
+  page: number;
 };
 
 export type UpdateNoteRequest = {

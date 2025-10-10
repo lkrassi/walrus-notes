@@ -1,0 +1,18 @@
+{
+  "enterNoteTitle": "Пожалуйста, введите название заметки",
+  "noteUpdatedSuccess": "Заметка обновлена успешно",
+  "noteUpdateError": "Произошла ошибка при обновлении заметки",
+  "noteContentPlaceholder": "Введите содержимое заметки...",
+  "emptyNoteMessage": "Заметка пуста. Нажмите \"Редактировать\", чтобы добавить содержимое.",
+  "save": "Сохранить",
+  "cancel": "Отменить",
+  "edit": "Редактировать",
+  "noteCreatedSuccess": "Заметка создана успешно",
+  "noteCreationError": "Произошла ошибка при создании заметки",
+  "noteTitle": "Название заметки",
+  "noteTitlePlaceholder": "Введите название заметки",
+  "noteContent": "Содержимое заметки",
+  "noteContentPlaceholderTextarea": "Введите содержимое заметки",
+  "creating": "Создание...",
+  "createNote": "Создать заметку"
+}

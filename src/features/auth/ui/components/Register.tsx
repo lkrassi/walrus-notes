@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button } from 'shared';
-import { useNotifications } from 'widgets';
+import { useAppDispatch, useNotifications } from 'widgets';
 
 import { register } from 'features/auth/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
@@ -22,6 +22,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useNotifications();
+  const dispatch = useAppDispatch();
   const passwordVisibility = usePasswordVisibility();
   const { t } = useLocalization();
 
@@ -40,7 +41,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await register(formData);
+      const response = await register(formData, dispatch);
       localStorage.setItem('userId', response.data.userId);
       showSuccess(t('auth:register.success'));
 

@@ -10,5 +10,20 @@
     "home": "Home",
     "about": "About",
     "contact": "Contact"
-  }
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "modal": {
+    "close": "Close"
+  },
+  "menu": {
+    "open": "Open menu"
+  },
+  "password": {
+    "hide": "Hide password",
+    "show": "Show password"
+  },
+  "createLayout": "Create layout"
 }

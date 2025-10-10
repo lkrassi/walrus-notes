@@ -104,7 +104,7 @@ export const LanguageSwitcher: React.FC = () => {
         className={`
         absolute top-full right-0 mt-2
         transition-all duration-300 ease-out
-        z-50
+        z-60
         ${
           isOpen
             ? 'opacity-100 translate-y-0 scale-100'

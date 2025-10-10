@@ -13,14 +13,6 @@ const NOTIFICATION_STYLES = {
   default: 'bg-gray-50 border-gray-200 text-gray-800',
 };
 
-const NOTIFICATION_ICONS = {
-  success: '✅',
-  error: '❌',
-  warning: '⚠️',
-  info: 'ℹ️',
-  default: '💬',
-};
-
 export const Notification: React.FC<NotificationProps> = ({ notification }) => {
   const type = notification.type || 'default';
 
@@ -32,9 +24,6 @@ export const Notification: React.FC<NotificationProps> = ({ notification }) => {
 
   return (
     <div className={getStyles()}>
-      <span className='flex-shrink-0 mr-3 text-xl'>
-        {NOTIFICATION_ICONS[type]}
-      </span>
       <div className='flex-1 min-w-0'>
         {notification.title && (
           <h3 className='font-semibold text-sm mb-1'>{notification.title}</h3>

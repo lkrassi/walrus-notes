@@ -1,3 +1,4 @@
+import type { AppDispatch } from 'widgets/model/stores';
 import { authRequest } from 'shared/api';
 import type {
   AuthTokens,
@@ -6,23 +7,20 @@ import type {
 } from 'shared/model';
 
 export const getNotes = async (
-  data: GetNotesRequest
+  data: GetNotesRequest,
+  dispatch: AppDispatch
 ): Promise<GetNotesApiResponse> => {
   const requestFn = async (
     tokens: AuthTokens
   ): Promise<GetNotesApiResponse> => {
-    const response = await fetch(
-      `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/notes/layout`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Request-Id': crypto.randomUUID(),
-          Authorization: `Bearer ${tokens.accessToken}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const url = `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1/notes/layout?layoutId=${encodeURIComponent(data.layoutId)}${data.page ? `&page=${data.page}` : ''}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-Request-Id': crypto.randomUUID(),
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -36,5 +34,5 @@ export const getNotes = async (
     return response.json();
   };
 
-  return authRequest(requestFn);
+  return authRequest(requestFn, dispatch);
 };

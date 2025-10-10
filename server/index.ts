@@ -9,7 +9,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -23,7 +22,6 @@ interface HealthResponse {
 
 app.use(express.static(path.join(__dirname, '../dist')));
 
-// Health check эндпоинт
 app.get('/api/health', (_req: Request, res: Response<HealthResponse>) => {
   const healthData: HealthResponse = {
     status: 'OK',
@@ -41,7 +39,6 @@ app.get('*', (_req: Request, res: Response) => {
 });
 
 app.use((err: Error, _req: Request, res: Response) => {
-  console.error('Server error:', err);
   res.status(500).json({
     status: 'ERROR',
     message: 'Internal Server Error',
@@ -49,9 +46,6 @@ app.use((err: Error, _req: Request, res: Response) => {
   });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Сервер запущен на порту: ${PORT}`);
-  console.log(`Проверка http://localhost:${PORT}/api/health`);
-});
+app.listen(PORT, '0.0.0.0', () => {});
 
 export default app;
