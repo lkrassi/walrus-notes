@@ -1,6 +1,6 @@
+import { Moon, Sun } from 'lucide-react';
 import { Button } from 'shared';
-import { useTheme, useLocalization } from 'widgets/hooks';
-import { Sun, Moon } from 'lucide-react';
+import { useLocalization, useTheme } from 'widgets/hooks';
 
 export const ThemeSwitcher = () => {
   const { t } = useLocalization();
@@ -9,8 +9,13 @@ export const ThemeSwitcher = () => {
   return (
     <Button
       onClick={toggleTheme}
-      className="bg-btn-bg hover:bg-btn-hover w-5 h-10 flex justify-center items-center px-8 py-5"
-      aria-label={theme === 'dark' ? t('common:theme.switchToLight') : t('common:theme.switchToDark')}
+      className='flex h-10 w-5 items-center justify-center px-8 py-5'
+      aria-label={
+        theme === 'dark'
+          ? t('common:theme.switchToLight')
+          : t('common:theme.switchToDark')
+      }
+      variant='default'
     >
       <span>
         {theme === 'dark' ? (

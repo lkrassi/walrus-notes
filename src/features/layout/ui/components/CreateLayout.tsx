@@ -20,7 +20,8 @@ export const CreateLayout = () => {
     <div className='space-y-4'>
       <Button
         onClick={handleCreateLayout}
-        className='bg-btn-bg hover:bg-btn-hover px-8 py-3'
+        variant='default'
+        className='px-8 py-3'
       >
         {t('common:createLayout')}
       </Button>

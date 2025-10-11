@@ -4,14 +4,12 @@ import {
   FileText,
   Folder,
   FolderOpen,
-  MoreHorizontal,
   Plus,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocalization } from 'widgets/hooks';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 
-interface FileTreeItemProps {
+type FileTreeItemProps =  {
   item: FileTreeItemType;
   level: number;
   isExpanded: boolean;
@@ -34,7 +32,6 @@ export const FileTreeItem = ({
   childrenItems,
   renderChild,
 }: FileTreeItemProps) => {
-  const { t } = useLocalization();
   return (
     <div>
       <div
@@ -76,30 +73,18 @@ export const FileTreeItem = ({
           {item.title}
         </span>
 
-        <div className='flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100'>
-          {item.type === 'layout' ? (
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                onCreateNote(item.id);
-              }}
-              className='rounded p-1 transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-700'
-              title={t('fileTree:createNote')}
-            >
-              <Plus className='h-3 w-3' />
-            </button>
-          ) : (
-            <button
-              onClick={e => {
-                e.stopPropagation();
-              }}
-              className='rounded p-1 transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-700'
-              title={t('fileTree:actions')}
-            >
-              <MoreHorizontal className='h-3 w-3' />
-            </button>
-          )}
-        </div>
+        {item.type === 'layout' && (
+          <button
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.stopPropagation();
+              onCreateNote(item.id);
+            }}
+            className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded'
+            title='Создать заметку'
+          >
+            <Plus className='h-4 w-4' />
+          </button>
+        )}
       </div>
 
       <AnimatePresence>

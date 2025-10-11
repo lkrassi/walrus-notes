@@ -75,7 +75,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
   return (
     <div className='dark:bg-dark-bg flex h-full flex-col bg-white'>
       <div className='border-border dark:border-dark-border flex flex-shrink-0 items-center justify-between border-b p-4'>
-        <div className='flex-1'>
+        <div className='min-w-0 flex-1'>
           {isEditing ? (
             <input
               type='text'
@@ -86,13 +86,13 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               autoFocus
             />
           ) : (
-            <h1 className='text-text dark:text-dark-text text-xl font-bold'>
+            <h1 className='text-text dark:text-dark-text truncate text-xl font-bold'>
               {note.title}
             </h1>
           )}
         </div>
 
-        <div className='flex gap-2'>
+        <div className='flex flex-shrink-0 gap-2'>
           {isEditing ? (
             <>
               <Button
@@ -100,14 +100,16 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
                 className='bg-btn-bg px-3 py-2 hover:opacity-90'
                 disabled={isLoading}
                 title={t('notes:save')}
+                variant='default'
               >
                 <Save className='h-4 w-4' />
               </Button>
               <Button
                 onClick={handleCancel}
-                className='bg-btn-cancel px-3 py-2 shadow-[0_8px_0_0_#9f9090] hover:opacity-90 active:translate-y-1.5 active:shadow-[0_1px_0_0_#9f9090]'
+                className='px-3 py-2 shadow-[0_8px_0_0_#9f9090] hover:opacity-90 active:translate-y-1.5 active:shadow-[0_1px_0_0_#9f9090]'
                 disabled={isLoading}
                 title={t('notes:cancel')}
+                variant='escape'
               >
                 <X className='h-4 w-4' />
               </Button>
@@ -117,6 +119,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               onClick={handleEdit}
               className='bg-btn-bg px-3 py-2 hover:opacity-90'
               title={t('notes:edit')}
+              variant='default'
             >
               <Edit3 className='h-4 w-4' />
             </Button>
@@ -129,7 +132,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none border-none bg-transparent outline-none focus:ring-2 overflow-y-auto'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none overflow-y-auto border-none bg-transparent outline-none focus:ring-2'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
             autoFocus

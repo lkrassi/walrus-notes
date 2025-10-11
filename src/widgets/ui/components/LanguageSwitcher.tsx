@@ -27,20 +27,6 @@ export const LanguageSwitcher: React.FC = () => {
     },
   ];
 
-  const activeClasses = `
-    bg-btn-bg
-    shadow-[0_8px_0_0_#6f46d0]
-    hover:bg-btn-hover
-  `;
-
-  const inactiveClasses = `
-    bg-[#a0a0a0]
-    shadow-[0_8px_0_0_#7a7a7a]
-    hover:bg-[#909090]
-    active:bg-btn-bg
-    active:shadow-[0_1px_0_0_#7a7a7a]
-    active:translate-y-1.5
-  `;
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('i18nextLng');
@@ -82,7 +68,8 @@ export const LanguageSwitcher: React.FC = () => {
     <div className='relative' ref={dropdownRef}>
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className='bg-btn-bg hover:bg-btn-hover group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'
+        variant='default'
+        className='group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'
       >
         <div className='flex flex-col items-center justify-center'>
           <div className='flex h-4 w-6 items-center justify-center'>
@@ -112,11 +99,8 @@ export const LanguageSwitcher: React.FC = () => {
             <Button
               key={language.code}
               onClick={() => handleLanguageSelect(language.code)}
+              variant={effectiveLanguage === language.code ? 'default' : 'disabled'}
               className={`flex h-10 w-5 items-center justify-center px-8 py-5 transition-all duration-200 ${
-                effectiveLanguage === language.code
-                  ? activeClasses
-                  : inactiveClasses
-              } ${
                 isOpen ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}
             >

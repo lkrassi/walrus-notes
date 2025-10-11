@@ -27,7 +27,6 @@ input,
 textarea,
 button {
   @apply outline-0;
-  border-radius: 0;
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -86,9 +85,9 @@ button:focus-visible {
   --color-dark-border-focus: #a78bfa;
 
   /* кнопки */
-  --color-btn-bg: #8b5cf6;
-  --color-btn-delete: #da1010;
-  --color-btn-cancel: #bda9a9;
+  --color-btn: #8b5cf6;
+  --color-btn-cancel: #da1010;
+  --color-btn-disabled: #bda9a9;
 }
 
 .ewq {

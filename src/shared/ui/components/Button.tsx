@@ -6,6 +6,7 @@ export const Button = ({
   onClick,
   type = 'button',
   disabled = false,
+  variant = 'default',
   className = '',
   to,
   title,
@@ -21,7 +22,7 @@ export const Button = ({
   };
 
   const getVariantClasses = () => {
-    return `
+    const baseClasses = `
       relative
       text-white
       text-base
@@ -31,16 +32,37 @@ export const Button = ({
       duration-200
       transform
       translate-y-0
-      shadow-[0_8px_0_0_#6f46d0]
-
-      active:shadow-[0_1px_0_0_#9d7ee4]
+      shadow-[0_8px_0_0]
+      rounded-md
+      active:shadow-[0_0_0_0]
       active:translate-y-1.5
-      disabled:bg-[#a0a0a0]
-      disabled:shadow-[0_8px_0_0_#7a7a7a]
-      disabled:hover:bg-[#a0a0a0]
-      disabled:active:shadow-[0_8px_0_0_#7a7a7a]
+      disabled:shadow-[0_8px_0_0]
+      disabled:active:shadow-[0_8px_0_0]
       disabled:active:translate-y-0
     `;
+
+    let bgColor = '';
+    let shadowColor = '';
+
+    switch (variant) {
+      case 'default':
+        bgColor = 'bg-btn';
+        shadowColor = 'shadow-btn/90 dark:shadow-btn/75';
+        break;
+      case 'escape':
+        bgColor = 'bg-btn-cancel';
+        shadowColor = 'shadow-btn-cancel/75 dark:shadow-btn-cancel/75';
+        break;
+      case 'disabled':
+        bgColor = 'bg-btn-disabled';
+        shadowColor = 'shadow-btn-disabled/75 dark:shadow-btn-disabled/75';
+        break;
+      default:
+        bgColor = 'bg-btn';
+        shadowColor = 'shadow-btn/90 dark:shadow-btn/75';
+    }
+
+    return `${baseClasses} ${bgColor} ${shadowColor}`;
   };
 
   const baseClasses = getVariantClasses();

@@ -76,14 +76,16 @@ export const CreateLayoutForm = ({
         <Button
           type='button'
           onClick={closeModal}
-          className='bg-btn-cancel px-6 py-3 shadow-[0_8px_0_0_#9f9090] hover:opacity-90 active:translate-y-1.5 active:shadow-[0_1px_0_0_#9f9090]'
+          variant='escape'
+          className='px-6 py-3'
           disabled={isLoading}
         >
           {t('layout:cancel')}
         </Button>
         <Button
           type='submit'
-          className='bg-btn-bg hover:bg-btn-hover px-6 py-3'
+          variant='default'
+          className='px-6 py-3'
           disabled={isLoading}
         >
           {isLoading ? t('layout:creating') : t('layout:createLayout')}

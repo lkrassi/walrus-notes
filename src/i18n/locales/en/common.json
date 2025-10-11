@@ -25,5 +25,11 @@
     "hide": "Hide password",
     "show": "Show password"
   },
-  "createLayout": "Create layout"
+  "createLayout": "Create layout",
+  "header": {
+    "goToHomepage": "Go to homepage",
+    "logoAlt": "Walrus Notes logo",
+    "switchTheme": "Switch theme",
+    "changeLanguage": "Change language"
+  }
 }

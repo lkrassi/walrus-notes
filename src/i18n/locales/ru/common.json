@@ -25,5 +25,11 @@
     "hide": "Скрыть пароль",
     "show": "Показать пароль"
   },
-  "createLayout": "Создать layout"
+  "createLayout": "Создать layout",
+  "header": {
+    "goToHomepage": "Перейти на главную",
+    "logoAlt": "Логотип Walrus Notes",
+    "switchTheme": "Переключить тему",
+    "changeLanguage": "Изменить язык"
+  }
 }
