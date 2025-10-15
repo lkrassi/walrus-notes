@@ -1,4 +1,4 @@
-export { useAppDispatch, useAppSelector } from './redux';
+export { useAppDispatch, useAppSelector, useUser } from './redux';
 export { useFileTree } from './useFileTree';
 export { SidebarProvider, useSidebar } from './sidebarContext';
 export { useLoader } from './useLoader';

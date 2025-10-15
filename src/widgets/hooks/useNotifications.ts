@@ -56,7 +56,7 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'success',
-        title: title || 'ЗАЕБОК',
+        title: title || 'УСПЕХ',
         message,
         duration: 5000,
       });
@@ -68,7 +68,7 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'error',
-        title: title || 'НЕ ЗАЕБОК',
+        title: title || 'НЕУДАЧА',
         message,
         duration: 7000,
       });

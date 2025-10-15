@@ -12,21 +12,6 @@ export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');
   const { t } = useLocalization();
 
-  const activeClasses = `
-    bg-btn-bg
-    shadow-[0_8px_0_0_#6f46d0]
-    hover:bg-btn-hover
-  `;
-
-  const inactiveClasses = `
-    bg-[#a0a0a0]
-    shadow-[0_8px_0_0_#7a7a7a]
-    hover:bg-[#909090]
-    active:bg-btn-bg
-    active:shadow-[0_1px_0_0_#7a7a7a]
-    active:translate-y-1.5
-  `;
-
   const handleSwitchToLogin = () => {
     setActiveForm('login');
   };
@@ -45,18 +30,16 @@ export const Auth = () => {
             <Button
               type='button'
               onClick={() => setActiveForm('login')}
-              className={`focus:bg-btn-bg flex-1 px-8 py-4 text-sm font-medium ${
-                activeForm === 'login' ? activeClasses : inactiveClasses
-              }`}
+              className='flex-1 px-8 py-4 text-sm font-medium'
+              variant={activeForm === 'login' ? 'default' : 'disabled'}
             >
               {t('auth:common.loginTab')}
             </Button>
             <Button
               type='button'
               onClick={() => setActiveForm('register')}
-              className={`focus:bg-btn-bg flex-1 px-8 py-4 text-sm font-medium ${
-                activeForm === 'register' ? activeClasses : inactiveClasses
-              }`}
+              className='flex-1 px-8 py-4 text-sm font-medium'
+              variant={activeForm === 'login' ? 'disabled' : 'default'}
             >
               {t('auth:common.registerTab')}
             </Button>

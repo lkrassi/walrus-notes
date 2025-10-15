@@ -42,7 +42,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     setIsSubmitting(true);
     try {
       const response = await register(formData, dispatch);
-      localStorage.setItem('userId', response.data.userId);
       showSuccess(t('auth:register.success'));
 
       setFormData({

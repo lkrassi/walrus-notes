@@ -34,5 +34,15 @@
   },
   "search": {
     "placeholder": "Поиск заметок и лэйаутов..."
+  },
+  "profile": {
+    "title": "Профиль",
+    "username": "Имя пользователя",
+    "email": "Email",
+    "role": "Роль",
+    "changePhoto": "Изменить фото",
+    "selectFile": "Выбрать файл",
+    "upload": "Загрузить",
+    "cancel": "Отмена"
   }
 }

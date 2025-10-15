@@ -9,6 +9,7 @@ import enFileTree from './locales/en/fileTree.json';
 import enLayout from './locales/en/layout.json';
 import enMain from './locales/en/main.json';
 import enNotes from './locales/en/notes.json';
+import enProfile from './locales/en/profile.json';
 import ruAuth from './locales/ru/auth.json';
 import ruCommon from './locales/ru/common.json';
 import ruDashboard from './locales/ru/dashboard.json';
@@ -16,6 +17,7 @@ import ruFileTree from './locales/ru/fileTree.json';
 import ruLayout from './locales/ru/layout.json';
 import ruMain from './locales/ru/main.json';
 import ruNotes from './locales/ru/notes.json';
+import ruProfile from './locales/ru/profile.json';
 
 const resources = {
   en: {
@@ -26,6 +28,7 @@ const resources = {
     layout: enLayout,
     main: enMain,
     notes: enNotes,
+    profile: enProfile,
   },
   ru: {
     common: ruCommon,
@@ -35,6 +38,7 @@ const resources = {
     layout: ruLayout,
     main: ruMain,
     notes: ruNotes,
+    profile: ruProfile,
   },
 };
 

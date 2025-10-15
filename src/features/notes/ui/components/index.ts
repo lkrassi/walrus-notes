@@ -1,1 +1,2 @@
-// Экспорты компонентов заметок будут добавлены при создании компонентов
+export { CreateNoteForm } from './CreateNoteForm';
+export { NoteViewer } from './NoteViewer';

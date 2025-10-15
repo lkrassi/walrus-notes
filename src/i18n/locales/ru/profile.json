@@ -1,0 +1,17 @@
+{
+  "title": "Профиль пользователя",
+  "username": "Имя пользователя",
+  "email": "Email",
+  "role": "Роль",
+  "changePhoto": "Изменить фото",
+  "selectFile": "Выберите файл",
+  "selectedFile": "Выбран файл",
+  "upload": "Загрузить",
+  "uploading": "Загрузка...",
+  "cancel": "Отмена",
+  "loading": "Загрузка...",
+  "profileNotFound": "Профиль не найден",
+  "uploadSuccess": "Фото профиля успешно изменено",
+  "uploadError": "Ошибка при загрузке фото",
+  "unauthorized": "Пользователь не авторизован"
+}

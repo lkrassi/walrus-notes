@@ -34,5 +34,15 @@
   },
   "search": {
     "placeholder": "Search notes and layouts..."
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "changePhoto": "Change Photo",
+    "selectFile": "Select File",
+    "upload": "Upload",
+    "cancel": "Cancel"
   }
 }

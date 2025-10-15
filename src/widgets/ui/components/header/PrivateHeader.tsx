@@ -1,8 +1,9 @@
+import { ProfileButton } from 'features/profile/ui/components/ProfileButton';
 import { Link } from 'react-router-dom';
+import { useLocalization } from 'widgets/hooks';
 import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
-import { useLocalization } from 'widgets/hooks/useLocalization';
 
 export const PrivateHeader = () => {
   const { t } = useLocalization();
@@ -36,6 +37,7 @@ export const PrivateHeader = () => {
         <div className='flex items-center gap-x-2'>
           <ThemeSwitcher />
           <LanguageSwitcher />
+          <ProfileButton />
         </div>
       </div>
     </header>

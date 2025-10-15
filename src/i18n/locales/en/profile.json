@@ -1,0 +1,17 @@
+{
+  "title": "User Profile",
+  "username": "Username",
+  "email": "Email",
+  "role": "Role",
+  "changePhoto": "Change Photo",
+  "selectFile": "Select file",
+  "selectedFile": "Selected file",
+  "upload": "Upload",
+  "uploading": "Uploading...",
+  "cancel": "Cancel",
+  "loading": "Loading...",
+  "profileNotFound": "Profile not found",
+  "uploadSuccess": "Profile photo changed successfully",
+  "uploadError": "Error uploading photo",
+  "unauthorized": "User not authorized"
+}

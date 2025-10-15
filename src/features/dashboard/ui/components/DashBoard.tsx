@@ -1,13 +1,36 @@
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import { getUserProfile } from 'features/profile/api/getUserProfile';
+import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
+import { checkAuth } from 'shared/api/checkAuth';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
   const sidebarRef = useRef<{ updateNoteInTree: (noteId: string, updates: Partial<Note>) => void }>(null);
   const [selectedItem, setSelectedItem] = useState<FileTreeItem | null>(null);
+
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (checkAuth()) {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          try {
+            const response = await getUserProfile(userId, dispatch);
+            dispatch(setUserProfile(response.data));
+          } catch (error) {
+            console.error('Failed to load user profile:', error);
+          }
+        }
+      }
+    };
+
+    loadUserProfile();
+  }, [dispatch]);
 
   const handleNoteUpdated = useCallback((noteId: string, updates: Partial<Note>) => {
     sidebarRef.current?.updateNoteInTree(noteId, updates);

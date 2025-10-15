@@ -1,15 +1,12 @@
-import type { BaseResponse } from 'shared/model/types/api';
+import type { BaseResponse } from './api';
 
 export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
+  userId?: string;
 };
 
 export type AuthResponse = BaseResponse<AuthTokens>;
-
-export type RegisterResponse = BaseResponse<{
-  userId: string;
-}>;
 
 export type LoginData = {
   email: string;
@@ -25,3 +22,16 @@ export type RegisterData = {
 export type RefreshData = AuthTokens;
 
 export type RequestFunction<T> = (tokens: AuthTokens) => Promise<T>;
+
+export type ChangeProfilePictureData = {
+  file: {
+    filename: string;
+    header: Record<string, string[]>;
+    size: number;
+  };
+  userId: string;
+};
+
+export type ChangeProfilePictureResponse = BaseResponse<{
+  newImgUrl: string;
+}>;
