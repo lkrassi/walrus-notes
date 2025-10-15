@@ -31,5 +31,8 @@
     "logoAlt": "Walrus Notes logo",
     "switchTheme": "Switch theme",
     "changeLanguage": "Change language"
+  },
+  "search": {
+    "placeholder": "Search notes and layouts..."
   }
 }

@@ -18,6 +18,7 @@ interface FileTreeProps {
   addNoteToTree: (layoutId: string, note: Note) => void;
   onItemSelect?: (item: FileTreeItemType) => void;
   selectedItemId?: string;
+  searchQuery?: string;
 }
 
 export const FileTree = ({
@@ -28,9 +29,38 @@ export const FileTree = ({
   addNoteToTree,
   onItemSelect,
   selectedItemId,
+  searchQuery,
 }: FileTreeProps) => {
   const { t } = useLocalization();
   const { openModal } = useModalContext();
+
+  const filterFileTree = (items: FileTreeItemType[], query: string): FileTreeItemType[] => {
+    if (!query.trim()) return items;
+
+    const lowerQuery = query.toLowerCase();
+
+    return items
+      .map(item => {
+        const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
+        const matchesPayload = item.type === 'note' && item.note?.payload?.toLowerCase().includes(lowerQuery);
+
+        if (matchesTitle || matchesPayload) {
+          return item;
+        }
+
+        if (item.children) {
+          const filteredChildren = filterFileTree(item.children, query);
+          if (filteredChildren.length > 0) {
+            return { ...item, children: filteredChildren };
+          }
+        }
+
+        return null;
+      })
+      .filter((item): item is FileTreeItemType => item !== null);
+  };
+
+  const filteredFileTree = searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
 
   const handleItemClick = (item: FileTreeItemType) => {
     if (item.type === 'layout') {
@@ -84,11 +114,11 @@ export const FileTree = ({
   return (
     <div className='h-full'>
       <div className='flex-1 overflow-y-auto p-2'>
-        {fileTree.length === 0 ? (
-          <FileTreeEmpty />
+        {filteredFileTree.length === 0 ? (
+          <FileTreeEmpty searchQuery={searchQuery} />
         ) : (
           <div className='space-y-1'>
-            {fileTree.map(item => renderTreeItem(item))}
+            {filteredFileTree.map(item => renderTreeItem(item))}
           </div>
         )}
       </div>

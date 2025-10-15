@@ -41,7 +41,6 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
       dispatch({ type: 'LOAD_LAYOUTS', payload: layouts });
       showSuccess('Лэйауты загружены');
     } catch (error) {
-      // Do nothing on error
     } finally {
       setIsLoading(false);
     }

@@ -31,5 +31,8 @@
     "logoAlt": "Логотип Walrus Notes",
     "switchTheme": "Переключить тему",
     "changeLanguage": "Изменить язык"
+  },
+  "search": {
+    "placeholder": "Поиск заметок и лэйаутов..."
   }
 }

@@ -16,7 +16,7 @@ export const DashBoard = () => {
         return {
           ...prev,
           note: { ...prev.note, ...updates },
-          title: updates.title || prev.title, // Update title in fileTree item
+          title: updates.title || prev.title,
         };
       }
       return prev;
