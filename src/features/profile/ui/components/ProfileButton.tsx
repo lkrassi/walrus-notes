@@ -17,6 +17,7 @@ export const ProfileButton: React.FC = () => {
 
   return (
     <button
+      data-tour="profile"
       onClick={handleOpenProfile}
       className='flex h-10 w-10 items-center justify-center overflow-hidden rounded-full'
       title='Открыть профиль'

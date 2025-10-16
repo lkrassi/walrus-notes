@@ -39,7 +39,7 @@ export const PrivateHeader = () => {
           <LanguageSwitcher />
         </div>
 
-        <div className='flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:gap-x-2 max-sm:mt-5 max-sm:items-center'>
+        <div className='flex w-full flex-col items-stretch gap-2 max-sm:mt-5 max-sm:items-center sm:w-auto sm:flex-row sm:gap-x-2'>
           <ProfileButton />
         </div>
       </div>

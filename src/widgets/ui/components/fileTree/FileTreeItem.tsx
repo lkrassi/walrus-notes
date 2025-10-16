@@ -32,12 +32,11 @@ export const FileTreeItem = ({
   childrenItems,
   renderChild,
 }: FileTreeItemProps) => {
-  // Отступ зависит от уровня вложенности: 20px базовый отступ + 16px за каждый уровень
   const paddingLeft = 20 + level * 16;
 
   return (
     <div className='file-tree-item'>
-      <button
+      <div
         className={`group relative flex w-full cursor-pointer items-center gap-2 rounded-lg py-2 transition-all duration-200 ${
           isSelected
             ? 'bg-primary dark:bg-dark-primary text-white'
@@ -97,7 +96,7 @@ export const FileTreeItem = ({
             <Plus className='h-4 w-4' />
           </button>
         )}
-      </button>
+      </div>
 
       <AnimatePresence>
         {isExpanded && hasChildren && childrenItems && (

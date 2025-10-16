@@ -51,5 +51,62 @@
     "goHome": "Return home",
     "goBack": "Go back",
     "helpText": "If you believe this is an error, please contact support"
+  },
+  "onboarding": {
+    "sidebar": {
+      "title": "Navigation Panel",
+      "description": "This is the navigation panel. You can create new layouts, search notes, and manage your file structure.",
+      "feature1": "Create new layouts for organizing notes",
+      "feature2": "Use file tree for navigation",
+      "feature3": "Manage your document structure"
+    },
+    "createLayout": {
+      "title": "Create Layout",
+      "description": "Click here to create a new layout for organizing your notes.",
+      "feature1": "Click to create a new layout",
+      "feature2": "Organize notes by topics or projects",
+      "feature3": "Add nested folders for better structure"
+    },
+    "search": {
+      "title": "Search Notes",
+      "description": "Use search to quickly find the notes or layouts you need.",
+      "feature1": "Fast search across all notes",
+      "feature2": "Filter by title and content",
+      "feature3": "Autocomplete for convenience"
+    },
+    "profile": {
+      "title": "User Profile",
+      "description": "Click here to open your profile and change settings.",
+      "feature1": "View and edit profile",
+      "feature2": "Change avatar and personal data",
+      "feature3": "Manage account settings"
+    },
+    "themeSwitcher": {
+      "title": "Theme Switcher",
+      "description": "Switch between light and dark interface themes.",
+      "feature1": "Light theme for comfortable daytime work",
+      "feature2": "Dark theme for evening work",
+      "feature3": "Automatic switching by schedule"
+    },
+    "languageSwitcher": {
+      "title": "Language Selection",
+      "description": "Change the application language.",
+      "feature1": "Support for Russian and English languages",
+      "feature2": "Full interface localization",
+      "feature3": "Save selected language"
+    },
+    "logout": {
+      "title": "Log Out",
+      "description": "Click here to log out of your account.",
+      "feature1": "Secure account logout",
+      "feature2": "Clear session and temporary data",
+      "feature3": "Return to login page"
+    },
+    "back": "Back",
+    "close": "Close",
+    "last": "Finish",
+    "next": "Next",
+    "open": "Open",
+    "skip": "Skip"
   }
 }

@@ -67,6 +67,7 @@ export const LanguageSwitcher: React.FC = () => {
   return (
     <div className='relative' ref={dropdownRef}>
       <Button
+        data-tour="language-switcher"
         onClick={() => setIsOpen(!isOpen)}
         variant='default'
         className='group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'

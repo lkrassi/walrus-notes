@@ -82,6 +82,7 @@ const SidebarComponent = (
       )}
 
       <aside
+        data-tour="sidebar"
         className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0`}
       >
         <div className='border-border dark:border-dark-border border-b p-4'>
@@ -107,6 +108,7 @@ const SidebarComponent = (
               {t('fileTree:fileStructure')}
             </h2>
             <button
+              data-tour="create-layout"
               onClick={handleCreateLayout}
               className='text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800'
               title={t('fileTree:createNewLayout')}
@@ -117,11 +119,13 @@ const SidebarComponent = (
           </div>
 
           <div className='mt-3'>
-            <SearchInput
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              suggestions={allSearchableItems}
-            />
+            <div data-tour="search">
+              <SearchInput
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                suggestions={allSearchableItems}
+              />
+            </div>
           </div>
         </div>
 

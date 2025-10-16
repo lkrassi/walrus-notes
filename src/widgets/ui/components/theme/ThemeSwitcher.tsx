@@ -8,6 +8,7 @@ export const ThemeSwitcher = () => {
 
   return (
     <Button
+      data-tour="theme-switcher"
       onClick={toggleTheme}
       className='flex h-10 w-5 items-center justify-center px-8 py-5'
       aria-label={

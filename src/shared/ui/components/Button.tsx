@@ -10,6 +10,7 @@ export const Button = ({
   className = '',
   to,
   title,
+  ...restProps // ← Принимаем все остальные пропсы
 }: ButtonProps) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled) return;
@@ -78,6 +79,7 @@ export const Button = ({
       className={`${baseClasses} ${className}`}
       onClick={handleClick}
       title={title}
+      {...restProps}
     >
       {children}
     </button>

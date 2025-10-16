@@ -7,6 +7,7 @@ import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
+import { OnboardingTour } from './OnboardingTour';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
@@ -129,6 +130,7 @@ export const DashBoard = () => {
 
   return (
     <div className='bg-gradient flex h-screen flex-col'>
+      <OnboardingTour />
       <PrivateHeader />
       <div className='flex min-h-0 flex-1 max-md:flex-col'>
         <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />

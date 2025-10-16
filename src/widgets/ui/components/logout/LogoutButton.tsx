@@ -15,6 +15,7 @@ export const LogoutButton = () => {
 
   return (
     <Button
+      data-tour='logout'
       onClick={handleLogout}
       className='flex h-10 w-5 items-center justify-center px-8 py-5'
       aria-label='Выйти'
