@@ -166,11 +166,11 @@ export const DashBoard = () => {
   };
 
   return (
-    <div className='bg-gradient min-h-screen'>
+    <div className='bg-gradient h-screen flex flex-col'>
       <PrivateHeader />
-      <div className='flex h-[calc(100vh-4rem)] max-md:flex-col'>
+      <div className='flex flex-1 min-h-0 max-md:flex-col'>
         <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />
-        <main className='flex h-full w-full min-w-0 flex-col overflow-hidden'>
+        <main className='flex flex-1 min-w-0 flex-col min-h-0'>
           {renderContent()}
         </main>
       </div>

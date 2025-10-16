@@ -2,11 +2,20 @@ import React from 'react';
 
 export const Loader: React.FC = () => {
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[100]">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 bg-black/50 dark:bg-white  rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-        <div className="w-3 h-3 bg-black/50 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-        <div className="w-3 h-3 bg-black/50 dark:bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+    <div className='fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm'>
+      <div className='flex space-x-2'>
+        <div
+          className='bg-primary h-3 w-3 animate-bounce rounded-full'
+          style={{ animationDelay: '0s' }}
+        ></div>
+        <div
+          className='bg-primary h-3 w-3 animate-bounce rounded-full'
+          style={{ animationDelay: '0.1s' }}
+        ></div>
+        <div
+          className='bg-primary h-3 w-3 animate-bounce rounded-full'
+          style={{ animationDelay: '0.2s' }}
+        ></div>
       </div>
     </div>
   );

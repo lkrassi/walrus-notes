@@ -104,7 +104,7 @@ export const FileTree = ({
   };
 
   return (
-    <div className='h-full'>
+    <div className='h-full flex flex-col'>
       <div className='flex-1 overflow-y-auto p-2'>
         {filteredFileTree.length === 0 ? (
           <FileTreeEmpty searchQuery={searchQuery} />

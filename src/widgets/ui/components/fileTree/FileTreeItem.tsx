@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronDown,
   ChevronRight,
@@ -6,10 +7,9 @@ import {
   FolderOpen,
   Plus,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 
-type FileTreeItemProps =  {
+type FileTreeItemProps = {
   item: FileTreeItemType;
   level: number;
   isExpanded: boolean;
@@ -19,7 +19,7 @@ type FileTreeItemProps =  {
   onCreateNote: (layoutId: string) => void;
   childrenItems?: FileTreeItemType[];
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
-}
+};
 
 export const FileTreeItem = ({
   item,
@@ -32,15 +32,21 @@ export const FileTreeItem = ({
   childrenItems,
   renderChild,
 }: FileTreeItemProps) => {
+  // Отступ зависит от уровня вложенности: 20px базовый отступ + 16px за каждый уровень
+  const paddingLeft = 20 + level * 16;
+
   return (
-    <div>
-      <div
-        className={`group relative flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 ${
+    <div className='file-tree-item'>
+      <button
+        className={`group relative flex w-full cursor-pointer items-center gap-2 rounded-lg py-2 transition-all duration-200 ${
           isSelected
             ? 'bg-primary dark:bg-dark-primary text-white'
             : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'
-        } `}
-        style={{ paddingLeft: `${level * 1.5 + 0.75}rem` }}
+        }`}
+        style={{
+          paddingLeft: `${paddingLeft}px`,
+          paddingRight: '12px',
+        }}
         onClick={() => onItemClick(item)}
       >
         {item.type === 'layout' && (
@@ -56,6 +62,8 @@ export const FileTreeItem = ({
             )}
           </div>
         )}
+
+        {item.type === 'note' && <div className='h-4 w-4 flex-shrink-0' />}
 
         <div className='flex-shrink-0'>
           {item.type === 'layout' ? (
@@ -79,13 +87,17 @@ export const FileTreeItem = ({
               e.stopPropagation();
               onCreateNote(item.id);
             }}
-            className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+            className={`opacity-0 transition-opacity duration-200 group-hover:opacity-100 ${
+              isSelected
+                ? 'text-white hover:text-gray-200'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
             title='Создать заметку'
           >
             <Plus className='h-4 w-4' />
           </button>
         )}
-      </div>
+      </button>
 
       <AnimatePresence>
         {isExpanded && hasChildren && childrenItems && (
@@ -94,7 +106,7 @@ export const FileTreeItem = ({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden"
+            className='overflow-hidden'
           >
             {childrenItems.map(child => renderChild?.(child, level + 1))}
           </motion.div>

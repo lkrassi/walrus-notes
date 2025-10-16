@@ -7,46 +7,16 @@
 body {
   @apply box-border;
   font-family: 'PT Mono', monospace;
-
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
-a {
+a,
+button,
+input {
   @apply outline-0;
 }
 
 button {
   @apply cursor-pointer;
-  touch-action: manipulation;
-}
-
-input,
-textarea,
-button {
-  @apply outline-0;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  button,
-  [role='button'],
-  a {
-    -webkit-touch-callout: none;
-  }
-}
-
-input:focus-visible,
-button:focus-visible {
-  @apply ring-border-focus ring-2 ring-offset-2;
-}
-
-@variant dark {
-  input:focus-visible,
-  button:focus-visible {
-    @apply ring-dark-border-focus;
-  }
 }
 
 @theme {

@@ -10,7 +10,7 @@ export const PrivateHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border border-b bg-white px-4 py-2 sm:px-6'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border border-b px-5'>
       <div className='flex items-center justify-between'>
         <Link
           to='/dashboard'
@@ -20,7 +20,7 @@ export const PrivateHeader = () => {
           <img
             src={logo}
             alt={t('common:header.logoAlt')}
-            className='h-8 w-8 sm:h-10 sm:w-10'
+            className='h-25 w-25'
             loading='lazy'
           />
           <div className='flex items-baseline gap-1'>

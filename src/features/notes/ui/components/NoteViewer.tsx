@@ -127,18 +127,18 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
         </div>
       </div>
 
-      <div className='min-h-0 flex-1'>
+      <div className='min-h-0 flex-1 overflow-hidden'>
         {isEditing ? (
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none border-none bg-transparent outline-none focus:ring-2'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none bg-transparent outline-none p-4'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
             autoFocus
           />
         ) : (
-          <div className='h-full overflow-y-auto'>
+          <div className='h-full overflow-y-auto p-4'>
             <div className='prose dark:prose-invert max-w-none'>
               {payload ? (
                 <div
