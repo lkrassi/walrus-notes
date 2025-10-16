@@ -100,7 +100,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
                 className='bg-btn-bg px-3 py-2 hover:opacity-90'
                 disabled={isLoading}
                 title={t('notes:save')}
-                variant='default'
+                variant='submit'
               >
                 <Save className='h-4 w-4' />
               </Button>
@@ -132,13 +132,13 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none overflow-y-auto border-none bg-transparent outline-none focus:ring-2'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none border-none bg-transparent outline-none focus:ring-2'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
             autoFocus
           />
         ) : (
-          <div className='h-full overflow-y-auto p-4'>
+          <div className='h-full overflow-y-auto'>
             <div className='prose dark:prose-invert max-w-none'>
               {payload ? (
                 <div

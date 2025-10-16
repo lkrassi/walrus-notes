@@ -101,7 +101,7 @@ export const CreateNoteForm = ({
           onChange={e => setPayload(e.target.value)}
           placeholder={t('notes:noteContentPlaceholderTextarea')}
           rows={6}
-          className='border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary resize-vertical w-full rounded-lg border bg-white px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 dark:bg-gray-800'
+          className='border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary w-full resize-none rounded-lg border bg-white px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 dark:bg-gray-800'
           disabled={isLoading}
         />
       </div>
@@ -118,7 +118,7 @@ export const CreateNoteForm = ({
         </Button>
         <Button
           type='submit'
-          variant='default'
+          variant='submit'
           className='px-6 py-3'
           disabled={isLoading}
         >

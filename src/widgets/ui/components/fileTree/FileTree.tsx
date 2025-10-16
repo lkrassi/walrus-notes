@@ -5,13 +5,11 @@ import { useLocalization } from 'widgets/hooks';
 import { useModalContext } from '../modal';
 import {
   FileTreeItem,
-  FileTreeLoading,
   FileTreeEmpty,
 } from './index';
 
 interface FileTreeProps {
   fileTree: FileTreeItemType[];
-  isLoading: boolean;
   expandedItems: Set<string>;
   toggleExpanded: (itemId: string) => void;
   updateNoteInTree: (noteId: string, updatedNote: Partial<Note>) => void;
@@ -23,7 +21,6 @@ interface FileTreeProps {
 
 export const FileTree = ({
   fileTree,
-  isLoading,
   expandedItems,
   toggleExpanded,
   addNoteToTree,
@@ -105,11 +102,6 @@ export const FileTree = ({
       />
     );
   };
-
-
-  if (isLoading) {
-    return <FileTreeLoading />;
-  }
 
   return (
     <div className='h-full'>

@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom';
 import { useLocalization } from 'widgets/hooks';
 import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
+import { LogoutButton } from '../logout/LogoutButton';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
 export const PrivateHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border h-16 border-b bg-white px-4 py-2 sm:px-6'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border border-b bg-white px-4 py-2 sm:px-6'>
       <div className='flex items-center justify-between'>
         <Link
-          to='/'
+          to='/dashboard'
           className='hidden items-center gap-2 sm:gap-3 md:flex'
           aria-label={t('common:header.goToHomepage')}
         >
@@ -35,6 +36,7 @@ export const PrivateHeader = () => {
         <div className='flex-1 md:hidden'></div>
 
         <div className='flex items-center gap-x-2'>
+          <LogoutButton />
           <ThemeSwitcher />
           <LanguageSwitcher />
           <ProfileButton />

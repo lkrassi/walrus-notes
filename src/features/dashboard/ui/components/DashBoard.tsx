@@ -1,17 +1,26 @@
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Note } from 'shared/model/types/layouts';
-import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
-import type { FileTreeItem } from 'widgets/hooks/useFileTree';
-import { useAppDispatch } from 'widgets/hooks/redux';
 import { getUserProfile } from 'features/profile/api/getUserProfile';
-import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { checkAuth } from 'shared/api/checkAuth';
+import type { Note } from 'shared/model/types/layouts';
+import { PrivateHeader, Sidebar, useFileTree, useLocalization } from 'widgets';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
-  const sidebarRef = useRef<{ updateNoteInTree: (noteId: string, updates: Partial<Note>) => void }>(null);
+  const navigate = useNavigate();
+  const { layoutId, noteId } = useParams<{
+    layoutId?: string;
+    noteId?: string;
+  }>();
+  const { fileTree } = useFileTree();
+  const sidebarRef = useRef<{
+    updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
+  }>(null);
   const [selectedItem, setSelectedItem] = useState<FileTreeItem | null>(null);
 
   useEffect(() => {
@@ -32,22 +41,58 @@ export const DashBoard = () => {
     loadUserProfile();
   }, [dispatch]);
 
-  const handleNoteUpdated = useCallback((noteId: string, updates: Partial<Note>) => {
-    sidebarRef.current?.updateNoteInTree(noteId, updates);
-    setSelectedItem(prev => {
-      if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
-        return {
-          ...prev,
-          note: { ...prev.note, ...updates },
-          title: updates.title || prev.title,
-        };
+  useEffect(() => {
+    if (layoutId || noteId) {
+      let foundItem: FileTreeItem | null = null;
+
+      if (noteId) {
+        foundItem = findItemInTree(fileTree || [], noteId);
+      } else if (layoutId) {
+        foundItem = findItemInTree(fileTree || [], layoutId);
       }
-      return prev;
-    });
-  }, []);
+
+      // Устанавливаем selectedItem только если нашли элемент
+      if (foundItem) {
+        setSelectedItem(foundItem);
+      }
+    } else {
+      setSelectedItem(null);
+    }
+  }, [layoutId, noteId, fileTree]);
+
+  const handleNoteUpdated = useCallback(
+    (noteId: string, updates: Partial<Note>) => {
+      sidebarRef.current?.updateNoteInTree(noteId, updates);
+      setSelectedItem(prev => {
+        if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
+          return {
+            ...prev,
+            note: { ...prev.note, ...updates },
+            title: updates.title || prev.title,
+          };
+        }
+        return prev;
+      });
+    },
+    []
+  );
 
   const handleItemSelect = (item: FileTreeItem) => {
+    // Устанавливаем selectedItem сразу при клике
     setSelectedItem(item);
+
+    // Обновляем URL
+    if (item.type === 'layout') {
+      navigate(`/dashboard/${item.id}`, { replace: true });
+    } else if (item.type === 'note') {
+      navigate(`/dashboard/${item.parentId}/${item.id}`, { replace: true });
+    } else {
+      navigate('/dashboard', { replace: true });
+    }
+  };
+
+  const handleNoteDeleted = (noteId: string) => {
+    navigate('/dashboard', { replace: true });
   };
 
   const renderContent = () => {
@@ -95,9 +140,7 @@ export const DashBoard = () => {
                 payload: updatedNote.payload,
               })
             }
-            onNoteDeleted={(noteId: string) => {
-              setSelectedItem(null);
-            }}
+            onNoteDeleted={handleNoteDeleted}
           />
         </div>
       );
@@ -133,4 +176,24 @@ export const DashBoard = () => {
       </div>
     </div>
   );
+};
+
+const findItemInTree = (
+  items: FileTreeItem[],
+  itemId: string
+): FileTreeItem | null => {
+  for (const item of items) {
+    if (item.id === itemId) {
+      return item;
+    }
+
+    if (item.children && item.children.length > 0) {
+      const foundInChildren = findItemInTree(item.children, itemId);
+      if (foundInChildren) {
+        return foundInChildren;
+      }
+    }
+  }
+
+  return null;
 };

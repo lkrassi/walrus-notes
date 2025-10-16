@@ -51,59 +51,46 @@ button:focus-visible {
 
 @theme {
   /* основные цвета */
-  --color-bg: #ffffff;
-  --color-dark-bg: #0f172a;
-  --color-text: #1e293b;
-  --color-dark-text: #f1f5f9;
+  --color-bg: #f8fcfa;
+  --color-dark-bg: #0c1e1a;
+  --color-text: #1a2b26;
+  --color-dark-text: #e8f5f1;
 
   /* акцентный цвет */
-  --color-primary: #8b5cf6;
-  --color-dark-primary: #a78bfa;
+  --color-primary: #0d9488;
+  --color-dark-primary: #2dd4bf;
 
-  /* темные варианты фиолетового */
-  --color-primary-dark: #7c3aed;
-  --color-dark-primary-dark: #8b5cf6;
+  /* темные варианты акцента */
+  --color-primary-dark: #0f766e;
+  --color-dark-primary-dark: #0d9488;
 
   /* градиентные цвета */
-  --color-primary-gradient: #a78bfa;
-  --color-dark-primary-gradient: #c4b5fd;
+  --color-primary-gradient: #2dd4bf;
+  --color-dark-primary-gradient: #5eead4;
 
   /* вторичные цвета */
-  --color-secondary: #6b7280;
-  --color-dark-secondary: #9ca3af;
+  --color-secondary: #64748b;
+  --color-dark-secondary: #94a3b8;
 
   /* границы */
-  --color-border: #e5e7eb;
-  --color-dark-border: #374151;
+  --color-border: #d1e8e2;
+  --color-dark-border: #2d4a45;
 
   /* плейсхолдеры */
-  --color-input-placeholder: #9ca3af;
-  --color-dark-input-placeholder: #6b7280;
+  --color-input-placeholder: #94a3b8;
+  --color-dark-input-placeholder: #64748b;
 
   /* фокус состояния */
-  --color-border-focus: #8b5cf6;
-  --color-dark-border-focus: #a78bfa;
+  --color-border-focus: #0d9488;
+  --color-dark-border-focus: #2dd4bf;
 
   /* кнопки */
-  --color-btn: #8b5cf6;
-  --color-btn-cancel: #da1010;
-  --color-btn-disabled: #bda9a9;
-}
-
-.ewq {
-  background-color: #9f9090;
+  --color-btn: #0d9488;
+  --color-btn-cancel: #dc2626;
+  --color-btn-disabled: #b0bec5;
+  --color-btn-submit: #3bd31c;
 }
 
 .bg-gradient {
-  @apply bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 dark:from-gray-900 dark:via-purple-950 dark:to-violet-900;
-}
-
-aside::-webkit-resizer {
-  width: 10px;
-  height: 100%;
-  position: absolute;
-  right: 0;
-  top: 0;
-  cursor: ew-resize;
-  background: transparent;
+  @apply bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
 }

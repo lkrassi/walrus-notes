@@ -84,7 +84,7 @@ export const CreateLayoutForm = ({
         </Button>
         <Button
           type='submit'
-          variant='default'
+          variant='submit'
           className='px-6 py-3'
           disabled={isLoading}
         >

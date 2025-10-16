@@ -10,7 +10,7 @@ export const PublicHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='flex h-16 items-center justify-between px-4 py-2 max-md:flex-col max-md:justify-center max-md:gap-y-5 max-md:py-5'>
+    <header className='flex h-16 items-center justify-between px-4 py-2 max-md:flex-col max-md:justify-center max-md:gap-y-5 max-md:py-5 max-sm:h-full'>
       <Link
         to='/'
         className='flex items-center gap-2 max-md:flex-col'
@@ -19,7 +19,7 @@ export const PublicHeader = () => {
         <img
           src={logo}
           alt={t('common:header.logoAlt')}
-          className='h-8 w-8 sm:h-10 sm:w-10'
+          className='h-20 w-20 max-sm:h-30 max-sm:w-30'
           loading='lazy'
         />
         <div className='flex items-baseline gap-1'>

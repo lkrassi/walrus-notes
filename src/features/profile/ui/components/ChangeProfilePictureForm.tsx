@@ -15,7 +15,6 @@ export const ChangeProfilePictureForm: React.FC = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -29,7 +28,6 @@ export const ChangeProfilePictureForm: React.FC = () => {
         return;
       }
       setSelectedFile(file);
-      // Создаем URL для предпросмотра
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
@@ -38,10 +36,8 @@ export const ChangeProfilePictureForm: React.FC = () => {
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    setUploading(true);
     try {
       const response = await changeProfilePicture(selectedFile, dispatch);
-      // Добавляем небольшую задержку, чтобы изображение успело загрузиться на сервер
       setTimeout(() => {
         dispatch(updateUserAvatar(response.data.newImgUrl));
         showSuccess(t('profile:uploadSuccess'));
@@ -51,7 +47,6 @@ export const ChangeProfilePictureForm: React.FC = () => {
       console.error('Upload error:', error);
       const message = error.message || t('profile:uploadError');
       showError(message);
-      setUploading(false);
     }
   };
 
@@ -97,16 +92,15 @@ export const ChangeProfilePictureForm: React.FC = () => {
           onClick={handleCancel}
           variant='escape'
           className='flex-1 px-4 py-2'
-          disabled={uploading}
         >
           {t('profile:cancel')}
         </Button>
         <Button
           onClick={handleUpload}
           className='flex-1 px-4 py-2'
-          variant={selectedFile ? 'default' : 'disabled'}
+          variant={selectedFile ? 'submit' : 'disabled'}
         >
-          {uploading ? t('profile:uploading') : t('profile:upload')}
+          {t('profile:upload')}
         </Button>
       </div>
     </div>

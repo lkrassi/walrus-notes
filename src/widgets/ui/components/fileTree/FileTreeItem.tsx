@@ -79,7 +79,7 @@ export const FileTreeItem = ({
               e.stopPropagation();
               onCreateNote(item.id);
             }}
-            className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded'
+            className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'
             title='Создать заметку'
           >
             <Plus className='h-4 w-4' />

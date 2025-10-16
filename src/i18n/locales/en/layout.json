@@ -15,7 +15,6 @@
   "createLayout": "Create layout",
   "layoutsLoadedSuccess": "Layouts loaded successfully",
   "layoutsLoadError": "Error loading layouts",
-  "loadingLayouts": "Loading layouts...",
   "noLayoutsFound": "Layouts not found",
   "createFirstLayout": "Create your first layout to get started",
   "refresh": "Refresh",

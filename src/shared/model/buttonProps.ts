@@ -1,4 +1,4 @@
-export type ButtonVariant = 'default' | 'disabled' | 'escape';
+export type ButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
 
 export type ButtonProps = {
   children: React.ReactNode;

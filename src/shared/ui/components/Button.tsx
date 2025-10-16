@@ -53,6 +53,10 @@ export const Button = ({
         bgColor = 'bg-btn-cancel';
         shadowColor = 'shadow-btn-cancel/75 dark:shadow-btn-cancel/75';
         break;
+      case 'submit':
+        bgColor = 'bg-btn-submit';
+        shadowColor = 'shadow-btn-submit/75 dark:shadow-btn-submit/75';
+        break;
       case 'disabled':
         bgColor = 'bg-btn-disabled';
         shadowColor = 'shadow-btn-disabled/75 dark:shadow-btn-disabled/75';

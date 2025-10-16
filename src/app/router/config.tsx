@@ -5,7 +5,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 export const AppRoutes = {
   MAIN: '/',
   AUTH: '/auth',
-  DASHBOARD: '/dashboard',
+  DASHBOARD: '/dashboard/:layoutId?/:noteId?',
   NOT_FOUND: '*',
 };
 

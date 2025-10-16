@@ -1,5 +1,3 @@
-import { StrictMode } from 'react';
-
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'widgets';
 
@@ -10,11 +8,9 @@ import './app/styles/App.css';
 import './i18n';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
-  </StrictMode>
+  <BrowserRouter>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </BrowserRouter>
 );

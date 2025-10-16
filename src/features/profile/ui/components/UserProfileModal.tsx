@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
@@ -12,12 +12,10 @@ export const UserProfileModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector(state => state.user);
   const { openModal } = useModalContext();
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       if (!profile) {
-        setLoading(true);
         try {
           const userId = localStorage.getItem('userId');
           if (userId) {
@@ -26,8 +24,6 @@ export const UserProfileModal: React.FC = () => {
           }
         } catch (error) {
           console.error('Failed to load profile:', error);
-        } finally {
-          setLoading(false);
         }
       }
     };
@@ -42,16 +38,6 @@ export const UserProfileModal: React.FC = () => {
       closeOnOverlayClick: true,
     });
   };
-
-  if (loading) {
-    return (
-      <div className='flex items-center justify-center p-8'>
-        <div className='text-text dark:text-dark-text'>
-          {t('profile:loading')}
-        </div>
-      </div>
-    );
-  }
 
   if (!profile) {
     return (

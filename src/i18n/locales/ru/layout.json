@@ -15,7 +15,6 @@
   "createLayout": "Создать лэйаут",
   "layoutsLoadedSuccess": "Лэйауты успешно загружены",
   "layoutsLoadError": "Ошибка при загрузке лэйаутов",
-  "loadingLayouts": "Загрузка лэйаутов...",
   "noLayoutsFound": "Лэйауты не найдены",
   "createFirstLayout": "Создайте свой первый лэйаут, чтобы начать работу",
   "refresh": "Обновить",

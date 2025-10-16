@@ -1,6 +1,7 @@
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, useState, type Ref } from 'react';
+import { useParams } from 'react-router-dom';
 import type { Note } from 'shared/model/types/layouts';
 import {
   useFileTree,
@@ -24,13 +25,15 @@ const SidebarComponent = (
   }>
 ) => {
   const { t } = useLocalization();
-  const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
+  const { layoutId, noteId } = useParams<{
+    layoutId?: string;
+    noteId?: string;
+  }>();
   const [searchQuery, setSearchQuery] = useState('');
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const { openModal } = useModalContext();
   const {
     fileTree,
-    isLoading,
     expandedItems,
     toggleExpanded,
     updateNoteInTree,
@@ -42,6 +45,8 @@ const SidebarComponent = (
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }), [updateNoteInTree]);
 
+  const selectedItemId = noteId || layoutId;
+
   const handleCreateLayout = () => {
     openModal(<CreateLayoutForm onLayoutCreated={reloadLayouts} />, {
       title: t('fileTree:createNewLayout'),
@@ -50,7 +55,6 @@ const SidebarComponent = (
   };
 
   const handleItemSelect = (item: FileTreeItem) => {
-    setSelectedItemId(item.id);
     onItemSelect?.(item);
     if (item.type === 'note') {
       setIsMobileOpen(false);
@@ -124,7 +128,6 @@ const SidebarComponent = (
         <div className='flex-1 overflow-y-auto'>
           <FileTree
             fileTree={fileTree}
-            isLoading={isLoading}
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
             updateNoteInTree={updateNoteInTree}
