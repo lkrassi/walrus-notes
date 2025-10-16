@@ -8,6 +8,7 @@ import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 
+import { Input } from 'shared';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
 
 type RegisterProps = {
@@ -78,16 +79,19 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           >
             {t('auth:register.email')}
           </label>
-          <input
+          <Input
             type='email'
             id='email'
+            name='email'
             value={formData.email}
             onChange={handleChange}
-            className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder rounded-xl border-2 px-4 py-3 transition-all duration-300'
-            placeholder={t('auth:register.emailPlaceholder')}
+            placeholder={t('auth:login.emailPlaceholder')}
+            variant='default'
+            className='w-full rounded-xl border-2 px-4 py-3'
             inputMode='email'
             autoComplete='email'
             enterKeyHint='next'
+            required
           />
         </div>
 
@@ -98,16 +102,18 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           >
             {t('auth:register.username')}
           </label>
-          <input
+          <Input
             type='text'
             id='username'
+            name='username'
             value={formData.username}
             onChange={handleChange}
-            className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder rounded-xl border-2 px-4 py-3 transition-all duration-300'
             placeholder={t('auth:register.usernamePlaceholder')}
+            variant='default'
+            className='w-full rounded-xl border-2 px-4 py-3'
             autoComplete='username'
             enterKeyHint='next'
-          />
+          />{' '}
         </div>
 
         <div className='flex flex-col gap-3'>
@@ -118,15 +124,18 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             {t('auth:register.password')}
           </label>
           <div className='relative'>
-            <input
+            <Input
               type={passwordVisibility.isVisible ? 'text' : 'password'}
               id='password'
+              name='password'
               value={formData.password}
               onChange={handleChange}
-              className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder w-full rounded-xl border-2 px-4 py-3 pr-12 transition-all duration-300'
-              placeholder={t('auth:register.passwordPlaceholder')}
-              autoComplete='new-password'
+              placeholder={t('auth:login.passwordPlaceholder')}
+              variant='default'
+              className='w-full rounded-xl border-2 px-4 py-3 pr-12'
+              autoComplete='current-password'
               enterKeyHint='done'
+              required
             />
             <div className='absolute top-1/2 right-3 -translate-y-2/3 transform'>
               <PasswordVisibilityToggle
@@ -140,7 +149,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='bg-btn-bg hover:bg-btn-hover w-full px-8 py-3'
+          className='w-full px-8 py-3'
         >
           {isSubmitting ? (
             <div className='flex items-center justify-center'>

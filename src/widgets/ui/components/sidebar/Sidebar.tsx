@@ -82,7 +82,7 @@ const SidebarComponent = (
       )}
 
       <aside
-        className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0 md:h-full`}
+        className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0`}
       >
         <div className='border-border dark:border-dark-border border-b p-4'>
           <button

@@ -7,6 +7,7 @@ import { useAppDispatch, useNotifications } from 'widgets';
 import { login } from 'features/auth/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
+import { Input } from 'shared';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
 
@@ -14,7 +15,7 @@ type LoginProps = {
   onSwitchToRegister?: () => void;
 };
 
-export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
+export const Login: React.FC<LoginProps> = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -73,16 +74,19 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
           >
             {t('auth:login.email')}
           </label>
-          <input
+          <Input
             type='email'
             id='email'
+            name='email'
             value={formData.email}
             onChange={handleChange}
-            className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder rounded-xl border-2 px-4 py-3 transition-all duration-300'
             placeholder={t('auth:login.emailPlaceholder')}
+            variant='default'
+            className='w-full rounded-xl border-2 px-4 py-3'
             inputMode='email'
             autoComplete='email'
             enterKeyHint='next'
+            required
           />
         </div>
 
@@ -94,15 +98,18 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
             {t('auth:login.password')}
           </label>
           <div className='relative'>
-            <input
+            <Input
               type={passwordVisibility.isVisible ? 'text' : 'password'}
               id='password'
+              name='password'
               value={formData.password}
               onChange={handleChange}
-              className='text-text dark:text-dark-text focus:border-border-focus dark:focus:border-dark-border-focus placeholder:text-input-placeholder dark:placeholder:text-dark-input-placeholder w-full rounded-xl border-2 px-4 py-3 pr-12 transition-all duration-300'
               placeholder={t('auth:login.passwordPlaceholder')}
+              variant='default'
+              className='w-full rounded-xl border-2 px-4 py-3 pr-12'
               autoComplete='current-password'
               enterKeyHint='done'
+              required
             />
             <div className='absolute top-1/2 right-3 -translate-y-2/3 transform'>
               <PasswordVisibilityToggle
@@ -116,7 +123,7 @@ export const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='bg-btn-bg hover:bg-btn-hover w-full px-8 py-3'
+          className='w-full px-8 py-3'
         >
           {isSubmitting ? (
             <div className='flex items-center justify-center'>

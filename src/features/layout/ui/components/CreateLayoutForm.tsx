@@ -1,6 +1,6 @@
 import { createLayout } from 'features/layout/api';
 import React, { useState } from 'react';
-import { Button } from 'shared';
+import { Button, Input } from 'shared';
 import {
   useAppDispatch,
   useLocalization,
@@ -60,13 +60,13 @@ export const CreateLayoutForm = ({
         >
           {t('layout:layoutTitle')}
         </label>
-        <input
+        <Input
           id='layout-title'
           type='text'
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('layout:layoutTitlePlaceholder')}
-          className='border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary w-full rounded-lg border bg-white px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 dark:bg-gray-800'
+          className='rounded-xl border-2 px-4 py-3 w-full'
           disabled={isLoading}
           autoFocus
         />

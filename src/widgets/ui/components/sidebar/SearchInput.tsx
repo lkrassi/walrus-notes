@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { Input } from 'shared';
 import { useLocalization } from 'widgets/hooks';
 
 interface SearchInputProps {
@@ -70,8 +71,8 @@ export const SearchInput = ({
 
   return (
     <div className='relative'>
-      <Search className='text-secondary dark:text-dark-secondary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
-      <input
+      <Search className='text-secondary dark:text-dark-secondary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 z-10' />
+      <Input
         type='text'
         placeholder={t('common:search.placeholder')}
         value={searchQuery}
@@ -79,7 +80,7 @@ export const SearchInput = ({
         onKeyDown={handleKeyDown}
         onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
         onFocus={() => setShowSuggestions(searchQuery.length > 0)}
-        className='border-border text-text placeholder-secondary focus:border-primary focus:ring-primary/20 dark:border-dark-border dark:bg-dark-bg dark:text-dark-text dark:placeholder-dark-secondary w-full rounded-lg border bg-white py-2 pr-4 pl-10 text-xs focus:ring-2 focus:outline-none'
+        className='pl-10 text-xs w-full'
       />
       {showSuggestions && filteredSuggestions.length > 0 && (
         <div className='absolute top-full right-0 left-0 z-10 mt-1 max-h-40 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800'>

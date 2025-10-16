@@ -1,7 +1,7 @@
 import { updateNote } from 'features/notes/api';
 import { Edit3, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from 'shared';
+import { Button, Input } from 'shared';
 import type { Note } from 'shared/model/types/layouts';
 import { useAppDispatch, useLocalization, useNotifications } from 'widgets';
 
@@ -77,16 +77,16 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
       <div className='border-border dark:border-dark-border flex flex-shrink-0 items-center justify-between border-b p-4'>
         <div className='min-w-0 flex-1'>
           {isEditing ? (
-            <input
+            <Input
               type='text'
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary w-full rounded border-none bg-transparent text-xl font-bold outline-none focus:ring-2'
+              className='text-xl font-bold w-[50%]'
               disabled={isLoading}
               autoFocus
             />
           ) : (
-            <h1 className='text-text dark:text-dark-text truncate text-xl font-bold'>
+            <h1 className='text-text dark:text-dark-text truncate px-3 py-2 text-xl font-bold'>
               {note.title}
             </h1>
           )}
@@ -132,7 +132,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none bg-transparent outline-none p-4'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary box-border h-full w-full resize-none bg-transparent p-4 outline-none'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
             autoFocus
