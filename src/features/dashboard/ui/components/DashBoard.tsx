@@ -6,8 +6,8 @@ import { checkAuth } from 'shared/api/checkAuth';
 import type { Note } from 'shared/model/types/layouts';
 import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import type { FileTreeItem } from 'widgets/hooks/useFileTree';
-import { useFileTree } from 'widgets/hooks/useFileTree';
+import type { FileTreeItem } from 'widgets/hooks';
+import { useFileTree } from 'widgets/hooks';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { OnboardingTour } from './OnboardingTour';
 
@@ -42,7 +42,6 @@ export const DashBoard = () => {
     loadUserProfile();
   }, [dispatch]);
 
-  // Синхронизация selectedItem с URL параметрами
   useEffect(() => {
     if (layoutId || noteId) {
       const findItemById = (items: FileTreeItem[], targetId: string): FileTreeItem | null => {

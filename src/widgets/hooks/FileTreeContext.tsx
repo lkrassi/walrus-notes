@@ -39,7 +39,7 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
       }
       const layouts = layoutsResponse.data;
 
-      dispatch({ type: 'LOAD_LAYOUTS', payload: layouts });
+      dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layouts });
       showSuccess('Лэйауты загружены');
     } catch (error) {
     } finally {
@@ -89,7 +89,7 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
   );
 
   const toggleExpanded = useCallback((itemId: string) => {
-    dispatch({ type: 'TOGGLE_EXPANDED', payload: itemId });
+    dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });
   }, []);
 
   const addNoteToTree = useCallback((layoutId: string, note: Note) => {
@@ -123,7 +123,7 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
   );
 
   useEffect(() => {
-    dispatch({ type: 'CLEAN_EXPANDED' });
+    dispatchFileTree({ type: 'CLEAN_EXPANDED' });
   }, [fileTree]);
 
   useEffect(() => {

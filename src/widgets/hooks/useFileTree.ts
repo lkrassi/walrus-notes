@@ -132,7 +132,7 @@ export const useFileTree = () => {
 
   useEffect(() => {
     loadLayoutsOnly();
-  }, [showSuccess, showError]);
+  }, [loadLayoutsOnly]);
 
   useEffect(() => {
     expandedItems.forEach(layoutId => {
