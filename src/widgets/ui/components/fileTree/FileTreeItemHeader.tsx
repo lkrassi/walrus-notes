@@ -107,9 +107,7 @@ export const FileTreeItemHeader = ({
         )}
       </div>
 
-      <span className='flex-1 truncate text-sm font-medium'>
-        {item.title}
-      </span>
+      <span className='flex-1 truncate text-sm font-medium'>{item.title}</span>
 
       <div className='flex items-center gap-1'>
         {item.type === 'layout' && (

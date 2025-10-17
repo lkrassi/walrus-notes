@@ -1,5 +1,9 @@
 import React, { createContext, useContext, type ReactNode } from 'react';
-import { useModal, type ModalOptions, type ModalState } from 'widgets/hooks/useModal';
+import {
+  useModal,
+  type ModalOptions,
+  type ModalState,
+} from 'widgets/hooks/useModal';
 import { Modal } from './Modal';
 
 interface ModalContextType {

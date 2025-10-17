@@ -51,53 +51,38 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+      className='fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm'
       onClick={handleOverlayClick}
     >
       <div
-        className={`
-          relative w-full ${sizeClass} max-h-[90vh] overflow-hidden
-          bg-white dark:bg-dark-bg
-          border border-border dark:border-dark-border
-          rounded-xl shadow-2xl
-          transform transition-all duration-300 ease-out
-          animate-in fade-in-0 zoom-in-95
-          ${options.className || ''}
-        `}
-        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full ${sizeClass} dark:bg-dark-bg border-border dark:border-dark-border animate-in fade-in-0 zoom-in-95 max-h-[90vh] transform overflow-hidden rounded-xl border bg-white shadow-2xl transition-all duration-300 ease-out ${options.className || ''} `}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         {(options.title || options.showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-border dark:border-dark-border">
+          <div className='border-border dark:border-dark-border flex items-center justify-between border-b p-6'>
             {options.title && (
-              <h2 className="text-xl font-bold text-text dark:text-dark-text">
+              <h2 className='text-text dark:text-dark-text text-xl font-bold'>
                 {options.title}
               </h2>
             )}
             {options.showCloseButton && (
               <button
                 onClick={onClose}
-                className="
-                  p-2 rounded-lg
-                  text-secondary dark:text-dark-secondary
-                  hover:text-text dark:hover:text-dark-text
-                  hover:bg-gray-100 dark:hover:bg-gray-800
-                  transition-colors duration-200
-                  focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary
-                "
+                className='text-secondary dark:text-dark-secondary hover:text-text dark:hover:text-dark-text focus:ring-primary dark:focus:ring-dark-primary rounded-lg p-2 transition-colors duration-200 hover:bg-gray-100 focus:ring-2 focus:outline-none dark:hover:bg-gray-800'
                 aria-label={t('common:modal.close')}
               >
                 <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  className='h-5 w-5'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                     strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+                    d='M6 18L18 6M6 6l12 12'
                   />
                 </svg>
               </button>
@@ -106,7 +91,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         )}
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className='max-h-[calc(90vh-120px)] overflow-y-auto'>
           {content}
         </div>
       </div>

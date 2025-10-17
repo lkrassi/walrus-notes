@@ -13,10 +13,10 @@ export const loaderSlice = createSlice({
   name: 'loader',
   initialState,
   reducers: {
-    startLoading: (state) => {
+    startLoading: state => {
       state.isLoading = true;
     },
-    stopLoading: (state) => {
+    stopLoading: state => {
       state.isLoading = false;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {

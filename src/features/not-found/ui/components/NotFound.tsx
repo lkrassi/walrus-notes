@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from 'shared';
-import { PublicHeader } from 'widgets/ui';
 import { useLocalization } from 'widgets/hooks';
+import { PublicHeader } from 'widgets/ui';
 
 export const NotFound = () => {
   const { t } = useLocalization();

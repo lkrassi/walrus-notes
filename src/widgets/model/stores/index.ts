@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { apiSlice } from 'widgets/model/stores/api';
 import loaderReducer from 'widgets/model/stores/slices/loaderSlice';
 import notificationsReducer from 'widgets/model/stores/slices/notificationsSlice';
 import userReducer from 'widgets/model/stores/slices/userSlice';
-import { apiSlice } from 'widgets/model/stores/api';
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +11,7 @@ export const store = configureStore({
     user: userReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(apiSlice.middleware),
 });
 

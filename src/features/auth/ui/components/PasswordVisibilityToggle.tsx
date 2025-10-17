@@ -18,8 +18,10 @@ export const PasswordVisibilityToggle: React.FC<
     <Button
       type='button'
       onClick={onToggle}
-      className={`${className} bg-btn-bg hover:bg-btn-hover flex items-center justify-center w-9 h-8 `}
-      aria-label={isVisible ? t('common:password.hide') : t('common:password.show')}
+      className={`${className} bg-btn-bg hover:bg-btn-hover flex h-8 w-9 items-center justify-center`}
+      aria-label={
+        isVisible ? t('common:password.hide') : t('common:password.show')
+      }
     >
       {isVisible ? (
         <Eye size={18} className='text-dark-text' />

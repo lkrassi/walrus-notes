@@ -19,13 +19,13 @@ export const SearchInput = ({
 
   return (
     <div className='relative'>
-      <Search className='text-secondary dark:text-dark-secondary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 z-10' />
+      <Search className='text-secondary dark:text-dark-secondary absolute top-1/2 left-3 z-10 h-4 w-4 -translate-y-1/2' />
       <Input
         type='text'
         placeholder={t('common:search.placeholder')}
         value={searchQuery}
         onChange={handleInputChange}
-        className='pl-10 text-xs w-full'
+        className='w-full pl-10 text-xs'
       />
     </div>
   );

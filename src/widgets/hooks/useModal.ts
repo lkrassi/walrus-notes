@@ -7,13 +7,13 @@ export type ModalOptions = {
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
   className?: string;
-}
+};
 
 export type ModalState = {
   isOpen: boolean;
   content: React.ReactNode | null;
   options: ModalOptions;
-}
+};
 
 export const useModal = () => {
   const [modalState, setModalState] = useState<ModalState>({
@@ -22,19 +22,22 @@ export const useModal = () => {
     options: {},
   });
 
-  const openModal = useCallback((content: React.ReactNode, options: ModalOptions = {}) => {
-    setModalState({
-      isOpen: true,
-      content,
-      options: {
-        closeOnOverlayClick: true,
-        closeOnEscape: true,
-        showCloseButton: true,
-        size: 'md',
-        ...options,
-      },
-    });
-  }, []);
+  const openModal = useCallback(
+    (content: React.ReactNode, options: ModalOptions = {}) => {
+      setModalState({
+        isOpen: true,
+        content,
+        options: {
+          closeOnOverlayClick: true,
+          closeOnEscape: true,
+          showCloseButton: true,
+          size: 'md',
+          ...options,
+        },
+      });
+    },
+    []
+  );
 
   const closeModal = useCallback(() => {
     setModalState(prev => ({

@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { ChangeProfilePictureForm } from './ChangeProfilePictureForm';
 
 export const UserProfileModal: React.FC = () => {

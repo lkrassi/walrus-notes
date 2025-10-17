@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
-import { useAppDispatch, useNotifications } from 'widgets';
+import { useNotifications } from 'widgets';
 
-import { useLoginMutation } from 'widgets/model/stores/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { Input } from 'shared';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { useLoginMutation } from 'widgets/model/stores/api';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;

@@ -1,6 +1,6 @@
-import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import { useCallback, useEffect, useReducer } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
+import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import { fileTreeReducer, initialFileTreeState } from './fileTreeReducer';
 import { useNotifications } from './useNotifications';
 

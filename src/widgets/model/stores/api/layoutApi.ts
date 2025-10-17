@@ -1,5 +1,5 @@
-import { apiSlice } from './apiSlice';
 import type { Layout } from 'shared/model/types/layouts';
+import { apiSlice } from './apiSlice';
 
 interface GetMyLayoutsResponse {
   data: Layout[];
@@ -31,13 +31,13 @@ interface CreateLayoutResponse {
 }
 
 export const layoutApi = apiSlice.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getMyLayouts: builder.query<GetMyLayoutsResponse, void>({
       query: () => '/layout/my',
       providesTags: ['Layouts'],
     }),
     createLayout: builder.mutation<CreateLayoutResponse, CreateLayoutRequest>({
-      query: (body) => ({
+      query: body => ({
         url: '/layout/create',
         method: 'POST',
         body: { title: body.title },

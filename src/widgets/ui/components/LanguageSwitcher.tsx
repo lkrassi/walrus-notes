@@ -27,7 +27,6 @@ export const LanguageSwitcher: React.FC = () => {
     },
   ];
 
-
   useEffect(() => {
     const savedLanguage = localStorage.getItem('i18nextLng');
 
@@ -67,7 +66,7 @@ export const LanguageSwitcher: React.FC = () => {
   return (
     <div className='relative' ref={dropdownRef}>
       <Button
-        data-tour="language-switcher"
+        data-tour='language-switcher'
         onClick={() => setIsOpen(!isOpen)}
         variant='default'
         className='group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'
@@ -100,7 +99,9 @@ export const LanguageSwitcher: React.FC = () => {
             <Button
               key={language.code}
               onClick={() => handleLanguageSelect(language.code)}
-              variant={effectiveLanguage === language.code ? 'default' : 'disabled'}
+              variant={
+                effectiveLanguage === language.code ? 'default' : 'disabled'
+              }
               className={`flex h-10 w-5 items-center justify-center px-8 py-5 transition-all duration-200 ${
                 isOpen ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}

@@ -8,14 +8,29 @@ export type FileTreeState = {
 
 export type FileTreeAction =
   | { type: 'LOAD_LAYOUTS'; payload: Layout[] }
-  | { type: 'LOAD_NOTES'; payload: { layoutId: string; notes: Note[]; hasMore?: boolean; currentPage?: number; append?: boolean } }
+  | {
+      type: 'LOAD_NOTES';
+      payload: {
+        layoutId: string;
+        notes: Note[];
+        hasMore?: boolean;
+        currentPage?: number;
+        append?: boolean;
+      };
+    }
   | { type: 'TOGGLE_EXPANDED'; payload: string }
   | { type: 'ADD_NOTE'; payload: { layoutId: string; note: Note } }
   | { type: 'REMOVE_NOTE'; payload: string }
-  | { type: 'UPDATE_NOTE'; payload: { noteId: string; updatedNote: Partial<Note> } }
+  | {
+      type: 'UPDATE_NOTE';
+      payload: { noteId: string; updatedNote: Partial<Note> };
+    }
   | { type: 'ADD_LAYOUT'; payload: Layout }
   | { type: 'REMOVE_LAYOUT'; payload: string }
-  | { type: 'UPDATE_LAYOUT'; payload: { layoutId: string; updatedLayout: Partial<Layout> } }
+  | {
+      type: 'UPDATE_LAYOUT';
+      payload: { layoutId: string; updatedLayout: Partial<Layout> };
+    }
   | { type: 'CLEAN_EXPANDED' };
 
 export const initialFileTreeState: FileTreeState = {
@@ -23,7 +38,10 @@ export const initialFileTreeState: FileTreeState = {
   expandedItems: new Set(),
 };
 
-export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): FileTreeState => {
+export const fileTreeReducer = (
+  state: FileTreeState,
+  action: FileTreeAction
+): FileTreeState => {
   switch (action.type) {
     case 'LOAD_LAYOUTS': {
       const treeItems: FileTreeItem[] = action.payload.map(layout => ({
@@ -41,7 +59,13 @@ export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): F
       };
     }
     case 'LOAD_NOTES': {
-      const { layoutId, notes, hasMore = false, currentPage = 1, append = false } = action.payload;
+      const {
+        layoutId,
+        notes,
+        hasMore = false,
+        currentPage = 1,
+        append = false,
+      } = action.payload;
       return {
         ...state,
         fileTree: state.fileTree.map(layout =>
@@ -49,15 +73,18 @@ export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): F
             ? {
                 ...layout,
                 children: append
-                  ? [...(layout.children || []), ...notes.map((note: Note) => ({
-                      id: note.id,
-                      type: 'note' as const,
-                      title: note.title,
-                      parentId: layoutId,
-                      createdAt: note.createdAt,
-                      updatedAt: note.updatedAt,
-                      note: note,
-                    }))]
+                  ? [
+                      ...(layout.children || []),
+                      ...notes.map((note: Note) => ({
+                        id: note.id,
+                        type: 'note' as const,
+                        title: note.title,
+                        parentId: layoutId,
+                        createdAt: note.createdAt,
+                        updatedAt: note.updatedAt,
+                        note: note,
+                      })),
+                    ]
                   : notes.map((note: Note) => ({
                       id: note.id,
                       type: 'note' as const,
@@ -115,7 +142,8 @@ export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): F
         ...state,
         fileTree: state.fileTree.map(layout => ({
           ...layout,
-          children: layout.children?.filter(child => child.id !== action.payload) || [],
+          children:
+            layout.children?.filter(child => child.id !== action.payload) || [],
         })),
       };
     }
@@ -149,7 +177,6 @@ export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): F
         children: [],
         createdAt: action.payload.createdAt,
         updatedAt: action.payload.updatedAt,
-        isNotesLoaded: false,
       };
       return {
         ...state,

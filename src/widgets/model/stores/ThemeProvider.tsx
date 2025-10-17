@@ -1,10 +1,10 @@
-import { useState, useEffect, createContext } from 'react';
 import type { ReactNode } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
 type ThemeContextType = {
   theme: string;
   toggleTheme: () => void;
-}
+};
 
 export const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
@@ -17,7 +17,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<string>(
-    () => localStorage.getItem('theme') || 'dark',
+    () => localStorage.getItem('theme') || 'dark'
   );
 
   useEffect(() => {

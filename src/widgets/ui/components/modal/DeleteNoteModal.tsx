@@ -1,9 +1,8 @@
-import { useDeleteNoteMutation } from 'widgets/model/stores/api';
 import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
-import { useAppDispatch } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useNotifications } from 'widgets/hooks/useNotifications';
+import { useDeleteNoteMutation } from 'widgets/model/stores/api';
 import { useModalContext } from './ModalProvider';
 
 interface DeleteNoteModalProps {

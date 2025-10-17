@@ -1,8 +1,18 @@
-import { createContext, useContext, useReducer, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
-import { useNotifications } from './useNotifications';
-import { fileTreeReducer, initialFileTreeState, type FileTreeState } from './fileTreeReducer';
 import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
+import {
+  fileTreeReducer,
+  initialFileTreeState,
+  type FileTreeState,
+} from './fileTreeReducer';
+import { useNotifications } from './useNotifications';
 
 const FileTreeContext = createContext<{
   fileTree: FileTreeState['fileTree'];
@@ -16,18 +26,30 @@ const FileTreeContext = createContext<{
   updateNoteInTree: (noteId: string, updatedNote: Partial<Note>) => void;
   addLayoutToTree: (layout: Layout) => void;
   removeLayoutFromTree: (layoutId: string) => void;
-  updateLayoutInTree: (layoutId: string, updatedLayout: Partial<Layout>) => void;
+  updateLayoutInTree: (
+    layoutId: string,
+    updatedLayout: Partial<Layout>
+  ) => void;
   loadMoreNotes: (layoutId: string) => Promise<void>;
 } | null>(null);
 
-export const FileTreeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatchFileTree] = useReducer(fileTreeReducer, initialFileTreeState);
+export const FileTreeProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [state, dispatchFileTree] = useReducer(
+    fileTreeReducer,
+    initialFileTreeState
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useNotifications();
 
   const { fileTree, expandedItems } = state;
 
-  const [hasToken, setHasToken] = useState(!!localStorage.getItem('accessToken'));
+  const [hasToken, setHasToken] = useState(
+    !!localStorage.getItem('accessToken')
+  );
 
   useEffect(() => {
     const checkToken = () => {
@@ -51,7 +73,12 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
     };
   }, []);
 
-  const { data: layoutsResponse, isLoading: isLayoutsLoading, error: layoutsError, refetch } = useGetMyLayoutsQuery(undefined, {
+  const {
+    data: layoutsResponse,
+    isLoading: isLayoutsLoading,
+    error: layoutsError,
+    refetch,
+  } = useGetMyLayoutsQuery(undefined, {
     skip: !hasToken,
   });
 
@@ -66,11 +93,9 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
     setIsLoading(isLayoutsLoading);
   }, [isLayoutsLoading]);
 
-  const loadLayoutsOnly = async () => {
-  };
+  const loadLayoutsOnly = async () => {};
 
-  const loadMoreNotes = async (layoutId: string) => {
-  };
+  const loadMoreNotes = async (layoutId: string) => {};
 
   const toggleExpanded = (itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });
@@ -96,16 +121,21 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
     dispatchFileTree({ type: 'REMOVE_LAYOUT', payload: layoutId });
   };
 
-  const updateLayoutInTree = (layoutId: string, updatedLayout: Partial<Layout>) => {
-    dispatchFileTree({ type: 'UPDATE_LAYOUT', payload: { layoutId, updatedLayout } });
+  const updateLayoutInTree = (
+    layoutId: string,
+    updatedLayout: Partial<Layout>
+  ) => {
+    dispatchFileTree({
+      type: 'UPDATE_LAYOUT',
+      payload: { layoutId, updatedLayout },
+    });
   };
 
   useEffect(() => {
     dispatchFileTree({ type: 'CLEAN_EXPANDED' });
   }, [fileTree]);
 
-  const reloadLayouts = () => {
-  };
+  const reloadLayouts = () => {};
 
   const value = {
     fileTree,
@@ -123,7 +153,11 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
     loadMoreNotes,
   };
 
-  return <FileTreeContext.Provider value={value}>{children}</FileTreeContext.Provider>;
+  return (
+    <FileTreeContext.Provider value={value}>
+      {children}
+    </FileTreeContext.Provider>
+  );
 };
 
 export const useFileTree = () => {

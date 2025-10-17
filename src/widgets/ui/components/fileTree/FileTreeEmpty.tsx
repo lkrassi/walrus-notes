@@ -21,7 +21,9 @@ export const FileTreeEmpty = ({ searchQuery }: FileTreeEmptyProps) => {
         {isSearching ? t('fileTree:noSearchResults') : t('fileTree:noLayouts')}
       </p>
       <p className='text-secondary dark:text-dark-secondary mt-1 text-xs'>
-        {isSearching ? t('fileTree:tryDifferentQuery') : t('fileTree:createFirstLayout')}
+        {isSearching
+          ? t('fileTree:tryDifferentQuery')
+          : t('fileTree:createFirstLayout')}
       </p>
     </div>
   );

@@ -38,7 +38,6 @@ interface RefreshResponse {
   };
 }
 
-
 export const authApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     login: builder.mutation<AuthResponse, LoginRequest>({
@@ -61,7 +60,7 @@ export const authApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: {
           accessToken: localStorage.getItem('accessToken'),
-          refreshToken: localStorage.getItem('refreshToken')
+          refreshToken: localStorage.getItem('refreshToken'),
         },
         headers: {
           'X-Request-Id': crypto.randomUUID(),

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
 import { Button } from 'shared';
-import { useAppDispatch, useNotifications } from 'widgets';
+import { useNotifications } from 'widgets';
 
-import { useRegisterMutation } from 'widgets/model/stores/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useRegisterMutation } from 'widgets/model/stores/api';
 
 import { Input } from 'shared';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';

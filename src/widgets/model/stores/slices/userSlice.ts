@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface UserProfileState {
   profile: {
@@ -22,7 +22,10 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUserProfile: (state, action: PayloadAction<UserProfileState['profile']>) => {
+    setUserProfile: (
+      state,
+      action: PayloadAction<UserProfileState['profile']>
+    ) => {
       state.profile = action.payload;
     },
     setAccessToken: (state, action: PayloadAction<string | null>) => {
@@ -33,12 +36,17 @@ const userSlice = createSlice({
         state.profile.imgUrl = action.payload;
       }
     },
-    clearUserProfile: (state) => {
+    clearUserProfile: state => {
       state.profile = null;
       state.accessToken = null;
     },
   },
 });
 
-export const { setUserProfile, setAccessToken, updateUserAvatar, clearUserProfile } = userSlice.actions;
+export const {
+  setUserProfile,
+  setAccessToken,
+  updateUserAvatar,
+  clearUserProfile,
+} = userSlice.actions;
 export default userSlice.reducer;

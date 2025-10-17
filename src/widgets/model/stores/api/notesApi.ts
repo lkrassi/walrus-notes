@@ -79,7 +79,10 @@ export const notesApi = apiSlice.injectEndpoints({
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
       providesTags: (result, error, arg) => [
         { type: 'Notes', id: arg.layoutId },
-        ...(result?.data?.map(note => ({ type: 'Note' as const, id: note.id })) || []),
+        ...(result?.data?.map(note => ({
+          type: 'Notes' as const,
+          id: note.id,
+        })) || []),
         'Notes',
       ],
     }),
@@ -103,7 +106,6 @@ export const notesApi = apiSlice.injectEndpoints({
         body: { noteId, ...body },
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: 'Note', id: arg.noteId },
         { type: 'Notes', id: arg.noteId },
         'Notes',
       ],

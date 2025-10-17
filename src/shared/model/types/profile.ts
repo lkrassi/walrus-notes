@@ -1,4 +1,4 @@
-import type { BaseResponse } from "./api";
+import type { BaseResponse } from './api';
 
 export type ChangeProfilePictureResponse = {
   data: {
@@ -15,7 +15,7 @@ export type ChangeProfilePictureResponse = {
     pages: number;
     perPage: number;
   };
-}
+};
 
 export type UserProfile = {
   id: string;

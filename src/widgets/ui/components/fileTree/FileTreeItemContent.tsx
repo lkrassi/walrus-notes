@@ -2,7 +2,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
-import { useGetNotesQuery, useLazyGetNotesQuery } from '../../../model/stores/api';
+import {
+  useGetNotesQuery,
+  useLazyGetNotesQuery,
+} from '../../../model/stores/api';
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;
@@ -33,6 +36,7 @@ export const FileTreeItemContent = ({
   );
 
   useEffect(() => {
+    console.log('Resetting state for item:', item.id);
     setAllNotes([]);
     setHasMore(true);
     setCurrentPage(1);
@@ -40,35 +44,50 @@ export const FileTreeItemContent = ({
   }, [item.id]);
 
   useEffect(() => {
-    if (notesResponse?.data && Array.isArray(notesResponse.data)) {
+    console.log('useEffect for notesResponse triggered:', notesResponse);
+    if (
+      notesResponse?.data &&
+      Array.isArray(notesResponse.data) &&
+      currentPage === 1
+    ) {
+      console.log(
+        'Setting allNotes from useGetNotesQuery:',
+        notesResponse.data
+      );
       setAllNotes(notesResponse.data);
-      setHasMore(notesResponse.pagination ? currentPage < notesResponse.pagination.pages : false);
-      setCurrentPage(1);
+      setHasMore(
+        notesResponse.pagination ? 1 < notesResponse.pagination.pages : false
+      );
 
       if (onNotesLoaded) {
         const notesWithLayout = notesResponse.data.map(note => ({
           ...note,
           layoutId: item.id,
         }));
+        console.log('Calling onNotesLoaded from useEffect:', notesWithLayout);
         onNotesLoaded(item.id, notesWithLayout);
       }
     }
-  }, [notesResponse?.data, item.id, onNotesLoaded, currentPage]);
+  }, [notesResponse?.data, item.id, onNotesLoaded]);
 
   async function loadPage(page: number) {
+    console.log('loadPage called with page:', page, 'hasMore:', hasMore);
     if (!hasMore && page > 1) return;
 
     setIsLoading(true);
     try {
       const result = await trigger({ layoutId: item.id, page });
+      console.log('API result:', result);
 
       if (result.error) {
+        console.log('API error:', result.error);
         setHasMore(false);
         setIsLoading(false);
         return;
       }
 
       if (!result.data) {
+        console.log('No data in result');
         setHasMore(false);
         setIsLoading(false);
         return;
@@ -76,6 +95,7 @@ export const FileTreeItemContent = ({
 
       const notesResponse = result.data;
       const notesData = notesResponse.data;
+      console.log('Notes data:', notesData);
 
       let newNotes: Note[] = [];
       if (Array.isArray(notesData)) {
@@ -83,38 +103,53 @@ export const FileTreeItemContent = ({
       }
 
       const pagination = notesResponse.pagination;
+      console.log('Pagination:', pagination);
 
       let more = false;
       if (pagination) {
         more = page < pagination.pages;
       }
+      console.log('Has more:', more);
 
       if (page === 1) {
         setAllNotes(newNotes);
+        console.log('Set allNotes to newNotes:', newNotes);
       } else {
-        setAllNotes(prev => [...prev, ...newNotes]);
+        setAllNotes(prev => {
+          const updated = [...prev, ...newNotes];
+          console.log('Updated allNotes:', updated);
+          return updated;
+        });
       }
 
       setHasMore(more);
       setCurrentPage(page);
 
       if (onNotesLoaded) {
+        const updatedNotes = page === 1 ? newNotes : [...allNotes, ...newNotes];
+        console.log('Calling onNotesLoaded with:', updatedNotes);
         onNotesLoaded(
           item.id,
-          page === 1 ? newNotes : [...allNotes, ...newNotes]
+          updatedNotes.map(note => ({ ...note, layoutId: item.id }))
         );
       }
     } catch (err) {
+      console.log('Error in loadPage:', err);
       setHasMore(false);
     }
     setIsLoading(false);
   }
 
   useEffect(() => {
-    if (isExpanded && item.type === 'layout' && allNotes.length === 0 && !notesResponse?.data) {
+    if (
+      isExpanded &&
+      item.type === 'layout' &&
+      allNotes.length === 0 &&
+      !isLoading
+    ) {
       loadPage(1);
     }
-  }, [isExpanded, item.id, allNotes.length, notesResponse?.data]);
+  }, [isExpanded, item.id, allNotes.length, isLoading]);
 
   return (
     <AnimatePresence>

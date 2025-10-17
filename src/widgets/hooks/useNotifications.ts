@@ -10,7 +10,7 @@ import {
 export const useNotifications = () => {
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(
-    (state) => state.notifications.notifications,
+    state => state.notifications.notifications
   );
 
   const lastMessagesRef = useRef<Set<string>>(new Set());
@@ -38,14 +38,14 @@ export const useNotifications = () => {
         }, notification.duration + 1000);
       }
     },
-    [dispatch],
+    [dispatch]
   );
 
   const hideNotification = useCallback(
     (id: string) => {
       dispatch(removeNotification(id));
     },
-    [dispatch],
+    [dispatch]
   );
 
   const clearNotifications = useCallback(() => {
@@ -61,7 +61,7 @@ export const useNotifications = () => {
         duration: 5000,
       });
     },
-    [showNotification],
+    [showNotification]
   );
 
   const showError = useCallback(
@@ -73,7 +73,7 @@ export const useNotifications = () => {
         duration: 7000,
       });
     },
-    [showNotification],
+    [showNotification]
   );
 
   const showWarning = useCallback(
@@ -85,7 +85,7 @@ export const useNotifications = () => {
         duration: 5000,
       });
     },
-    [showNotification],
+    [showNotification]
   );
 
   const showInfo = useCallback(
@@ -97,14 +97,14 @@ export const useNotifications = () => {
         duration: 4000,
       });
     },
-    [showNotification],
+    [showNotification]
   );
 
   const forceShowNotification = useCallback(
     (notification: Omit<Notification, 'id'>) => {
       dispatch(addNotification(notification));
     },
-    [dispatch],
+    [dispatch]
   );
 
   return {

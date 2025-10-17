@@ -24,7 +24,7 @@ export const Auth = () => {
     <main>
       <PublicHeader />
 
-      <div className='flex items-center justify-center max-sm:min-h-full max-sm:py-10 min-h-[80vh]'>
+      <div className='flex min-h-[80vh] items-center justify-center max-sm:min-h-full max-sm:py-10'>
         <div className='w-full max-w-md'>
           <div className='mb-8 flex gap-x-5 p-2 max-sm:flex-col max-sm:gap-y-5'>
             <Button

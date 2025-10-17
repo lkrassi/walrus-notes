@@ -1,6 +1,6 @@
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { FileTreeItemHeader } from './FileTreeItemHeader';
 import { FileTreeItemContent } from './FileTreeItemContent';
+import { FileTreeItemHeader } from './FileTreeItemHeader';
 
 type FileTreeItemProps = {
   item: FileTreeItemType;
