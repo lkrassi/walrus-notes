@@ -1,12 +1,12 @@
-import { createLayout } from 'features/layout/api';
 import React, { useState } from 'react';
 import { Button, Input } from 'shared';
 import {
   useAppDispatch,
   useLocalization,
-  useModalContext,
   useNotifications,
-} from 'widgets';
+} from 'widgets/hooks';
+import { useCreateLayoutMutation } from 'widgets/model/stores/api';
+import { useModalContext } from 'widgets/ui';
 
 interface CreateLayoutFormProps {
   onLayoutCreated?: () => void;
@@ -17,9 +17,9 @@ export const CreateLayoutForm = ({
 }: CreateLayoutFormProps) => {
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useNotifications();
   const { closeModal } = useModalContext();
+  const [createLayout, { isLoading }] = useCreateLayoutMutation();
   const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,24 +30,19 @@ export const CreateLayoutForm = ({
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      await createLayout(
-        {
-          title: title.trim(),
-        },
-        dispatch
-      );
+      await createLayout({
+        title: title.trim(),
+      }).unwrap();
 
       showSuccess(t('layout:layoutCreatedSuccess'));
       setTitle('');
-      onLayoutCreated?.();
+      if (onLayoutCreated) {
+        onLayoutCreated();
+      }
       closeModal();
     } catch (err: any) {
       showError(t('layout:layoutCreationError'));
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -66,7 +61,7 @@ export const CreateLayoutForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('layout:layoutTitlePlaceholder')}
-          className='rounded-xl border-2 px-4 py-3 w-full'
+          className='w-full rounded-xl border-2 px-4 py-3'
           disabled={isLoading}
           autoFocus
         />

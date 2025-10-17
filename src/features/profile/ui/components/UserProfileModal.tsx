@@ -4,7 +4,7 @@ import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-import { getUserProfile } from '../../api/getUserProfile';
+import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { ChangeProfilePictureForm } from './ChangeProfilePictureForm';
 
 export const UserProfileModal: React.FC = () => {
@@ -12,24 +12,16 @@ export const UserProfileModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector(state => state.user);
   const { openModal } = useModalContext();
+  const userId = localStorage.getItem('userId');
+  const { data: userProfileData } = useGetUserProfileQuery(userId || '', {
+    skip: !userId,
+  });
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!profile) {
-        try {
-          const userId = localStorage.getItem('userId');
-          if (userId) {
-            const response = await getUserProfile(userId, dispatch);
-            dispatch(setUserProfile(response.data));
-          }
-        } catch (error) {
-          console.error('Failed to load profile:', error);
-        }
-      }
-    };
-
-    loadProfile();
-  }, [profile, dispatch]);
+    if (userProfileData?.data && !profile) {
+      dispatch(setUserProfile(userProfileData.data));
+    }
+  }, [userProfileData, profile, dispatch]);
 
   const handleChangePhoto = () => {
     openModal(<ChangeProfilePictureForm />, {

@@ -34,17 +34,15 @@ const SidebarComponent = (
     toggleExpanded,
     updateNoteInTree,
     addNoteToTree,
-    reloadLayouts,
-    loadMoreNotes,
     removeNoteFromTree,
   } = useFileTree();
 
-  useImperativeHandle(ref, () => ({ updateNoteInTree }), [updateNoteInTree]);
+  useImperativeHandle(ref, () => ({ updateNoteInTree }));
 
   const selectedItemId = noteId || layoutId;
 
   const handleCreateLayout = () => {
-    openModal(<CreateLayoutForm onLayoutCreated={reloadLayouts} />, {
+    openModal(<CreateLayoutForm />, {
       title: t('fileTree:createNewLayout'),
       size: 'md',
     });
@@ -81,7 +79,7 @@ const SidebarComponent = (
       {!isMobileOpen && (
         <button
           onClick={() => setIsMobileOpen(true)}
-          className='text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text fixed top-4 left-4 z-50 rounded-lg p-2 transition-colors hover:bg-gray-100 md:hidden dark:hover:bg-gray-800'
+          className='mobile-menu-button text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text fixed top-4 left-4 z-50 rounded-lg p-2 transition-colors hover:bg-gray-100 md:hidden dark:hover:bg-gray-800'
           title={t('common:menu.open')}
           aria-label={t('common:menu.open')}
         >
@@ -125,10 +123,11 @@ const SidebarComponent = (
             <button
               data-tour='create-layout'
               onClick={handleCreateLayout}
-             title={t('fileTree:createNewLayout')}
+              title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
+              className='text-text hover:text-primary dark:text-dark-text dark:hover:text-primary rounded p-1'
             >
-              <Plus />
+              <Plus className='h-5 w-5' />
             </button>
           </div>
 
@@ -144,7 +143,6 @@ const SidebarComponent = (
 
         <div className='flex-1 overflow-y-auto'>
           <FileTree
-            fileTree={fileTree}
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
             updateNoteInTree={updateNoteInTree}
@@ -152,7 +150,6 @@ const SidebarComponent = (
             onItemSelect={handleItemSelect}
             selectedItemId={selectedItemId}
             searchQuery={searchQuery}
-            loadMoreNotes={loadMoreNotes}
             onDeleteNote={handleDeleteNote}
           />
         </div>

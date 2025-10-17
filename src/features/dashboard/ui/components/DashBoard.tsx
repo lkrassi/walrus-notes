@@ -1,15 +1,15 @@
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
-import { getUserProfile } from 'features/profile/api/getUserProfile';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { checkAuth } from 'shared/api/checkAuth';
 import type { Note } from 'shared/model/types/layouts';
-import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
-import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useFileTree } from 'widgets/hooks';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
-import { OnboardingTour } from './OnboardingTour';
+import { PrivateHeader, Sidebar } from 'widgets/ui';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
@@ -24,27 +24,23 @@ export const DashBoard = () => {
   }>(null);
   const [selectedItem, setSelectedItem] = useState<FileTreeItem | null>(null);
 
-  useEffect(() => {
-    const loadUserProfile = async () => {
-      if (checkAuth()) {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          try {
-            const response = await getUserProfile(userId, dispatch);
-            dispatch(setUserProfile(response.data));
-          } catch (error) {
-            console.error('Failed to load user profile:', error);
-          }
-        }
-      }
-    };
+  const userId = checkAuth() ? localStorage.getItem('userId') : null;
+  const { data: userProfileResponse } = useGetUserProfileQuery(userId || '', {
+    skip: !userId,
+  });
 
-    loadUserProfile();
-  }, [dispatch]);
+  useEffect(() => {
+    if (userProfileResponse?.data) {
+      dispatch(setUserProfile(userProfileResponse.data));
+    }
+  }, [userProfileResponse, dispatch]);
 
   useEffect(() => {
     if (layoutId || noteId) {
-      const findItemById = (items: FileTreeItem[], targetId: string): FileTreeItem | null => {
+      const findItemById = (
+        items: FileTreeItem[],
+        targetId: string
+      ): FileTreeItem | null => {
         for (const item of items) {
           if (item.id === targetId) {
             return item;
@@ -69,22 +65,22 @@ export const DashBoard = () => {
     }
   }, [layoutId, noteId, fileTree]);
 
-  const handleNoteUpdated = useCallback(
-    (noteId: string, updates: Partial<Note>) => {
-      sidebarRef.current?.updateNoteInTree(noteId, updates);
-      setSelectedItem(prev => {
-        if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
-          return {
-            ...prev,
-            note: { ...prev.note, ...updates },
-            title: updates.title || prev.title,
-          };
-        }
-        return prev;
-      });
-    },
-    []
-  );
+  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
+    // Update the selected item immediately
+    setSelectedItem(prev => {
+      if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
+        return {
+          ...prev,
+          note: { ...prev.note, ...updates },
+          title: updates.title || prev.title,
+        };
+      }
+      return prev;
+    });
+
+    // Update the sidebar tree
+    sidebarRef.current?.updateNoteInTree(noteId, updates);
+  };
 
   const handleItemSelect = (item: FileTreeItem) => {
     setSelectedItem(item);
@@ -137,6 +133,13 @@ export const DashBoard = () => {
             }
             onNoteDeleted={() => {
               setSelectedItem(null);
+              // Navigate back to layout if a note was deleted
+              if (layoutId) {
+                // Stay on the layout
+              } else {
+                // Navigate to dashboard root if no layout context
+                window.history.replaceState(null, '', '/dashboard');
+              }
             }}
           />
         </div>
@@ -164,7 +167,6 @@ export const DashBoard = () => {
 
   return (
     <div className='bg-gradient flex h-screen flex-col'>
-      <OnboardingTour />
       <PrivateHeader />
       <div className='flex min-h-0 flex-1 max-md:flex-col'>
         <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />

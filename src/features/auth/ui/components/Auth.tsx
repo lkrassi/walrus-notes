@@ -6,7 +6,7 @@ import { Login } from 'features/auth/ui/components/Login';
 import { Register } from 'features/auth/ui/components/Register';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 
-import { PublicHeader } from 'widgets/ui/components';
+import { PublicHeader } from 'widgets/ui';
 
 export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');

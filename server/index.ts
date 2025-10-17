@@ -39,8 +39,6 @@ app.get('*', (_req: Request, res: Response) => {
 });
 
 app.use((err: Error, _req: Request, res: Response) => {
-  console.error('Unhandled error:', err);
-
   res.status(500).json({
     status: 'ERROR',
     message: 'Internal Server Error',

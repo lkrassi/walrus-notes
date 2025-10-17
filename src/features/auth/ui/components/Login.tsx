@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
 import { useAppDispatch, useNotifications } from 'widgets';
 
-import { login } from 'features/auth/api';
+import { useLoginMutation } from 'widgets/model/stores/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { Input } from 'shared';
@@ -20,9 +20,8 @@ export const Login: React.FC<LoginProps> = () => {
     email: '',
     password: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useNotifications();
-  const dispatch = useAppDispatch();
+  const [login, { isLoading: isSubmitting }] = useLoginMutation();
 
   const navigate = useNavigate();
   const passwordVisibility = usePasswordVisibility();
@@ -41,18 +40,19 @@ export const Login: React.FC<LoginProps> = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
     try {
-      const response = await login(formData, dispatch);
+      const response = await login(formData).unwrap();
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
       localStorage.setItem('userId', response.data.userId);
+
+      // Dispatch custom event to notify components about token change
+      window.dispatchEvent(new Event('tokenSet'));
+
       showSuccess(t('auth:login.success'));
       navigate('/dashboard');
     } catch (error) {
       showError(t('auth:login.error'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

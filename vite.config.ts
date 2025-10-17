@@ -4,7 +4,14 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler']],
+      },
+    }),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       app: fileURLToPath(new URL('./src/app', import.meta.url)),

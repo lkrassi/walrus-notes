@@ -1,9 +1,9 @@
-import { updateNote } from 'features/notes/api';
 import { Edit3, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button, Input } from 'shared';
 import type { Note } from 'shared/model/types/layouts';
-import { useAppDispatch, useLocalization, useNotifications } from 'widgets';
+import { useLocalization, useNotifications } from 'widgets';
+import { useUpdateNoteMutation } from 'widgets/model/stores/api';
 
 interface NoteViewerProps {
   note: Note;
@@ -16,9 +16,8 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(note.title);
   const [payload, setPayload] = useState(note.payload);
-  const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useNotifications();
-  const dispatch = useAppDispatch();
+  const [updateNote, { isLoading }] = useUpdateNoteMutation();
 
   useEffect(() => {
     setTitle(note.title);
@@ -41,17 +40,12 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      await updateNote(
-        {
-          noteId: note.id,
-          title: title.trim(),
-          payload: payload.trim(),
-        },
-        dispatch
-      );
+      await updateNote({
+        noteId: note.id,
+        payload: payload.trim(),
+        title: title.trim(),
+      }).unwrap();
 
       const updatedNote: Note = {
         ...note,
@@ -60,15 +54,13 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
         updatedAt: new Date().toISOString(),
       };
 
-      Object.assign(note, updatedNote);
-
       showSuccess(t('notes:noteUpdatedSuccess'));
-      onNoteUpdated?.(updatedNote);
+      if (onNoteUpdated) {
+        onNoteUpdated(updatedNote);
+      }
       setIsEditing(false);
     } catch (err: any) {
       showError(t('notes:noteUpdateError'));
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -81,7 +73,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               type='text'
               value={title}
               onChange={e => setTitle(e.target.value)}
-              className='text-xl font-bold w-[50%]'
+              className='w-[50%] text-xl font-bold'
               disabled={isLoading}
               autoFocus
             />

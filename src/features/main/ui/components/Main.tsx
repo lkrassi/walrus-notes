@@ -1,5 +1,5 @@
 import React from 'react';
-import { PublicHeader } from 'widgets/ui/components';
+import { PublicHeader } from 'widgets/ui';
 import { HeroLeft } from './HeroLeft';
 import { HeroRight } from './HeroRight';
 

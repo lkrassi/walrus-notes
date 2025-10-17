@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from 'shared';
 import { useAppDispatch, useNotifications } from 'widgets';
 
-import { register } from 'features/auth/api';
+import { useRegisterMutation } from 'widgets/model/stores/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -21,9 +21,8 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     username: '',
     password: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError } = useNotifications();
-  const dispatch = useAppDispatch();
+  const [register, { isLoading: isSubmitting }] = useRegisterMutation();
   const passwordVisibility = usePasswordVisibility();
   const { t } = useLocalization();
 
@@ -40,9 +39,8 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsSubmitting(true);
     try {
-      const response = await register(formData, dispatch);
+      await register(formData).unwrap();
       showSuccess(t('auth:register.success'));
 
       setFormData({
@@ -56,8 +54,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       }
     } catch (error) {
       showError(t('auth:register.error'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

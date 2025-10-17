@@ -1,4 +1,4 @@
-import { deleteNote } from 'features/notes/api';
+import { useDeleteNoteMutation } from 'widgets/model/stores/api';
 import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
 import { useAppDispatch } from 'widgets/hooks/redux';
@@ -16,13 +16,13 @@ export const DeleteNoteModal: React.FC<DeleteNoteModalProps> = ({
   onNoteDeleted,
 }) => {
   const { t } = useLocalization();
-  const dispatch = useAppDispatch();
   const { showSuccess, showError } = useNotifications();
   const { openModal } = useModalContext();
+  const [deleteNote, { isLoading }] = useDeleteNoteMutation();
 
   const handleDelete = async () => {
     try {
-      await deleteNote({ noteId }, dispatch);
+      await deleteNote({ noteId }).unwrap();
       onNoteDeleted();
       showSuccess(t('common:deleteNote.success'));
       openModal(null);

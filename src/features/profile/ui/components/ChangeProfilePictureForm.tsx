@@ -2,9 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { updateUserAvatar } from 'widgets/model/stores/slices/userSlice';
+import { useChangeProfilePictureMutation } from 'widgets/model/stores/api';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-import { changeProfilePicture } from '../../api/changeProfilePicture';
 
 export const ChangeProfilePictureForm: React.FC = () => {
   const { t } = useLocalization();
@@ -12,6 +11,9 @@ export const ChangeProfilePictureForm: React.FC = () => {
   const { closeModal } = useModalContext();
   const { showSuccess, showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [changeProfilePicture, { isLoading }] =
+    useChangeProfilePictureMutation();
+  const userId = localStorage.getItem('userId');
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -34,18 +36,17 @@ export const ChangeProfilePictureForm: React.FC = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !userId) return;
 
     try {
-      const response = await changeProfilePicture(selectedFile, dispatch);
+      await changeProfilePicture({ file: selectedFile, userId });
       setTimeout(() => {
-        dispatch(updateUserAvatar(response.data.newImgUrl));
         showSuccess(t('profile:uploadSuccess'));
         closeModal();
       }, 1000);
     } catch (error: any) {
-      console.error('Upload error:', error);
-      const message = error.message || t('profile:uploadError');
+      const message =
+        error.data?.meta?.message || error.message || t('profile:uploadError');
       showError(message);
     }
   };

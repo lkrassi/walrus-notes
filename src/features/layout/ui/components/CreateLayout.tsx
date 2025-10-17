@@ -1,5 +1,6 @@
 import { Button } from 'shared';
-import { useModalContext, useLocalization } from 'widgets';
+import { useLocalization } from 'widgets';
+import { useModalContext } from 'widgets/ui';
 import { CreateLayoutForm } from './CreateLayoutForm';
 
 export const CreateLayout = () => {
@@ -7,13 +8,10 @@ export const CreateLayout = () => {
   const { openModal } = useModalContext();
 
   const handleCreateLayout = () => {
-    openModal(
-      <CreateLayoutForm />,
-      {
-        title: t('layout:createNewLayout'),
-        size: 'md',
-      }
-    );
+    openModal(<CreateLayoutForm />, {
+      title: t('layout:createNewLayout'),
+      size: 'md',
+    });
   };
 
   return (

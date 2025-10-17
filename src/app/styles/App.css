@@ -16,7 +16,7 @@ input {
 }
 
 button {
-  @apply cursor-pointer hover:scale-102 active:scale-98;
+  @apply cursor-pointer;
 }
 
 @theme {

@@ -1,13 +1,9 @@
-import { createNote } from 'features/notes/api';
 import { useState } from 'react';
 import { Button, Input } from 'shared';
 import type { Note } from 'shared/model/types/layouts';
-import {
-  useAppDispatch,
-  useLocalization,
-  useModalContext,
-  useNotifications,
-} from 'widgets';
+import { useLocalization, useNotifications } from 'widgets';
+import { useCreateNoteMutation } from 'widgets/model/stores/api';
+import { useModalContext } from 'widgets/ui';
 
 interface CreateNoteFormProps {
   layoutId: string;
@@ -21,10 +17,9 @@ export const CreateNoteForm = ({
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
   const [payload, setPayload] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useNotifications();
   const { closeModal } = useModalContext();
-  const dispatch = useAppDispatch();
+  const [createNote, { isLoading }] = useCreateNoteMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,17 +29,12 @@ export const CreateNoteForm = ({
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const response = await createNote(
-        {
-          layoutId,
-          title: title.trim(),
-          payload: payload.trim(),
-        },
-        dispatch
-      );
+      const response = await createNote({
+        layoutId,
+        title: title.trim(),
+        payload: payload.trim(),
+      }).unwrap();
 
       const newNote: Note = {
         id: response.data.id,
@@ -56,14 +46,14 @@ export const CreateNoteForm = ({
       };
 
       showSuccess(t('notes:noteCreatedSuccess'));
-      onNoteCreated?.(newNote);
+      if (onNoteCreated) {
+        onNoteCreated(newNote);
+      }
       setTitle('');
       setPayload('');
       closeModal();
     } catch (err: any) {
       showError(t('notes:noteCreationError'));
-    } finally {
-      setIsLoading(false);
     }
   };
 

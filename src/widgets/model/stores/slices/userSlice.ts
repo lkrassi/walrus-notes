@@ -10,10 +10,12 @@ export interface UserProfileState {
     role: string;
     createdAt: string;
   } | null;
+  accessToken: string | null;
 }
 
 const initialState: UserProfileState = {
   profile: null,
+  accessToken: localStorage.getItem('accessToken'),
 };
 
 const userSlice = createSlice({
@@ -23,6 +25,9 @@ const userSlice = createSlice({
     setUserProfile: (state, action: PayloadAction<UserProfileState['profile']>) => {
       state.profile = action.payload;
     },
+    setAccessToken: (state, action: PayloadAction<string | null>) => {
+      state.accessToken = action.payload;
+    },
     updateUserAvatar: (state, action: PayloadAction<string>) => {
       if (state.profile) {
         state.profile.imgUrl = action.payload;
@@ -30,9 +35,10 @@ const userSlice = createSlice({
     },
     clearUserProfile: (state) => {
       state.profile = null;
+      state.accessToken = null;
     },
   },
 });
 
-export const { setUserProfile, updateUserAvatar, clearUserProfile } = userSlice.actions;
+export const { setUserProfile, setAccessToken, updateUserAvatar, clearUserProfile } = userSlice.actions;
 export default userSlice.reducer;

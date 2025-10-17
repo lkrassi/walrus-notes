@@ -1,15 +1,13 @@
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import type { Note } from 'shared/model/types/layouts';
-import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useLocalization } from 'widgets/hooks';
+import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
+import { useAppSelector } from '../../../hooks/redux';
+import { useGetMyLayoutsQuery } from '../../../model/stores/api';
 import { useModalContext } from '../modal';
-import {
-  FileTreeItem,
-  FileTreeEmpty,
-} from './index';
+import { FileTreeEmpty, FileTreeItem } from './index';
 
 interface FileTreeProps {
-  fileTree: FileTreeItemType[];
   expandedItems: Set<string>;
   toggleExpanded: (itemId: string) => void;
   updateNoteInTree: (noteId: string, updatedNote: Partial<Note>) => void;
@@ -17,25 +15,42 @@ interface FileTreeProps {
   onItemSelect?: (item: FileTreeItemType) => void;
   selectedItemId?: string;
   searchQuery?: string;
-  loadMoreNotes?: (layoutId: string) => Promise<void>;
   onDeleteNote?: (noteId: string) => void;
 }
 
 export const FileTree = ({
-  fileTree,
   expandedItems,
   toggleExpanded,
   addNoteToTree,
   onItemSelect,
   selectedItemId,
   searchQuery,
-  loadMoreNotes,
   onDeleteNote,
-}: FileTreeProps) => {
+}: Omit<FileTreeProps, 'fileTree' | 'onNotesLoaded' | 'loadMoreNotes'>) => {
   const { t } = useLocalization();
   const { openModal } = useModalContext();
 
-  const filterFileTree = (items: FileTreeItemType[], query: string): FileTreeItemType[] => {
+  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
+  const accessToken = useAppSelector(state => state.user.accessToken);
+
+  const fileTree = (() => {
+    if (!layoutsResponse?.data) return [];
+
+    return layoutsResponse.data.map(layout => ({
+      id: layout.id,
+      type: 'layout' as const,
+      title: layout.title,
+      children: [],
+      createdAt: layout.createdAt,
+      updatedAt: layout.updatedAt,
+      isNotesLoaded: false,
+    }));
+  })();
+
+  const filterFileTree = (
+    items: FileTreeItemType[],
+    query: string
+  ): FileTreeItemType[] => {
     if (!query.trim()) return items;
 
     const lowerQuery = query.toLowerCase();
@@ -43,7 +58,9 @@ export const FileTree = ({
     return items
       .map(item => {
         const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
-        const matchesPayload = item.type === 'note' && item.note?.payload?.toLowerCase().includes(lowerQuery);
+        const matchesPayload =
+          item.type === 'note' &&
+          item.note?.payload?.toLowerCase().includes(lowerQuery);
 
         if (matchesTitle || matchesPayload) {
           return item;
@@ -61,22 +78,15 @@ export const FileTree = ({
       .filter((item): item is FileTreeItemType => item !== null);
   };
 
-  const filteredFileTree = searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
-
-  const handleItemClick = (item: FileTreeItemType) => {
-    if (item.type === 'layout') {
-      toggleExpanded(item.id);
-    }
-    onItemSelect?.(item);
-  };
-
-
+  const filteredFileTree = (() => {
+    return searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
+  })();
 
   const handleCreateNote = (layoutId: string) => {
     openModal(
       <CreateNoteForm
         layoutId={layoutId}
-        onNoteCreated={(note) => addNoteToTree(layoutId, note)}
+        onNoteCreated={note => addNoteToTree(layoutId, note)}
       />,
       {
         title: t('fileTree:createNewNote'),
@@ -85,6 +95,12 @@ export const FileTree = ({
     );
   };
 
+  const handleItemClick = (item: FileTreeItemType) => {
+    onItemSelect?.(item);
+    if (item.type === 'layout') {
+      toggleExpanded(item.id);
+    }
+  };
 
   const renderTreeItem = (item: FileTreeItemType, level: number = 0) => {
     const isExpanded = expandedItems.has(item.id);
@@ -102,25 +118,14 @@ export const FileTree = ({
           onItemClick={handleItemClick}
           onCreateNote={handleCreateNote}
           onDeleteNote={onDeleteNote}
-          childrenItems={item.children}
           renderChild={renderTreeItem}
         />
-        {isExpanded && item.type === 'layout' && item.hasMoreNotes && loadMoreNotes && (
-          <div className='ml-4 mt-1'>
-            <button
-              onClick={() => loadMoreNotes(item.id)}
-              className='text-sm text-primary hover:text-primary-dark px-2 py-1 rounded transition-colors'
-            >
-              Загрузить еще...
-            </button>
-          </div>
-        )}
       </div>
     );
   };
 
   return (
-    <div className='h-full flex flex-col'>
+    <div className='flex h-full flex-col'>
       <div className='flex-1 overflow-y-auto p-2'>
         {filteredFileTree.length === 0 ? (
           <FileTreeEmpty searchQuery={searchQuery} />

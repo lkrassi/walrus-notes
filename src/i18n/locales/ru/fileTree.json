@@ -1,10 +1,10 @@
 {
   "fileStructure": "Файловая структура",
-  "createNewLayout": "Создать новый лэйаут",
+  "createNewLayout": "Создать новую папку",
   "createNote": "Создать заметку",
   "actions": "Действия",
-  "noLayouts": "Нет лэйаутов",
-  "createFirstLayout": "Создайте первый лэйаут",
+  "noLayouts": "Нет папок",
+  "createFirstLayout": "Создайте первую папку",
   "createNewNote": "Создать новую заметку",
   "noSearchResults": "Ничего не найдено",
   "tryDifferentQuery": "Попробуйте другой запрос"

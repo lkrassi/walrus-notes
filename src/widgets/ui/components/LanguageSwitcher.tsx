@@ -39,7 +39,7 @@ export const LanguageSwitcher: React.FC = () => {
         changeLanguage('ru');
       }
     }
-  }, [currentLanguage, changeLanguage]);
+  }, []);
 
   const currentLang =
     languages.find(lang => lang.code === effectiveLanguage) || languages[0];

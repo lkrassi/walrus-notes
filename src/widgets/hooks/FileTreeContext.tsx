@@ -1,10 +1,8 @@
-import { createContext, useContext, useReducer, useCallback, useState, useEffect } from 'react';
-import { getMyLayouts } from 'features/layout/api';
-import { getNotes } from 'features/notes/api';
+import { createContext, useContext, useReducer, useState, useEffect } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
-import { useAppDispatch } from './redux';
 import { useNotifications } from './useNotifications';
-import { fileTreeReducer, initialFileTreeState, type FileTreeAction, type FileTreeState } from './fileTreeReducer';
+import { fileTreeReducer, initialFileTreeState, type FileTreeState } from './fileTreeReducer';
+import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 
 const FileTreeContext = createContext<{
   fileTree: FileTreeState['fileTree'];
@@ -26,124 +24,88 @@ export const FileTreeProvider = ({ children }: { children: React.ReactNode }) =>
   const [state, dispatchFileTree] = useReducer(fileTreeReducer, initialFileTreeState);
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess, showError } = useNotifications();
-  const dispatch = useAppDispatch();
 
   const { fileTree, expandedItems } = state;
 
-  const loadLayoutsOnly = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const layoutsResponse = await getMyLayouts(dispatch);
-      if (!layoutsResponse?.data || !Array.isArray(layoutsResponse.data)) {
-        throw new Error('Invalid response structure');
-      }
-      const layouts = layoutsResponse.data;
+  const [hasToken, setHasToken] = useState(!!localStorage.getItem('accessToken'));
 
-      dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layouts });
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('accessToken');
+      setHasToken(!!token);
+    };
+
+    checkToken();
+
+    const handleTokenSet = () => {
+      setHasToken(true);
+      setTimeout(() => refetch(), 100);
+    };
+
+    window.addEventListener('tokenSet', handleTokenSet);
+    window.addEventListener('storage', checkToken);
+
+    return () => {
+      window.removeEventListener('tokenSet', handleTokenSet);
+      window.removeEventListener('storage', checkToken);
+    };
+  }, []);
+
+  const { data: layoutsResponse, isLoading: isLayoutsLoading, error: layoutsError, refetch } = useGetMyLayoutsQuery(undefined, {
+    skip: !hasToken,
+  });
+
+  useEffect(() => {
+    if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
+      dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layoutsResponse.data });
       showSuccess('Лэйауты загружены');
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [layoutsResponse, showSuccess]);
 
-  const loadNotesForLayout = useCallback(
-    async (layoutId: string, page: number = 1) => {
-      try {
-        const notesResponse = await getNotes({
-          layoutId,
-          page,
-        }, dispatch);
-        const notes =
-          notesResponse?.data && Array.isArray(notesResponse.data)
-            ? notesResponse.data
-            : [];
-        const pagination = notesResponse?.pagination;
-        const hasMore = pagination ? page < pagination.pages : false;
+  useEffect(() => {
+    setIsLoading(isLayoutsLoading);
+  }, [isLayoutsLoading]);
 
-        dispatchFileTree({
-          type: 'LOAD_NOTES',
-          payload: {
-            layoutId,
-            notes,
-            hasMore,
-            currentPage: page,
-            append: page > 1
-          }
-        });
-      } catch (error) {
-        showError('Ошибка при загрузке заметок');
-      }
-    },
-    [showError]
-  );
+  const loadLayoutsOnly = async () => {
+  };
 
-  const loadMoreNotes = useCallback(
-    async (layoutId: string) => {
-      const layout = fileTree.find(item => item.id === layoutId && item.type === 'layout');
-      if (layout && layout.hasMoreNotes && layout.currentPage) {
-        await loadNotesForLayout(layoutId, layout.currentPage + 1);
-      }
-    },
-    [fileTree, loadNotesForLayout]
-  );
+  const loadMoreNotes = async (layoutId: string) => {
+  };
 
-  const toggleExpanded = useCallback((itemId: string) => {
+  const toggleExpanded = (itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });
-  }, []);
+  };
 
-  const addNoteToTree = useCallback((layoutId: string, note: Note) => {
-    dispatch({ type: 'ADD_NOTE', payload: { layoutId, note } });
-  }, []);
+  const addNoteToTree = (layoutId: string, note: Note) => {
+    dispatchFileTree({ type: 'ADD_NOTE', payload: { layoutId, note } });
+  };
 
-  const removeNoteFromTree = useCallback((noteId: string) => {
-    dispatch({ type: 'REMOVE_NOTE', payload: noteId });
-  }, []);
+  const removeNoteFromTree = (noteId: string) => {
+    dispatchFileTree({ type: 'REMOVE_NOTE', payload: noteId });
+  };
 
-  const updateNoteInTree = useCallback(
-    (noteId: string, updatedNote: Partial<Note>) => {
-      dispatch({ type: 'UPDATE_NOTE', payload: { noteId, updatedNote } });
-    },
-    []
-  );
+  const updateNoteInTree = (noteId: string, updatedNote: Partial<Note>) => {
+    dispatchFileTree({ type: 'UPDATE_NOTE', payload: { noteId, updatedNote } });
+  };
 
-  const addLayoutToTree = useCallback((layout: Layout) => {
-    dispatch({ type: 'ADD_LAYOUT', payload: layout });
-  }, []);
+  const addLayoutToTree = (layout: Layout) => {
+    dispatchFileTree({ type: 'ADD_LAYOUT', payload: layout });
+  };
 
-  const removeLayoutFromTree = useCallback((layoutId: string) => {
-    dispatch({ type: 'REMOVE_LAYOUT', payload: layoutId });
-  }, []);
+  const removeLayoutFromTree = (layoutId: string) => {
+    dispatchFileTree({ type: 'REMOVE_LAYOUT', payload: layoutId });
+  };
 
-  const updateLayoutInTree = useCallback(
-    (layoutId: string, updatedLayout: Partial<Layout>) => {
-      dispatch({ type: 'UPDATE_LAYOUT', payload: { layoutId, updatedLayout } });
-    },
-    []
-  );
+  const updateLayoutInTree = (layoutId: string, updatedLayout: Partial<Layout>) => {
+    dispatchFileTree({ type: 'UPDATE_LAYOUT', payload: { layoutId, updatedLayout } });
+  };
 
   useEffect(() => {
     dispatchFileTree({ type: 'CLEAN_EXPANDED' });
   }, [fileTree]);
 
-  useEffect(() => {
-    loadLayoutsOnly();
-  }, [loadLayoutsOnly]);
-
-  useEffect(() => {
-    expandedItems.forEach(layoutId => {
-      const layout = fileTree.find(
-        item => item.id === layoutId && item.type === 'layout'
-      );
-      if (layout && !layout.isNotesLoaded) {
-        loadNotesForLayout(layoutId);
-      }
-    });
-  }, [expandedItems, fileTree, loadNotesForLayout]);
-
-  const reloadLayouts = useCallback(() => {
-    loadLayoutsOnly();
-  }, [loadLayoutsOnly]);
+  const reloadLayouts = () => {
+  };
 
   const value = {
     fileTree,
