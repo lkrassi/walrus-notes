@@ -3,7 +3,7 @@ import type { BaseResponse } from './api';
 export type AuthTokens = {
   accessToken: string;
   refreshToken: string;
-  userId?: string;
+  userId: string;
 };
 
 export type AuthResponse = BaseResponse<AuthTokens>;

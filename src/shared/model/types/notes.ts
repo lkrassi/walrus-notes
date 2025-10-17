@@ -44,3 +44,5 @@ export type CreateNoteApiResponse = BaseResponse<CreateNoteResponse>;
 export type DeleteNoteApiResponse = BaseResponse<DeleteNoteResponse>;
 export type GetNotesApiResponse = BaseResponse<GetNotesResponse>;
 export type UpdateNoteApiResponse = BaseResponse<UpdateNoteResponse>;
+
+export type GetNotesWithPaginationApiResponse = BaseResponse<GetNotesResponse>;

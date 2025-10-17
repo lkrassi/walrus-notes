@@ -1,17 +1,12 @@
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, useState, type Ref } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Note } from 'shared/model/types/layouts';
-import {
-  useFileTree,
-  useLocalization,
-  useSearchSuggestions,
-  useSidebar,
-} from 'widgets/hooks';
+import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { FileTree } from '../fileTree';
-import { useModalContext } from '../modal';
+import { DeleteNoteModal, useModalContext } from '../modal';
 import { SearchInput } from './SearchInput';
 
 type SidebarProps = {
@@ -29,6 +24,7 @@ const SidebarComponent = (
     layoutId?: string;
     noteId?: string;
   }>();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const { openModal } = useModalContext();
@@ -39,9 +35,9 @@ const SidebarComponent = (
     updateNoteInTree,
     addNoteToTree,
     reloadLayouts,
+    loadMoreNotes,
+    removeNoteFromTree,
   } = useFileTree();
-
-  const allSearchableItems = useSearchSuggestions(fileTree);
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }), [updateNoteInTree]);
 
@@ -54,10 +50,29 @@ const SidebarComponent = (
     });
   };
 
+  const handleDeleteNote = (noteId: string) => {
+    openModal(
+      <DeleteNoteModal
+        noteId={noteId}
+        onNoteDeleted={() => removeNoteFromTree(noteId)}
+      />,
+      {
+        title: 'Подтверждение удаления',
+        size: 'sm',
+        closeOnOverlayClick: true,
+        closeOnEscape: true,
+        showCloseButton: true,
+      }
+    );
+  };
+
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
     if (item.type === 'note') {
       setIsMobileOpen(false);
+      navigate(`/dashboard/${item.parentId}/${item.id}`);
+    } else if (item.type === 'layout') {
+      navigate(`/dashboard/${item.id}`);
     }
   };
 
@@ -82,7 +97,7 @@ const SidebarComponent = (
       )}
 
       <aside
-        data-tour="sidebar"
+        data-tour='sidebar'
         className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0`}
       >
         <div className='border-border dark:border-dark-border border-b p-4'>
@@ -108,22 +123,20 @@ const SidebarComponent = (
               {t('fileTree:fileStructure')}
             </h2>
             <button
-              data-tour="create-layout"
+              data-tour='create-layout'
               onClick={handleCreateLayout}
-              className='text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800'
-              title={t('fileTree:createNewLayout')}
+             title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
             >
-              <Plus className='h-5 w-5' />
+              <Plus />
             </button>
           </div>
 
           <div className='mt-3'>
-            <div data-tour="search">
+            <div data-tour='search'>
               <SearchInput
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
-                suggestions={allSearchableItems}
               />
             </div>
           </div>
@@ -139,6 +152,8 @@ const SidebarComponent = (
             onItemSelect={handleItemSelect}
             selectedItemId={selectedItemId}
             searchQuery={searchQuery}
+            loadMoreNotes={loadMoreNotes}
+            onDeleteNote={handleDeleteNote}
           />
         </div>
       </aside>

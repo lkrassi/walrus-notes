@@ -6,6 +6,15 @@
     "cancel": "Cancel",
     "delete": "Delete"
   },
+  "deleteNote": {
+    "title": "Delete note?",
+    "description": "This action cannot be undone. The note will be permanently deleted.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "success": "Note deleted",
+    "error": "Error deleting note",
+    "deleteBtnTitle": "Delete note"
+  },
   "navigation": {
     "home": "Home",
     "about": "About",

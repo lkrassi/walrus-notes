@@ -46,7 +46,7 @@ export const Login: React.FC<LoginProps> = () => {
       const response = await login(formData, dispatch);
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
-      localStorage.setItem('userId', '3b3c093a-8a0a-4427-8a3e-947462697f7e');
+      localStorage.setItem('userId', response.data.userId);
       showSuccess(t('auth:login.success'));
       navigate('/dashboard');
     } catch (error) {

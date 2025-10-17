@@ -8,7 +8,7 @@ export type FileTreeState = {
 
 export type FileTreeAction =
   | { type: 'LOAD_LAYOUTS'; payload: Layout[] }
-  | { type: 'LOAD_NOTES'; payload: { layoutId: string; notes: Note[] } }
+  | { type: 'LOAD_NOTES'; payload: { layoutId: string; notes: Note[]; hasMore?: boolean; currentPage?: number; append?: boolean } }
   | { type: 'TOGGLE_EXPANDED'; payload: string }
   | { type: 'ADD_NOTE'; payload: { layoutId: string; note: Note } }
   | { type: 'REMOVE_NOTE'; payload: string }
@@ -41,23 +41,35 @@ export const fileTreeReducer = (state: FileTreeState, action: FileTreeAction): F
       };
     }
     case 'LOAD_NOTES': {
-      const { layoutId, notes } = action.payload;
+      const { layoutId, notes, hasMore = false, currentPage = 1, append = false } = action.payload;
       return {
         ...state,
         fileTree: state.fileTree.map(layout =>
           layout.id === layoutId
             ? {
                 ...layout,
-                children: notes.map((note: Note) => ({
-                  id: note.id,
-                  type: 'note' as const,
-                  title: note.title,
-                  parentId: layoutId,
-                  createdAt: note.createdAt,
-                  updatedAt: note.updatedAt,
-                  note: note,
-                })),
+                children: append
+                  ? [...(layout.children || []), ...notes.map((note: Note) => ({
+                      id: note.id,
+                      type: 'note' as const,
+                      title: note.title,
+                      parentId: layoutId,
+                      createdAt: note.createdAt,
+                      updatedAt: note.updatedAt,
+                      note: note,
+                    }))]
+                  : notes.map((note: Note) => ({
+                      id: note.id,
+                      type: 'note' as const,
+                      title: note.title,
+                      parentId: layoutId,
+                      createdAt: note.createdAt,
+                      updatedAt: note.updatedAt,
+                      note: note,
+                    })),
                 isNotesLoaded: true,
+                hasMoreNotes: hasMore,
+                currentPage: currentPage,
               }
             : layout
         ),

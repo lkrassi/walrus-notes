@@ -1,17 +1,24 @@
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { getUserProfile } from 'features/profile/api/getUserProfile';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { checkAuth } from 'shared/api/checkAuth';
 import type { Note } from 'shared/model/types/layouts';
 import { PrivateHeader, Sidebar, useLocalization } from 'widgets';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import { useFileTree } from 'widgets/hooks/useFileTree';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { OnboardingTour } from './OnboardingTour';
 
 export const DashBoard = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
+  const { layoutId, noteId } = useParams<{
+    layoutId?: string;
+    noteId?: string;
+  }>();
+  const { fileTree } = useFileTree();
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
@@ -34,6 +41,34 @@ export const DashBoard = () => {
 
     loadUserProfile();
   }, [dispatch]);
+
+  // Синхронизация selectedItem с URL параметрами
+  useEffect(() => {
+    if (layoutId || noteId) {
+      const findItemById = (items: FileTreeItem[], targetId: string): FileTreeItem | null => {
+        for (const item of items) {
+          if (item.id === targetId) {
+            return item;
+          }
+          if (item.children) {
+            const found = findItemById(item.children, targetId);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      const targetId = noteId || layoutId;
+      if (targetId) {
+        const foundItem = findItemById(fileTree, targetId);
+        if (foundItem) {
+          setSelectedItem(foundItem);
+        }
+      }
+    } else {
+      setSelectedItem(null);
+    }
+  }, [layoutId, noteId, fileTree]);
 
   const handleNoteUpdated = useCallback(
     (noteId: string, updates: Partial<Note>) => {

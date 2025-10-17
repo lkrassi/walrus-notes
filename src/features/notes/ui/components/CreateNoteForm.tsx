@@ -82,7 +82,7 @@ export const CreateNoteForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('notes:noteTitlePlaceholder')}
-          className='rounded-xl border-2 px-4 py-3 w-full'
+          className='w-full rounded-xl border-2 px-4 py-3'
           disabled={isLoading}
           autoFocus
         />

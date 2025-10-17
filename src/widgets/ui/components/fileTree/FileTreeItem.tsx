@@ -6,8 +6,11 @@ import {
   Folder,
   FolderOpen,
   Plus,
+  Trash2,
 } from 'lucide-react';
+import { useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
+import { useLocalization } from '../../../hooks';
 
 type FileTreeItemProps = {
   item: FileTreeItemType;
@@ -17,6 +20,7 @@ type FileTreeItemProps = {
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onCreateNote: (layoutId: string) => void;
+  onDeleteNote?: (noteId: string) => void;
   childrenItems?: FileTreeItemType[];
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
 };
@@ -29,10 +33,14 @@ export const FileTreeItem = ({
   hasChildren,
   onItemClick,
   onCreateNote,
+  onDeleteNote,
   childrenItems,
   renderChild,
 }: FileTreeItemProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const paddingLeft = 20 + level * 16;
+
+  const { t } = useLocalization();
 
   return (
     <div className='file-tree-item'>
@@ -46,6 +54,8 @@ export const FileTreeItem = ({
           paddingLeft: `${paddingLeft}px`,
           paddingRight: '12px',
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         onClick={() => onItemClick(item)}
       >
         {item.type === 'layout' && (
@@ -80,22 +90,39 @@ export const FileTreeItem = ({
           {item.title}
         </span>
 
-        {item.type === 'layout' && (
-          <button
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-              e.stopPropagation();
-              onCreateNote(item.id);
-            }}
-            className={`opacity-0 transition-opacity duration-200 group-hover:opacity-100 ${
-              isSelected
-                ? 'text-white hover:text-gray-200'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
-            title='Создать заметку'
-          >
-            <Plus className='h-4 w-4' />
-          </button>
-        )}
+        <div className='flex items-center gap-1'>
+          {item.type === 'layout' && (
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onCreateNote(item.id);
+              }}
+              className={`opacity-0 transition-opacity duration-200 group-hover:opacity-100 ${
+                isSelected
+                  ? 'text-white hover:text-gray-200'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+              title='Создать заметку'
+            >
+              <Plus className='h-4 w-4' />
+            </button>
+          )}
+
+          {item.type === 'note' && (
+            <button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onDeleteNote?.(item.id);
+              }}
+              className={`transition-opacity duration-200 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+              title={t('common:deleteNote.deleteBtnTitle')}
+            >
+              <Trash2 className='h-4 w-4' />
+            </button>
+          )}
+        </div>
       </div>
 
       <AnimatePresence>

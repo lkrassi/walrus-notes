@@ -21,6 +21,8 @@ export type FileTreeItem = {
   updatedAt?: string;
   note?: Note;
   isNotesLoaded?: boolean;
+  hasMoreNotes?: boolean;
+  currentPage?: number;
 }
 
 export const useFileTree = () => {
@@ -50,23 +52,44 @@ export const useFileTree = () => {
   }, [showSuccess, showError]);
 
   const loadNotesForLayout = useCallback(
-    async (layoutId: string) => {
+    async (layoutId: string, page: number = 1) => {
       try {
         const notesResponse = await getNotes({
           layoutId,
-          page: 1,
+          page,
         }, dispatch);
         const notes =
           notesResponse?.data && Array.isArray(notesResponse.data)
             ? notesResponse.data
             : [];
+        const pagination = notesResponse?.pagination;
+        const hasMore = pagination ? page < pagination.pages : false;
 
-        dispatchFileTree({ type: 'LOAD_NOTES', payload: { layoutId, notes } });
+        dispatchFileTree({
+          type: 'LOAD_NOTES',
+          payload: {
+            layoutId,
+            notes,
+            hasMore,
+            currentPage: page,
+            append: page > 1
+          }
+        });
       } catch (error) {
         showError('Ошибка при загрузке заметок');
       }
     },
     [showError]
+  );
+
+  const loadMoreNotes = useCallback(
+    async (layoutId: string) => {
+      const layout = fileTree.find(item => item.id === layoutId && item.type === 'layout');
+      if (layout && layout.hasMoreNotes && layout.currentPage) {
+        await loadNotesForLayout(layoutId, layout.currentPage + 1);
+      }
+    },
+    [fileTree, loadNotesForLayout]
   );
 
   const toggleExpanded = useCallback((itemId: string) => {
@@ -139,5 +162,6 @@ export const useFileTree = () => {
     addLayoutToTree,
     removeLayoutFromTree,
     updateLayoutInTree,
+    loadMoreNotes,
   };
 };

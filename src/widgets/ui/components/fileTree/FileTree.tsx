@@ -17,6 +17,8 @@ interface FileTreeProps {
   onItemSelect?: (item: FileTreeItemType) => void;
   selectedItemId?: string;
   searchQuery?: string;
+  loadMoreNotes?: (layoutId: string) => Promise<void>;
+  onDeleteNote?: (noteId: string) => void;
 }
 
 export const FileTree = ({
@@ -27,6 +29,8 @@ export const FileTree = ({
   onItemSelect,
   selectedItemId,
   searchQuery,
+  loadMoreNotes,
+  onDeleteNote,
 }: FileTreeProps) => {
   const { t } = useLocalization();
   const { openModal } = useModalContext();
@@ -88,18 +92,30 @@ export const FileTree = ({
     const hasChildren = !!(item.children && item.children.length > 0);
 
     return (
-      <FileTreeItem
-        key={item.id}
-        item={item}
-        level={level}
-        isExpanded={isExpanded}
-        isSelected={isSelected}
-        hasChildren={hasChildren}
-        onItemClick={handleItemClick}
-        onCreateNote={handleCreateNote}
-        childrenItems={item.children}
-        renderChild={renderTreeItem}
-      />
+      <div key={item.id}>
+        <FileTreeItem
+          item={item}
+          level={level}
+          isExpanded={isExpanded}
+          isSelected={isSelected}
+          hasChildren={hasChildren}
+          onItemClick={handleItemClick}
+          onCreateNote={handleCreateNote}
+          onDeleteNote={onDeleteNote}
+          childrenItems={item.children}
+          renderChild={renderTreeItem}
+        />
+        {isExpanded && item.type === 'layout' && item.hasMoreNotes && loadMoreNotes && (
+          <div className='ml-4 mt-1'>
+            <button
+              onClick={() => loadMoreNotes(item.id)}
+              className='text-sm text-primary hover:text-primary-dark px-2 py-1 rounded transition-colors'
+            >
+              Загрузить еще...
+            </button>
+          </div>
+        )}
+      </div>
     );
   };
 
