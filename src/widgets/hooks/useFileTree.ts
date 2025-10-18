@@ -33,7 +33,7 @@ export const useFileTree = () => {
     } else if (layoutsResponse) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: [] });
     }
-  }, [layoutsResponse, showSuccess]);
+  }, [layoutsResponse]); // Убрал showSuccess из зависимостей
 
   const toggleExpanded = useCallback((itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });

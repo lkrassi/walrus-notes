@@ -10,7 +10,7 @@ export const PrivateHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b sm:flex-row sm:items-center sm:justify-between sm:px-5'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b sm:flex-row sm:items-center sm:justify-between sm:px-5 max-sm:py-5'>
       <Link
         to='/dashboard'
         className='flex flex-col items-center gap-2 sm:flex-row sm:gap-3'

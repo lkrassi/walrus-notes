@@ -113,11 +113,11 @@ export const FileTreeItemHeader = ({
         {item.type === 'layout' && (
           <button
             onClick={handleCreateNote}
-            className={`opacity-0 transition-opacity duration-150 group-hover:opacity-100 ${
+            className={`transition-opacity duration-150 max-md:opacity-100 ${
               isSelected
                 ? 'text-white hover:text-gray-200'
-                : 'text-gray-400 hover:text-gray-600'
-            }`}
+                : 'text-gray-400 hover:text-gray-600 max-md:text-gray-600'
+            } ${window.innerWidth >= 768 ? 'opacity-0 group-hover:opacity-100' : ''}`}
             title={t('fileTree:createNote')}
           >
             <Plus className='h-4 w-4' />
@@ -127,7 +127,9 @@ export const FileTreeItemHeader = ({
         {item.type === 'note' && (
           <button
             onClick={handleDeleteNote}
-            className={`transition-opacity duration-150 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+            className={`transition-opacity duration-150 max-md:opacity-100 ${
+              window.innerWidth >= 768 ? (isHovered ? 'opacity-100' : 'opacity-0') : ''
+            }`}
             title={t('common:deleteNote.deleteBtnTitle')}
           >
             <Trash2 className='h-4 w-4' />

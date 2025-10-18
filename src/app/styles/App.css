@@ -13,7 +13,8 @@ body {
 
 a,
 button,
-input {
+input,
+textarea {
   @apply outline-0;
 }
 

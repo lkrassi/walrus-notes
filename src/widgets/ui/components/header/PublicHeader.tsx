@@ -10,7 +10,7 @@ export const PublicHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-0'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b max-sm:py-5 sm:flex-row sm:items-center sm:justify-between sm:px-5'>
       <Link
         to='/'
         className='flex items-center gap-2 max-md:flex-col'

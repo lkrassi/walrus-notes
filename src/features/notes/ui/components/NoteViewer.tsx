@@ -66,7 +66,6 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
 
   return (
     <div className='flex h-full w-full flex-col'>
-      {/* Заголовок - автоматическая высота */}
       <div className='border-border dark:border-dark-border flex items-center justify-between border-b p-4'>
         <div className='min-w-0 flex-1'>
           {isEditing ? (
@@ -120,7 +119,6 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
         </div>
       </div>
 
-      {/* Контент - занимает всё оставшееся пространство */}
       <div className='flex-1 overflow-hidden'>
         {isEditing ? (
           <textarea
