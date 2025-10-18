@@ -66,7 +66,6 @@ export const DashBoard = () => {
   }, [layoutId, noteId, fileTree]);
 
   const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
-    // Update the selected item immediately
     setSelectedItem(prev => {
       if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
         return {
@@ -78,7 +77,6 @@ export const DashBoard = () => {
       return prev;
     });
 
-    // Update the sidebar tree
     sidebarRef.current?.updateNoteInTree(noteId, updates);
   };
 
@@ -89,7 +87,7 @@ export const DashBoard = () => {
   const renderContent = () => {
     if (!selectedItem) {
       return (
-        <div className='flex flex-1 items-center justify-center'>
+        <div className='flex h-full items-center justify-center'>
           <div className='text-center'>
             <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
               <svg viewBox='0 0 24 24' fill='currentColor'>
@@ -111,7 +109,7 @@ export const DashBoard = () => {
       const note = selectedItem.note;
       if (!note) {
         return (
-          <div className='flex flex-1 items-center justify-center'>
+          <div className='flex h-full items-center justify-center'>
             <div className='text-center'>
               <p className='text-secondary dark:text-dark-secondary'>
                 {t('dashboard:noteLoadError')}
@@ -122,32 +120,27 @@ export const DashBoard = () => {
       }
 
       return (
-        <div className='flex-1'>
-          <NoteViewer
-            note={note}
-            onNoteUpdated={updatedNote =>
-              handleNoteUpdated(updatedNote.id, {
-                title: updatedNote.title,
-                payload: updatedNote.payload,
-              })
+        <NoteViewer
+          note={note}
+          onNoteUpdated={updatedNote =>
+            handleNoteUpdated(updatedNote.id, {
+              title: updatedNote.title,
+              payload: updatedNote.payload,
+            })
+          }
+          onNoteDeleted={() => {
+            setSelectedItem(null);
+            if (layoutId) {
+            } else {
+              window.history.replaceState(null, '', '/dashboard');
             }
-            onNoteDeleted={() => {
-              setSelectedItem(null);
-              // Navigate back to layout if a note was deleted
-              if (layoutId) {
-                // Stay on the layout
-              } else {
-                // Navigate to dashboard root if no layout context
-                window.history.replaceState(null, '', '/dashboard');
-              }
-            }}
-          />
-        </div>
+          }}
+        />
       );
     }
 
     return (
-      <div className='flex flex-1 items-center justify-center'>
+      <div className='flex h-full items-center justify-center'>
         <div className='text-center'>
           <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
             <svg viewBox='0 0 24 24' fill='currentColor'>
@@ -166,13 +159,11 @@ export const DashBoard = () => {
   };
 
   return (
-    <div className='bg-gradient flex h-screen flex-col'>
+    <div className='flex h-screen flex-col'>
       <PrivateHeader />
       <div className='flex min-h-0 flex-1 max-md:flex-col'>
         <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />
-        <main className='flex min-h-0 min-w-0 flex-1 flex-col'>
-          {renderContent()}
-        </main>
+        <main className='flex min-h-0 min-w-0 flex-1'>{renderContent()}</main>
       </div>
     </div>
   );

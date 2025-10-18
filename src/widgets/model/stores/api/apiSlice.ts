@@ -4,6 +4,7 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { startLoading, stopLoading } from '../slices/loaderSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'https://walrus-notes-1.onrender.com/wn/api/v1',
@@ -22,6 +23,9 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
+  // Start loading
+  api.dispatch(startLoading());
+
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {
@@ -58,6 +62,9 @@ const baseQueryWithReauth: BaseQueryFn<
       localStorage.removeItem('refreshToken');
     }
   }
+
+  // Stop loading
+  api.dispatch(stopLoading());
 
   return result;
 };
