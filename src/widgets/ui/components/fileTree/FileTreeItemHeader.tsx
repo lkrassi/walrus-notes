@@ -118,7 +118,7 @@ export const FileTreeItemHeader = ({
                 ? 'text-white hover:text-gray-200'
                 : 'text-gray-400 hover:text-gray-600'
             }`}
-            title='Создать заметку'
+            title={t('fileTree:createNote')}
           >
             <Plus className='h-4 w-4' />
           </button>

@@ -7,5 +7,8 @@
   "createFirstLayout": "Создайте первую папку",
   "createNewNote": "Создать новую заметку",
   "noSearchResults": "Ничего не найдено",
-  "tryDifferentQuery": "Попробуйте другой запрос"
+  "tryDifferentQuery": "Попробуйте другой запрос",
+  "folderEmpty": "Папка пуста",
+  "loading": "Загрузка",
+  "uploadMore": "Загрузить ещё..."
 }

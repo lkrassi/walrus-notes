@@ -1,11 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
+import { useLocalization } from '../../../hooks';
 import {
   useGetNotesQuery,
   useLazyGetNotesQuery,
+  notesApi,
 } from '../../../model/stores/api';
+import { useAppSelector } from '../../../hooks/redux';
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;
@@ -22,11 +25,14 @@ export const FileTreeItemContent = ({
   renderChild,
   onNotesLoaded,
 }: FileTreeItemContentProps) => {
-  const [allNotes, setAllNotes] = useState<Note[]>([]);
-  const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadedPages, setLoadedPages] = useState<Set<number>>(new Set([1]));
+  const [hasMore, setHasMore] = useState(true);
+  const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   const [trigger] = useLazyGetNotesQuery();
+  const { t } = useLocalization();
 
   const { data: notesResponse, isLoading: isQueryLoading } = useGetNotesQuery(
     { layoutId: item.id, page: 1 },
@@ -36,177 +42,151 @@ export const FileTreeItemContent = ({
   );
 
   useEffect(() => {
-    console.log('Resetting state for item:', item.id);
-    setAllNotes([]);
+    setLoadedPages(new Set([1]));
     setHasMore(true);
     setCurrentPage(1);
-    setIsLoading(false);
+    setIsInitialLoadDone(false);
+    setIsLoadingMore(false);
   }, [item.id]);
 
   useEffect(() => {
-    console.log('useEffect for notesResponse triggered:', notesResponse);
-    if (
-      notesResponse?.data &&
-      Array.isArray(notesResponse.data) &&
-      currentPage === 1
-    ) {
-      console.log(
-        'Setting allNotes from useGetNotesQuery:',
-        notesResponse.data
-      );
-      setAllNotes(notesResponse.data);
-      setHasMore(
-        notesResponse.pagination ? 1 < notesResponse.pagination.pages : false
-      );
+    if (!isExpanded || item.type !== 'layout') return;
+    if (!notesResponse) return;
 
-      if (onNotesLoaded) {
-        const notesWithLayout = notesResponse.data.map(note => ({
-          ...note,
-          layoutId: item.id,
-        }));
-        console.log('Calling onNotesLoaded from useEffect:', notesWithLayout);
-        onNotesLoaded(item.id, notesWithLayout);
-      }
+    const notes = Array.isArray(notesResponse.data) ? notesResponse.data : [];
+    const pagination = notesResponse.pagination;
+    const more = pagination ? 1 < pagination.pages : false;
+
+    setHasMore(more);
+    setIsInitialLoadDone(true);
+
+    if (onNotesLoaded) {
+      const notesWithLayout = notes.map(note => ({
+        ...note,
+        layoutId: item.id,
+      }));
+      onNotesLoaded(item.id, notesWithLayout);
     }
-  }, [notesResponse?.data, item.id, onNotesLoaded]);
+  }, [notesResponse, isExpanded, item.id, onNotesLoaded]);
 
-  async function loadPage(page: number) {
-    console.log('loadPage called with page:', page, 'hasMore:', hasMore);
-    if (!hasMore && page > 1) return;
+  const loadMore = async (page: number) => {
+    if (!hasMore || page <= 1 || isLoadingMore) return;
 
-    setIsLoading(true);
+    setIsLoadingMore(true);
     try {
       const result = await trigger({ layoutId: item.id, page });
-      console.log('API result:', result);
 
-      if (result.error) {
-        console.log('API error:', result.error);
+      if (result.error || !result.data) {
         setHasMore(false);
-        setIsLoading(false);
         return;
       }
 
-      if (!result.data) {
-        console.log('No data in result');
-        setHasMore(false);
-        setIsLoading(false);
-        return;
-      }
+      const { data: newNotes, pagination } = result.data;
+      const validNotes = Array.isArray(newNotes) ? newNotes : [];
+      const more = pagination ? page < pagination.pages : false;
 
-      const notesResponse = result.data;
-      const notesData = notesResponse.data;
-      console.log('Notes data:', notesData);
-
-      let newNotes: Note[] = [];
-      if (Array.isArray(notesData)) {
-        newNotes = notesData;
-      }
-
-      const pagination = notesResponse.pagination;
-      console.log('Pagination:', pagination);
-
-      let more = false;
-      if (pagination) {
-        more = page < pagination.pages;
-      }
-      console.log('Has more:', more);
-
-      if (page === 1) {
-        setAllNotes(newNotes);
-        console.log('Set allNotes to newNotes:', newNotes);
-      } else {
-        setAllNotes(prev => {
-          const updated = [...prev, ...newNotes];
-          console.log('Updated allNotes:', updated);
-          return updated;
-        });
-      }
-
+      setLoadedPages(prev => new Set([...prev, page]));
       setHasMore(more);
       setCurrentPage(page);
-
-      if (onNotesLoaded) {
-        const updatedNotes = page === 1 ? newNotes : [...allNotes, ...newNotes];
-        console.log('Calling onNotesLoaded with:', updatedNotes);
-        onNotesLoaded(
-          item.id,
-          updatedNotes.map(note => ({ ...note, layoutId: item.id }))
-        );
-      }
     } catch (err) {
-      console.log('Error in loadPage:', err);
+      console.error('Error loading more notes:', err);
       setHasMore(false);
+    } finally {
+      setIsLoadingMore(false);
     }
-    setIsLoading(false);
+  };
+
+  // Получаем все заметки из загруженных страниц
+  const apiState = useAppSelector(state => state.api);
+  const allNotes: Note[] = [];
+  loadedPages.forEach(page => {
+    const cachedData = notesApi.endpoints.getNotes.select({
+      layoutId: item.id,
+      page
+    })({ api: apiState });
+    if (cachedData?.data?.data) {
+      allNotes.push(...cachedData.data.data);
+    }
+  });
+
+  let contentState: 'loading' | 'notes' | 'empty' | null = null;
+  if (!isExpanded || item.type !== 'layout') {
+    contentState = null;
+  } else if (!isInitialLoadDone && isQueryLoading) {
+    contentState = 'loading';
+  } else if (isInitialLoadDone && allNotes.length > 0) {
+    contentState = 'notes';
+  } else if (isInitialLoadDone) {
+    contentState = 'empty';
   }
 
-  useEffect(() => {
-    if (
-      isExpanded &&
-      item.type === 'layout' &&
-      allNotes.length === 0 &&
-      !isLoading
-    ) {
-      loadPage(1);
-    }
-  }, [isExpanded, item.id, allNotes.length, isLoading]);
-
   return (
-    <AnimatePresence>
-      {isExpanded && item.type === 'layout' && (
-        <>
-          {(isLoading || isQueryLoading) && currentPage === 1 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className='mt-2 ml-6 text-sm text-gray-500'
-            >
-              Загрузка заметок...
-            </motion.div>
-          )}
+    <AnimatePresence mode='wait'>
+      {contentState === 'loading' && (
+        <motion.div
+          key='loading'
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className='mt-2 ml-6 overflow-hidden text-sm text-gray-500'
+        >
+          {t('fileTree:loading')}
+        </motion.div>
+      )}
 
-          {allNotes.length > 0 && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className='overflow-hidden'
-            >
-              {allNotes.map(note => (
-                <div key={note.id}>
-                  {renderChild?.(
-                    {
-                      id: note.id,
-                      type: 'note' as const,
-                      title: note.title,
-                      parentId: item.id,
-                      createdAt: note.createdAt,
-                      updatedAt: note.updatedAt,
-                      note,
-                    },
-                    level + 1
-                  )}
-                </div>
-              ))}
-              {hasMore && (
-                <div className='mt-1 ml-4'>
-                  <button
-                    onClick={() => loadPage(currentPage + 1)}
-                    disabled={isLoading}
-                    className='text-primary hover:text-primary-dark rounded px-2 py-1 text-sm transition-colors disabled:opacity-50'
-                  >
-                    {isLoading && currentPage > 1
-                      ? 'Загрузка...'
-                      : 'Загрузить ещё...'}
-                  </button>
-                </div>
+      {contentState === 'notes' && (
+        <motion.div
+          key='notes'
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className='overflow-hidden'
+        >
+          {allNotes.map(note => (
+            <div key={note.id}>
+              {renderChild?.(
+                {
+                  id: note.id,
+                  type: 'note',
+                  title: note.title,
+                  parentId: item.id,
+                  createdAt: note.createdAt,
+                  updatedAt: note.updatedAt,
+                  note,
+                },
+                level + 1
               )}
-            </motion.div>
+            </div>
+          ))}
+          {hasMore && (
+            <div className='mt-1 ml-4'>
+              <button
+                onClick={() => loadMore(currentPage + 1)}
+                disabled={isLoadingMore}
+                className='text-primary hover:text-primary-dark rounded px-2 py-1 text-sm transition-colors disabled:opacity-50'
+              >
+                {isLoadingMore
+                  ? t('fileTree:loading')
+                  : t('fileTree:uploadMore')}
+              </button>
+            </div>
           )}
-        </>
+        </motion.div>
+      )}
+
+      {contentState === 'empty' && (
+        <motion.div
+          key='empty'
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className='mt-2 ml-6 overflow-hidden text-sm text-gray-500'
+        >
+          {t('fileTree:folderEmpty')}
+        </motion.div>
       )}
     </AnimatePresence>
   );

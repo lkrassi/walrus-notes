@@ -36,7 +36,20 @@ export type Note = {
   updatedAt: string;
 };
 
-export type GetNotesResponse = Note[];
+export type GetNotesResponse = {
+  data: Note[];
+  pagination: {
+    page: number;
+    perPage: number;
+    pages: number;
+  };
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+};
 
 export type UpdateNoteResponse = string;
 
