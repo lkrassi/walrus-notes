@@ -4,8 +4,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-
-
 body {
   @apply box-border;
   font-family: 'PT Mono', monospace;
@@ -20,6 +18,30 @@ textarea {
 
 button {
   @apply cursor-pointer;
+}
+
+h1 {
+  @apply text-2xl leading-tight font-bold max-sm:text-xl md:text-3xl lg:text-4xl;
+}
+
+h2 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h3 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h4 {
+  @apply text-xl leading-relaxed font-medium max-sm:text-base md:text-2xl lg:text-3xl;
+}
+
+h5 {
+  @apply text-lg leading-relaxed font-medium max-sm:text-base md:text-xl lg:text-2xl;
+}
+
+h6 {
+  @apply text-base leading-relaxed font-medium max-sm:text-sm md:text-lg lg:text-xl;
 }
 
 @theme {
@@ -66,4 +88,32 @@ button {
 
 .bg-gradient {
   @apply bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
+}
+
+.walrus-scrollbar::-webkit-scrollbar {
+  width: 20px;
+}
+
+.walrus-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.walrus-scrollbar::-webkit-scrollbar-thumb {
+  background-image: url('../../assets/tusk.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 70px;
+  border-radius: 8px;
+}
+
+.dark .walrus-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.walrus-scrollbar::-webkit-scrollbar-thumb {
+  background-image: url('../../assets/tusk.png');
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%; /* Растянуть на всю высоту бегунка */
+  border-radius: 8px;
 }

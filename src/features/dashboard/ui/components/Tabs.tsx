@@ -1,20 +1,6 @@
 import { FileText, Folder, X } from 'lucide-react';
 import { useState } from 'react';
-import type { FileTreeItem } from 'widgets/hooks';
-
-interface Tab {
-  id: string;
-  item: FileTreeItem;
-  isActive: boolean;
-}
-
-interface TabsProps {
-  tabs: Tab[];
-  onTabClick: (tabId: string) => void;
-  onTabClose: (tabId: string) => void;
-  onTabReorder?: (tabs: Tab[]) => void;
-  getItemPath?: (item: FileTreeItem) => string;
-}
+import type { TabsProps } from '../../model/types/tabsProps';
 
 export const Tabs = ({
   tabs,

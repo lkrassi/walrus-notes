@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { checkAuth } from 'shared/api/checkAuth';
 import type { FileTreeItem } from 'widgets/hooks';
-import { useFileTree } from 'widgets/hooks';
+import { useFileTree, useLocalStorageString } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
@@ -28,9 +28,10 @@ export const DashBoard = () => {
   >([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
-  const userId = checkAuth() ? localStorage.getItem('userId') : null;
-  const { data: userProfileResponse } = useGetUserProfileQuery(userId || '', {
-    skip: !userId,
+  const [userId] = useLocalStorageString('userId', '');
+  const hasAuth = checkAuth();
+  const { data: userProfileResponse } = useGetUserProfileQuery(userId, {
+    skip: !hasAuth || !userId,
   });
 
   useEffect(() => {

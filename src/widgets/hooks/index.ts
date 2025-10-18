@@ -6,3 +6,6 @@ export { useLocalization } from './useLocalization';
 export { useModal } from './useModal';
 export { useNotifications } from './useNotifications';
 export { useTheme } from './useTheme';
+export { useDeviceType, useIsMobile, useIsTablet, useIsDesktop } from './useDeviceType';
+export { useDebounce, useDebouncedCallback } from './useDebounce';
+export { useLocalStorage, useLocalStorageString, useLocalStorageNumber, useLocalStorageBoolean, useLocalStorageObject } from './useLocalStorage';

@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useLocalization } from '../../../hooks';
+import { useLocalization, useIsMobile } from '../../../hooks';
 
 type FileTreeItemHeaderProps = {
   item: FileTreeItemType;
@@ -31,6 +31,7 @@ export const FileTreeItemHeader = ({
   onDeleteNote,
 }: FileTreeItemHeaderProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
   const paddingLeft = 20 + level * 16;
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -113,11 +114,13 @@ export const FileTreeItemHeader = ({
         {item.type === 'layout' && (
           <button
             onClick={handleCreateNote}
-            className={`transition-opacity duration-150 max-md:opacity-100 ${
-              isSelected
-                ? 'text-white hover:text-gray-200'
-                : 'text-gray-400 hover:text-gray-600 max-md:text-gray-600'
-            } ${window.innerWidth >= 768 ? 'opacity-0 group-hover:opacity-100' : ''}`}
+            className={`transition-opacity duration-150 ${
+              isMobile
+                ? 'opacity-100 text-gray-600'
+                : `opacity-0 group-hover:opacity-100 ${
+                    isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                  }`
+            }`}
             title={t('fileTree:createNote')}
           >
             <Plus className='h-4 w-4' />
@@ -127,8 +130,8 @@ export const FileTreeItemHeader = ({
         {item.type === 'note' && (
           <button
             onClick={handleDeleteNote}
-            className={`transition-opacity duration-150 max-md:opacity-100 ${
-              window.innerWidth >= 768 ? (isHovered ? 'opacity-100' : 'opacity-0') : ''
+            className={`transition-opacity duration-150 ${
+              isMobile ? 'opacity-100' : isHovered ? 'opacity-100' : 'opacity-0'
             }`}
             title={t('common:deleteNote.deleteBtnTitle')}
           >

@@ -58,7 +58,6 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         className={`relative w-full ${sizeClass} dark:bg-dark-bg border-border dark:border-dark-border animate-in fade-in-0 zoom-in-95 max-h-[90vh] transform overflow-hidden rounded-xl border bg-white shadow-2xl transition-all duration-300 ease-out ${options.className || ''} `}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
         {(options.title || options.showCloseButton) && (
           <div className='border-border dark:border-dark-border flex items-center justify-between border-b p-6'>
             {options.title && (
@@ -90,7 +89,6 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
           </div>
         )}
 
-        {/* Content */}
         <div className='max-h-[calc(90vh-120px)] overflow-y-auto'>
           {content}
         </div>

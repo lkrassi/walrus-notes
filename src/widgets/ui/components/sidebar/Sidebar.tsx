@@ -3,7 +3,7 @@ import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, useState, type Ref } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Note } from 'shared/model/types/layouts';
-import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
+import { useFileTree, useLocalization, useSidebar, useDebounce } from 'widgets/hooks';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { FileTree } from '../fileTree';
 import { DeleteNoteModal, useModalContext } from '../modal';
@@ -27,6 +27,7 @@ const SidebarComponent = (
   }>();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const { openModal } = useModalContext();
   const {
@@ -135,8 +136,9 @@ const SidebarComponent = (
           <div className='mt-3'>
             <div data-tour='search'>
               <SearchInput
-                searchQuery={searchQuery}
+                searchQuery={debouncedSearchQuery}
                 onSearchChange={setSearchQuery}
+                debounceDelay={300}
               />
             </div>
           </div>

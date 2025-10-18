@@ -13,7 +13,7 @@ export const PublicHeader = () => {
     <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b max-sm:py-5 sm:flex-row sm:items-center sm:justify-between sm:px-5'>
       <Link
         to='/'
-        className='flex items-center gap-2 max-md:flex-col'
+        className='flex items-center gap-2 max-sm:flex-col'
         aria-label={t('common:header.goToHomepage')}
       >
         <img

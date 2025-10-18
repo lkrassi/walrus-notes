@@ -1,21 +1,30 @@
+import React from 'react';
 import { Search } from 'lucide-react';
 import { Input } from 'shared';
-import { useLocalization } from 'widgets/hooks';
+import { useLocalization, useDebounce } from 'widgets/hooks';
 
 interface SearchInputProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  debounceDelay?: number;
 }
 
 export const SearchInput = ({
   searchQuery,
   onSearchChange,
+  debounceDelay = 300,
 }: SearchInputProps) => {
   const { t } = useLocalization();
+  const debouncedSearchQuery = useDebounce(searchQuery, debounceDelay);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSearchChange(e.target.value);
   };
+
+  // Возвращаем debounced значение для использования в родительском компоненте
+  React.useEffect(() => {
+    // Можно добавить дополнительную логику для debounced поиска
+  }, [debouncedSearchQuery]);
 
   return (
     <div className='relative'>

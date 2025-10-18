@@ -1,13 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useAppDispatch } from 'widgets/hooks/redux';
 import { useChangeProfilePictureMutation } from 'widgets/model/stores/api';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 export const ChangeProfilePictureForm: React.FC = () => {
   const { t } = useLocalization();
-  const dispatch = useAppDispatch();
   const { closeModal } = useModalContext();
   const { showSuccess, showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
