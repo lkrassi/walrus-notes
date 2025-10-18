@@ -11,10 +11,11 @@ import { SearchInput } from './SearchInput';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;
+  selectedItemId?: string;
 };
 
 const SidebarComponent = (
-  { onItemSelect }: SidebarProps,
+  { onItemSelect, selectedItemId }: SidebarProps,
   ref: Ref<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>
@@ -39,7 +40,7 @@ const SidebarComponent = (
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }));
 
-  const selectedItemId = noteId || layoutId;
+  const currentSelectedItemId = selectedItemId || noteId || layoutId;
 
   const handleCreateLayout = () => {
     openModal(<CreateLayoutForm />, {
@@ -148,7 +149,7 @@ const SidebarComponent = (
             updateNoteInTree={updateNoteInTree}
             addNoteToTree={addNoteToTree}
             onItemSelect={handleItemSelect}
-            selectedItemId={selectedItemId}
+            selectedItemId={currentSelectedItemId}
             searchQuery={searchQuery}
             onDeleteNote={handleDeleteNote}
           />

@@ -1,18 +1,16 @@
-import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { checkAuth } from 'shared/api/checkAuth';
-import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useFileTree } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
-import { PrivateHeader, Sidebar } from 'widgets/ui';
+import { Sidebar } from 'widgets/ui';
+import { DashboardContent } from './DashboardContent';
+import { DashboardHeader } from './DashboardHeader';
 
 export const DashBoard = () => {
-  const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { layoutId, noteId } = useParams<{
     layoutId?: string;
@@ -20,9 +18,15 @@ export const DashBoard = () => {
   }>();
   const { fileTree } = useFileTree();
   const sidebarRef = useRef<{
-    updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
+    updateNoteInTree: (
+      noteId: string,
+      updates: Partial<import('shared/model/types/layouts').Note>
+    ) => void;
   }>(null);
-  const [selectedItem, setSelectedItem] = useState<FileTreeItem | null>(null);
+  const [openTabs, setOpenTabs] = useState<
+    Array<{ id: string; item: FileTreeItem; isActive: boolean }>
+  >([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
   const userId = checkAuth() ? localStorage.getItem('userId') : null;
   const { data: userProfileResponse } = useGetUserProfileQuery(userId || '', {
@@ -57,113 +61,161 @@ export const DashBoard = () => {
       if (targetId) {
         const foundItem = findItemById(fileTree, targetId);
         if (foundItem) {
-          setSelectedItem(foundItem);
+          openTab(foundItem);
         }
       }
-    } else {
-      setSelectedItem(null);
     }
   }, [layoutId, noteId, fileTree]);
 
-  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
-    setSelectedItem(prev => {
-      if (prev && prev.id === noteId && prev.type === 'note' && prev.note) {
-        return {
-          ...prev,
-          note: { ...prev.note, ...updates },
-          title: updates.title || prev.title,
-        };
+  const openTab = (item: FileTreeItem) => {
+    setOpenTabs(prev => {
+      const existingTab = prev.find(tab => tab.id === item.id);
+      if (existingTab) {
+        // Если вкладка уже открыта, просто активируем её
+        return prev.map(tab => ({
+          ...tab,
+          isActive: tab.id === item.id,
+        }));
+      } else {
+        // Добавляем новую вкладку
+        return [
+          ...prev.map(tab => ({ ...tab, isActive: false })),
+          { id: item.id, item, isActive: true },
+        ];
       }
-      return prev;
     });
+    setActiveTabId(item.id);
+  };
+
+  const closeTab = (tabId: string) => {
+    setOpenTabs(prev => {
+      const newTabs = prev.filter(tab => tab.id !== tabId);
+      if (activeTabId === tabId && newTabs.length > 0) {
+        // Если закрываем активную вкладку, активируем последнюю
+        newTabs[newTabs.length - 1].isActive = true;
+        setActiveTabId(newTabs[newTabs.length - 1].id);
+      }
+      return newTabs;
+    });
+  };
+
+  const switchTab = (tabId: string) => {
+    setOpenTabs(prev =>
+      prev.map(tab => ({
+        ...tab,
+        isActive: tab.id === tabId,
+      }))
+    );
+    setActiveTabId(tabId);
+
+    // Синхронизируем URL с активной вкладкой
+    const activeTab = openTabs.find(tab => tab.id === tabId);
+    if (activeTab) {
+      if (activeTab.item.type === 'note') {
+        window.history.replaceState(
+          null,
+          '',
+          `/dashboard/${activeTab.item.parentId}/${activeTab.item.id}`
+        );
+      } else if (activeTab.item.type === 'layout') {
+        window.history.replaceState(
+          null,
+          '',
+          `/dashboard/${activeTab.item.id}`
+        );
+      }
+    }
+  };
+
+  const reorderTabs = (
+    newTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>
+  ) => {
+    setOpenTabs(newTabs);
+  };
+
+  const getItemPath = (item: FileTreeItem): string => {
+    const findPath = (
+      items: FileTreeItem[],
+      targetId: string,
+      currentPath: string[] = []
+    ): string[] | null => {
+      for (const currentItem of items) {
+        if (currentItem.id === targetId) {
+          return [...currentPath, currentItem.title];
+        }
+        if (currentItem.children) {
+          const found = findPath(currentItem.children, targetId, [
+            ...currentPath,
+            currentItem.title,
+          ]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    if (item.type === 'note' && item.parentId) {
+      const path = findPath(fileTree, item.parentId);
+      return path ? path.join(' / ') : '';
+    }
+    return '';
+  };
+
+  const handleNoteUpdated = (
+    noteId: string,
+    updates: Partial<import('shared/model/types/layouts').Note>
+  ) => {
+    setOpenTabs(prev =>
+      prev.map(tab => {
+        if (tab.id === noteId && tab.item.type === 'note' && tab.item.note) {
+          return {
+            ...tab,
+            item: {
+              ...tab.item,
+              note: { ...tab.item.note, ...updates },
+              title: updates.title || tab.item.title,
+            },
+          };
+        }
+        return tab;
+      })
+    );
 
     sidebarRef.current?.updateNoteInTree(noteId, updates);
   };
 
   const handleItemSelect = (item: FileTreeItem) => {
-    setSelectedItem(item);
-  };
-
-  const renderContent = () => {
-    if (!selectedItem) {
-      return (
-        <div className='flex h-full items-center justify-center'>
-          <div className='text-center'>
-            <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
-              <svg viewBox='0 0 24 24' fill='currentColor'>
-                <path d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' />
-              </svg>
-            </div>
-            <h3 className='text-text dark:text-dark-text mb-2 text-xl font-semibold'>
-              {t('dashboard:selectFileOrFolder')}
-            </h3>
-            <p className='text-secondary dark:text-dark-secondary'>
-              {t('dashboard:selectItemDescription')}
-            </p>
-          </div>
-        </div>
+    openTab(item);
+    // Обновляем URL для синхронизации с деревом
+    if (item.type === 'note') {
+      window.history.replaceState(
+        null,
+        '',
+        `/dashboard/${item.parentId}/${item.id}`
       );
+    } else if (item.type === 'layout') {
+      window.history.replaceState(null, '', `/dashboard/${item.id}`);
     }
-
-    if (selectedItem.type === 'note') {
-      const note = selectedItem.note;
-      if (!note) {
-        return (
-          <div className='flex h-full items-center justify-center'>
-            <div className='text-center'>
-              <p className='text-secondary dark:text-dark-secondary'>
-                {t('dashboard:noteLoadError')}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      return (
-        <NoteViewer
-          note={note}
-          onNoteUpdated={updatedNote =>
-            handleNoteUpdated(updatedNote.id, {
-              title: updatedNote.title,
-              payload: updatedNote.payload,
-            })
-          }
-          onNoteDeleted={() => {
-            setSelectedItem(null);
-            if (layoutId) {
-            } else {
-              window.history.replaceState(null, '', '/dashboard');
-            }
-          }}
-        />
-      );
-    }
-
-    return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-center'>
-          <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
-            <svg viewBox='0 0 24 24' fill='currentColor'>
-              <path d='M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z' />
-            </svg>
-          </div>
-          <h3 className='text-text dark:text-dark-text mb-2 text-xl font-semibold'>
-            {selectedItem.title}
-          </h3>
-          <p className='text-secondary dark:text-dark-secondary'>
-            {t('dashboard:layoutFolderDescription')}
-          </p>
-        </div>
-      </div>
-    );
   };
 
   return (
     <div className='flex h-screen flex-col'>
-      <PrivateHeader />
+      <DashboardHeader />
       <div className='flex min-h-0 flex-1 max-md:flex-col'>
-        <Sidebar ref={sidebarRef} onItemSelect={handleItemSelect} />
-        <main className='flex min-h-0 min-w-0 flex-1'>{renderContent()}</main>
+        <Sidebar
+          ref={sidebarRef}
+          onItemSelect={handleItemSelect}
+          selectedItemId={activeTabId || undefined}
+        />
+        <DashboardContent
+          openTabs={openTabs}
+          activeTabId={activeTabId}
+          onTabClick={switchTab}
+          onTabClose={closeTab}
+          onTabReorder={reorderTabs}
+          getItemPath={getItemPath}
+          onNoteUpdated={handleNoteUpdated}
+        />
       </div>
     </div>
   );

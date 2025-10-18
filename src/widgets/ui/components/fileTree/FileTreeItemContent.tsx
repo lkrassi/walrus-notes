@@ -88,15 +88,13 @@ export const FileTreeItemContent = ({
       setLoadedPages(prev => new Set([...prev, page]));
       setHasMore(more);
       setCurrentPage(page);
-    } catch (err) {
-      console.error('Error loading more notes:', err);
+    } catch {
       setHasMore(false);
     } finally {
       setIsLoadingMore(false);
     }
   };
 
-  // Получаем все заметки из загруженных страниц
   const apiState = useAppSelector(state => state.api);
   const allNotes: Note[] = [];
   loadedPages.forEach(page => {

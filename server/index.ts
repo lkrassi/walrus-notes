@@ -39,12 +39,16 @@ app.get('*', (_req: Request, res: Response) => {
 });
 
 app.use((err: Error, _req: Request, res: Response) => {
+  console.error('Server error:', err);
   res.status(500).json({
     status: 'ERROR',
     message: 'Internal Server Error',
     timestamp: new Date().toISOString(),
   });
 });
-app.listen(PORT, '0.0.0.0', () => {});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 export default app;
