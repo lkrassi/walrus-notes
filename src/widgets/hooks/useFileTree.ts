@@ -6,13 +6,14 @@ import { useNotifications } from './useNotifications';
 
 export type FileTreeItem = {
   id: string;
-  type: 'layout' | 'note';
+  type: 'layout' | 'note' | 'graph';
   title: string;
   children?: FileTreeItem[];
   parentId?: string;
   createdAt?: string;
   updatedAt?: string;
   note?: Note;
+  layoutId?: string;
 };
 
 export const useFileTree = () => {

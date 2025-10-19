@@ -15,6 +15,7 @@ interface FileTreeProps {
   onItemSelect?: (item: FileTreeItemType) => void;
   selectedItemId?: string;
   searchQuery?: string;
+  onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
 }
 
@@ -25,6 +26,7 @@ export const FileTree = ({
   onItemSelect,
   selectedItemId,
   searchQuery,
+  onOpenGraph,
   onDeleteNote,
 }: Omit<FileTreeProps, 'fileTree' | 'onNotesLoaded' | 'loadMoreNotes'>) => {
   const { t } = useLocalization();
@@ -117,6 +119,7 @@ export const FileTree = ({
           hasChildren={hasChildren}
           onItemClick={handleItemClick}
           onCreateNote={handleCreateNote}
+          onOpenGraph={onOpenGraph}
           onDeleteNote={onDeleteNote}
           renderChild={renderTreeItem}
         />

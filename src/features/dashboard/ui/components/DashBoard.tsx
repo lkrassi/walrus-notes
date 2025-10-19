@@ -44,6 +44,17 @@ export const DashBoard = () => {
     updateUrlForItem(item);
   };
 
+  const handleOpenGraph = (layoutId: string) => {
+    const graphItem: FileTreeItem = {
+      id: `graph-${layoutId}`,
+      type: 'graph',
+      title: 'Граф заметок',
+      layoutId,
+    };
+    openTab(graphItem);
+    updateUrlForItem(graphItem);
+  };
+
   const getItemPathWrapper = (item: FileTreeItem): string => {
     return getItemPath(item, fileTree);
   };

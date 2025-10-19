@@ -73,7 +73,19 @@ const SidebarComponent = (
       navigate(`/dashboard/${item.parentId}/${item.id}`);
     } else if (item.type === 'layout') {
       navigate(`/dashboard/${item.id}`);
+    } else if (item.type === 'graph') {
+      navigate(`/dashboard/graph/${item.layoutId}`);
     }
+  };
+
+  const handleOpenGraph = (layoutId: string) => {
+    onItemSelect?.({
+      id: `graph-${layoutId}`,
+      type: 'graph',
+      title: 'Граф заметок',
+      layoutId,
+    });
+    navigate(`/dashboard/graph/${layoutId}`);
   };
 
   return (
@@ -153,6 +165,7 @@ const SidebarComponent = (
             onItemSelect={handleItemSelect}
             selectedItemId={currentSelectedItemId}
             searchQuery={searchQuery}
+            onOpenGraph={handleOpenGraph}
             onDeleteNote={handleDeleteNote}
           />
         </div>

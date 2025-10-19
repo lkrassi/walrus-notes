@@ -9,3 +9,6 @@ export * from './components/notifications/Notification';
 export * from './components/notifications/NotificationsContainer';
 export * from './components/sidebar';
 export * from './components/theme/ThemeSwitcher';
+export { DragAndDropProvider } from './components/DragAndDropProvider';
+export { Draggable } from './components/Draggable';
+export { DropZone } from './components/DropZone';

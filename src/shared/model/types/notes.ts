@@ -1,61 +1,29 @@
-import type { BaseResponse } from 'shared/model/types/api';
+import type { Note } from './layouts';
 
-export type CreateNoteRequest = {
+export interface NotePosition {
   layoutId: string;
-  payload: string;
-  title: string;
-};
-
-export type DeleteNoteRequest = {
   noteId: string;
-};
+  xPos: number;
+  yPos: number;
+}
 
-export type GetNotesRequest = {
-  layoutId: string;
-  page: number;
-};
+export interface NoteWithPosition extends Note {
+  xPos?: number;
+  yPos?: number;
+}
 
-export type UpdateNoteRequest = {
-  noteId: string;
-  payload?: string;
-  title?: string;
-};
-
-export type CreateNoteResponse = {
+export interface GraphNode {
   id: string;
-};
+  type: 'note';
+  position: { x: number; y: number };
+  data: {
+    note: Note;
+  };
+}
 
-export type DeleteNoteResponse = string;
-
-export type Note = {
+export interface GraphEdge {
   id: string;
-  layoutId: string;
-  title: string;
-  payload: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type GetNotesResponse = {
-  data: Note[];
-  pagination: {
-    page: number;
-    perPage: number;
-    pages: number;
-  };
-  meta: {
-    code: string;
-    message: string;
-    error: string;
-    requestId: string;
-  };
-};
-
-export type UpdateNoteResponse = string;
-
-export type CreateNoteApiResponse = BaseResponse<CreateNoteResponse>;
-export type DeleteNoteApiResponse = BaseResponse<DeleteNoteResponse>;
-export type GetNotesApiResponse = BaseResponse<GetNotesResponse>;
-export type UpdateNoteApiResponse = BaseResponse<UpdateNoteResponse>;
-
-export type GetNotesWithPaginationApiResponse = BaseResponse<GetNotesResponse>;
+  source: string;
+  target: string;
+  type: 'default';
+}

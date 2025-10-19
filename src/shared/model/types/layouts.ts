@@ -22,6 +22,10 @@ export type Note = {
   payload: string;
   createdAt: string;
   updatedAt: string;
+  position?: {
+    xPos: number;
+    yPos: number;
+  };
 };
 
 export type GetMyLayoutsResponse = {

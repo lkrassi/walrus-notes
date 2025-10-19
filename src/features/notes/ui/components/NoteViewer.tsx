@@ -7,6 +7,7 @@ import { useUpdateNoteMutation } from 'widgets/model/stores/api';
 
 interface NoteViewerProps {
   note: Note;
+  layoutId?: string;
   onNoteUpdated?: (note: Note) => void;
   onNoteDeleted?: (noteId: string) => void;
 }
@@ -107,14 +108,16 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
               </Button>
             </>
           ) : (
-            <Button
-              onClick={handleEdit}
-              className='bg-btn-bg px-3 py-2 hover:opacity-90'
-              title={t('notes:edit')}
-              variant='default'
-            >
-              <Edit3 className='h-4 w-4' />
-            </Button>
+            <>
+              <Button
+                onClick={handleEdit}
+                className='bg-btn-bg px-3 py-2 hover:opacity-90'
+                title={t('notes:edit')}
+                variant='default'
+              >
+                <Edit3 className='h-4 w-4' />
+              </Button>
+            </>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
+import { NotesGraph } from 'features/notes/ui/components/NotesGraph';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -68,6 +69,7 @@ export const DashboardContent = ({
       return (
         <NoteViewer
           note={note}
+          layoutId={activeTab.item.parentId}
           onNoteUpdated={updatedNote =>
             onNoteUpdated(updatedNote.id, {
               title: updatedNote.title,
@@ -81,6 +83,12 @@ export const DashboardContent = ({
             }
           }}
         />
+      );
+    }
+
+    if (activeTab.item.type === 'graph') {
+      return (
+        <NotesGraph layoutId={activeTab.item.layoutId!} />
       );
     }
 

@@ -4,6 +4,7 @@ import {
   FileText,
   Folder,
   FolderOpen,
+  Network,
   Plus,
   Trash2,
 } from 'lucide-react';
@@ -18,6 +19,7 @@ type FileTreeItemHeaderProps = {
   isSelected: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onCreateNote: (layoutId: string) => void;
+  onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
 };
 
@@ -28,6 +30,7 @@ export const FileTreeItemHeader = ({
   isSelected,
   onItemClick,
   onCreateNote,
+  onOpenGraph,
   onDeleteNote,
 }: FileTreeItemHeaderProps) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -60,6 +63,11 @@ export const FileTreeItemHeader = ({
   const handleCreateNote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onCreateNote(item.id);
+  };
+
+  const handleOpenGraph = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onOpenGraph?.(item.id);
   };
 
   const handleDeleteNote = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -112,19 +120,34 @@ export const FileTreeItemHeader = ({
 
       <div className='flex items-center gap-1'>
         {item.type === 'layout' && (
-          <button
-            onClick={handleCreateNote}
-            className={`transition-opacity duration-150 ${
-              isMobile
-                ? 'opacity-100 text-gray-600'
-                : `opacity-0 group-hover:opacity-100 ${
-                    isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
-                  }`
-            }`}
-            title={t('fileTree:createNote')}
-          >
-            <Plus className='h-4 w-4' />
-          </button>
+          <>
+            <button
+              onClick={handleOpenGraph}
+              className={`transition-opacity duration-150 ${
+                isMobile
+                  ? 'opacity-100 text-gray-600'
+                  : `opacity-0 group-hover:opacity-100 ${
+                      isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                    }`
+              }`}
+              title='Открыть граф заметок'
+            >
+              <Network className='h-4 w-4' />
+            </button>
+            <button
+              onClick={handleCreateNote}
+              className={`transition-opacity duration-150 ${
+                isMobile
+                  ? 'opacity-100 text-gray-600'
+                  : `opacity-0 group-hover:opacity-100 ${
+                      isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                    }`
+              }`}
+              title={t('fileTree:createNote')}
+            >
+              <Plus className='h-4 w-4' />
+            </button>
+          </>
         )}
 
         {item.type === 'note' && (

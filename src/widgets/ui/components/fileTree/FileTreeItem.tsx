@@ -10,6 +10,7 @@ type FileTreeItemProps = {
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onCreateNote: (layoutId: string) => void;
+  onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
   onNotesLoaded?: (layoutId: string, notes: any[]) => void;
@@ -22,6 +23,7 @@ export const FileTreeItem = ({
   isSelected,
   onItemClick,
   onCreateNote,
+  onOpenGraph,
   onDeleteNote,
   renderChild,
   onNotesLoaded,
@@ -35,6 +37,7 @@ export const FileTreeItem = ({
         isSelected={isSelected}
         onItemClick={onItemClick}
         onCreateNote={onCreateNote}
+        onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}
       />
       <FileTreeItemContent

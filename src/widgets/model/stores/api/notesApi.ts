@@ -1,4 +1,5 @@
 import type { Note } from 'shared/model/types/layouts';
+import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
 
 interface GetNotesRequest {
@@ -72,6 +73,61 @@ interface DeleteNoteResponse {
   };
 }
 
+interface GetPosedNotesRequest {
+  layoutId: string;
+}
+
+interface GetPosedNotesResponse {
+  data: Note[];
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
+interface GetUnposedNotesRequest {
+  layoutId: string;
+}
+
+interface GetUnposedNotesResponse {
+  data: Note[];
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
+interface UpdateNotePositionRequest extends NotePosition {}
+
+interface UpdateNotePositionResponse {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
 export const notesApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
@@ -102,31 +158,41 @@ export const notesApi = apiSlice.injectEndpoints({
       ],
       onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
-          notesApi.util.updateQueryData('getNotes', { layoutId, page: 1 }, (draft) => {
-            const tempNote: Note = {
-              id: `temp-${Date.now()}`,
-              layoutId,
-              title: 'Новая заметка',
-              payload: '',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            };
-            draft.data.unshift(tempNote);
-          })
+          notesApi.util.updateQueryData(
+            'getNotes',
+            { layoutId, page: 1 },
+            draft => {
+              const tempNote: Note = {
+                id: `temp-${Date.now()}`,
+                layoutId,
+                title: 'Новая заметка',
+                payload: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              };
+              draft.data.unshift(tempNote);
+            }
+          )
         );
 
         try {
           const { data: createdNote } = await queryFulfilled;
 
           dispatch(
-            notesApi.util.updateQueryData('getNotes', { layoutId, page: 1 }, (draft) => {
-              const tempIndex = draft.data.findIndex(note => note.id.startsWith('temp-'));
-              if (tempIndex !== -1) {
-                draft.data[tempIndex] = createdNote.data;
-              } else {
-                draft.data.unshift(createdNote.data);
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId, page: 1 },
+              draft => {
+                const tempIndex = draft.data.findIndex(note =>
+                  note.id.startsWith('temp-')
+                );
+                if (tempIndex !== -1) {
+                  draft.data[tempIndex] = createdNote.data;
+                } else {
+                  draft.data.unshift(createdNote.data);
+                }
               }
-            })
+            )
           );
         } catch {
           patchResult.undo();
@@ -154,6 +220,48 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Notes'],
     }),
+
+    getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
+      query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
+      providesTags: (result, error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        'Notes',
+      ],
+      extraOptions: {
+        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
+      },
+    }),
+
+    getUnposedNotes: builder.query<
+      GetUnposedNotesResponse,
+      GetUnposedNotesRequest
+    >({
+      query: ({ layoutId }) =>
+        `/notes/layout/graph/unposed?layoutId=${layoutId}`,
+      providesTags: (result, error, arg) => [
+        { type: 'Notes', id: `unposed-${arg.layoutId}` },
+        'Notes',
+      ],
+      extraOptions: {
+        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
+      },
+    }),
+
+    updateNotePosition: builder.mutation<
+      UpdateNotePositionResponse,
+      UpdateNotePositionRequest
+    >({
+      query: body => ({
+        url: '/notes/layout/graph/note',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: `unposed-${arg.layoutId}` },
+        'Notes',
+      ],
+    }),
   }),
 });
 
@@ -163,4 +271,7 @@ export const {
   useCreateNoteMutation,
   useUpdateNoteMutation,
   useDeleteNoteMutation,
+  useGetPosedNotesQuery,
+  useGetUnposedNotesQuery,
+  useUpdateNotePositionMutation,
 } = notesApi;

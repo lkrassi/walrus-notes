@@ -7,7 +7,7 @@ export const FloatingIcons: React.FC = () => {
   const isMobile = useIsMobile();
 
   if (isMobile) {
-    return null; // На мобильных устройствах скрываем плавающие иконки для лучшей производительности
+    return null;
   }
 
   return (
