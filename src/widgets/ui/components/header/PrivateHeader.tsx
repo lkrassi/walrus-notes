@@ -10,10 +10,10 @@ export const PrivateHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b sm:flex-row sm:items-center sm:justify-between sm:px-5 max-sm:py-5'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b md:flex-row md:items-center md:justify-between md:px-5 max-md:py-5'>
       <Link
         to='/dashboard'
-        className='flex flex-col items-center gap-2 sm:flex-row sm:gap-3'
+        className='flex flex-col items-center gap-2 md:flex-row md:gap-3'
         aria-label={t('common:header.goToHomepage')}
       >
         <img
@@ -32,14 +32,14 @@ export const PrivateHeader = () => {
         </div>
       </Link>
 
-      <div className='flex gap-x-2 max-sm:flex-col'>
-        <div className='flex gap-x-2 max-sm:justify-center'>
+      <div className='flex gap-x-2 max-md:flex-col'>
+        <div className='flex gap-x-2 max-md:justify-center'>
           <LogoutButton />
           <ThemeSwitcher />
           <LanguageSwitcher />
         </div>
 
-        <div className='flex w-full flex-col items-stretch gap-2 max-sm:mt-5 max-sm:items-center sm:w-auto sm:flex-row sm:gap-x-2'>
+        <div className='flex w-full flex-col items-stretch gap-2 max-md:mt-5 max-md:items-center md:w-auto md:flex-row md:gap-x-2'>
           <ProfileButton />
         </div>
       </div>

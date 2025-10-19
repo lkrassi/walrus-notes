@@ -4,10 +4,10 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { startLoading, stopLoading } from '../slices/loaderSlice';
+import { startLoading, stopLoading, startLoadingByKey, stopLoadingByKey } from '../slices/loaderSlice';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://walrus-notes-1.onrender.com/wn/api/v1',
+  baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
   prepareHeaders: headers => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -23,8 +23,14 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  // Start loading
-  api.dispatch(startLoading());
+  const loadingKey = (extraOptions as any)?.loadingKey;
+
+  if (loadingKey === null) {
+  } else if (loadingKey) {
+    api.dispatch(startLoadingByKey(loadingKey));
+  } else {
+    api.dispatch(startLoading());
+  }
 
   let result = await baseQuery(args, api, extraOptions);
 
@@ -63,8 +69,12 @@ const baseQueryWithReauth: BaseQueryFn<
     }
   }
 
-  // Stop loading
-  api.dispatch(stopLoading());
+  if (loadingKey === null) {
+  } else if (loadingKey) {
+    api.dispatch(stopLoadingByKey(loadingKey));
+  } else {
+    api.dispatch(stopLoading());
+  }
 
   return result;
 };

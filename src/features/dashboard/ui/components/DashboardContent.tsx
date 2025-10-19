@@ -1,15 +1,18 @@
-import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
+import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { FolderEmptyState } from './FolderEmptyState';
 
 interface DashboardContentProps {
   openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
   activeTabId: string | null;
   onTabClick: (tabId: string) => void;
   onTabClose: (tabId: string) => void;
-  onTabReorder: (tabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>) => void;
+  onTabReorder: (
+    tabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>
+  ) => void;
   getItemPath: (item: FileTreeItem) => string;
   onNoteUpdated: (noteId: string, updates: Partial<Note>) => void;
 }
@@ -81,23 +84,7 @@ export const DashboardContent = ({
       );
     }
 
-    return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-center'>
-          <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
-            <svg viewBox='0 0 24 24' fill='currentColor'>
-              <path d='M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z' />
-            </svg>
-          </div>
-          <h3 className='text-text dark:text-dark-text mb-2 text-xl font-semibold'>
-            {activeTab.item.title}
-          </h3>
-          <p className='text-secondary dark:text-dark-secondary'>
-            {t('dashboard:layoutFolderDescription')}
-          </p>
-        </div>
-      </div>
-    );
+    return <FolderEmptyState folderTitle={activeTab.item.title} />;
   };
 
   return (
@@ -111,9 +98,7 @@ export const DashboardContent = ({
           getItemPath={getItemPath}
         />
       )}
-      <div className='flex-1 min-h-0'>
-        {renderContent()}
-      </div>
+      <div className='min-h-0 flex-1'>{renderContent()}</div>
     </main>
   );
 };

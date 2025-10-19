@@ -10,10 +10,10 @@ export const PublicHeader = () => {
   const { t } = useLocalization();
 
   return (
-    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b max-sm:py-5 sm:flex-row sm:items-center sm:justify-between sm:px-5'>
+    <header className='dark:bg-dark-bg border-border dark:border-dark-border flex flex-col items-center gap-4 border-b max-md:py-5 md:flex-row md:items-center md:justify-between md:px-5'>
       <Link
         to='/'
-        className='flex items-center gap-2 max-sm:flex-col'
+        className='flex items-center gap-2 max-md:flex-col'
         aria-label={t('common:header.goToHomepage')}
       >
         <img

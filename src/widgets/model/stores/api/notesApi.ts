@@ -85,6 +85,9 @@ export const notesApi = apiSlice.injectEndpoints({
         })) || []),
         'Notes',
       ],
+      extraOptions: {
+        loadingKey: null,
+      },
     }),
 
     createNote: builder.mutation<CreateNoteResponse, CreateNoteRequest>({
@@ -100,7 +103,6 @@ export const notesApi = apiSlice.injectEndpoints({
       onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
           notesApi.util.updateQueryData('getNotes', { layoutId, page: 1 }, (draft) => {
-            // Оптимистично добавляем временную заметку
             const tempNote: Note = {
               id: `temp-${Date.now()}`,
               layoutId,
@@ -116,20 +118,17 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data: createdNote } = await queryFulfilled;
 
-          // Заменяем временную заметку на реальную
           dispatch(
             notesApi.util.updateQueryData('getNotes', { layoutId, page: 1 }, (draft) => {
               const tempIndex = draft.data.findIndex(note => note.id.startsWith('temp-'));
               if (tempIndex !== -1) {
                 draft.data[tempIndex] = createdNote.data;
               } else {
-                // Если временной заметки нет, добавляем реальную
                 draft.data.unshift(createdNote.data);
               }
             })
           );
         } catch {
-          // Откатываем изменения при ошибке
           patchResult.undo();
         }
       },
