@@ -1,3 +1,4 @@
+import { memo, useCallback, useMemo } from 'react';
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization } from 'widgets/hooks';
@@ -19,7 +20,7 @@ interface FileTreeProps {
   onDeleteNote?: (noteId: string) => void;
 }
 
-export const FileTree = ({
+export const FileTree = memo(({
   expandedItems,
   toggleExpanded,
   addNoteToTree,
@@ -35,7 +36,7 @@ export const FileTree = ({
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
   const accessToken = useAppSelector(state => state.user.accessToken);
 
-  const fileTree = (() => {
+  const fileTree = useMemo(() => {
     if (!layoutsResponse?.data) return [];
 
     return layoutsResponse.data.map(layout => ({
@@ -47,9 +48,9 @@ export const FileTree = ({
       updatedAt: layout.updatedAt,
       isNotesLoaded: false,
     }));
-  })();
+  }, [layoutsResponse?.data]);
 
-  const filterFileTree = (
+  const filterFileTree = useCallback((
     items: FileTreeItemType[],
     query: string
   ): FileTreeItemType[] => {
@@ -78,13 +79,13 @@ export const FileTree = ({
         return null;
       })
       .filter((item): item is FileTreeItemType => item !== null);
-  };
+  }, []);
 
-  const filteredFileTree = (() => {
+  const filteredFileTree = useMemo(() => {
     return searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
-  })();
+  }, [fileTree, searchQuery, filterFileTree]);
 
-  const handleCreateNote = (layoutId: string) => {
+  const handleCreateNote = useCallback((layoutId: string) => {
     openModal(
       <CreateNoteForm
         layoutId={layoutId}
@@ -95,16 +96,16 @@ export const FileTree = ({
         size: 'lg',
       }
     );
-  };
+  }, [openModal, t, addNoteToTree]);
 
-  const handleItemClick = (item: FileTreeItemType) => {
+  const handleItemClick = useCallback((item: FileTreeItemType) => {
     onItemSelect?.(item);
     if (item.type === 'layout') {
       toggleExpanded(item.id);
     }
-  };
+  }, [onItemSelect, toggleExpanded]);
 
-  const renderTreeItem = (item: FileTreeItemType, level: number = 0) => {
+  const renderTreeItem = useCallback((item: FileTreeItemType, level: number = 0) => {
     const isExpanded = expandedItems.has(item.id);
     const isSelected = selectedItemId === item.id;
     const hasChildren = !!(item.children && item.children.length > 0);
@@ -125,7 +126,7 @@ export const FileTree = ({
         />
       </div>
     );
-  };
+  }, [expandedItems, selectedItemId, handleItemClick, handleCreateNote, onOpenGraph, onDeleteNote]);
 
   return (
     <div className='flex h-full flex-col'>
@@ -140,4 +141,4 @@ export const FileTree = ({
       </div>
     </div>
   );
-};
+});

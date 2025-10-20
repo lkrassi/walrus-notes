@@ -79,13 +79,17 @@ const SidebarComponent = (
   };
 
   const handleOpenGraph = (layoutId: string) => {
+    // Найдем название layout для отображения в заголовке графа
+    const layout = fileTree.find(item => item.id === layoutId);
+    const graphTitle = layout ? `Граф: ${layout.title}` : 'Граф заметок';
+
     onItemSelect?.({
       id: `graph-${layoutId}`,
       type: 'graph',
-      title: 'Граф заметок',
+      title: graphTitle,
       layoutId,
     });
-    navigate(`/dashboard/graph/${layoutId}`);
+    // Don't navigate for graph items to avoid URL changes
   };
 
   return (

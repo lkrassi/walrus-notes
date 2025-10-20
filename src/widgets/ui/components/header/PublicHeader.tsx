@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 import logo from '../../../../assets/logo.png';
@@ -6,7 +7,7 @@ import { useLocalization } from 'widgets/hooks/useLocalization';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
-export const PublicHeader = () => {
+export const PublicHeader = memo(() => {
   const { t } = useLocalization();
 
   return (
@@ -37,4 +38,4 @@ export const PublicHeader = () => {
       </div>
     </header>
   );
-};
+});

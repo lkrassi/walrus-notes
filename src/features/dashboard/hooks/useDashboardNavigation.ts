@@ -48,9 +48,10 @@ export const useDashboardNavigation = ({
     }
   }, [layoutId, noteId, fileTree, openTab]);
 
+  // Don't update URL for graph items since they don't have a direct route
   const updateUrlForTab = (tabId: string) => {
     const activeTab = openTabs.find(tab => tab.id === tabId);
-    if (activeTab) {
+    if (activeTab && activeTab.item.type !== 'graph') {
       if (activeTab.item.type === 'note') {
         window.history.replaceState(
           null,
@@ -68,16 +69,19 @@ export const useDashboardNavigation = ({
   };
 
   const updateUrlForItem = (item: FileTreeItem) => {
-    if (item.type === 'note') {
-      window.history.replaceState(
-        null,
-        '',
-        `/dashboard/${item.parentId}/${item.id}`
-      );
-    } else if (item.type === 'layout') {
-      window.history.replaceState(null, '', `/dashboard/${item.id}`);
+    if (item.type !== 'graph') {
+      if (item.type === 'note') {
+        window.history.replaceState(
+          null,
+          '',
+          `/dashboard/${item.parentId}/${item.id}`
+        );
+      } else if (item.type === 'layout') {
+        window.history.replaceState(null, '', `/dashboard/${item.id}`);
+      }
     }
   };
+
 
   return {
     updateUrlForTab,

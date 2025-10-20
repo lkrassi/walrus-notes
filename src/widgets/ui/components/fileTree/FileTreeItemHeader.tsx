@@ -121,19 +121,17 @@ export const FileTreeItemHeader = ({
       <div className='flex items-center gap-1'>
         {item.type === 'layout' && (
           <>
-            <button
-              onClick={handleOpenGraph}
-              className={`transition-opacity duration-150 ${
-                isMobile
-                  ? 'opacity-100 text-gray-600'
-                  : `opacity-0 group-hover:opacity-100 ${
-                      isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
-                    }`
-              }`}
-              title='Открыть граф заметок'
-            >
-              <Network className='h-4 w-4' />
-            </button>
+            {!isMobile && (
+              <button
+                onClick={handleOpenGraph}
+                className={`transition-opacity duration-150 opacity-0 group-hover:opacity-100 ${
+                  isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                }`}
+                title='Открыть граф заметок'
+              >
+                <Network className='h-4 w-4' />
+              </button>
+            )}
             <button
               onClick={handleCreateNote}
               className={`transition-opacity duration-150 ${

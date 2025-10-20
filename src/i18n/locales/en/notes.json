@@ -14,5 +14,9 @@
   "noteContent": "Note content",
   "noteContentPlaceholderTextarea": "Enter note content",
   "creating": "Creating...",
-  "createNote": "Create note"
+  "createNote": "Create note",
+  "folderEmpty": "Folder is empty",
+  "folderEmptyDescription": "The folder \"{layoutTitle}\" has no notes yet. Create the first note to get started.",
+  "graphEmpty": "Notes graph is empty",
+  "graphEmptyDescription": "Add notes to the graph to start visualizing connections between them"
 }

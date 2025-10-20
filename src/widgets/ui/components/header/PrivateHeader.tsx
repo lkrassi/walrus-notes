@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { ProfileButton } from 'features/profile/ui/components/ProfileButton';
 import { Link } from 'react-router-dom';
 import { useLocalization } from 'widgets/hooks';
@@ -6,7 +7,7 @@ import { LanguageSwitcher } from '../LanguageSwitcher';
 import { LogoutButton } from '../logout/LogoutButton';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
-export const PrivateHeader = () => {
+export const PrivateHeader = memo(() => {
   const { t } = useLocalization();
 
   return (
@@ -45,4 +46,4 @@ export const PrivateHeader = () => {
       </div>
     </header>
   );
-};
+});

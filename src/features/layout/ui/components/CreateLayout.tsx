@@ -1,18 +1,19 @@
+import { memo, useCallback } from 'react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets';
 import { useModalContext } from 'widgets/ui';
 import { CreateLayoutForm } from './CreateLayoutForm';
 
-export const CreateLayout = () => {
+export const CreateLayout = memo(() => {
   const { t } = useLocalization();
   const { openModal } = useModalContext();
 
-  const handleCreateLayout = () => {
+  const handleCreateLayout = useCallback(() => {
     openModal(<CreateLayoutForm />, {
       title: t('layout:createNewLayout'),
       size: 'md',
     });
-  };
+  }, [openModal, t]);
 
   return (
     <div className='space-y-4'>
@@ -25,4 +26,4 @@ export const CreateLayout = () => {
       </Button>
     </div>
   );
-};
+});

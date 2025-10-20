@@ -227,9 +227,6 @@ export const notesApi = apiSlice.injectEndpoints({
         { type: 'Notes', id: `posed-${arg.layoutId}` },
         'Notes',
       ],
-      extraOptions: {
-        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
-      },
     }),
 
     getUnposedNotes: builder.query<
@@ -242,9 +239,6 @@ export const notesApi = apiSlice.injectEndpoints({
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
         'Notes',
       ],
-      extraOptions: {
-        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
-      },
     }),
 
     updateNotePosition: builder.mutation<
@@ -256,11 +250,47 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: 'Notes', id: `posed-${arg.layoutId}` },
-        { type: 'Notes', id: `unposed-${arg.layoutId}` },
-        'Notes',
-      ],
+      invalidatesTags: [], // Не инвалидируем теги, чтобы избежать лишних запросов
+      extraOptions: {
+        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
+      },
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        // Оптимистично обновляем кэш для posed заметок
+        const patchResult = dispatch(
+          notesApi.util.updateQueryData(
+            'getPosedNotes',
+            { layoutId: arg.layoutId },
+            draft => {
+              const noteIndex = draft.data.findIndex(note => note.id === arg.noteId);
+              if (noteIndex !== -1) {
+                draft.data[noteIndex].position = {
+                  xPos: arg.xPos,
+                  yPos: arg.yPos,
+                };
+              }
+            }
+          )
+        );
+
+        // Оптимистично обновляем кэш для unposed заметок (удаляем заметку)
+        const unposedPatchResult = dispatch(
+          notesApi.util.updateQueryData(
+            'getUnposedNotes',
+            { layoutId: arg.layoutId },
+            draft => {
+              draft.data = draft.data.filter(note => note.id !== arg.noteId);
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // В случае ошибки откатываем изменения
+          patchResult.undo();
+          unposedPatchResult.undo();
+        }
+      },
     }),
   }),
 });

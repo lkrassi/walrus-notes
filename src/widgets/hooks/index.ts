@@ -9,5 +9,3 @@ export { useTheme } from './useTheme';
 export { useDeviceType, useIsMobile, useIsTablet, useIsDesktop } from './useDeviceType';
 export { useDebounce, useDebouncedCallback } from './useDebounce';
 export { useLocalStorage, useLocalStorageString, useLocalStorageNumber, useLocalStorageBoolean, useLocalStorageObject } from './useLocalStorage';
-export { useDragAndDrop } from './useDragAndDrop';
-export type { DragItem, DropZone } from './useDragAndDrop';

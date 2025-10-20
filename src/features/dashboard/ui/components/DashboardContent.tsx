@@ -1,10 +1,12 @@
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { NotesGraph } from 'features/notes/ui/components/NotesGraph';
+import { EmptyLayoutState } from 'features/notes/ui/components/EmptyLayoutState';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { FolderEmptyState } from './FolderEmptyState';
+import { FolderWithNotes } from './FolderWithNotes';
 
 interface DashboardContentProps {
   openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
@@ -16,6 +18,7 @@ interface DashboardContentProps {
   ) => void;
   getItemPath: (item: FileTreeItem) => string;
   onNoteUpdated: (noteId: string, updates: Partial<Note>) => void;
+  onItemSelect: (item: FileTreeItem) => void;
 }
 
 export const DashboardContent = ({
@@ -26,6 +29,7 @@ export const DashboardContent = ({
   onTabReorder,
   getItemPath,
   onNoteUpdated,
+  onItemSelect,
 }: DashboardContentProps) => {
   const { t } = useLocalization();
 
@@ -89,6 +93,14 @@ export const DashboardContent = ({
     if (activeTab.item.type === 'graph') {
       return (
         <NotesGraph layoutId={activeTab.item.layoutId!} />
+      );
+    }
+
+    if (activeTab.item.type === 'layout') {
+      return (
+        <FolderWithNotes
+          folderItem={activeTab.item}
+        />
       );
     }
 

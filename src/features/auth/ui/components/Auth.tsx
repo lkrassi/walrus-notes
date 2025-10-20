@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Button } from 'shared';
 
@@ -12,13 +12,13 @@ export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');
   const { t } = useLocalization();
 
-  const handleSwitchToLogin = () => {
+  const handleSwitchToLogin = useCallback(() => {
     setActiveForm('login');
-  };
+  }, []);
 
-  const handleSwitchToRegister = () => {
+  const handleSwitchToRegister = useCallback(() => {
     setActiveForm('register');
-  };
+  }, []);
 
   return (
     <main>

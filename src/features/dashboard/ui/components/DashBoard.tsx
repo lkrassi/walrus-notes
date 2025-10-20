@@ -52,7 +52,7 @@ export const DashBoard = () => {
       layoutId,
     };
     openTab(graphItem);
-    updateUrlForItem(graphItem);
+    // Don't update URL for graph items
   };
 
   const getItemPathWrapper = (item: FileTreeItem): string => {
@@ -76,6 +76,7 @@ export const DashBoard = () => {
           onTabReorder={reorderTabs}
           getItemPath={getItemPathWrapper}
           onNoteUpdated={handleNoteUpdated}
+          onItemSelect={handleItemSelect}
         />
       </div>
     </div>

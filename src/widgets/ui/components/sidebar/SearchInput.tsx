@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from 'shared';
 import { useLocalization, useDebounce } from 'widgets/hooks';
@@ -9,7 +9,7 @@ interface SearchInputProps {
   debounceDelay?: number;
 }
 
-export const SearchInput = ({
+export const SearchInput = memo(({
   searchQuery,
   onSearchChange,
   debounceDelay = 300,
@@ -38,4 +38,4 @@ export const SearchInput = ({
       />
     </div>
   );
-};
+});

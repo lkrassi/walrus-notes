@@ -14,5 +14,9 @@
   "noteContent": "Содержимое заметки",
   "noteContentPlaceholderTextarea": "Введите содержимое заметки",
   "creating": "Создание...",
-  "createNote": "Создать заметку"
+  "createNote": "Создать заметку",
+  "folderEmpty": "Папка пуста",
+  "folderEmptyDescription": "В папке \"{layoutTitle}\" пока нет заметок. Создайте первую заметку, чтобы начать работу.",
+  "graphEmpty": "Граф заметок пуст",
+  "graphEmptyDescription": "В папке \"{layoutTitle}\" пока нет заметок. Создайте первую заметку, чтобы начать визуализировать связи между ними"
 }

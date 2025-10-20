@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export type DeviceType = 'mobile' | 'tablet' | 'desktop';
 
@@ -12,21 +12,21 @@ export const useDeviceType = (): DeviceType => {
     return 'desktop';
   });
 
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 768) {
-        setDeviceType('mobile');
-      } else if (width < 1024) {
-        setDeviceType('tablet');
-      } else {
-        setDeviceType('desktop');
-      }
-    };
+  const handleResize = useCallback(() => {
+    const width = window.innerWidth;
+    if (width < 768) {
+      setDeviceType('mobile');
+    } else if (width < 1024) {
+      setDeviceType('tablet');
+    } else {
+      setDeviceType('desktop');
+    }
+  }, []);
 
+  useEffect(() => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [handleResize]);
 
   return deviceType;
 };

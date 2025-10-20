@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import type { ButtonProps } from 'shared/model';
 
-export const Button = ({
+export const Button = memo(({
   children,
   onClick,
   type = 'button',
@@ -84,4 +84,4 @@ export const Button = ({
       {children}
     </button>
   );
-};
+});
