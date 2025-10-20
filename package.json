@@ -35,6 +35,7 @@
     "react-joyride": "^2.9.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.3",
+    "reactflow": "^11.11.4",
     "tailwindcss": "^4.1.13",
     "yup": "^1.7.1"
   },
