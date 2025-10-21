@@ -12,30 +12,20 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 app.use(cors());
 app.use(express.json());
 
-interface HealthResponse {
-  status: 'OK' | 'ERROR';
-  timestamp: string;
-  environment: string;
-  uptime: number;
-  version: string;
-}
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
-app.use(express.static(path.join(__dirname, '../dist')));
-
-app.get('/api/health', (_req: Request, res: Response<HealthResponse>) => {
-  const healthData: HealthResponse = {
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     uptime: process.uptime(),
-    version: process.env.npm_package_version || '0.0.0',
-  };
-
-  res.status(200).json(healthData);
+    version: '1.0.0',
+  });
 });
 
-app.get('/*', (_req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+app.get('*', (_req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 app.use((err: Error, _req: Request, res: Response) => {
