@@ -5,17 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run build:server",
-    "build:server": "tsc -p tsconfig.server.json",
     "preview": "vite preview --host 0.0.0.0 --port $PORT",
-    "start": "node dist-server/index.js",
     "start:dev": "tsx watch server/index.ts",
     "lint": "eslint src/**/*.{ts,tsx}",
     "lint:fix": "eslint src/**/*.{ts,tsx} --fix",
     "format": "prettier --write src/**/*.{ts,tsx,json,css}",
     "format:check": "prettier --check src/**/*.{ts,tsx,json,css}",
     "type-check": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "build": "vite build && npm run build:server",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start": "node dist-server/index.js",
+    "prebuild": "rm -rf node_modules pnpm-lock.yaml && pnpm install"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
