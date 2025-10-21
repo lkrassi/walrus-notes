@@ -34,7 +34,7 @@ app.get('/api/health', (_req: Request, res: Response<HealthResponse>) => {
   res.status(200).json(healthData);
 });
 
-app.get('*', (_req: Request, res: Response) => {
+app.get('/*', (_req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
 
