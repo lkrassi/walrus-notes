@@ -25,7 +25,6 @@ import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
 } from 'widgets/model/stores/api';
-import { EmptyGraphState } from './EmptyGraphState';
 import { UnposedNotesList } from './UnposedNotesList';
 
 interface NotesGraphProps {
@@ -52,7 +51,7 @@ const NotesGraphContent = React.memo(({ layoutId }: NotesGraphProps) => {
     layoutId,
   });
   const [updatePosition] = useUpdateNotePositionMutation();
-  const { screenToFlowPosition, addNodes } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
 
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {
@@ -72,55 +71,81 @@ const NotesGraphContent = React.memo(({ layoutId }: NotesGraphProps) => {
 
   const posedNotes = posedNotesResponse?.data || [];
 
+  // Фильтруем только заметки с позициями
+  const notesWithPositions = posedNotes.filter(
+    note =>
+      note.position?.xPos !== undefined && note.position?.yPos !== undefined
+  );
+
   const initialNodes: Node[] = useMemo(() => {
-    return posedNotes.map((note: Note) => ({
+    return notesWithPositions.map((note: Note) => ({
       id: note.id,
       type: 'note' as const,
       position: {
-        x: note.position?.xPos || Math.random() * 500,
-        y: note.position?.yPos || Math.random() * 500,
+        x: note.position!.xPos, // Мы уже отфильтровали заметки с позициями
+        y: note.position!.yPos,
       },
       data: { note },
     }));
-  }, [posedNotes]);
+  }, [notesWithPositions]);
 
   const initialEdges: Edge[] = useMemo(() => {
-    // пока нет связей между заметками
     return [];
   }, []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const handleAddNoteToGraph = useCallback(
-    (item: any, dropPosition?: { x: number; y: number }) => {
-      const note = item.data || item;
-      const newPosition = dropPosition || {
-        x: Math.random() * 400 + 100,
-        y: Math.random() * 400 + 100,
-      };
+  // Синхронизируем nodes с posedNotes
+  useEffect(() => {
+    const notesWithPositionsIds = new Set(
+      notesWithPositions.map(note => note.id)
+    );
+    const currentNodeIds = new Set(nodes.map(node => node.id));
 
-      const newNode = {
+    // Добавляем отсутствующие узлы (только с позициями)
+    const nodesToAdd = notesWithPositions
+      .filter(note => !currentNodeIds.has(note.id))
+      .map((note: Note) => ({
         id: note.id,
         type: 'note' as const,
-        position: newPosition,
+        position: {
+          x: note.position!.xPos,
+          y: note.position!.yPos,
+        },
         data: { note },
-      };
-      addNodes(newNode);
+      }));
+
+    // Удаляем узлы, которых нет в notesWithPositions
+    const nodesToRemove = nodes.filter(
+      node => !notesWithPositionsIds.has(node.id)
+    );
+
+    if (nodesToAdd.length > 0 || nodesToRemove.length > 0) {
+      setNodes(prevNodes => [
+        ...prevNodes.filter(node => notesWithPositionsIds.has(node.id)),
+        ...nodesToAdd,
+      ]);
+    }
+  }, [notesWithPositions, setNodes, nodes]);
+
+  const handleAddNoteToGraph = useCallback(
+    (note: Note, dropPosition?: { x: number; y: number }) => {
+      if (!dropPosition) {
+        console.warn('No drop position provided for note:', note.id);
+        return;
+      }
 
       updatePosition({
         layoutId,
         noteId: note.id,
-        xPos: newPosition.x,
-        yPos: newPosition.y,
+        xPos: dropPosition.x,
+        yPos: dropPosition.y,
       }).catch(error => {
         console.error('Failed to add note to graph:', error);
-        setNodes(currentNodes =>
-          currentNodes.filter(node => node.id !== note.id)
-        );
       });
     },
-    [layoutId, updatePosition, addNodes, setNodes]
+    [layoutId, updatePosition]
   );
 
   const onConnect: OnConnect = useCallback(
@@ -142,22 +167,6 @@ const NotesGraphContent = React.memo(({ layoutId }: NotesGraphProps) => {
     [onNodesChange]
   );
 
-  useEffect(() => {
-    setNodes(initialNodes);
-  }, [initialNodes, setNodes]);
-
-  if (isLoading) {
-    return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-gray-500'>Загрузка графа...</div>
-      </div>
-    );
-  }
-
-  if (posedNotes.length === 0) {
-    return <EmptyGraphState layoutTitle='Граф заметок' layoutId={layoutId} />;
-  }
-
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
@@ -178,6 +187,14 @@ const NotesGraphContent = React.memo(({ layoutId }: NotesGraphProps) => {
     },
     [handleAddNoteToGraph, screenToFlowPosition]
   );
+
+  if (isLoading) {
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <div className='text-gray-500'>Загрузка графа...</div>
+      </div>
+    );
+  }
 
   return (
     <div className='bg-bg dark:bg-dark-bg relative flex h-full w-full'>

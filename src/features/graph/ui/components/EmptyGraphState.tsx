@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { FileText } from 'lucide-react';
-import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useFileTree } from 'widgets/hooks';
+import { useLocalization } from 'widgets/hooks/useLocalization';
 import {
   descriptionVariants,
   emptyStateVariants,
   iconVariants,
   titleVariants,
-} from './animations';
+} from '../../model/animations';
 
 interface EmptyGraphStateProps {
   layoutTitle?: string;
@@ -21,7 +21,6 @@ export const EmptyGraphState = ({
   const { t } = useLocalization();
   const { fileTree } = useFileTree();
 
-  // Найти название папки по layoutId
   const layout = fileTree.find(item => item.id === layoutId);
   const actualLayoutTitle = layout ? layout.title : layoutTitle;
 
@@ -37,7 +36,7 @@ export const EmptyGraphState = ({
           variants={iconVariants}
           initial='hidden'
           animate='visible'
-          className='mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30'
+          className='mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30'
         >
           <FileText className='h-12 w-12 text-blue-600 dark:text-blue-400' />
         </motion.div>

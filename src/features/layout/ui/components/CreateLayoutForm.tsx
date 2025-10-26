@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'shared';
 import {
-  useAppDispatch,
   useLocalization,
   useNotifications,
 } from 'widgets/hooks';
@@ -17,10 +16,9 @@ export const CreateLayoutForm = ({
 }: CreateLayoutFormProps) => {
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
-  const { showSuccess, showError } = useNotifications();
+  const { showError } = useNotifications();
   const { closeModal } = useModalContext();
   const [createLayout, { isLoading }] = useCreateLayoutMutation();
-  const dispatch = useAppDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +33,6 @@ export const CreateLayoutForm = ({
         title: title.trim(),
       }).unwrap();
 
-      showSuccess(t('layout:layoutCreatedSuccess'));
       setTitle('');
       if (onLayoutCreated) {
         onLayoutCreated();

@@ -127,12 +127,12 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <textarea
             value={payload}
             onChange={e => setPayload(e.target.value)}
-            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary h-full w-full resize-none bg-transparent p-4 outline-none walrus-scrollbar'
+            className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary h-full w-full resize-none bg-transparent p-4 outline-none'
             placeholder={t('notes:noteContentPlaceholder')}
             disabled={isLoading}
           />
         ) : (
-          <div className='h-full overflow-y-auto p-4 walrus-scrollbar'>
+          <div className='h-full overflow-y-auto p-4'>
             <div className='prose dark:prose-invert max-w-none'>
               {payload ? (
                 <div className='text-text dark:text-dark-text break-words whitespace-pre-wrap'>

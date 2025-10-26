@@ -2,7 +2,6 @@ import { useCallback, useEffect, useReducer } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
 import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import { fileTreeReducer, initialFileTreeState } from './fileTreeReducer';
-import { useNotifications } from './useNotifications';
 
 export type FileTreeItem = {
   id: string;
@@ -21,7 +20,6 @@ export const useFileTree = () => {
     fileTreeReducer,
     initialFileTreeState
   );
-  const { showSuccess } = useNotifications();
 
   const { fileTree, expandedItems } = state;
 
@@ -30,11 +28,10 @@ export const useFileTree = () => {
   useEffect(() => {
     if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layoutsResponse.data });
-      showSuccess('Лэйауты загружены');
     } else if (layoutsResponse) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: [] });
     }
-  }, [layoutsResponse]); // Убрал showSuccess из зависимостей
+  }, [layoutsResponse]);
 
   const toggleExpanded = useCallback((itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });

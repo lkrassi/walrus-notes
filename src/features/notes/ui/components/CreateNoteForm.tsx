@@ -17,7 +17,7 @@ export const CreateNoteForm = ({
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
   const [payload, setPayload] = useState('');
-  const { showSuccess, showError } = useNotifications();
+  const { showError } = useNotifications();
   const { closeModal } = useModalContext();
   const [createNote, { isLoading }] = useCreateNoteMutation();
 
@@ -45,7 +45,6 @@ export const CreateNoteForm = ({
         updatedAt: new Date().toISOString(),
       };
 
-      showSuccess(t('notes:noteCreatedSuccess'));
       if (onNoteCreated) {
         onNoteCreated(newNote);
       }

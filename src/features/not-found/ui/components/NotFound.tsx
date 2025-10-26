@@ -16,7 +16,7 @@ export const NotFound = () => {
               404
             </div>
             <div className='relative'>
-              <h1 className='from-primary to-primary-gradient dark:from-dark-primary dark:to-dark-primary-gradient mb-4 bg-gradient-to-br bg-clip-text text-8xl font-bold text-transparent'>
+              <h1 className='from-primary to-primary-gradient dark:from-dark-primary dark:to-dark-primary-gradient mb-4 bg-clip-text text-8xl font-bold text-transparent'>
                 404
               </h1>
             </div>

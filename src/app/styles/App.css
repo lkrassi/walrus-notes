@@ -89,24 +89,3 @@ h6 {
 .bg-gradient {
   @apply bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
 }
-
-.walrus-scrollbar::-webkit-scrollbar,
-.walrus-scrollbar-horizontal::-webkit-scrollbar {
-  @apply w-7;
-}
-
-.walrus-scrollbar::-webkit-scrollbar-thumb,
-.walrus-scrollbar-horizontal::-webkit-scrollbar-thumb {
-  background-image: url('../../assets/tusk.png');
-  background-position: top center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-.walrus-scrollbar::-webkit-scrollbar-thumb {
-  background-image: url('../../assets/tusk.png');
-}
-
-.walrus-scrollbar-horizontal::-webkit-scrollbar-thumb {
-  background-image: url('../../assets/tusk_horizontal.png');
-}

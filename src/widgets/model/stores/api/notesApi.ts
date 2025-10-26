@@ -250,29 +250,90 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [], // Не инвалидируем теги, чтобы избежать лишних запросов
+      invalidatesTags: [],
       extraOptions: {
-        loadingKey: null, // Отключаем глобальный лоадер для этого запроса
+        loadingKey: null,
       },
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
-        // Оптимистично обновляем кэш для posed заметок
+      onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
+        // Получаем текущее состояние кэша
+        const state = getState() as any;
+
+        // Ищем заметку в unposedNotes для получения реальных данных
+        let realNoteData: Note | undefined;
+
+        try {
+          const unposedCache = notesApi.endpoints.getUnposedNotes.select({
+            layoutId: arg.layoutId,
+          })(state);
+          if (unposedCache.data?.data) {
+            realNoteData = unposedCache.data.data.find(
+              note => note.id === arg.noteId
+            );
+          }
+        } catch (error) {
+          console.warn('Failed to get note data from unposed cache:', error);
+        }
+
+        // Если не нашли в unposed, ищем в общем списке заметок
+        if (!realNoteData) {
+          try {
+            const notesCache = notesApi.endpoints.getNotes.select({
+              layoutId: arg.layoutId,
+              page: 1,
+            })(state);
+            if (notesCache.data?.data) {
+              realNoteData = notesCache.data.data.find(
+                note => note.id === arg.noteId
+              );
+            }
+          } catch (error) {
+            console.warn('Failed to get note data from notes cache:', error);
+          }
+        }
+
         const patchResult = dispatch(
           notesApi.util.updateQueryData(
             'getPosedNotes',
             { layoutId: arg.layoutId },
             draft => {
-              const noteIndex = draft.data.findIndex(note => note.id === arg.noteId);
+              const noteIndex = draft.data.findIndex(
+                note => note.id === arg.noteId
+              );
+
               if (noteIndex !== -1) {
+                // Обновляем позицию существующей заметки
                 draft.data[noteIndex].position = {
                   xPos: arg.xPos,
                   yPos: arg.yPos,
                 };
+              } else {
+                // Создаем новую заметку с реальными данными или заглушкой
+                const newNote: Note = realNoteData
+                  ? {
+                      ...realNoteData,
+                      position: {
+                        xPos: arg.xPos,
+                        yPos: arg.yPos,
+                      },
+                    }
+                  : {
+                      id: arg.noteId,
+                      layoutId: arg.layoutId,
+                      title: 'Новая заметка',
+                      payload: '',
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                      position: {
+                        xPos: arg.xPos,
+                        yPos: arg.yPos,
+                      },
+                    };
+                draft.data.push(newNote);
               }
             }
           )
         );
 
-        // Оптимистично обновляем кэш для unposed заметок (удаляем заметку)
         const unposedPatchResult = dispatch(
           notesApi.util.updateQueryData(
             'getUnposedNotes',
@@ -285,8 +346,24 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
+
+          // После успешного запроса можно обновить данные, если нужно
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                const noteIndex = draft.data.findIndex(
+                  note => note.id === arg.noteId
+                );
+                if (noteIndex !== -1) {
+                  // Здесь можно обновить данные заметки, если они приходят в ответе
+                  // или оставить как есть
+                }
+              }
+            )
+          );
         } catch {
-          // В случае ошибки откатываем изменения
           patchResult.undo();
           unposedPatchResult.undo();
         }

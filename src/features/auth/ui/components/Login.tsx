@@ -17,7 +17,7 @@ type LoginProps = {
 };
 
 export const Login: React.FC<LoginProps> = () => {
-  const { showSuccess, showError } = useNotifications();
+  const {showError } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
 
   const navigate = useNavigate();
@@ -41,7 +41,6 @@ export const Login: React.FC<LoginProps> = () => {
       localStorage.setItem('userId', response.data.userId);
 
       window.dispatchEvent(new Event('tokenSet'));
-      showSuccess(t('auth:login.success'));
       navigate('/dashboard');
     } catch (error) {
       showError(t('auth:login.error'));

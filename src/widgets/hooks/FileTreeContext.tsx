@@ -85,7 +85,6 @@ export const FileTreeProvider = ({
   useEffect(() => {
     if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layoutsResponse.data });
-      showSuccess('Лэйауты загружены');
     }
   }, [layoutsResponse, showSuccess]);
 

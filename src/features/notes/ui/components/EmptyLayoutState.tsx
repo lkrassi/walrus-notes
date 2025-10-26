@@ -6,7 +6,7 @@ import {
   emptyStateVariants,
   iconVariants,
   titleVariants,
-} from './animations';
+} from '../../../graph/model/animations';
 
 interface EmptyLayoutStateProps {
   layoutTitle?: string;
