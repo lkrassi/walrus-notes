@@ -21,7 +21,7 @@
   "delete": "Delete",
   "backendNotImplemented": "Backend not implemented yet",
 
-  "deleteLayout": "Delete layout",
+  "deleteLayout": "Confirmation of deletion",
   "deleteLayoutConfirmation": "Are you sure you want to delete the layout \"{{title}}\"?",
   "deleteLayoutWarning": "This action cannot be undone. All notes inside the layout will also be deleted.",
   "layoutDeletedSuccess": "Layout successfully deleted",

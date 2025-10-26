@@ -84,7 +84,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           )}
         </div>
 
-        <div className='flex flex-shrink-0 gap-2'>
+        <div className='flex gap-2'>
           {isEditing ? (
             <>
               <Button

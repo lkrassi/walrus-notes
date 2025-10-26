@@ -4,8 +4,6 @@ import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-import { FolderEmptyState } from './FolderEmptyState';
-import { FolderWithNotes } from './FolderWithNotes';
 
 interface DashboardContentProps {
   openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
@@ -87,15 +85,10 @@ export const DashboardContent = ({
       );
     }
 
-    if (activeTab.item.type === 'graph') {
-      return <NotesGraph layoutId={activeTab.item.layoutId!} />;
-    }
-
     if (activeTab.item.type === 'layout') {
-      return <FolderWithNotes folderItem={activeTab.item} />;
+      // Используем id вместо layoutId, так как для layout'ов id и есть layoutId
+      return <NotesGraph layoutId={activeTab.item.id} />;
     }
-
-    return <FolderEmptyState folderTitle={activeTab.item.title} />;
   };
 
   return (

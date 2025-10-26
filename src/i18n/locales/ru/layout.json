@@ -21,7 +21,7 @@
   "delete": "Удалить",
   "backendNotImplemented": "Бэкендры долго пишут, пока не реализовано",
 
-  "deleteLayout": "Удалить папку",
+  "deleteLayout": "Подтверждение удаления",
   "deleteLayoutConfirmation": "Вы уверены, что хотите удалить папку \"{{title}}\"?",
   "deleteLayoutWarning": "Это действие нельзя отменить. Все заметки внутри папки также будут удалены.",
   "layoutDeletedSuccess": "Папка успешно удалена",

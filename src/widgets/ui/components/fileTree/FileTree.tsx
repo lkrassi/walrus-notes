@@ -3,7 +3,6 @@ import { memo, useCallback, useMemo } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization } from 'widgets/hooks';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useAppSelector } from '../../../hooks/redux';
 import { useGetMyLayoutsQuery } from '../../../model/stores/api';
 import { useModalContext } from '../modal';
 import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
@@ -32,13 +31,12 @@ export const FileTree = memo(
     searchQuery,
     onOpenGraph,
     onDeleteNote,
-    onDeleteLayout, // Добавьте этот пропс
+    onDeleteLayout,
   }: Omit<FileTreeProps, 'fileTree' | 'onNotesLoaded' | 'loadMoreNotes'>) => {
     const { t } = useLocalization();
     const { openModal } = useModalContext();
 
     const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-    const accessToken = useAppSelector(state => state.user.accessToken);
 
     const fileTree = useMemo(() => {
       if (!layoutsResponse?.data) return [];
@@ -105,7 +103,6 @@ export const FileTree = memo(
       [openModal, t, addNoteToTree]
     );
 
-    // Добавьте эту функцию для удаления layout
     const handleDeleteLayout = useCallback(
       (layoutId: string) => {
         openModal(
@@ -114,7 +111,6 @@ export const FileTree = memo(
             layoutTitle={fileTree.find(item => item.id === layoutId)?.title || ''}
             onLayoutDeleted={() => {
               onDeleteLayout?.(layoutId);
-              // Здесь можно добавить дополнительную логику после удаления
             }}
           />,
           {
@@ -154,7 +150,7 @@ export const FileTree = memo(
               onCreateNote={handleCreateNote}
               onOpenGraph={onOpenGraph}
               onDeleteNote={onDeleteNote}
-              onDeleteLayout={handleDeleteLayout} // Передайте функцию
+              onDeleteLayout={handleDeleteLayout}
               renderChild={renderTreeItem}
             />
           </div>
@@ -167,7 +163,7 @@ export const FileTree = memo(
         handleCreateNote,
         onOpenGraph,
         onDeleteNote,
-        handleDeleteLayout, // Добавьте в зависимости
+        handleDeleteLayout,
       ]
     );
 

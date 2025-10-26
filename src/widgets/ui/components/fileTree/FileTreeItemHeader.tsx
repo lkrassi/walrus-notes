@@ -4,7 +4,6 @@ import {
   FileText,
   Folder,
   FolderOpen,
-  Network,
   Plus,
   Trash2,
 } from 'lucide-react';
@@ -31,7 +30,6 @@ export const FileTreeItemHeader = ({
   isSelected,
   onItemClick,
   onCreateNote,
-  onOpenGraph,
   onDeleteNote,
   onDeleteLayout,
 }: FileTreeItemHeaderProps) => {
@@ -67,11 +65,6 @@ export const FileTreeItemHeader = ({
     onCreateNote(item.id);
   };
 
-  const handleOpenGraph = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onOpenGraph?.(item.id);
-  };
-
   const handleDeleteNote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onDeleteNote?.(item.id);
@@ -100,7 +93,7 @@ export const FileTreeItemHeader = ({
       onClick={handleItemClick}
     >
       {item.type === 'layout' && (
-        <div className='flex h-4 w-4 flex-shrink-0 items-center justify-center'>
+        <div className='flex h-4 w-4 items-center justify-center'>
           {isExpanded ? (
             <ChevronDown className='h-4 w-4' />
           ) : (
@@ -109,9 +102,9 @@ export const FileTreeItemHeader = ({
         </div>
       )}
 
-      {item.type === 'note' && <div className='h-4 w-4 flex-shrink-0' />}
+      {item.type === 'note' && <div className='h-4 w-4' />}
 
-      <div className='flex-shrink-0'>
+      <div>
         {item.type === 'layout' ? (
           isExpanded ? (
             <FolderOpen className='h-4 w-4' />
@@ -128,19 +121,6 @@ export const FileTreeItemHeader = ({
       <div className='flex items-center gap-1'>
         {item.type === 'layout' && (
           <>
-            {!isMobile && (
-              <button
-                onClick={handleOpenGraph}
-                className={`opacity-0 transition-opacity duration-150 group-hover:opacity-100 ${
-                  isSelected
-                    ? 'text-white hover:text-gray-200'
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-                title='Открыть граф заметок'
-              >
-                <Network className='h-4 w-4' />
-              </button>
-            )}
             <button
               onClick={handleCreateNote}
               className={`transition-opacity duration-150 ${

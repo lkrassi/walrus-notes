@@ -41,13 +41,13 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
   const handleStyle = {
     background: nodeColor,
     border: '2px solid white',
-    width: 10,
-    height: 10,
+    width: 15,
+    height: 15,
   };
 
   return (
     <div
-      className={`max-w-40 min-w-40 rounded-xl p-2 transition-all duration-200 hover:scale-105 active:scale-95 ${
+      className={`max-w-40 min-w-40 rounded-xl p-2 transition-all duration-200 ${
         selected
           ? 'shadow-lg ring-4 ring-blue-400'
           : 'shadow-md hover:shadow-lg'
@@ -107,12 +107,9 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         style={handleStyle}
       />
 
-      <h3 className='mb-2 truncate font-semibold text-white'>
+      <h3 className='mb-2 truncate font-semibold text-dark-text'>
         {data.note.title}
       </h3>
-      <p className='line-clamp-3 text-sm text-white/90'>
-        {data.note.payload || 'Нет содержимого'}
-      </p>
     </div>
   );
 };

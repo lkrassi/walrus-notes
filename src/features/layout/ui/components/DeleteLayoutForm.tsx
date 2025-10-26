@@ -66,11 +66,11 @@ export const DeleteLayoutForm = ({
         </p>
       </div>
 
-      <div className='flex justify-end gap-3'>
+      <div className='flex justify-center gap-3'>
         <Button
           type='button'
           onClick={closeModal}
-          variant='escape'
+          variant='default'
           className='px-6 py-3'
           disabled={isLoading}
         >
@@ -78,7 +78,7 @@ export const DeleteLayoutForm = ({
         </Button>
         <Button
           type='submit'
-          variant='default'
+          variant='escape'
           className='px-6 py-3'
           disabled={isLoading}
         >
