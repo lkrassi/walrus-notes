@@ -1,3 +1,4 @@
+// widgets/model/stores/api/layoutApi.ts
 import type { Layout } from 'shared/model/types/layouts';
 import { apiSlice } from './apiSlice';
 
@@ -30,6 +31,25 @@ interface CreateLayoutResponse {
   };
 }
 
+interface DeleteLayoutRequest {
+  layoutId: string;
+}
+
+interface DeleteLayoutResponse {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
 export const layoutApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getMyLayouts: builder.query<GetMyLayoutsResponse, void>({
@@ -44,7 +64,19 @@ export const layoutApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Layouts'],
     }),
+    deleteLayout: builder.mutation<DeleteLayoutResponse, DeleteLayoutRequest>({
+      query: body => ({
+        url: '/layout/delete',
+        method: 'POST',
+        body: { layoutId: body.layoutId },
+      }),
+      invalidatesTags: ['Layouts'],
+    }),
   }),
 });
 
-export const { useGetMyLayoutsQuery, useCreateLayoutMutation } = layoutApi;
+export const {
+  useGetMyLayoutsQuery,
+  useCreateLayoutMutation,
+  useDeleteLayoutMutation,
+} = layoutApi;

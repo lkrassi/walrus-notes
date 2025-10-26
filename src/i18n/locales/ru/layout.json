@@ -5,7 +5,7 @@
   "myLayouts": "Мои папки",
   "viewAndManageLayouts": "Просмотрите и управляйте всеми вашими папками",
   "showAllLayouts": "Показать все папки",
-  "enterLayoutTitle": "Пожалуйста, введите название напки",
+  "enterLayoutTitle": "Пожалуйста, введите название папки",
   "layoutCreatedSuccess": "Папка создана успешно",
   "layoutCreationError": "Произошла ошибка при создании папки",
   "layoutTitle": "Название папки",
@@ -19,5 +19,12 @@
   "createFirstLayout": "Создайте свою первую папку, чтобы начать работу",
   "refresh": "Обновить",
   "delete": "Удалить",
-  "backendNotImplemented": "Бэкендры долго пишут, пока не реализовано"
+  "backendNotImplemented": "Бэкендры долго пишут, пока не реализовано",
+
+  "deleteLayout": "Удалить папку",
+  "deleteLayoutConfirmation": "Вы уверены, что хотите удалить папку \"{{title}}\"?",
+  "deleteLayoutWarning": "Это действие нельзя отменить. Все заметки внутри папки также будут удалены.",
+  "layoutDeletedSuccess": "Папка успешно удалена",
+  "layoutDeletionError": "Произошла ошибка при удалении папки",
+  "deleting": "Удаление..."
 }

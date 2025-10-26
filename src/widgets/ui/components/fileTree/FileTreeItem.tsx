@@ -12,6 +12,7 @@ type FileTreeItemProps = {
   onCreateNote: (layoutId: string) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
+  onDeleteLayout?: (layoutId: string) => void;
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
   onNotesLoaded?: (layoutId: string, notes: any[]) => void;
 };
@@ -25,6 +26,7 @@ export const FileTreeItem = ({
   onCreateNote,
   onOpenGraph,
   onDeleteNote,
+  onDeleteLayout,
   renderChild,
   onNotesLoaded,
 }: FileTreeItemProps) => {
@@ -39,6 +41,7 @@ export const FileTreeItem = ({
         onCreateNote={onCreateNote}
         onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}
+        onDeleteLayout={onDeleteLayout}
       />
       <FileTreeItemContent
         item={item}

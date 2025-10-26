@@ -65,7 +65,7 @@ export const Dropdown = ({
     right: 'left-full ml-1',
   };
 
-  const triggerClassName = `cursor-pointer ${disabled ? 'cursor-not-allowed opacity-50' : ''}`;
+  const triggerClassName = `cursor-pointer ${disabled ? 'cursor-not-allowed' : ''}`;
   const contentClassNameFull = `absolute z-50 rounded-lg border border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm ${positionClasses[position]} ${contentClassName || ''}`;
 
   return (
@@ -129,7 +129,7 @@ interface DropdownItemProps {
 }
 
 export const DropdownItem = ({ children, onClick, className, disabled = false }: DropdownItemProps) => {
-  const itemClassName = `cursor-pointer p-2 transition-colors hover:bg-gray-50 ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className || ''}`;
+  const itemClassName = `cursor-pointer p-2 transition-colors ${disabled ? 'cursor-not-allowed' : ''} ${className || ''}`;
 
   return (
     <div onClick={disabled ? undefined : onClick} className={itemClassName}>

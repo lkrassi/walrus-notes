@@ -128,6 +128,64 @@ interface UpdateNotePositionResponse {
   };
 }
 
+// Типы для связей между заметками
+interface CreateNoteLinkRequest {
+  firstNoteId: string;
+  layoutId: string;
+  secondNoteId: string;
+}
+
+interface CreateNoteLinkResponse {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
+interface DeleteNoteLinkRequest {
+  firstNoteId: string;
+  layoutId: string;
+  secondNoteId: string;
+}
+
+interface DeleteNoteLinkResponse {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
+const createTempNote = (
+  layoutId: string,
+  title: string = 'Новая заметка'
+): Note => ({
+  id: `temp-${Date.now()}`,
+  layoutId,
+  title,
+  payload: '',
+  ownerId: '', // добавляем обязательные поля
+  haveAccess: [], // добавляем обязательные поля
+  linkedWith: [], // добавляем обязательные поля
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
 export const notesApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
@@ -162,14 +220,7 @@ export const notesApi = apiSlice.injectEndpoints({
             'getNotes',
             { layoutId, page: 1 },
             draft => {
-              const tempNote: Note = {
-                id: `temp-${Date.now()}`,
-                layoutId,
-                title: 'Новая заметка',
-                payload: '',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              };
+              const tempNote = createTempNote(layoutId);
               draft.data.unshift(tempNote);
             }
           )
@@ -225,6 +276,10 @@ export const notesApi = apiSlice.injectEndpoints({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
       providesTags: (result, error, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
+        ...(result?.data?.map(note => ({
+          type: 'Notes' as const,
+          id: note.id,
+        })) || []),
         'Notes',
       ],
     }),
@@ -237,6 +292,10 @@ export const notesApi = apiSlice.injectEndpoints({
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
       providesTags: (result, error, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
+        ...(result?.data?.map(note => ({
+          type: 'Notes' as const,
+          id: note.id,
+        })) || []),
         'Notes',
       ],
     }),
@@ -255,10 +314,8 @@ export const notesApi = apiSlice.injectEndpoints({
         loadingKey: null,
       },
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        // Получаем текущее состояние кэша
         const state = getState() as any;
 
-        // Ищем заметку в unposedNotes для получения реальных данных
         let realNoteData: Note | undefined;
 
         try {
@@ -274,7 +331,6 @@ export const notesApi = apiSlice.injectEndpoints({
           console.warn('Failed to get note data from unposed cache:', error);
         }
 
-        // Если не нашли в unposed, ищем в общем списке заметок
         if (!realNoteData) {
           try {
             const notesCache = notesApi.endpoints.getNotes.select({
@@ -307,7 +363,6 @@ export const notesApi = apiSlice.injectEndpoints({
                   yPos: arg.yPos,
                 };
               } else {
-                // Создаем новую заметку с реальными данными или заглушкой
                 const newNote: Note = realNoteData
                   ? {
                       ...realNoteData,
@@ -316,18 +371,7 @@ export const notesApi = apiSlice.injectEndpoints({
                         yPos: arg.yPos,
                       },
                     }
-                  : {
-                      id: arg.noteId,
-                      layoutId: arg.layoutId,
-                      title: 'Новая заметка',
-                      payload: '',
-                      createdAt: new Date().toISOString(),
-                      updatedAt: new Date().toISOString(),
-                      position: {
-                        xPos: arg.xPos,
-                        yPos: arg.yPos,
-                      },
-                    };
+                  : createTempNote(arg.layoutId);
                 draft.data.push(newNote);
               }
             }
@@ -346,26 +390,241 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
-
-          // После успешного запроса можно обновить данные, если нужно
-          dispatch(
-            notesApi.util.updateQueryData(
-              'getPosedNotes',
-              { layoutId: arg.layoutId },
-              draft => {
-                const noteIndex = draft.data.findIndex(
-                  note => note.id === arg.noteId
-                );
-                if (noteIndex !== -1) {
-                  // Здесь можно обновить данные заметки, если они приходят в ответе
-                  // или оставить как есть
-                }
-              }
-            )
-          );
         } catch {
           patchResult.undo();
           unposedPatchResult.undo();
+        }
+      },
+    }),
+
+    createNoteLink: builder.mutation<
+      CreateNoteLinkResponse,
+      CreateNoteLinkRequest
+    >({
+      query: body => ({
+        url: '/notes/layout/links/create',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [],
+      extraOptions: {
+        loadingKey: null,
+      },
+
+      onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
+        const patchResults = [];
+
+        // 1. Обновляем getNotes кэш
+        try {
+          const notesCache = notesApi.endpoints.getNotes.select({
+            layoutId: arg.layoutId,
+            page: 1,
+          })(getState() as any);
+
+          if (notesCache.data?.data) {
+            // Обновляем первую заметку в getNotes
+            const patchResult1 = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (note && !note.linkedWith.includes(arg.secondNoteId)) {
+                    note.linkedWith.push(arg.secondNoteId);
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult1);
+
+            // Обновляем вторую заметку в getNotes
+            const patchResult2 = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.secondNoteId);
+                  if (note && !note.linkedWith.includes(arg.firstNoteId)) {
+                    note.linkedWith.push(arg.firstNoteId);
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult2);
+          }
+        } catch (error) {
+          console.warn(
+            'Failed to update getNotes cache for link creation:',
+            error
+          );
+        }
+
+        // 2. Обновляем getPosedNotes кэш (это важно!)
+        try {
+          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+            layoutId: arg.layoutId,
+          })(getState() as any);
+
+          if (posedNotesCache.data?.data) {
+            // Обновляем первую заметку в getPosedNotes
+            const patchResult3 = dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId: arg.layoutId },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (note && !note.linkedWith.includes(arg.secondNoteId)) {
+                    note.linkedWith.push(arg.secondNoteId);
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult3);
+
+            // Обновляем вторую заметку в getPosedNotes
+            const patchResult4 = dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId: arg.layoutId },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.secondNoteId);
+                  if (note && !note.linkedWith.includes(arg.firstNoteId)) {
+                    note.linkedWith.push(arg.firstNoteId);
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult4);
+          }
+        } catch (error) {
+          console.warn(
+            'Failed to update getPosedNotes cache for link creation:',
+            error
+          );
+        }
+
+        try {
+          await queryFulfilled;
+        } catch {
+          // Откатываем все изменения в случае ошибки
+          patchResults.forEach(patchResult => patchResult.undo());
+        }
+      },
+    }),
+
+    deleteNoteLink: builder.mutation<
+      DeleteNoteLinkResponse,
+      DeleteNoteLinkRequest
+    >({
+      query: body => ({
+        url: '/notes/layout/links/delete',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (result, error, arg) => [
+        { type: 'Notes', id: arg.layoutId },
+        { type: 'Notes', id: arg.firstNoteId },
+        { type: 'Notes', id: arg.secondNoteId },
+        'Notes',
+      ],
+      extraOptions: {
+        loadingKey: null,
+      },
+
+      onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
+        const patchResults = [];
+
+        try {
+          // Обновляем getNotes кэш
+          const notesCache = notesApi.endpoints.getNotes.select({
+            layoutId: arg.layoutId,
+            page: 1,
+          })(getState() as any);
+
+          if (notesCache.data?.data) {
+            // Удаляем из первой заметки
+            const patchResult1 = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (note) {
+                    note.linkedWith = note.linkedWith.filter(
+                      id => id !== arg.secondNoteId
+                    );
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult1);
+
+            // Удаляем из второй заметки
+            const patchResult2 = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.secondNoteId);
+                  if (note) {
+                    note.linkedWith = note.linkedWith.filter(
+                      id => id !== arg.firstNoteId
+                    );
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult2);
+          }
+
+          // Обновляем getPosedNotes кэш
+          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+            layoutId: arg.layoutId,
+          })(getState() as any);
+
+          if (posedNotesCache.data?.data) {
+            // Удаляем из первой заметки в posed
+            const patchResult3 = dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId: arg.layoutId },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (note) {
+                    note.linkedWith = note.linkedWith.filter(
+                      id => id !== arg.secondNoteId
+                    );
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult3);
+
+            // Удаляем из второй заметки в posed
+            const patchResult4 = dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId: arg.layoutId },
+                draft => {
+                  const note = draft.data.find(n => n.id === arg.secondNoteId);
+                  if (note) {
+                    note.linkedWith = note.linkedWith.filter(
+                      id => id !== arg.firstNoteId
+                    );
+                  }
+                }
+              )
+            );
+            patchResults.push(patchResult4);
+          }
+        } catch (error) {
+          console.warn('Failed to update cache for link deletion:', error);
+        }
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResults.forEach(patchResult => patchResult.undo());
         }
       },
     }),
@@ -381,4 +640,6 @@ export const {
   useGetPosedNotesQuery,
   useGetUnposedNotesQuery,
   useUpdateNotePositionMutation,
+  useCreateNoteLinkMutation,
+  useDeleteNoteLinkMutation,
 } = notesApi;

@@ -36,14 +36,8 @@ export const CreateNoteForm = ({
         payload: payload.trim(),
       }).unwrap();
 
-      const newNote: Note = {
-        id: response.data.id,
-        layoutId,
-        title: title.trim(),
-        payload: payload.trim(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      // Используем данные из ответа API, а не создаем вручную
+      const newNote: Note = response.data;
 
       if (onNoteCreated) {
         onNoteCreated(newNote);

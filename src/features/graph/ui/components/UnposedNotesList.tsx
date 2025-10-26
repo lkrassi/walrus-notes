@@ -29,8 +29,10 @@ export const UnposedNotesList = ({
 
   if (isLoading) {
     return (
-      <div className='absolute top-4 right-4 z-10 w-64 rounded-lg border border-gray-200 bg-white/95 backdrop-blur-sm'>
-        <div className='p-3 text-xs text-gray-500'>Загрузка...</div>
+      <div className='absolute top-4 right-4 z-10 w-64 rounded-lg border border-border bg-bg/95 backdrop-blur-sm dark:border-dark-border dark:bg-dark-bg/95'>
+        <div className='p-3 text-xs text-text-secondary dark:text-dark-text-secondary'>
+          Загрузка...
+        </div>
       </div>
     );
   }
@@ -45,11 +47,14 @@ export const UnposedNotesList = ({
         isOpen={isExpanded}
         onOpenChange={setIsExpanded}
         trigger={
-          <DropdownTrigger className='rounded-lg p-3 transition-colors hover:bg-gray-50/80'>
+          <DropdownTrigger className='rounded-lg border border-border bg-bg p-3 transition-all  dark:border-dark-border dark:bg-dark-bg dark:hover:bg-dark-primary/10'>
             <div className='flex items-center gap-2'>
-              <span className='text-xs font-semibold text-gray-700'>
+              <span className='text-xs font-semibold text-text dark:text-dark-text'>
                 Без позиции ({unposedNotes.length})
               </span>
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-medium text-primary dark:bg-dark-primary/20 dark:text-dark-primary'>
+                {unposedNotes.length}
+              </div>
             </div>
           </DropdownTrigger>
         }
@@ -66,13 +71,13 @@ export const UnposedNotesList = ({
                   e.dataTransfer.effectAllowed = 'move';
                 }}
                 onClick={() => handleNoteClick(note)}
-                className='group flex cursor-pointer items-start gap-2 rounded-md border border-transparent p-2 transition-all hover:border-blue-100 hover:bg-blue-50 hover:shadow-sm'
+                className='group flex cursor-pointer items-start gap-2 rounded-md border border-border bg-bg p-2 transition-all hover:border-primary hover:bg-primary/5 hover:shadow-sm dark:border-dark-border dark:bg-dark-bg dark:hover:border-dark-primary dark:hover:bg-dark-primary/5'
               >
                 <div className='min-w-0 flex-1'>
-                  <h4 className='truncate text-xs font-medium text-gray-800 group-hover:text-blue-700'>
+                  <h4 className='truncate text-xs font-medium text-text group-hover:text-primary dark:text-dark-text dark:group-hover:text-dark-primary'>
                     {note.title}
                   </h4>
-                  <p className='mt-0.5 line-clamp-2 text-[10px] text-gray-500 group-hover:text-blue-600'>
+                  <p className='mt-0.5 line-clamp-2 text-[10px] text-text-secondary group-hover:text-primary/80 dark:text-dark-text-secondary dark:group-hover:text-dark-primary/80'>
                     {note.payload || 'Нет содержимого'}
                   </p>
                 </div>

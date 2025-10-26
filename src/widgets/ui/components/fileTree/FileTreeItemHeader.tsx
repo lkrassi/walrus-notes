@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useLocalization, useIsMobile } from '../../../hooks';
+import { useIsMobile, useLocalization } from '../../../hooks';
 
 type FileTreeItemHeaderProps = {
   item: FileTreeItemType;
@@ -21,6 +21,7 @@ type FileTreeItemHeaderProps = {
   onCreateNote: (layoutId: string) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
+  onDeleteLayout?: (layoutId: string) => void;
 };
 
 export const FileTreeItemHeader = ({
@@ -32,6 +33,7 @@ export const FileTreeItemHeader = ({
   onCreateNote,
   onOpenGraph,
   onDeleteNote,
+  onDeleteLayout,
 }: FileTreeItemHeaderProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
@@ -73,6 +75,11 @@ export const FileTreeItemHeader = ({
   const handleDeleteNote = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onDeleteNote?.(item.id);
+  };
+
+  const handleDeleteLayout = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onDeleteLayout?.(item.id);
   };
 
   return (
@@ -124,8 +131,10 @@ export const FileTreeItemHeader = ({
             {!isMobile && (
               <button
                 onClick={handleOpenGraph}
-                className={`transition-opacity duration-150 opacity-0 group-hover:opacity-100 ${
-                  isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                className={`opacity-0 transition-opacity duration-150 group-hover:opacity-100 ${
+                  isSelected
+                    ? 'text-white hover:text-gray-200'
+                    : 'text-gray-400 hover:text-gray-600'
                 }`}
                 title='Открыть граф заметок'
               >
@@ -136,14 +145,31 @@ export const FileTreeItemHeader = ({
               onClick={handleCreateNote}
               className={`transition-opacity duration-150 ${
                 isMobile
-                  ? 'opacity-100 text-gray-600'
+                  ? 'text-gray-600 opacity-100'
                   : `opacity-0 group-hover:opacity-100 ${
-                      isSelected ? 'text-white hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'
+                      isSelected
+                        ? 'text-white hover:text-gray-200'
+                        : 'text-gray-400 hover:text-gray-600'
                     }`
               }`}
               title={t('fileTree:createNote')}
             >
               <Plus className='h-4 w-4' />
+            </button>
+            <button
+              onClick={handleDeleteLayout}
+              className={`transition-opacity duration-150 ${
+                isMobile
+                  ? 'text-red-600 opacity-100'
+                  : `opacity-0 group-hover:opacity-100 ${
+                      isSelected
+                        ? 'text-white hover:text-red-200'
+                        : 'text-gray-400 hover:text-red-600'
+                    }`
+              }`}
+              title={t('layout:deleteLayout')}
+            >
+              <Trash2 className='h-4 w-4' />
             </button>
           </>
         )}

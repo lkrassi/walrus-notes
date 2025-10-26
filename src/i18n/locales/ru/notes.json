@@ -18,5 +18,18 @@
   "folderEmpty": "Папка пуста",
   "folderEmptyDescription": "В папке \"{layoutTitle}\" пока нет заметок. Создайте первую заметку, чтобы начать работу.",
   "graphEmpty": "Граф заметок пуст",
-  "graphEmptyDescription": "В папке \"{layoutTitle}\" пока нет заметок. Создайте первую заметку, чтобы начать визуализировать связи между ними"
+  "graphEmptyDescription": "В папке \"{layoutTitle}\" пока нет заметок. Создайте первую заметку, чтобы начать визуализировать связи между ними",
+  "createNoteLink": "Создать связь между заметками",
+  "addLink": "Добавить связь",
+  "createLinkBetweenNotes": "Создать связь между заметками",
+  "searchNotes": "Поиск заметок...",
+  "firstNote": "Первая заметка",
+  "secondNote": "Вторая заметка",
+  "selectDifferentNotes": "Выберите две разные заметки",
+  "linkCreatedSuccess": "Связь успешно создана",
+  "linkCreationError": "Ошибка при создании связи",
+  "linkPreview": "Предпросмотр связи",
+  "creatingLink": "Создание связи...",
+  "createLink": "Создать связь",
+  "noContent": "Нет содержимого"
 }

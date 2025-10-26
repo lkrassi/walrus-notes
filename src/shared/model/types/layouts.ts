@@ -17,15 +17,18 @@ export type Layout = {
 
 export type Note = {
   id: string;
-  layoutId: string;
   title: string;
   payload: string;
-  createdAt: string;
-  updatedAt: string;
+  ownerId: string;
+  haveAccess: string[];
   position?: {
     xPos: number;
     yPos: number;
   };
+  linkedWith: string[];
+  layoutId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type GetMyLayoutsResponse = {
@@ -34,6 +37,48 @@ export type GetMyLayoutsResponse = {
     code: string;
     error: string;
     message: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+};
+
+export type CreateNoteLinkRequest = {
+  firstNoteId: string;
+  layoutId: string;
+  secondNoteId: string;
+};
+
+export type CreateNoteLinkResponse = {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+};
+
+export type DeleteNoteLinkRequest = {
+  firstNoteId: string;
+  layoutId: string;
+  secondNoteId: string;
+};
+
+export type DeleteNoteLinkResponse = {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
     requestId: string;
   };
   pagination: {

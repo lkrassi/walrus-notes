@@ -17,7 +17,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(note.title);
   const [payload, setPayload] = useState(note.payload);
-  const { showSuccess, showError } = useNotifications();
+  const { showError } = useNotifications();
   const [updateNote, { isLoading }] = useUpdateNoteMutation();
 
   useEffect(() => {
@@ -55,7 +55,6 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
         updatedAt: new Date().toISOString(),
       };
 
-      showSuccess(t('notes:noteUpdatedSuccess'));
       if (onNoteUpdated) {
         onNoteUpdated(updatedNote);
       }
@@ -85,7 +84,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           )}
         </div>
 
-        <div className='flex flex-shrink-0 gap-2 '>
+        <div className='flex flex-shrink-0 gap-2'>
           {isEditing ? (
             <>
               <Button
@@ -135,7 +134,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           <div className='h-full overflow-y-auto p-4'>
             <div className='prose dark:prose-invert max-w-none'>
               {payload ? (
-                <div className='text-text dark:text-dark-text break-words whitespace-pre-wrap'>
+                <div className='text-text dark:text-dark-text whitespace-pre-wrap'>
                   {payload}
                 </div>
               ) : (
