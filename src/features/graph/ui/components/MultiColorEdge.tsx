@@ -1,4 +1,4 @@
-import { BaseEdge, type EdgeProps, getSimpleBezierPath } from 'reactflow';
+import { BaseEdge, type EdgeProps, getBezierPath } from 'reactflow';
 
 interface MultiColorStepEdgeData {
   sourceColor: string;
@@ -11,19 +11,15 @@ export const MultiColorEdge = ({
   sourceY,
   targetX,
   targetY,
-  sourcePosition,
-  targetPosition,
   style = {},
   data,
   markerEnd,
 }: EdgeProps<MultiColorStepEdgeData>) => {
-  const [edgePath] = getSimpleBezierPath({
+  const [edgePath] = getBezierPath({
     sourceX,
     sourceY,
     targetX,
     targetY,
-    sourcePosition,
-    targetPosition,
   });
 
   const gradientId = `gradient-${id}`;

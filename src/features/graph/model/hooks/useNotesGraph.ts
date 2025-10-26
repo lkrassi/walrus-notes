@@ -11,7 +11,6 @@ interface UseNotesGraphProps {
   layoutId: string;
 }
 
-// Используем тот же разделитель
 const EDGE_ID_SEPARATOR = '___';
 
 // Функция для создания edge ID

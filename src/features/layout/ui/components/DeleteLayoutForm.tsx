@@ -58,10 +58,10 @@ export const DeleteLayoutForm = ({
         <h3 className='text-text dark:text-dark-text mt-4 text-lg font-semibold'>
           {t('layout:deleteLayout')}
         </h3>
-        <p className='text-text-secondary dark:text-dark-text-secondary mt-2 text-sm'>
+        <p className='text-text dark:text-dark-text mt-2 text-sm'>
           {t('layout:deleteLayoutConfirmation', { title: layoutTitle })}
         </p>
-        <p className='text-text-tertiary dark:text-dark-text-tertiary mt-1 text-xs'>
+        <p className='text-text dark:text-dark-text mt-1 text-xs'>
           {t('layout:deleteLayoutWarning')}
         </p>
       </div>

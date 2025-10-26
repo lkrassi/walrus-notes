@@ -8,7 +8,6 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import type { Note } from 'shared/model';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphEffects } from '../../model/hooks/useGraphEffects';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
@@ -19,7 +18,6 @@ import { UnposedNotesList } from './UnposedNotesList';
 
 interface NotesGraphContentProps {
   layoutId: string;
-  onNoteDoubleClick?: (note: Note) => void;
 }
 
 const edgeTypes = {
@@ -31,7 +29,7 @@ const nodeTypes = {
 };
 
 export const NotesGraphContent = React.memo(
-  ({ layoutId, onNoteDoubleClick }: NotesGraphContentProps) => {
+  ({ layoutId }: NotesGraphContentProps) => {
     const {
       isLoading,
       initialNodes,

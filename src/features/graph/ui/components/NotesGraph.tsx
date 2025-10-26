@@ -15,7 +15,6 @@ export const NotesGraph = ({
     <ReactFlowProvider>
       <NotesGraphContent
         layoutId={layoutId}
-        onNoteDoubleClick={onNoteDoubleClick}
       />
     </ReactFlowProvider>
   );
