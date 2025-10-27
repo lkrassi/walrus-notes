@@ -31,7 +31,6 @@ export const useGraphHandlers = ({
         console.warn('No drop position provided for note:', note.id);
         return;
       }
-      // Исправлено: передаем три аргумента как ожидается
       updatePositionCallback(note.id, dropPosition.x, dropPosition.y);
     },
     [updatePositionCallback]
@@ -39,7 +38,6 @@ export const useGraphHandlers = ({
 
   const onNodeDragStop = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      // Исправлено: передаем три аргумента
       updatePositionCallback(node.id, node.position.x, node.position.y);
     },
     [updatePositionCallback]
@@ -68,7 +66,6 @@ export const useGraphHandlers = ({
 
   const handleNodeMouseLeave = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      // Исправлено: передаем node.id или ничего, если функция принимает опциональный параметр
       onNodeMouseLeave(node?.id);
     },
     [onNodeMouseLeave]

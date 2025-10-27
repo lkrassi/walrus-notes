@@ -84,9 +84,15 @@ export const NotesGraphContent = React.memo(
       if (!selectedNodeId) {
         return combinedEdges.map(edge => ({
           ...edge,
+          style: {
+            // Добавляем стили для неподсвеченных ребер
+            strokeWidth: 2,
+            strokeDasharray: '5,5',
+            opacity: 0.3,
+          },
           data: {
             ...edge.data,
-            isRelatedToSelected: true,
+            isRelatedToSelected: false,
             isSelected: false,
           },
         }));
@@ -97,6 +103,11 @@ export const NotesGraphContent = React.memo(
           selectedNodeId === edge.source || selectedNodeId === edge.target;
         return {
           ...edge,
+          style: {
+            strokeWidth: isRelated ? 3 : 2,
+            strokeDasharray: isRelated ? '0' : '5,5',
+            opacity: isRelated ? 1 : 0.3,
+          },
           data: {
             ...edge.data,
             isRelatedToSelected: isRelated,

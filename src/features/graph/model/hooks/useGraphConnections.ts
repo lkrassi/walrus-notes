@@ -40,36 +40,18 @@ export const useGraphConnections = ({
     return [...edges, ...tempEdges];
   }, [edges, tempEdges]);
 
-  const createEdge = useCallback(
-    (source: string, target: string): Edge => {
-      return {
-        id: `${source}-${target}`,
-        source,
-        target,
-        type: 'multiColor' as const,
-        data: {
-          sourceColor: generateColorFromId(source),
-          targetColor: generateColorFromId(target),
-        },
-        style: {
-          strokeWidth: 3,
-          strokeDasharray:
-            selectedNodeId &&
-            (selectedNodeId === source || selectedNodeId === target)
-              ? '0'
-              : '5,5',
-          opacity:
-            hoveredNodeId &&
-            (hoveredNodeId === source || hoveredNodeId === target)
-              ? 1
-              : 0.7,
-          transition: 'opacity 0.2s ease-in-out',
-        },
-        animated: false,
-      };
-    },
-    [selectedNodeId, hoveredNodeId]
-  );
+  const createEdge = useCallback((source: string, target: string): Edge => {
+    return {
+      id: `${source}-${target}`,
+      source,
+      target,
+      type: 'multiColor' as const,
+      data: {
+        sourceColor: generateColorFromId(source),
+        targetColor: generateColorFromId(target),
+      },
+    };
+  }, []);
 
   const onConnectStart = useCallback((event: any, params: any) => {
     if (!isValidNoteId(params.nodeId)) {

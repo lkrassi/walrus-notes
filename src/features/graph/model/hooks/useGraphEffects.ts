@@ -41,6 +41,10 @@ export const useGraphEffects = ({
   useEffect(() => {
     setTempEdges(prev =>
       prev.map(edge => {
+        const isRelatedToSelected = selectedNodeId
+          ? selectedNodeId === edge.source || selectedNodeId === edge.target
+          : false;
+
         const isHovered =
           !!hoveredNodeId &&
           (hoveredNodeId === edge.source || hoveredNodeId === edge.target);
@@ -48,14 +52,16 @@ export const useGraphEffects = ({
         return {
           ...edge,
           animated: isHovered,
+          style: {
+            strokeWidth: isRelatedToSelected ? 3 : 2,
+            strokeDasharray: isRelatedToSelected ? '0' : '5,5',
+            opacity: isHovered ? 1 : isRelatedToSelected ? 1 : 0.3,
+            transition: 'opacity 0.2s ease-in-out',
+          },
           data: {
             ...edge.data,
-            isRelatedToSelected: selectedNodeId
-              ? selectedNodeId === edge.source || selectedNodeId === edge.target
-              : true,
-            isSelected: selectedNodeId
-              ? selectedNodeId === edge.source || selectedNodeId === edge.target
-              : false,
+            isRelatedToSelected,
+            isSelected: isRelatedToSelected,
           },
         };
       })
