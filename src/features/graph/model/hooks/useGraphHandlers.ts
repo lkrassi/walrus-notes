@@ -1,12 +1,16 @@
 import { useCallback } from 'react';
-import type { NodeChange, NodeDragHandler, OnNodesChange } from 'reactflow';
+import type { Node, NodeChange, OnNodesChange } from 'reactflow';
 
 interface UseGraphHandlersProps {
-  updatePositionCallback: (noteId: string, xPos: number, yPos: number) => void;
+  updatePositionCallback: (
+    nodeId: string,
+    xPos: number,
+    yPos: number
+  ) => Promise<void>;
   onNodeClick: (nodeId: string) => void;
   onNodeMouseEnter: (nodeId: string) => void;
-  onNodeMouseLeave: () => void;
-  onNodesChange: (changes: NodeChange[]) => void;
+  onNodeMouseLeave: (nodeId?: string) => void;
+  onNodesChange: OnNodesChange;
   screenToFlowPosition: (position: { x: number; y: number }) => {
     x: number;
     y: number;
@@ -27,13 +31,15 @@ export const useGraphHandlers = ({
         console.warn('No drop position provided for note:', note.id);
         return;
       }
+      // Исправлено: передаем три аргумента как ожидается
       updatePositionCallback(note.id, dropPosition.x, dropPosition.y);
     },
     [updatePositionCallback]
   );
 
-  const onNodeDragStop: NodeDragHandler = useCallback(
-    (event, node) => {
+  const onNodeDragStop = useCallback(
+    (event: React.MouseEvent, node: Node) => {
+      // Исправлено: передаем три аргумента
       updatePositionCallback(node.id, node.position.x, node.position.y);
     },
     [updatePositionCallback]
@@ -47,22 +53,23 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeClick = useCallback(
-    (event: React.MouseEvent, node: any) => {
+    (event: React.MouseEvent, node: Node) => {
       onNodeClick(node.id);
     },
     [onNodeClick]
   );
 
   const handleNodeMouseEnter = useCallback(
-    (event: React.MouseEvent, node: any) => {
+    (event: React.MouseEvent, node: Node) => {
       onNodeMouseEnter(node.id);
     },
     [onNodeMouseEnter]
   );
 
   const handleNodeMouseLeave = useCallback(
-    (event: React.MouseEvent, node: any) => {
-      onNodeMouseLeave();
+    (event: React.MouseEvent, node: Node) => {
+      // Исправлено: передаем node.id или ничего, если функция принимает опциональный параметр
+      onNodeMouseLeave(node?.id);
     },
     [onNodeMouseLeave]
   );

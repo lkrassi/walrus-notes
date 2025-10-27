@@ -41,40 +41,24 @@ export const useGraphEffects = ({
   useEffect(() => {
     setTempEdges(prev =>
       prev.map(edge => {
-        const isAnimated = !!(
-          hoveredNodeId &&
-          (hoveredNodeId === edge.source || hoveredNodeId === edge.target)
-        );
+        const isHovered =
+          !!hoveredNodeId &&
+          (hoveredNodeId === edge.source || hoveredNodeId === edge.target);
 
         return {
           ...edge,
-          animated: isAnimated,
-          style: {
-            ...edge.style,
-            opacity:
-              hoveredNodeId &&
-              (hoveredNodeId === edge.source || hoveredNodeId === edge.target)
-                ? 1
-                : 0.7,
+          animated: isHovered,
+          data: {
+            ...edge.data,
+            isRelatedToSelected: selectedNodeId
+              ? selectedNodeId === edge.source || selectedNodeId === edge.target
+              : true,
+            isSelected: selectedNodeId
+              ? selectedNodeId === edge.source || selectedNodeId === edge.target
+              : false,
           },
         };
       })
     );
-  }, [hoveredNodeId, setTempEdges]);
-
-  useEffect(() => {
-    setTempEdges(prev =>
-      prev.map(edge => ({
-        ...edge,
-        style: {
-          ...edge.style,
-          strokeDasharray:
-            selectedNodeId &&
-            (selectedNodeId === edge.source || selectedNodeId === edge.target)
-              ? '0'
-              : '5,5',
-        },
-      }))
-    );
-  }, [selectedNodeId, setTempEdges]);
+  }, [hoveredNodeId, selectedNodeId, setTempEdges]);
 };

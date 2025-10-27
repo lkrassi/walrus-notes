@@ -1,23 +1,27 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
   useEdgesState,
   useNodesState,
   useReactFlow,
+  type Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import type { Note } from 'shared/model/types/layouts';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphEffects } from '../../model/hooks/useGraphEffects';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
+import { GraphBackground } from './GraphBackground';
+import { GraphControls } from './GraphControls';
+import { GraphLoading } from './GraphLoading';
+import { GraphMiniMap } from './GraphMiniMap';
 import { MultiColorEdge } from './MultiColorEdge';
-import { generateColorFromId, NoteNodeComponent } from './NoteNode';
+import { NoteNodeComponent } from './NoteNode';
 import { UnposedNotesList } from './UnposedNotesList';
 
 interface NotesGraphContentProps {
   layoutId: string;
+  onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
 }
 
 const edgeTypes = {
@@ -29,7 +33,7 @@ const nodeTypes = {
 };
 
 export const NotesGraphContent = React.memo(
-  ({ layoutId }: NotesGraphContentProps) => {
+  ({ layoutId, onNoteOpen }: NotesGraphContentProps) => {
     const {
       isLoading,
       initialNodes,
@@ -74,6 +78,34 @@ export const NotesGraphContent = React.memo(
       setTempEdges,
     });
 
+    const edgesWithSelection = (() => {
+      const combinedEdges = [...edges, ...tempEdges];
+
+      if (!selectedNodeId) {
+        return combinedEdges.map(edge => ({
+          ...edge,
+          data: {
+            ...edge.data,
+            isRelatedToSelected: true,
+            isSelected: false,
+          },
+        }));
+      }
+
+      return combinedEdges.map(edge => {
+        const isRelated =
+          selectedNodeId === edge.source || selectedNodeId === edge.target;
+        return {
+          ...edge,
+          data: {
+            ...edge.data,
+            isRelatedToSelected: isRelated,
+            isSelected: isRelated,
+          },
+        };
+      });
+    })();
+
     const {
       handleAddNoteToGraph,
       onNodeDragStop,
@@ -91,27 +123,64 @@ export const NotesGraphContent = React.memo(
       screenToFlowPosition,
     });
 
-    // Обновляем nodes с учетом выбранного состояния
-    const nodesWithSelection = useMemo(
-      () =>
-        nodes.map(node => ({
+    const handleNoteOpen = (noteId: string) => {
+      const node = nodes.find(n => n.id === noteId);
+      if (node && node.data.note) {
+        onNoteOpen?.({ noteId, note: node.data.note });
+      }
+    };
+
+    const nodesWithSelection = (() => {
+      if (!selectedNodeId) {
+        return nodes.map(node => ({
           ...node,
           data: {
             ...node.data,
-            selected: selectedNodeId === node.id,
+            selected: false,
+            isRelatedToSelected: true,
+            onNoteClick: handleNoteOpen,
           },
-        })),
-      [nodes, selectedNodeId]
-    );
+          style: {
+            ...node.style,
+            opacity: 1,
+          },
+        }));
+      }
+
+      const relatedNodeIds = new Set<string>([selectedNodeId]);
+      allEdges.forEach(edge => {
+        if (edge.source === selectedNodeId) relatedNodeIds.add(edge.target);
+        if (edge.target === selectedNodeId) relatedNodeIds.add(edge.source);
+      });
+
+      return nodes.map(node => {
+        const isRelated = relatedNodeIds.has(node.id);
+        const isSelected = selectedNodeId === node.id;
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            selected: isSelected,
+            isRelatedToSelected: isRelated,
+            onNoteClick: handleNoteOpen,
+          },
+          style: {
+            ...node.style,
+            opacity: isRelated ? 1 : 0.5,
+            transition: 'opacity 0.3s ease-in-out',
+          },
+        };
+      });
+    })();
+
+    const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
+      event.stopPropagation();
+      node.data?.onNoteClick?.(node.id);
+    };
 
     if (isLoading) {
-      return (
-        <div className='flex h-full items-center justify-center'>
-          <div className='text-text-secondary dark:text-dark-text-secondary'>
-            Загрузка графа...
-          </div>
-        </div>
-      );
+      return <GraphLoading />;
     }
 
     return (
@@ -123,7 +192,7 @@ export const NotesGraphContent = React.memo(
         >
           <ReactFlow
             nodes={nodesWithSelection}
-            edges={allEdges}
+            edges={edgesWithSelection}
             onNodesChange={handleNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -146,23 +215,11 @@ export const NotesGraphContent = React.memo(
             maxZoom={2}
             proOptions={{ hideAttribution: true }}
             key={layoutId}
+            onNodeDoubleClick={handleNodeDoubleClick}
           >
-            <Background gap={20} size={1} color='#6b7280' />
-            <Controls />
-            <MiniMap
-              nodeColor={node => generateColorFromId(node.id)}
-              maskColor='rgba(0, 0, 0, 0.1)'
-              nodeStrokeColor='#000'
-              nodeBorderRadius={2}
-              nodeStrokeWidth={1}
-              maskStrokeColor='rgba(0, 0, 0, 0.5)'
-              maskStrokeWidth={2}
-              position='bottom-right'
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                border: '1px solid #e5e7eb',
-              }}
-            />
+            <GraphBackground />
+            <GraphControls />
+            <GraphMiniMap />
 
             <UnposedNotesList
               layoutId={layoutId}

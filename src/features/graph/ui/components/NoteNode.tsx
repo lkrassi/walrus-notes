@@ -1,39 +1,16 @@
 import { Handle, Position } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
+import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface NoteNodeProps {
-  data: { note: Note };
+  data: {
+    note: Note;
+    onNoteClick?: (noteId: string) => void;
+    selected?: boolean;
+    isRelatedToSelected?: boolean;
+  };
   selected: boolean;
 }
-
-export const generateColorFromId = (id: string): string => {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  const colors = [
-    '#ef4444',
-    '#f97316',
-    '#f59e0b',
-    '#eab308',
-    '#84cc16',
-    '#22c55e',
-    '#10b981',
-    '#14b8a6',
-    '#06b6d4',
-    '#0ea5e9',
-    '#3b82f6',
-    '#6366f1',
-    '#8b5cf6',
-    '#a855f7',
-    '#d946ef',
-    '#ec4899',
-    '#f43f5e',
-  ];
-
-  return colors[Math.abs(hash) % colors.length];
-};
 
 export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
   const nodeColor = generateColorFromId(data.note.id);
@@ -45,17 +22,24 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
     height: 15,
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    data.onNoteClick?.(data.note.id);
+  };
+
   return (
-    <div
-      className={`max-w-40 min-w-40 rounded-xl p-2 transition-all duration-200 ${
+    <button
+      onDoubleClick={handleDoubleClick}
+      className={`max-w-40 min-w-40 cursor-pointer rounded-xl p-2 text-left transition-all duration-200 ${
         selected
           ? 'shadow-lg ring-4 ring-blue-400'
           : 'shadow-md hover:shadow-lg'
       }`}
       style={{
         backgroundColor: nodeColor,
-        border: `2px solid ${selected ? '#3b82f6' : 'transparent'}`,
+        opacity: data.isRelatedToSelected !== false ? 1 : 0.5, // Поддержка прозрачности
       }}
+      title='Двойной клик для открытия заметки'
     >
       <Handle
         type='source'
@@ -107,9 +91,12 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         style={handleStyle}
       />
 
-      <h3 className='mb-2 truncate font-semibold text-dark-text'>
+      <h3 className='mb-2 truncate font-semibold text-white'>
         {data.note.title}
       </h3>
-    </div>
+      <p className='line-clamp-2 text-sm text-white/80'>
+        {data.note.payload || 'Нет содержимого'}
+      </p>
+    </button>
   );
 };

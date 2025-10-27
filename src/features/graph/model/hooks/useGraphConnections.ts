@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { Connection, Edge } from 'reactflow';
 import { useCreateNoteLinkMutation } from 'widgets/model/stores/api';
-import { generateColorFromId } from '../../ui/components/NoteNode';
+import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface UseGraphConnectionsProps {
   layoutId: string;
@@ -15,7 +15,6 @@ interface UseGraphConnectionsProps {
   };
 }
 
-// Функция для проверки валидности ID
 const isValidNoteId = (id: string | null): id is string => {
   return (
     typeof id === 'string' &&
@@ -72,7 +71,6 @@ export const useGraphConnections = ({
     [selectedNodeId, hoveredNodeId]
   );
 
-  // Обработчик начала создания связи с проверкой ID
   const onConnectStart = useCallback((event: any, params: any) => {
     if (!isValidNoteId(params.nodeId)) {
       return;
@@ -86,7 +84,6 @@ export const useGraphConnections = ({
     });
   }, []);
 
-  // Обработчик завершения создания связи с проверкой ID
   const onConnectEnd = useCallback(
     async (event: any) => {
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
@@ -119,7 +116,6 @@ export const useGraphConnections = ({
         targetNodeId = targetNode?.id || null;
       }
 
-      // Проверяем, что targetNodeId валиден и не совпадает с source
       if (!isValidNoteId(targetNodeId) || tempEdge.source === targetNodeId) {
         setTempEdge(null);
         return;
@@ -137,7 +133,6 @@ export const useGraphConnections = ({
       }
 
       try {
-        // Теперь TypeScript знает, что оба параметра - строки
         const newEdge = createEdge(tempEdge.source, targetNodeId);
         setTempEdges(prev => [...prev, newEdge]);
 
@@ -165,10 +160,8 @@ export const useGraphConnections = ({
     ]
   );
 
-  // Обработчик для стандартного onConnect с проверкой ID
   const onConnect = useCallback(
     async (connection: Connection) => {
-      // Используем type guard для проверки
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)

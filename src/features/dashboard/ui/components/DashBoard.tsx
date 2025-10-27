@@ -1,40 +1,46 @@
 import { useRef } from 'react';
+import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useFileTree } from 'widgets/hooks';
 import { Sidebar } from 'widgets/ui';
+import {
+  useDashboardNavigation,
+  useDashboardTabs,
+  useDashboardUser,
+} from '../../hooks';
+import { getItemPath } from '../../utils/fileTreeUtils';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
-import { useDashboardTabs, useDashboardNavigation, useDashboardUser } from '../../hooks';
-import { getItemPath } from '../../utils/fileTreeUtils';
 
 export const DashBoard = () => {
   const { fileTree } = useFileTree();
   const sidebarRef = useRef<{
-    updateNoteInTree: (
-      noteId: string,
-      updates: Partial<import('shared/model/types/layouts').Note>
-    ) => void;
+    updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
 
-  // Используем кастомные хуки для разделения логики
-  const { openTabs, activeTabId, openTab, closeTab, switchTab, reorderTabs, updateTabNote } = useDashboardTabs();
+  const {
+    openTabs,
+    activeTabId,
+    openTab,
+    closeTab,
+    switchTab,
+    reorderTabs,
+    updateTabNote,
+  } = useDashboardTabs();
   const { updateUrlForTab, updateUrlForItem } = useDashboardNavigation({
     fileTree,
     openTab,
     switchTab,
     openTabs,
   });
-  useDashboardUser(); // Инициализация профиля пользователя
+  useDashboardUser();
 
   const handleTabSwitch = (tabId: string) => {
     switchTab(tabId);
     updateUrlForTab(tabId);
   };
 
-  const handleNoteUpdated = (
-    noteId: string,
-    updates: Partial<import('shared/model/types/layouts').Note>
-  ) => {
+  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
     updateTabNote(noteId, updates);
     sidebarRef.current?.updateNoteInTree(noteId, updates);
   };
@@ -44,15 +50,21 @@ export const DashBoard = () => {
     updateUrlForItem(item);
   };
 
-  const handleOpenGraph = (layoutId: string) => {
-    const graphItem: FileTreeItem = {
-      id: `graph-${layoutId}`,
-      type: 'graph',
-      title: 'Граф заметок',
-      layoutId,
+  // Новая функция для открытия заметки из графа с реальными данными
+  const handleNoteOpenFromGraph = (noteData: {
+    noteId: string;
+    note: Note;
+  }) => {
+    const noteItem: FileTreeItem = {
+      id: noteData.noteId,
+      type: 'note',
+      title: noteData.note.title,
+      parentId: noteData.note.layoutId,
+      note: noteData.note,
     };
-    openTab(graphItem);
-    // Don't update URL for graph items
+
+    openTab(noteItem);
+    updateUrlForItem(noteItem);
   };
 
   const getItemPathWrapper = (item: FileTreeItem): string => {
@@ -77,6 +89,7 @@ export const DashBoard = () => {
           getItemPath={getItemPathWrapper}
           onNoteUpdated={handleNoteUpdated}
           onItemSelect={handleItemSelect}
+          onNoteOpen={handleNoteOpenFromGraph}
         />
       </div>
     </div>

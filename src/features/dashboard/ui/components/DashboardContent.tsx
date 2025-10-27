@@ -16,6 +16,7 @@ interface DashboardContentProps {
   getItemPath: (item: FileTreeItem) => string;
   onNoteUpdated: (noteId: string, updates: Partial<Note>) => void;
   onItemSelect: (item: FileTreeItem) => void;
+  onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
 }
 
 export const DashboardContent = ({
@@ -25,10 +26,39 @@ export const DashboardContent = ({
   onTabReorder,
   getItemPath,
   onNoteUpdated,
+  onItemSelect,
+  onNoteOpen, // Добавьте этот пропс в деструктуризацию
 }: DashboardContentProps) => {
   const { t } = useLocalization();
 
   const activeTab = openTabs.find(tab => tab.isActive);
+
+  const handleNoteOpen = (noteData: { noteId: string; note: Note }) => {
+    if (onNoteOpen) {
+      onNoteOpen(noteData); // Передаем в родительский компонент
+      return;
+    }
+
+    // Резервная логика, если пропс не передан
+    const existingTab = openTabs.find(
+      tab => tab.item.type === 'note' && tab.item.id === noteData.noteId
+    );
+
+    if (existingTab) {
+      onTabClick(existingTab.id);
+      return;
+    }
+
+    const noteItem: FileTreeItem = {
+      id: noteData.noteId,
+      type: 'note',
+      title: noteData.note.title,
+      parentId: activeTab?.item.id || noteData.note.layoutId,
+      note: noteData.note,
+    };
+
+    onItemSelect(noteItem);
+  };
 
   const renderContent = () => {
     if (!activeTab) {
@@ -53,12 +83,13 @@ export const DashboardContent = ({
 
     if (activeTab.item.type === 'note') {
       const note = activeTab.item.note;
+
       if (!note) {
         return (
           <div className='flex h-full items-center justify-center'>
             <div className='text-center'>
               <p className='text-secondary dark:text-dark-secondary'>
-                {t('dashboard:noteLoadError')}
+                Загрузка заметки...
               </p>
             </div>
           </div>
@@ -86,8 +117,9 @@ export const DashboardContent = ({
     }
 
     if (activeTab.item.type === 'layout') {
-      // Используем id вместо layoutId, так как для layout'ов id и есть layoutId
-      return <NotesGraph layoutId={activeTab.item.id} />;
+      return (
+        <NotesGraph layoutId={activeTab.item.id} onNoteOpen={handleNoteOpen} />
+      );
     }
   };
 

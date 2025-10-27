@@ -5,17 +5,14 @@ import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
 } from 'widgets/model/stores/api';
-import { generateColorFromId } from '../../ui/components/NoteNode';
+import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface UseNotesGraphProps {
   layoutId: string;
 }
 
-const EDGE_ID_SEPARATOR = '___';
-
-// Функция для создания edge ID
 const createEdgeId = (source: string, target: string): string => {
-  return `${source}${EDGE_ID_SEPARATOR}${target}`;
+  return `${source}${target}`;
 };
 
 export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
@@ -93,11 +90,6 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
                     selectedNodeId === linkedNoteId)
                     ? '0'
                     : '5,5',
-                opacity:
-                  hoveredNodeId &&
-                  (hoveredNodeId === note.id || hoveredNodeId === linkedNoteId)
-                    ? 1
-                    : 0.7,
               },
               animated: isAnimated,
             };
