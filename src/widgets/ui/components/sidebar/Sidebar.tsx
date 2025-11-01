@@ -1,9 +1,14 @@
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, useState, type Ref } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import type { Note } from 'shared/model/types/layouts';
-import { useFileTree, useLocalization, useSidebar, useDebounce } from 'widgets/hooks';
+import {
+  useDebounce,
+  useFileTree,
+  useLocalization,
+  useSidebar,
+} from 'widgets/hooks';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { FileTree } from '../fileTree';
 import { DeleteNoteModal, useModalContext } from '../modal';
@@ -25,7 +30,6 @@ const SidebarComponent = (
     layoutId?: string;
     noteId?: string;
   }>();
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
@@ -68,18 +72,10 @@ const SidebarComponent = (
 
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
-    if (item.type === 'note') {
-      setIsMobileOpen(false);
-      navigate(`/dashboard/${item.parentId}/${item.id}`);
-    } else if (item.type === 'layout') {
-      navigate(`/dashboard/${item.id}`);
-    } else if (item.type === 'graph') {
-      navigate(`/dashboard/graph/${item.layoutId}`);
-    }
+    setIsMobileOpen(false);
   };
 
   const handleOpenGraph = (layoutId: string) => {
-    // Найдем название layout для отображения в заголовке графа
     const layout = fileTree.find(item => item.id === layoutId);
     const graphTitle = layout ? `Граф: ${layout.title}` : 'Граф заметок';
 
@@ -89,7 +85,6 @@ const SidebarComponent = (
       title: graphTitle,
       layoutId,
     });
-    // Don't navigate for graph items to avoid URL changes
   };
 
   return (

@@ -24,7 +24,7 @@ export const ProfileButton: React.FC = () => {
     >
       {profile?.imgUrl ? (
         <img
-          src={`https://${profile.imgUrl}`}
+          src={`https://${profile.imgUrl}`} 
           alt='Аватар'
           className='h-full w-full object-cover'
         />

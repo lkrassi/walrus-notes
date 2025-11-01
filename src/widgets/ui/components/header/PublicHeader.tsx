@@ -27,7 +27,7 @@ export const PublicHeader = memo(() => {
           <h1 className='text-text dark:text-dark-text text-base font-bold sm:text-xl md:text-2xl'>
             Walrus
           </h1>
-          <h1 className='from-primary to-primary-gradient bg-gradient-to-r bg-clip-text text-base font-bold text-transparent sm:text-xl md:text-2xl'>
+          <h1 className='from-primary to-primary-gradient bg-clip-text text-base font-bold text-transparent sm:text-xl md:text-2xl'>
             Notes
           </h1>
         </div>

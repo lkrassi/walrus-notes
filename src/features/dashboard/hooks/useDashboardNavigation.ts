@@ -1,87 +1,35 @@
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { FileTreeItem } from 'widgets/hooks';
 
 interface UseDashboardNavigationProps {
-  fileTree: FileTreeItem[];
-  openTab: (item: FileTreeItem) => void;
-  switchTab: (tabId: string) => void;
   openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
 }
 
 export const useDashboardNavigation = ({
-  fileTree,
-  openTab,
-  switchTab,
   openTabs,
 }: UseDashboardNavigationProps) => {
-  const { layoutId, noteId } = useParams<{
-    layoutId?: string;
-    noteId?: string;
-  }>();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (layoutId || noteId) {
-      const findItemById = (
-        items: FileTreeItem[],
-        targetId: string
-      ): FileTreeItem | null => {
-        for (const item of items) {
-          if (item.id === targetId) {
-            return item;
-          }
-          if (item.children) {
-            const found = findItemById(item.children, targetId);
-            if (found) return found;
-          }
-        }
-        return null;
-      };
-
-      const targetId = noteId || layoutId;
-      if (targetId) {
-        const foundItem = findItemById(fileTree, targetId);
-        if (foundItem) {
-          openTab(foundItem);
-        }
-      }
-    }
-  }, [layoutId, noteId, fileTree, openTab]);
-
-  // Don't update URL for graph items since they don't have a direct route
   const updateUrlForTab = (tabId: string) => {
     const activeTab = openTabs.find(tab => tab.id === tabId);
-    if (activeTab && activeTab.item.type !== 'graph') {
-      if (activeTab.item.type === 'note') {
-        window.history.replaceState(
-          null,
-          '',
-          `/dashboard/${activeTab.item.parentId}/${activeTab.item.id}`
-        );
-      } else if (activeTab.item.type === 'layout') {
-        window.history.replaceState(
-          null,
-          '',
-          `/dashboard/${activeTab.item.id}`
-        );
-      }
-    }
+    if (!activeTab) return;
+
+    updateUrlForItem(activeTab.item);
   };
 
   const updateUrlForItem = (item: FileTreeItem) => {
-    if (item.type !== 'graph') {
-      if (item.type === 'note') {
-        window.history.replaceState(
-          null,
-          '',
-          `/dashboard/${item.parentId}/${item.id}`
-        );
-      } else if (item.type === 'layout') {
-        window.history.replaceState(null, '', `/dashboard/${item.id}`);
-      }
-    }
-  };
+    let newPath = '/dashboard';
 
+    if (item.type === 'layout') {
+      newPath = `/dashboard/${item.id}`;
+    } else if (item.type === 'note' && item.parentId) {
+      newPath = `/dashboard/${item.parentId}/${item.id}`;
+    } else if (item.type === 'graph' && item.layoutId) {
+      newPath = `/dashboard/${item.layoutId}`;
+    }
+
+    navigate(newPath, { replace: true });
+  };
 
   return {
     updateUrlForTab,

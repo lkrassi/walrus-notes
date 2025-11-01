@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+::selection {
+  @apply bg-primary/30 text-text;
+}
+
+.dark ::selection {
+  @apply bg-primary/30 text-dark-text;
+}
+
 body {
   @apply box-border;
   font-family: 'PT Mono', monospace;

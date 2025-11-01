@@ -27,7 +27,7 @@ export const DashboardContent = ({
   getItemPath,
   onNoteUpdated,
   onItemSelect,
-  onNoteOpen, // Добавьте этот пропс в деструктуризацию
+  onNoteOpen,
 }: DashboardContentProps) => {
   const { t } = useLocalization();
 
@@ -35,11 +35,10 @@ export const DashboardContent = ({
 
   const handleNoteOpen = (noteData: { noteId: string; note: Note }) => {
     if (onNoteOpen) {
-      onNoteOpen(noteData); // Передаем в родительский компонент
+      onNoteOpen(noteData);
       return;
     }
 
-    // Резервная логика, если пропс не передан
     const existingTab = openTabs.find(
       tab => tab.item.type === 'note' && tab.item.id === noteData.noteId
     );
@@ -108,19 +107,29 @@ export const DashboardContent = ({
           }
           onNoteDeleted={() => {
             onTabClose(activeTab.id);
-            if (openTabs.length <= 1) {
-              window.history.replaceState(null, '', '/dashboard');
-            }
           }}
         />
       );
     }
 
-    if (activeTab.item.type === 'layout') {
-      return (
-        <NotesGraph layoutId={activeTab.item.id} onNoteOpen={handleNoteOpen} />
-      );
+    if (activeTab.item.type === 'layout' || activeTab.item.type === 'graph') {
+      const layoutId =
+        activeTab.item.type === 'layout'
+          ? activeTab.item.id
+          : activeTab.item.layoutId;
+
+      return <NotesGraph layoutId={layoutId!} onNoteOpen={handleNoteOpen} />;
     }
+
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-secondary dark:text-dark-secondary'>
+            Неподдерживаемый тип контента
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (

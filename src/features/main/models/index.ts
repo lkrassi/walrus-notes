@@ -1,1 +1,1 @@
-export * from './animation-variants';
+export * from './variants';

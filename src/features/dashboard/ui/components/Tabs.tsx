@@ -60,7 +60,7 @@ export const Tabs = ({
 
   return (
     <div className='border-border dark:border-dark-border dark:bg-dark-bg scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent flex overflow-x-auto border-b bg-white'>
-      {tabs.map((tab, index) => (
+      {tabs.map((tab) => (
         <div
           key={tab.id}
           draggable

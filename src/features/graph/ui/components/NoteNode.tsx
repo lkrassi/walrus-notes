@@ -37,7 +37,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
       }`}
       style={{
         backgroundColor: nodeColor,
-        opacity: data.isRelatedToSelected !== false ? 1 : 0.5, // Поддержка прозрачности
+        opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
       }}
       title='Двойной клик для открытия заметки'
     >
@@ -91,12 +91,9 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         style={handleStyle}
       />
 
-      <h3 className='mb-2 truncate font-semibold text-white'>
+      <h3 className='font-semibold text-dark-text m-3 text-center'>
         {data.note.title}
       </h3>
-      <p className='line-clamp-2 text-sm text-white/80'>
-        {data.note.payload || 'Нет содержимого'}
-      </p>
     </button>
   );
 };

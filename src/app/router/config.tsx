@@ -1,4 +1,6 @@
+// router/config.tsx
 import { AuthPage, DashBoardPage, MainPage, NotFoundPage } from 'pages';
+import { SettingsPage } from 'pages/settings/ui/SettingsPage';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -6,6 +8,7 @@ export const AppRoutes = {
   MAIN: '/',
   AUTH: '/auth',
   DASHBOARD: '/dashboard/:layoutId?/:noteId?',
+  SETTINGS: '/settings',
   NOT_FOUND: '*',
 };
 
@@ -27,6 +30,14 @@ export const appRoutesConfig = [
     element: (
       <ProtectedRoute>
         <DashBoardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: AppRoutes.SETTINGS,
+    element: (
+      <ProtectedRoute>
+        <SettingsPage />
       </ProtectedRoute>
     ),
   },
