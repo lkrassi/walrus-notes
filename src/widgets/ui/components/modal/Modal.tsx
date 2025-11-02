@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
 
@@ -18,11 +18,27 @@ const SIZE_CLASSES = {
 export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   const { t } = useLocalization();
   const { isOpen, content, options } = modalState;
+  const [animationState, setAnimationState] = useState<
+    'entering' | 'open' | 'exiting'
+  >('entering');
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const triggerPosition = options.triggerPosition;
+
+  useEffect(() => {
+    if (isOpen) {
+      setAnimationState('entering');
+      const timer = setTimeout(() => setAnimationState('open'), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setAnimationState('exiting');
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (options.closeOnEscape && e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
 
@@ -35,27 +51,86 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, options.closeOnEscape, onClose]);
+  }, [isOpen, options.closeOnEscape]);
+
+  const handleClose = () => {
+    setAnimationState('exiting');
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (options.closeOnOverlayClick && e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
+  const getModalTransform = () => {
+    if (!triggerPosition) {
+      return animationState === 'open' ? 'scale(1)' : 'scale(0.8)';
+    }
+
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    const viewportCenterX = window.innerWidth / 2;
+    const viewportCenterY = window.innerHeight / 2;
+
+    const triggerCenterX = triggerPosition.x + scrollX;
+    const triggerCenterY = triggerPosition.y + scrollY;
+
+    const deltaX = triggerCenterX - viewportCenterX;
+    const deltaY = triggerCenterY - viewportCenterY;
+
+    switch (animationState) {
+      case 'entering':
+        return `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
+      case 'open':
+        return 'translate(0, 0) scale(1)';
+      case 'exiting':
+        return `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
+      default:
+        return 'translate(0, 0) scale(1)';
+    }
+  };
+
+  const getModalOpacity = () => {
+    switch (animationState) {
+      case 'entering':
+        return 0;
+      case 'open':
+        return 1;
+      case 'exiting':
+        return 0;
+      default:
+        return 1;
+    }
+  };
 
   if (!isOpen || !content) {
     return null;
   }
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (options.closeOnOverlayClick && e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   const sizeClass = SIZE_CLASSES[options.size || 'md'];
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm'
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300'
+      style={{
+        opacity: animationState === 'entering' ? 0 : 1,
+      }}
       onClick={handleOverlayClick}
     >
       <div
-        className={`relative w-full ${sizeClass} dark:bg-dark-bg border-border dark:border-dark-border animate-in fade-in-0 zoom-in-95 max-h-[90vh] transform overflow-hidden rounded-xl border bg-white shadow-2xl transition-all duration-300 ease-out ${options.className || ''} `}
+        ref={modalRef}
+        className={`relative w-full ${sizeClass} dark:bg-dark-bg border-border dark:border-dark-border max-h-[90vh] overflow-hidden rounded-xl border bg-white shadow-2xl transition-all duration-300 ease-out ${
+          options.className || ''
+        }`}
+        style={{
+          transform: getModalTransform(),
+          opacity: getModalOpacity(),
+        }}
         onClick={e => e.stopPropagation()}
       >
         {(options.title || options.showCloseButton) && (
@@ -67,7 +142,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
             )}
             {options.showCloseButton && (
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className='text-secondary dark:text-dark-secondary hover:text-text dark:hover:text-dark-text focus:ring-primary dark:focus:ring-dark-primary rounded-lg p-2 transition-colors duration-200 hover:bg-gray-100 focus:ring-2 focus:outline-none dark:hover:bg-gray-800'
                 aria-label={t('common:modal.close')}
               >

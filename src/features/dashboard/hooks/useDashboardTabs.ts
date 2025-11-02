@@ -1,3 +1,4 @@
+// hooks/useDashboardTabs.ts
 import { useCallback, useState } from 'react';
 import type { FileTreeItem } from 'widgets/hooks';
 
@@ -47,6 +48,91 @@ export const useDashboardTabs = () => {
     [activeTabId]
   );
 
+  // Функция для правильного разбиения tabId на тип и ID
+  const parseTabId = (tabId: string) => {
+    const firstDashIndex = tabId.indexOf('-');
+    if (firstDashIndex === -1) {
+      return { type: tabId, id: '' };
+    }
+
+    const type = tabId.substring(0, firstDashIndex);
+    const id = tabId.substring(firstDashIndex + 1);
+
+    return { type, id };
+  };
+
+  // Функция закрытия вкладок по ID элемента
+  const closeTabsByItemId = useCallback(
+    (itemId: string, itemType?: 'note' | 'layout') => {
+      setOpenTabs(prev => {
+        const tabsToClose = prev.filter(tab => {
+          const { type, id } = parseTabId(tab.id);
+
+          if (itemType) {
+            return type === itemType && id === itemId;
+          }
+          return id === itemId;
+        });
+
+        if (tabsToClose.length === 0) {
+          return prev;
+        }
+
+        const closedTabIds = tabsToClose.map(tab => tab.id);
+        const newTabs = prev.filter(tab => !closedTabIds.includes(tab.id));
+
+        if (closedTabIds.includes(activeTabId!) && newTabs.length > 0) {
+          newTabs[newTabs.length - 1].isActive = true;
+          setActiveTabId(newTabs[newTabs.length - 1].id);
+        } else if (newTabs.length === 0) {
+          setActiveTabId(null);
+        }
+
+        return newTabs;
+      });
+    },
+    [activeTabId]
+  );
+
+  // Функция закрытия всех вкладок папки и её заметок
+  const closeLayoutTabs = useCallback(
+    (layoutId: string) => {
+      setOpenTabs(prev => {
+        const tabsToClose = prev.filter(tab => {
+          const { type, id } = parseTabId(tab.id);
+
+          if (type === 'layout') {
+            return id === layoutId;
+          }
+          if (type === 'note') {
+            return tab.item.parentId === layoutId;
+          }
+          if (type === 'graph') {
+            return tab.item.layoutId === layoutId;
+          }
+          return false;
+        });
+
+        if (tabsToClose.length === 0) {
+          return prev;
+        }
+
+        const closedTabIds = tabsToClose.map(tab => tab.id);
+        const newTabs = prev.filter(tab => !closedTabIds.includes(tab.id));
+
+        if (closedTabIds.includes(activeTabId!) && newTabs.length > 0) {
+          newTabs[newTabs.length - 1].isActive = true;
+          setActiveTabId(newTabs[newTabs.length - 1].id);
+        } else if (newTabs.length === 0) {
+          setActiveTabId(null);
+        }
+
+        return newTabs;
+      });
+    },
+    [activeTabId]
+  );
+
   const reorderTabs = useCallback((newTabs: DashboardTab[]) => {
     setOpenTabs(newTabs);
   }, []);
@@ -58,8 +144,10 @@ export const useDashboardTabs = () => {
     ) => {
       setOpenTabs(prev =>
         prev.map(tab => {
+          const { type, id } = parseTabId(tab.id);
           if (
-            tab.id === `note-${noteId}` &&
+            type === 'note' &&
+            id === noteId &&
             tab.item.type === 'note' &&
             tab.item.note
           ) {
@@ -84,6 +172,8 @@ export const useDashboardTabs = () => {
     activeTabId,
     openTab,
     closeTab,
+    closeTabsByItemId,
+    closeLayoutTabs,
     switchTab,
     reorderTabs,
     updateTabNote,

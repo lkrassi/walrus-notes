@@ -1,8 +1,11 @@
 import React from 'react';
 import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
+import { useLocalization } from 'widgets/hooks';
 
 export const Settings: React.FC = () => {
+  const { t } = useLocalization();
+
   return (
     <div className='bg-bg dark:bg-dark-bg min-h-screen'>
       <PrivateHeader />
@@ -13,10 +16,10 @@ export const Settings: React.FC = () => {
             <div className='flex items-center gap-4'>
               <div>
                 <h2 className='text-text dark:text-dark-text mb-1 text-xl font-semibold'>
-                  Добро пожаловать в настройки
+                  {t('settings:welcome.title')}
                 </h2>
                 <p className='text-secondary dark:text-dark-secondary'>
-                  Настройте Walrus Notes под свои потребности
+                  {t('settings:welcome.subtitle')}
                 </p>
               </div>
             </div>
@@ -37,10 +40,10 @@ export const Settings: React.FC = () => {
                     </div>
                     <div className='flex-1'>
                       <h3 className='text-text dark:text-dark-text mb-1 text-lg font-semibold'>
-                        {section.title}
+                        {t(`settings:sections.${section.id}.title`)}
                       </h3>
                       <p className='text-secondary dark:text-dark-secondary text-sm'>
-                        {section.description}
+                        {t(`settings:sections.${section.id}.description`)}
                       </p>
                     </div>
                   </div>
@@ -52,12 +55,12 @@ export const Settings: React.FC = () => {
 
           <div className='dark:bg-dark-bg border-border dark:border-dark-border mt-8 rounded-2xl border bg-white p-6'>
             <h3 className='text-text dark:text-dark-text mb-4 text-lg font-semibold'>
-              О приложении
+              {t('settings:about.title')}
             </h3>
             <div className='grid grid-cols-1 gap-4 text-sm md:grid-cols-3'>
               <div>
                 <p className='text-secondary dark:text-dark-secondary mb-1'>
-                  Версия
+                  {t('settings:about.version')}
                 </p>
                 <p className='text-text dark:text-dark-text font-medium'>
                   1.0.0
@@ -65,16 +68,16 @@ export const Settings: React.FC = () => {
               </div>
               <div>
                 <p className='text-secondary dark:text-dark-secondary mb-1'>
-                  Лицензия
+                  {t('settings:about.license')}
                 </p>
                 <p className='text-text dark:text-dark-text font-medium'>MIT</p>
               </div>
               <div>
                 <p className='text-secondary dark:text-dark-secondary mb-1'>
-                  Поддержка
+                  {t('settings:about.support')}
                 </p>
                 <p className='text-text dark:text-dark-text font-medium'>
-                  support@walrus-notes.com
+                  {t('settings:about.supportEmail')}
                 </p>
               </div>
             </div>

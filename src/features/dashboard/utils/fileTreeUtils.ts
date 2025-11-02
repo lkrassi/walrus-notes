@@ -16,7 +16,10 @@ export const findItemById = (
   return null;
 };
 
-export const getItemPath = (item: FileTreeItem, fileTree: FileTreeItem[]): string => {
+export const getItemPath = (
+  item: FileTreeItem,
+  fileTree: FileTreeItem[]
+): string => {
   const findPath = (
     items: FileTreeItem[],
     targetId: string,

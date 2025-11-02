@@ -1,5 +1,5 @@
 {
-  "enterNoteTitle": "Please enter the note title",
+  "enterNoteTitle": "Please enter a note title",
   "noteUpdatedSuccess": "Note updated successfully",
   "noteUpdateError": "An error occurred while updating the note",
   "noteContentPlaceholder": "Enter note content...",
@@ -16,7 +16,26 @@
   "creating": "Creating...",
   "createNote": "Create note",
   "folderEmpty": "Folder is empty",
-  "folderEmptyDescription": "The folder \"{layoutTitle}\" has no notes yet. Create the first note to get started.",
+  "folderEmptyDescription": "The folder \"{layoutTitle}\" doesn't have any notes yet. Create the first note to get started.",
   "graphEmpty": "Notes graph is empty",
-  "graphEmptyDescription": "Add notes to the graph to start visualizing connections between them"
-}
+  "graphEmptyDescription": "The folder \"{layoutTitle}\" doesn't have any notes yet. Create the first note to start visualizing connections between them",
+  "createNoteLink": "Create link between notes",
+  "addLink": "Add link",
+  "createLinkBetweenNotes": "Create link between notes",
+  "searchNotes": "Search notes...",
+  "firstNote": "First note",
+  "secondNote": "Second note",
+  "selectDifferentNotes": "Select two different notes",
+  "linkCreatedSuccess": "Link created successfully",
+  "linkCreationError": "Error creating link",
+  "linkPreview": "Link preview",
+  "creatingLink": "Creating link...",
+  "createLink": "Create link",
+  "noContent": "No content",
+  "deleteNote": "Delete note",
+  "deleteNoteConfirmation": "Are you sure you want to delete the note \"{{title}}\"?",
+  "deleteNoteWarning": "This action cannot be undone.",
+  "noteDeletionError": "Error deleting note",
+  "deleting": "Deleting...",
+  "delete": "Delete"
+} 

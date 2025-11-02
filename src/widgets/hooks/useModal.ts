@@ -7,7 +7,15 @@ export type ModalOptions = {
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
   className?: string;
+  triggerPosition?: TriggerPosition;
 };
+
+export interface TriggerPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export type ModalState = {
   isOpen: boolean;

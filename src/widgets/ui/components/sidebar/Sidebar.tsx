@@ -9,9 +9,14 @@ import {
   useLocalization,
   useSidebar,
 } from 'widgets/hooks';
+import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import {
+  closeLayoutTabs,
+  closeTabsByItemId,
+} from 'widgets/model/stores/slices/tabsSlice';
+import { useModalActions } from '../../../hooks/useModalActions';
 import { FileTree } from '../fileTree';
-import { DeleteNoteModal, useModalContext } from '../modal';
 import { SearchInput } from './SearchInput';
 
 type SidebarProps = {
@@ -33,41 +38,32 @@ const SidebarComponent = (
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
-  const { openModal } = useModalContext();
+  const dispatch = useAppDispatch();
   const {
     fileTree,
     expandedItems,
     toggleExpanded,
     updateNoteInTree,
     addNoteToTree,
-    removeNoteFromTree,
   } = useFileTree();
+
+  const { createAnimatedOpener } = useModalActions();
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }));
 
   const currentSelectedItemId = selectedItemId || noteId || layoutId;
 
-  const handleCreateLayout = () => {
-    openModal(<CreateLayoutForm />, {
-      title: t('fileTree:createNewLayout'),
-      size: 'md',
-    });
-  };
+  const handleCreateLayout = createAnimatedOpener(<CreateLayoutForm />, {
+    title: t('fileTree:createNewLayout'),
+    size: 'md',
+  });
 
   const handleDeleteNote = (noteId: string) => {
-    openModal(
-      <DeleteNoteModal
-        noteId={noteId}
-        onNoteDeleted={() => removeNoteFromTree(noteId)}
-      />,
-      {
-        title: 'Подтверждение удаления',
-        size: 'sm',
-        closeOnOverlayClick: true,
-        closeOnEscape: true,
-        showCloseButton: true,
-      }
-    );
+    dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
+  };
+
+  const handleDeleteLayout = (layoutId: string) => {
+    dispatch(closeLayoutTabs(layoutId));
   };
 
   const handleItemSelect = (item: FileTreeItem) => {
@@ -108,7 +104,6 @@ const SidebarComponent = (
       )}
 
       <aside
-        data-tour='sidebar'
         className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0`}
       >
         <div className='border-border dark:border-dark-border border-b p-4'>
@@ -134,7 +129,6 @@ const SidebarComponent = (
               {t('fileTree:fileStructure')}
             </h2>
             <button
-              data-tour='create-layout'
               onClick={handleCreateLayout}
               title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
@@ -145,7 +139,7 @@ const SidebarComponent = (
           </div>
 
           <div className='mt-3'>
-            <div data-tour='search'>
+            <div>
               <SearchInput
                 searchQuery={debouncedSearchQuery}
                 onSearchChange={setSearchQuery}
@@ -166,6 +160,7 @@ const SidebarComponent = (
             searchQuery={searchQuery}
             onOpenGraph={handleOpenGraph}
             onDeleteNote={handleDeleteNote}
+            onDeleteLayout={handleDeleteLayout}
           />
         </div>
       </aside>

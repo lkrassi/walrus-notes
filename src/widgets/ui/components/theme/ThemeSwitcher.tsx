@@ -16,6 +16,11 @@ export const ThemeSwitcher = () => {
           ? t('common:theme.switchToLight')
           : t('common:theme.switchToDark')
       }
+      title={
+        theme === 'dark'
+          ? t('common:theme.switchToLight')
+          : t('common:theme.switchToDark')
+      }
       variant='default'
     >
       <span>

@@ -1,14 +1,16 @@
+// widgets/ui/components/Dashboard.tsx
+import {
+  useDashboardNavigation,
+  useDashboardUser,
+} from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useFileTree } from 'widgets/hooks';
+import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
+import { openTab, switchTab } from 'widgets/model/stores/slices/tabsSlice';
 import { Sidebar } from 'widgets/ui';
-import {
-  useDashboardNavigation,
-  useDashboardTabs,
-  useDashboardUser,
-} from '../../hooks';
 import { getItemPath } from '../../utils/fileTreeUtils';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
@@ -16,19 +18,11 @@ import { DashboardHeader } from './DashboardHeader';
 export const DashBoard = () => {
   const { fileTree } = useFileTree();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { openTabs, activeTabId } = useTabs();
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
-
-  const {
-    openTabs,
-    activeTabId,
-    openTab,
-    closeTab,
-    switchTab,
-    reorderTabs,
-    updateTabNote,
-  } = useDashboardTabs();
 
   const { updateUrlForTab } = useDashboardNavigation({
     openTabs,
@@ -42,35 +36,16 @@ export const DashBoard = () => {
     }
   }, [activeTabId, updateUrlForTab]);
 
-  const handleTabSwitch = (tabId: string) => {
-    switchTab(tabId);
-  };
-
-  const handleTabClose = (tabId: string) => {
-    closeTab(tabId);
-
-    const remainingTabs = openTabs.filter(t => t.id !== tabId);
-    if (remainingTabs.length === 0) {
-      navigate('/dashboard', { replace: true });
-    } else if (openTabs.find(t => t.id === tabId)?.isActive) {
-      handleTabSwitch(remainingTabs[0].id);
-    }
-  };
-
-  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
-    updateTabNote(noteId, updates);
-    sidebarRef.current?.updateNoteInTree(noteId, updates);
-  };
-
   const handleItemSelect = (item: FileTreeItem) => {
-    const tabId = `${item.type}-${item.id}`;
+    // ИСПРАВЛЕНО: используем новый формат ID
+    const tabId = `${item.type}::${item.id}`;
     const existingTab = openTabs.find(tab => tab.id === tabId);
 
     if (existingTab) {
-      handleTabSwitch(existingTab.id);
+      dispatch(switchTab(tabId));
     } else {
-      openTab(item);
-      handleTabSwitch(tabId);
+      dispatch(openTab(item));
+      dispatch(switchTab(tabId));
     }
   };
 
@@ -103,15 +78,9 @@ export const DashBoard = () => {
           selectedItemId={activeTabId || undefined}
         />
         <DashboardContent
-          openTabs={openTabs}
-          activeTabId={activeTabId}
-          onTabClick={handleTabSwitch}
-          onTabClose={handleTabClose}
-          onTabReorder={reorderTabs}
-          getItemPath={getItemPathWrapper}
-          onNoteUpdated={handleNoteUpdated}
-          onItemSelect={handleItemSelect}
           onNoteOpen={handleNoteOpenFromGraph}
+          getItemPath={getItemPathWrapper}
+          onItemSelect={handleItemSelect}
         />
       </div>
     </div>

@@ -10,7 +10,7 @@
   "layoutCreationError": "Произошла ошибка при создании папки",
   "layoutTitle": "Название папки",
   "layoutTitlePlaceholder": "Введите название папки",
-  "cancel": "Отмена",
+  "cancel": "Отменить",
   "creating": "Создание...",
   "createLayout": "Создать папку",
   "layoutsLoadedSuccess": "Папки успешно загружены",
@@ -21,7 +21,7 @@
   "delete": "Удалить",
   "backendNotImplemented": "Бэкендры долго пишут, пока не реализовано",
 
-  "deleteLayout": "Подтверждение удаления",
+  "deleteLayout": "Удалить папку",
   "deleteLayoutConfirmation": "Вы уверены, что хотите удалить папку \"{{title}}\"?",
   "deleteLayoutWarning": "Это действие нельзя отменить. Все заметки внутри папки также будут удалены.",
   "layoutDeletedSuccess": "Папка успешно удалена",

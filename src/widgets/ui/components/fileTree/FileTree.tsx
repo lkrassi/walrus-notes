@@ -1,12 +1,13 @@
-import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
+import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
 import { memo, useCallback, useMemo } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization } from 'widgets/hooks';
+import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useGetMyLayoutsQuery } from '../../../model/stores/api';
+import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import { useModalContext } from '../modal';
-import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
-import { FileTreeEmpty, FileTreeItem } from './index';
+import { FileTreeEmpty } from './FileTreeEmpty';
+import { FileTreeItem } from './FileTreeItem';
 
 interface FileTreeProps {
   expandedItems: Set<string>;
@@ -25,16 +26,11 @@ export const FileTree = memo(
   ({
     expandedItems,
     toggleExpanded,
-    addNoteToTree,
     onItemSelect,
     selectedItemId,
     searchQuery,
     onOpenGraph,
-    onDeleteNote,
-    onDeleteLayout,
   }: Omit<FileTreeProps, 'fileTree' | 'onNotesLoaded' | 'loadMoreNotes'>) => {
-    const { t } = useLocalization();
-    const { openModal } = useModalContext();
 
     const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 
@@ -87,41 +83,6 @@ export const FileTree = memo(
       return searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
     }, [fileTree, searchQuery, filterFileTree]);
 
-    const handleCreateNote = useCallback(
-      (layoutId: string) => {
-        openModal(
-          <CreateNoteForm
-            layoutId={layoutId}
-            onNoteCreated={note => addNoteToTree(layoutId, note)}
-          />,
-          {
-            title: t('fileTree:createNewNote'),
-            size: 'lg',
-          }
-        );
-      },
-      [openModal, t, addNoteToTree]
-    );
-
-    const handleDeleteLayout = useCallback(
-      (layoutId: string) => {
-        openModal(
-          <DeleteLayoutForm
-            layoutId={layoutId}
-            layoutTitle={fileTree.find(item => item.id === layoutId)?.title || ''}
-            onLayoutDeleted={() => {
-              onDeleteLayout?.(layoutId);
-            }}
-          />,
-          {
-            title: t('layout:deleteLayout'),
-            size: 'md',
-          }
-        );
-      },
-      [openModal, fileTree, t, onDeleteLayout]
-    );
-
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
         onItemSelect?.(item);
@@ -147,10 +108,7 @@ export const FileTree = memo(
               isSelected={isSelected}
               hasChildren={hasChildren}
               onItemClick={handleItemClick}
-              onCreateNote={handleCreateNote}
               onOpenGraph={onOpenGraph}
-              onDeleteNote={onDeleteNote}
-              onDeleteLayout={handleDeleteLayout}
               renderChild={renderTreeItem}
             />
           </div>
@@ -160,10 +118,7 @@ export const FileTree = memo(
         expandedItems,
         selectedItemId,
         handleItemClick,
-        handleCreateNote,
         onOpenGraph,
-        onDeleteNote,
-        handleDeleteLayout,
       ]
     );
 
@@ -182,3 +137,5 @@ export const FileTree = memo(
     );
   }
 );
+
+FileTree.displayName = 'FileTree';

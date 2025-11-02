@@ -1,39 +1,65 @@
+// widgets/ui/components/DashboardContent.tsx
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
+import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import {
+  closeTab,
+  openTab,
+  reorderTabs,
+  switchTab,
+  updateTabNote,
+} from 'widgets/model/stores/slices/tabsSlice';
 
 interface DashboardContentProps {
-  openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
-  activeTabId: string | null;
-  onTabClick: (tabId: string) => void;
-  onTabClose: (tabId: string) => void;
-  onTabReorder: (
-    tabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>
-  ) => void;
-  getItemPath: (item: FileTreeItem) => string;
-  onNoteUpdated: (noteId: string, updates: Partial<Note>) => void;
-  onItemSelect: (item: FileTreeItem) => void;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  getItemPath: (item: FileTreeItem) => string;
+  onItemSelect?: (item: FileTreeItem) => void;
 }
 
 export const DashboardContent = ({
-  openTabs,
-  onTabClick,
-  onTabClose,
-  onTabReorder,
-  getItemPath,
-  onNoteUpdated,
-  onItemSelect,
   onNoteOpen,
+  getItemPath,
+  onItemSelect,
 }: DashboardContentProps) => {
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
+  const { openTabs, activeTabId } = useTabs();
 
   const activeTab = openTabs.find(tab => tab.isActive);
 
-  const handleNoteOpen = (noteData: { noteId: string; note: Note }) => {
+  const handleTabClick = (tabId: string) => {
+    dispatch(switchTab(tabId));
+  };
+
+  const handleTabClose = (tabId: string) => {
+    dispatch(closeTab(tabId));
+  };
+
+  const handleTabReorder = (tabs: any[]) => {
+    dispatch(reorderTabs(tabs));
+  };
+
+  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
+    dispatch(updateTabNote({ noteId, updates }));
+  };
+
+  const handleItemSelect = (item: FileTreeItem) => {
+    const tabId = `${item.type}-${item.id}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+
+    if (existingTab) {
+      dispatch(switchTab(tabId));
+    } else {
+      dispatch(openTab(item));
+      dispatch(switchTab(tabId));
+    }
+  };
+
+  const handleNoteOpenFromGraph = (noteData: { noteId: string; note: Note }) => {
     if (onNoteOpen) {
       onNoteOpen(noteData);
       return;
@@ -44,7 +70,7 @@ export const DashboardContent = ({
     );
 
     if (existingTab) {
-      onTabClick(existingTab.id);
+      handleTabClick(existingTab.id);
       return;
     }
 
@@ -56,7 +82,7 @@ export const DashboardContent = ({
       note: noteData.note,
     };
 
-    onItemSelect(noteItem);
+    handleItemSelect(noteItem);
   };
 
   const renderContent = () => {
@@ -100,13 +126,13 @@ export const DashboardContent = ({
           note={note}
           layoutId={activeTab.item.parentId}
           onNoteUpdated={updatedNote =>
-            onNoteUpdated(updatedNote.id, {
+            handleNoteUpdated(updatedNote.id, {
               title: updatedNote.title,
               payload: updatedNote.payload,
             })
           }
           onNoteDeleted={() => {
-            onTabClose(activeTab.id);
+            handleTabClose(activeTab.id);
           }}
         />
       );
@@ -118,7 +144,7 @@ export const DashboardContent = ({
           ? activeTab.item.id
           : activeTab.item.layoutId;
 
-      return <NotesGraph layoutId={layoutId!} onNoteOpen={handleNoteOpen} />;
+      return <NotesGraph layoutId={layoutId!} onNoteOpen={handleNoteOpenFromGraph} />;
     }
 
     return (
@@ -137,9 +163,9 @@ export const DashboardContent = ({
       {openTabs.length > 0 && (
         <Tabs
           tabs={openTabs}
-          onTabClick={onTabClick}
-          onTabClose={onTabClose}
-          onTabReorder={onTabReorder}
+          onTabClick={handleTabClick}
+          onTabClose={handleTabClose}
+          onTabReorder={handleTabReorder}
           getItemPath={getItemPath}
         />
       )}

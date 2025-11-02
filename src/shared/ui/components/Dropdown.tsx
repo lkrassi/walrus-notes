@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -25,7 +25,8 @@ export const Dropdown = ({
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const isOpen =
+    controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
   const handleToggle = () => {
     if (disabled) return;
@@ -38,7 +39,10 @@ export const Dropdown = ({
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
       if (controlledIsOpen === undefined) {
         setInternalIsOpen(false);
       }
@@ -74,11 +78,7 @@ export const Dropdown = ({
         {trigger}
       </div>
 
-      {isOpen && (
-        <div className={contentClassNameFull}>
-          {children}
-        </div>
-      )}
+      {isOpen && <div className={contentClassNameFull}>{children}</div>}
     </div>
   );
 };
@@ -90,9 +90,16 @@ interface DropdownTriggerProps {
   showArrow?: boolean;
 }
 
-export const DropdownTrigger = ({ children, isOpen, className, showArrow = true }: DropdownTriggerProps) => {
+export const DropdownTrigger = ({
+  children,
+  isOpen,
+  className,
+  showArrow = true,
+}: DropdownTriggerProps) => {
   return (
-    <div className={`flex w-full items-center justify-between ${className || ''}`}>
+    <div
+      className={`flex w-full items-center justify-between ${className || ''}`}
+    >
       {children}
       {showArrow && (
         <div className='flex items-center'>
@@ -113,9 +120,15 @@ interface DropdownContentProps {
   maxHeight?: string;
 }
 
-export const DropdownContent = ({ children, className, maxHeight = 'max-h-48' }: DropdownContentProps) => {
+export const DropdownContent = ({
+  children,
+  className,
+  maxHeight = 'max-h-48',
+}: DropdownContentProps) => {
   return (
-    <div className={`overflow-y-auto border-t border-gray-100 ${maxHeight} ${className || ''}`}>
+    <div
+      className={`overflow-y-auto border-t border-gray-100 ${maxHeight} ${className || ''}`}
+    >
       {children}
     </div>
   );
@@ -128,7 +141,12 @@ interface DropdownItemProps {
   disabled?: boolean;
 }
 
-export const DropdownItem = ({ children, onClick, className, disabled = false }: DropdownItemProps) => {
+export const DropdownItem = ({
+  children,
+  onClick,
+  className,
+  disabled = false,
+}: DropdownItemProps) => {
   const itemClassName = `cursor-pointer p-2 transition-colors ${disabled ? 'cursor-not-allowed' : ''} ${className || ''}`;
 
   return (

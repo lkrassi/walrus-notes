@@ -1,4 +1,3 @@
-// App.tsx
 import { appRoutesConfig } from 'app/router/config';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';

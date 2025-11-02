@@ -2,44 +2,44 @@ import React from 'react';
 import { Button } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { useDeleteLayoutMutation } from 'widgets/model/stores/api';
-import { closeLayoutTabs } from 'widgets/model/stores/slices/tabsSlice';
+import { useDeleteNoteMutation } from 'widgets/model/stores/api';
+import { closeTabsByItemId } from 'widgets/model/stores/slices/tabsSlice';
 import { useModalContext } from 'widgets/ui';
 
-interface DeleteLayoutFormProps {
-  layoutId: string;
-  layoutTitle: string;
-  onLayoutDeleted?: (layoutId: string) => void;
+interface DeleteNoteFormProps {
+  noteId: string;
+  noteTitle: string;
+  onNoteDeleted?: (noteId: string) => void;
 }
 
-export const DeleteLayoutForm = ({
-  layoutId,
-  layoutTitle,
-  onLayoutDeleted,
-}: DeleteLayoutFormProps) => {
+export const DeleteNoteForm = ({
+  noteId,
+  noteTitle,
+  onNoteDeleted,
+}: DeleteNoteFormProps) => {
   const { t } = useLocalization();
   const { showError } = useNotifications();
   const { closeModal } = useModalContext();
   const dispatch = useAppDispatch();
-  const [deleteLayout, { isLoading }] = useDeleteLayoutMutation();
+  const [deleteNote, { isLoading }] = useDeleteNoteMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      await deleteLayout({
-        layoutId,
+      await deleteNote({
+        noteId,
       }).unwrap();
 
-      dispatch(closeLayoutTabs(layoutId));
+      dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
 
-      if (onLayoutDeleted) {
-        onLayoutDeleted(layoutId);
+      if (onNoteDeleted) {
+        onNoteDeleted(noteId);
       }
 
       closeModal();
     } catch (err: any) {
-      showError(t('layout:layoutDeletionError'));
+      showError(t('notes:noteDeletionError'));
     }
   };
 
@@ -62,13 +62,15 @@ export const DeleteLayoutForm = ({
           </svg>
         </div>
         <h3 className='text-text dark:text-dark-text mt-4 text-lg font-semibold'>
-          {t('layout:deleteLayout')}
+          {t('notes:deleteNote')}
         </h3>
+
         <p className='text-text dark:text-dark-text mt-2 text-sm'>
-          {t('layout:deleteLayoutConfirmation', { title: layoutTitle })}
+          Вы уверены, что хотите удалить заметку "{noteTitle}"?
         </p>
+
         <p className='text-text dark:text-dark-text mt-1 text-xs'>
-          {t('layout:deleteLayoutWarning')}
+          {t('notes:deleteNoteWarning')}
         </p>
       </div>
 
@@ -80,7 +82,7 @@ export const DeleteLayoutForm = ({
           className='px-6 py-3'
           disabled={isLoading}
         >
-          {t('layout:cancel')}
+          {t('common:cancel')}
         </Button>
         <Button
           type='submit'
@@ -88,7 +90,7 @@ export const DeleteLayoutForm = ({
           className='px-6 py-3'
           disabled={isLoading}
         >
-          {isLoading ? t('layout:deleting') : t('layout:delete')}
+          {isLoading ? t('notes:deleting') : t('notes:delete')}
         </Button>
       </div>
     </form>

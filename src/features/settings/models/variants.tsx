@@ -4,12 +4,14 @@ import { ProfileButton } from '../../profile';
 
 export const settingsSections = [
   {
+    id: 'profile',
     title: 'Профиль',
     icon: User,
     description: 'Управление личными данными и аватаром',
     action: <ProfileButton />,
   },
   {
+    id: 'appearance',
     title: 'Внешний вид',
     icon: Palette,
     description: 'Тема, шрифты и настройки отображения',
@@ -20,6 +22,7 @@ export const settingsSections = [
     ),
   },
   {
+    id: 'notifications',
     title: 'Уведомления',
     icon: Bell,
     description: 'Настройки оповещений и email-рассылок',
@@ -30,6 +33,7 @@ export const settingsSections = [
     ),
   },
   {
+    id: 'security',
     title: 'Безопасность',
     icon: Shield,
     description: 'Пароль, двухфакторная аутентификация',
@@ -40,6 +44,7 @@ export const settingsSections = [
     ),
   },
   {
+    id: 'help',
     title: 'Помощь',
     icon: HelpCircle,
     description: 'Документация и поддержка',

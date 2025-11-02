@@ -3,7 +3,6 @@ import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocalization } from 'widgets/hooks';
 import logo from '../../../../assets/logo.png';
-import { Breadcrumbs } from '../breadcrumbs/Breadcrumbs';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { LogoutButton } from '../logout/LogoutButton';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
@@ -29,7 +28,7 @@ export const PrivateHeader = memo(() => {
             <h1 className='text-text dark:text-dark-text text-base font-bold sm:text-xl md:text-2xl'>
               Walrus
             </h1>
-            <h1 className='from-primary to-primary-gradient bg-clip-text text-base font-bold text-transparent sm:text-xl md:text-2xl'>
+            <h1 className='text-primary text-base font-bold sm:text-xl md:text-2xl'>
               Notes
             </h1>
           </div>
@@ -46,11 +45,7 @@ export const PrivateHeader = memo(() => {
             <SettingsButton />
           </div>
         </div>
-      </div>
-
-      <div className='container mx-auto px-4'>
-        <Breadcrumbs />
-      </div>
+      </div>{' '}
     </header>
   );
 });

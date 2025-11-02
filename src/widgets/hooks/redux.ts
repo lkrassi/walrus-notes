@@ -1,3 +1,4 @@
+// widgets/hooks/redux.ts
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from 'widgets/model/stores';
@@ -7,4 +8,8 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useUser = () => {
   return useAppSelector(state => state.user);
+};
+
+export const useTabs = () => {
+  return useAppSelector(state => state.tabs);
 };

@@ -14,6 +14,8 @@ export const LanguageSwitcher: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [effectiveLanguage, setEffectiveLanguage] = useState('ru');
 
+  const { t } = useLocalization();
+
   const languages = [
     {
       code: 'en',
@@ -70,6 +72,7 @@ export const LanguageSwitcher: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         variant='default'
         className='group flex h-10 w-5 items-center justify-center gap-2 px-8 py-5'
+        title={t('common:header.changeLanguage')}
       >
         <div className='flex flex-col items-center justify-center'>
           <div className='flex h-4 w-6 items-center justify-center'>

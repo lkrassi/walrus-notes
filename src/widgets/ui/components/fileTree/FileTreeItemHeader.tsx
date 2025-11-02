@@ -1,3 +1,5 @@
+import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
+import { CreateNoteForm } from 'features/notes';
 import {
   ChevronDown,
   ChevronRight,
@@ -10,6 +12,8 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useIsMobile, useLocalization } from '../../../hooks';
+import { useModalActions } from '../../../hooks/useModalActions';
+import { DeleteNoteForm } from './DeleteNoteForm';
 
 type FileTreeItemHeaderProps = {
   item: FileTreeItemType;
@@ -17,7 +21,6 @@ type FileTreeItemHeaderProps = {
   isExpanded: boolean;
   isSelected: boolean;
   onItemClick: (item: FileTreeItemType) => void;
-  onCreateNote: (layoutId: string) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
@@ -29,7 +32,6 @@ export const FileTreeItemHeader = ({
   isExpanded,
   isSelected,
   onItemClick,
-  onCreateNote,
   onDeleteNote,
   onDeleteLayout,
 }: FileTreeItemHeaderProps) => {
@@ -39,6 +41,7 @@ export const FileTreeItemHeader = ({
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { t } = useLocalization();
+  const { createAnimatedOpener } = useModalActions();
 
   useEffect(() => {
     return () => {
@@ -60,20 +63,42 @@ export const FileTreeItemHeader = ({
 
   const handleItemClick = () => onItemClick(item);
 
-  const handleCreateNote = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onCreateNote(item.id);
-  };
+  // Обработчики с анимацией
+  const handleDeleteNote = createAnimatedOpener(
+    <DeleteNoteForm
+      noteId={item.id}
+      noteTitle={item.title}
+      onNoteDeleted={noteId => {
+        onDeleteNote?.(noteId);
+      }}
+    />,
+    {
+      title: t('notes:deleteNote'),
+      size: 'md',
+    }
+  );
 
-  const handleDeleteNote = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onDeleteNote?.(item.id);
-  };
+  const handleCreateNote = createAnimatedOpener(
+    <CreateNoteForm layoutId={item.id} onNoteCreated={note => {}} />,
+    {
+      title: t('fileTree:createNewNote'),
+      size: 'lg',
+    }
+  );
 
-  const handleDeleteLayout = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onDeleteLayout?.(item.id);
-  };
+  const handleDeleteLayout = createAnimatedOpener(
+    <DeleteLayoutForm
+      layoutId={item.id}
+      layoutTitle={item.title}
+      onLayoutDeleted={layoutId => {
+        onDeleteLayout?.(layoutId);
+      }}
+    />,
+    {
+      title: t('layout:deleteLayout'),
+      size: 'md',
+    }
+  );
 
   return (
     <div
@@ -160,7 +185,7 @@ export const FileTreeItemHeader = ({
             className={`transition-opacity duration-150 ${
               isMobile ? 'opacity-100' : isHovered ? 'opacity-100' : 'opacity-0'
             }`}
-            title={t('common:deleteNote.deleteBtnTitle')}
+            title={t('notes:delete')}
           >
             <Trash2 className='h-4 w-4' />
           </button>

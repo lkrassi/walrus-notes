@@ -31,5 +31,11 @@
   "linkPreview": "Предпросмотр связи",
   "creatingLink": "Создание связи...",
   "createLink": "Создать связь",
-  "noContent": "Нет содержимого"
+  "noContent": "Нет содержимого",
+  "deleteNote": "Удалить заметку",
+  "deleteNoteConfirmation": "Вы уверены, что хотите удалить заметку \"{{title}}\"?",
+  "deleteNoteWarning": "Это действие нельзя отменить.",
+  "noteDeletionError": "Ошибка при удалении заметки",
+  "deleting": "Удаление...",
+  "delete": "Удалить"
 }

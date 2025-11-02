@@ -1,0 +1,42 @@
+{
+  "title": "Настройки",
+  "welcome": {
+    "title": "Добро пожаловать в настройки",
+    "subtitle": "Настройте Walrus Notes под свои потребности"
+  },
+  "sections": {
+    "profile": {
+      "title": "Профиль",
+      "description": "Управление личными данными и аватаром"
+    },
+    "appearance": {
+      "title": "Внешний вид",
+      "description": "Тема, шрифты и настройки отображения"
+    },
+    "notifications": {
+      "title": "Уведомления",
+      "description": "Настройки оповещений и email-рассылок"
+    },
+    "security": {
+      "title": "Безопасность",
+      "description": "Пароль, двухфакторная аутентификация"
+    },
+    "help": {
+      "title": "Помощь",
+      "description": "Документация и поддержка"
+    }
+  },
+  "about": {
+    "title": "О приложении",
+    "version": "Версия",
+    "license": "Лицензия",
+    "support": "Поддержка",
+    "supportEmail": "support@walrus-notes.com"
+  },
+  "buttons": {
+    "configure": "Настроить",
+    "manage": "Управлять",
+    "protect": "Защитить",
+    "goTo": "Перейти"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "title": "Settings",
+  "welcome": {
+    "title": "Welcome to Settings",
+    "subtitle": "Customize Walrus Notes to fit your needs"
+  },
+  "sections": {
+    "profile": {
+      "title": "Profile",
+      "description": "Manage personal data and avatar"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Theme, fonts and display settings"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Alerts and email notifications settings"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Password, two-factor authentication"
+    },
+    "help": {
+      "title": "Help",
+      "description": "Documentation and support"
+    }
+  },
+  "about": {
+    "title": "About",
+    "version": "Version",
+    "license": "License",
+    "support": "Support",
+    "supportEmail": "support@walrus-notes.com"
+  },
+  "buttons": {
+    "configure": "Configure",
+    "manage": "Manage",
+    "protect": "Protect",
+    "goTo": "Go to"
+  }
+}
