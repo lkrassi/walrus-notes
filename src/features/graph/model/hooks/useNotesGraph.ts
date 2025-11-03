@@ -11,10 +11,6 @@ interface UseNotesGraphProps {
   layoutId: string;
 }
 
-const createEdgeId = (source: string, target: string): string => {
-  return `${source}${target}`;
-};
-
 export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const { data: posedNotesResponse, isLoading } = useGetPosedNotesQuery({
     layoutId,
@@ -51,56 +47,43 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const initialEdges: Edge[] = useMemo(() => {
     const edges: Edge[] = [];
-
-    notesWithPositions.forEach(note => {
-      note.linkedWith?.forEach(linkedNoteId => {
-        const targetNoteExists = notesWithPositions.some(
-          n => n.id === linkedNoteId
-        );
-
-        if (targetNoteExists) {
-          const edgeExists = edges.some(
-            edge =>
-              (edge.source === note.id && edge.target === linkedNoteId) ||
-              (edge.source === linkedNoteId && edge.target === note.id)
+    notesWithPositions.forEach(sourceNote => {
+      if (sourceNote.linkedWith && Array.isArray(sourceNote.linkedWith)) {
+        sourceNote.linkedWith.forEach(targetNoteId => {
+          const targetNoteExists = notesWithPositions.some(
+            n => n.id === targetNoteId
           );
 
-          if (!edgeExists) {
-            const sourceColor = generateColorFromId(note.id);
-            const targetColor = generateColorFromId(linkedNoteId);
-            const isAnimated = !!(
-              hoveredNodeId &&
-              (hoveredNodeId === note.id || hoveredNodeId === linkedNoteId)
+          if (targetNoteExists) {
+            const edgeExists = edges.some(
+              edge =>
+                edge.source === sourceNote.id && edge.target === targetNoteId
             );
 
-            const newEdge: Edge = {
-              id: createEdgeId(note.id, linkedNoteId),
-              source: note.id,
-              target: linkedNoteId,
-              type: 'multiColor' as const,
-              data: {
-                sourceColor,
-                targetColor,
-              },
-              style: {
-                strokeWidth: 3,
-                strokeDasharray:
-                  selectedNodeId &&
-                  (selectedNodeId === note.id ||
-                    selectedNodeId === linkedNoteId)
-                    ? '0'
-                    : '5,5',
-              },
-              animated: isAnimated,
-            };
-            edges.push(newEdge);
+            if (!edgeExists) {
+              const sourceColor = generateColorFromId(sourceNote.id);
+              const targetColor = generateColorFromId(targetNoteId);
+
+              const newEdge: Edge = {
+                id: `edge-${sourceNote.id}-${targetNoteId}`,
+                source: sourceNote.id,
+                target: targetNoteId,
+                type: 'multiColor' as const,
+                data: {
+                  sourceColor,
+                  targetColor,
+                },
+              };
+
+              edges.push(newEdge);
+            }
           }
-        }
-      });
+        });
+      }
     });
 
     return edges;
-  }, [notesWithPositions, selectedNodeId, hoveredNodeId]);
+  }, [notesWithPositions]);
 
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {
@@ -112,7 +95,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           yPos,
         }).unwrap();
       } catch (error) {
-        console.error('Failed to update note position:', error);
+        console.error(error);
       }
     },
     [layoutId, updatePosition]

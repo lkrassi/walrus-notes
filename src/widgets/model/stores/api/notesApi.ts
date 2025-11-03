@@ -327,7 +327,7 @@ export const notesApi = apiSlice.injectEndpoints({
             );
           }
         } catch (error) {
-          console.warn('Failed to get note data from unposed cache:', error);
+          console.warn(error);
         }
 
         if (!realNoteData) {
@@ -342,7 +342,7 @@ export const notesApi = apiSlice.injectEndpoints({
               );
             }
           } catch (error) {
-            console.warn('Failed to get note data from notes cache:', error);
+            console.warn(error);
           }
         }
 
@@ -413,93 +413,39 @@ export const notesApi = apiSlice.injectEndpoints({
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults = [];
 
-        // 1. Обновляем getNotes кэш
-        try {
-          const notesCache = notesApi.endpoints.getNotes.select({
-            layoutId: arg.layoutId,
-            page: 1,
-          })(getState() as any);
-
-          if (notesCache.data?.data) {
-            // Обновляем первую заметку в getNotes
-            const patchResult1 = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (note && !note.linkedWith.includes(arg.secondNoteId)) {
-                    note.linkedWith.push(arg.secondNoteId);
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult1);
-
-            // Обновляем вторую заметку в getNotes
-            const patchResult2 = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.secondNoteId);
-                  if (note && !note.linkedWith.includes(arg.firstNoteId)) {
-                    note.linkedWith.push(arg.firstNoteId);
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult2);
-          }
-        } catch (error) {
-          console.warn(
-            'Failed to update getNotes cache for link creation:',
-            error
-          );
-        }
-
-        // 2. Обновляем getPosedNotes кэш (это важно!)
+        // ✅ ИСПРАВЛЕНО: linkedWith - массив ID заметок, К КОТОРЫМ идут линии ИЗ ЭТОЙ заметки
+        // Добавляем target в linkedWith массива source заметки
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
             layoutId: arg.layoutId,
           })(getState() as any);
 
           if (posedNotesCache.data?.data) {
-            // Обновляем первую заметку в getPosedNotes
-            const patchResult3 = dispatch(
+            // Обновляем ИСХОДНУЮ заметку (source) - добавляем target в linkedWith
+            const patchResult = dispatch(
               notesApi.util.updateQueryData(
                 'getPosedNotes',
                 { layoutId: arg.layoutId },
                 draft => {
-                  const note = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (note && !note.linkedWith.includes(arg.secondNoteId)) {
-                    note.linkedWith.push(arg.secondNoteId);
+                  const sourceNote = draft.data.find(
+                    n => n.id === arg.firstNoteId
+                  );
+                  // ✅ ИСПРАВЛЕНО: Обновляем source note (ИЗ которой идет связь)
+                  if (sourceNote) {
+                    if (!sourceNote.linkedWith) {
+                      sourceNote.linkedWith = [];
+                    }
+                    if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
+                      sourceNote.linkedWith.push(arg.secondNoteId);
+                    }
                   }
                 }
               )
             );
-            patchResults.push(patchResult3);
-
-            // Обновляем вторую заметку в getPosedNotes
-            const patchResult4 = dispatch(
-              notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.secondNoteId);
-                  if (note && !note.linkedWith.includes(arg.firstNoteId)) {
-                    note.linkedWith.push(arg.firstNoteId);
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult4);
+            patchResults.push(patchResult);
           }
         } catch (error) {
-          console.warn(
-            'Failed to update getPosedNotes cache for link creation:',
-            error
-          );
+          console.warn(error);
         }
 
         try {
@@ -534,90 +480,32 @@ export const notesApi = apiSlice.injectEndpoints({
         const patchResults = [];
 
         try {
-          // Обновляем getNotes кэш
-          const notesCache = notesApi.endpoints.getNotes.select({
-            layoutId: arg.layoutId,
-            page: 1,
-          })(getState() as any);
-
-          if (notesCache.data?.data) {
-            // Удаляем из первой заметки
-            const patchResult1 = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (note) {
-                    note.linkedWith = note.linkedWith.filter(
-                      id => id !== arg.secondNoteId
-                    );
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult1);
-
-            // Удаляем из второй заметки
-            const patchResult2 = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.secondNoteId);
-                  if (note) {
-                    note.linkedWith = note.linkedWith.filter(
-                      id => id !== arg.firstNoteId
-                    );
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult2);
-          }
-
-          // Обновляем getPosedNotes кэш
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
             layoutId: arg.layoutId,
           })(getState() as any);
 
           if (posedNotesCache.data?.data) {
-            // Удаляем из первой заметки в posed
-            const patchResult3 = dispatch(
+            // ✅ ИСПРАВЛЕНО: Удаляем только из ИСХОДНОЙ заметки (source)
+            const patchResult = dispatch(
               notesApi.util.updateQueryData(
                 'getPosedNotes',
                 { layoutId: arg.layoutId },
                 draft => {
-                  const note = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (note) {
-                    note.linkedWith = note.linkedWith.filter(
+                  const sourceNote = draft.data.find(
+                    n => n.id === arg.firstNoteId
+                  );
+                  if (sourceNote && sourceNote.linkedWith) {
+                    sourceNote.linkedWith = sourceNote.linkedWith.filter(
                       id => id !== arg.secondNoteId
                     );
                   }
                 }
               )
             );
-            patchResults.push(patchResult3);
-
-            // Удаляем из второй заметки в posed
-            const patchResult4 = dispatch(
-              notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
-                draft => {
-                  const note = draft.data.find(n => n.id === arg.secondNoteId);
-                  if (note) {
-                    note.linkedWith = note.linkedWith.filter(
-                      id => id !== arg.firstNoteId
-                    );
-                  }
-                }
-              )
-            );
-            patchResults.push(patchResult4);
+            patchResults.push(patchResult);
           }
         } catch (error) {
-          console.warn('Failed to update cache for link deletion:', error);
+          console.warn(error);
         }
 
         try {

@@ -2,16 +2,13 @@ import { useDashboardNavigation } from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
-import { useFileTree } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { openTab, switchTab } from 'widgets/model/stores/slices/tabsSlice';
 import { Sidebar } from 'widgets/ui';
-import { getItemPath } from '../../utils/fileTreeUtils';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
 
 export const DashBoard = () => {
-  const { fileTree } = useFileTree();
   const dispatch = useAppDispatch();
   const { openTabs, activeTabId } = useTabs();
   const sidebarRef = useRef<{
@@ -55,10 +52,6 @@ export const DashBoard = () => {
     handleItemSelect(noteItem);
   };
 
-  const getItemPathWrapper = (item: FileTreeItem): string => {
-    return getItemPath(item, fileTree);
-  };
-
   return (
     <div className='flex h-screen flex-col'>
       <DashboardHeader />
@@ -70,7 +63,6 @@ export const DashBoard = () => {
         />
         <DashboardContent
           onNoteOpen={handleNoteOpenFromGraph}
-          getItemPath={getItemPathWrapper}
           onItemSelect={handleItemSelect}
         />
       </div>

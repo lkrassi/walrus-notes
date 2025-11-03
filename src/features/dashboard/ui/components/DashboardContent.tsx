@@ -16,14 +16,10 @@ import {
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
-  getItemPath: (item: FileTreeItem) => string;
   onItemSelect?: (item: FileTreeItem) => void;
 }
 
-export const DashboardContent = ({
-  onNoteOpen,
-  getItemPath,
-}: DashboardContentProps) => {
+export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { openTabs } = useTabs();
@@ -82,7 +78,7 @@ export const DashboardContent = ({
       id: noteData.noteId,
       type: 'note',
       title: noteData.note.title,
-      parentId: activeTab?.item.id || noteData.note.layoutId,
+      parentId: noteData.note.layoutId,
       note: noteData.note,
     };
 
@@ -128,7 +124,7 @@ export const DashboardContent = ({
       return (
         <NoteViewer
           note={note}
-          layoutId={activeTab.item.parentId}
+          layoutId={activeTab.item.parentId || note.layoutId || ''}
           onNoteUpdated={updatedNote =>
             handleNoteUpdated(updatedNote.id, {
               title: updatedNote.title,
@@ -149,14 +145,40 @@ export const DashboardContent = ({
             ? activeTab.item.id
             : activeTab.item.layoutId;
 
+        if (!layoutId) {
+          console.error(
+            '❌ Cannot render graph: layoutId is undefined',
+            activeTab
+          );
+          return (
+            <div className='flex h-full items-center justify-center'>
+              <div className='text-center'>
+                <p className='text-secondary dark:text-dark-secondary'>
+                  Ошибка: не указан layoutId
+                </p>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <NotesGraph
-            layoutId={layoutId!}
+            layoutId={layoutId}
             onNoteOpen={handleNoteOpenFromGraph}
           />
         );
       }
     }
+
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-secondary dark:text-dark-secondary'>
+            Неподдерживаемый тип вкладки
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -167,7 +189,6 @@ export const DashboardContent = ({
           onTabClick={handleTabClick}
           onTabClose={handleTabClose}
           onTabReorder={handleTabReorder}
-          getItemPath={getItemPath}
         />
       )}
       <div className='min-h-0 flex-1'>{renderContent()}</div>

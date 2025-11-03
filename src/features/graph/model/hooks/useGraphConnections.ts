@@ -28,6 +28,8 @@ export const useGraphConnections = ({
   layoutId,
   nodes,
   edges,
+  selectedNodeId,
+  hoveredNodeId,
   screenToFlowPosition,
 }: UseGraphConnectionsProps) => {
   const [createNoteLink] = useCreateNoteLinkMutation();
@@ -40,7 +42,7 @@ export const useGraphConnections = ({
 
   const createEdge = useCallback((source: string, target: string): Edge => {
     return {
-      id: `${source}-${target}`,
+      id: `temp-${source}-${target}`,
       source,
       target,
       type: 'multiColor' as const,
@@ -51,7 +53,8 @@ export const useGraphConnections = ({
     };
   }, []);
 
-  const onConnectStart = useCallback((params: any) => {
+  const onConnectStart = useCallback((event: any, params: any) => {
+
     if (!isValidNoteId(params.nodeId)) {
       return;
     }
@@ -66,6 +69,7 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: any) => {
+
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
         setTempEdge(null);
         return;
@@ -102,9 +106,7 @@ export const useGraphConnections = ({
       }
 
       const edgeExists = allEdges.some(
-        edge =>
-          (edge.source === tempEdge.source && edge.target === targetNodeId) ||
-          (edge.source === targetNodeId && edge.target === tempEdge.source)
+        edge => edge.source === tempEdge.source && edge.target === targetNodeId
       );
 
       if (edgeExists) {
@@ -121,9 +123,12 @@ export const useGraphConnections = ({
           firstNoteId: tempEdge.source,
           secondNoteId: targetNodeId,
         }).unwrap();
-      } catch {
+
+      } catch (error) {
         setTempEdges(prev =>
-          prev.filter(edge => edge.id !== `${tempEdge.source}-${targetNodeId}`)
+          prev.filter(
+            edge => edge.id !== `temp-${tempEdge.source}-${targetNodeId}`
+          )
         );
       } finally {
         setTempEdge(null);
@@ -142,55 +147,38 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
-      console.log('onConnect called:', connection);
 
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
       ) {
-        console.log('Invalid connection IDs');
         return;
       }
 
       const source = connection.source;
       const target = connection.target;
 
-      console.log(`Connecting ${source} to ${target}`);
-
-      if (source === target) {
-        console.log('Cannot connect node to itself');
-        return;
-      }
+      if (source === target) return;
 
       const edgeExists = allEdges.some(
-        edge =>
-          (edge.source === source && edge.target === target) ||
-          (edge.source === target && edge.target === source)
+        edge => edge.source === source && edge.target === target
       );
 
-      if (edgeExists) {
-        console.log('Edge already exists');
-        return;
-      }
-
-      console.log('Creating new edge...');
+      if (edgeExists) return;
 
       try {
         const newEdge = createEdge(source, target);
         setTempEdges(prev => [...prev, newEdge]);
 
-        console.log('Sending API request...');
         await createNoteLink({
           layoutId,
           firstNoteId: source,
           secondNoteId: target,
         }).unwrap();
 
-        console.log('Connection created successfully');
       } catch (error) {
-        console.error('Failed to create connection:', error);
         setTempEdges(prev =>
-          prev.filter(edge => edge.id !== `${source}-${target}`)
+          prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );
       }
     },

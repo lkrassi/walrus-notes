@@ -28,7 +28,6 @@ export const useGraphHandlers = ({
   const handleAddNoteToGraph = useCallback(
     (note: any, dropPosition?: { x: number; y: number }) => {
       if (!dropPosition) {
-        console.warn('No drop position provided for note:', note.id);
         return;
       }
       updatePositionCallback(note.id, dropPosition.x, dropPosition.y);
@@ -85,7 +84,7 @@ export const useGraphHandlers = ({
           });
           handleAddNoteToGraph(note, dropPosition);
         } catch (error) {
-          console.error('Failed to parse note data:', error);
+          console.error(error);
         }
       }
     },

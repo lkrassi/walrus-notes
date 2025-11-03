@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useModalActions } from 'widgets/hooks/useModalActions'; // ← изменено
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useIsMobile, useLocalization } from '../../../hooks';
 import { DeleteNoteForm } from './DeleteNoteForm';
 
@@ -41,7 +41,7 @@ export const FileTreeItemHeader = ({
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { t } = useLocalization();
-  const { openModalFromTrigger } = useModalActions(); // ← изменено
+  const { openModalFromTrigger } = useModalActions();
 
   useEffect(() => {
     return () => {
@@ -116,6 +116,7 @@ export const FileTreeItemHeader = ({
       onBlur={handleMouseLeave}
       onClick={handleItemClick}
     >
+      {/* ✅ ИСПРАВЛЕНО: Используем 'layout' вместо 'folder' */}
       {item.type === 'layout' && (
         <div className='flex h-4 w-4 items-center justify-center'>
           {isExpanded ? (
@@ -129,6 +130,7 @@ export const FileTreeItemHeader = ({
       {item.type === 'note' && <div className='h-4 w-4' />}
 
       <div>
+        {/* ✅ ИСПРАВЛЕНО: Используем 'layout' вместо 'folder' */}
         {item.type === 'layout' ? (
           isExpanded ? (
             <FolderOpen className='h-4 w-4' />
@@ -143,6 +145,7 @@ export const FileTreeItemHeader = ({
       <span className='flex-1 truncate text-sm font-medium'>{item.title}</span>
 
       <div className='flex items-center gap-1'>
+        {/* ✅ ИСПРАВЛЕНО: Используем 'layout' вместо 'folder' */}
         {item.type === 'layout' && (
           <>
             <button

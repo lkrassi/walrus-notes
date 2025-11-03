@@ -7,7 +7,6 @@ export const Tabs = ({
   onTabClick,
   onTabClose,
   onTabReorder,
-  getItemPath,
 }: TabsProps) => {
   const [draggedTab, setDraggedTab] = useState<string | null>(null);
   const [dragOverTab, setDragOverTab] = useState<string | null>(null);
@@ -98,11 +97,6 @@ export const Tabs = ({
               <Folder className='mr-2 h-4 w-4' />
             )}
             <div className='min-w-0 flex-1'>
-              {tab.item.type === 'note' && getItemPath ? (
-                <div className='truncate text-xs opacity-75'>
-                  {getItemPath(tab.item) || tab.item.title}
-                </div>
-              ) : null}
               <div className='truncate text-sm font-medium'>
                 {tab.item.title}
               </div>

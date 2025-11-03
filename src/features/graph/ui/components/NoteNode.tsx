@@ -41,61 +41,74 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
       }}
       title='Двойной клик для открытия заметки'
     >
-      {/* Source handles */}
+      {/* ✅ Source handles - ОТКУДА идут линии (ИЗ этой заметки) */}
       <Handle
         type='source'
         position={Position.Right}
-        id='source-right' // Уникальный id
+        id='source-right'
         style={handleStyle}
+        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Left}
-        id='source-left' // Уникальный id
+        id='source-left'
         style={handleStyle}
+        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Top}
-        id='source-top' // Уникальный id
+        id='source-top'
         style={handleStyle}
+        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Bottom}
-        id='source-bottom' // Уникальный id
+        id='source-bottom'
         style={handleStyle}
+        title='Создать связь ИЗ этой заметки'
       />
 
-      {/* Target handles */}
+      {/* ✅ Target handles - КУДА приходят линии (В эту заметку) */}
       <Handle
         type='target'
         position={Position.Right}
-        id='target-right' // Уникальный id
+        id='target-right'
         style={handleStyle}
+        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Left}
-        id='target-left' // Уникальный id
+        id='target-left'
         style={handleStyle}
+        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Top}
-        id='target-top' // Уникальный id
+        id='target-top'
         style={handleStyle}
+        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Bottom}
-        id='target-bottom' // Уникальный id
+        id='target-bottom'
         style={handleStyle}
+        title='Создать связь В эту заметку'
       />
 
-      <h3 className='font-semibold text-dark-text m-3 text-center'>
+      <h3 className='text-dark-text m-3 text-center font-semibold'>
         {data.note.title}
       </h3>
+
+      {/* ✅ ИСПРАВЛЕНО: Показываем исходящие связи */}
+      <div className='text-dark-text/70 text-center text-xs'>
+        {data.note.linkedWith?.length || 0} исходящих связей
+      </div>
     </button>
   );
 };

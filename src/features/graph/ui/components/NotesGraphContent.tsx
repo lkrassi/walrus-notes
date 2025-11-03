@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactFlow, {
   useEdgesState,
   useNodesState,
@@ -24,6 +24,7 @@ interface NotesGraphContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
 }
 
+// ✅ ИСПРАВЛЕНО: Мемоизация вынесена за пределы компонента
 const edgeTypes = {
   multiColor: MultiColorEdge,
 };
@@ -85,7 +86,6 @@ export const NotesGraphContent = React.memo(
         return combinedEdges.map(edge => ({
           ...edge,
           style: {
-            // Добавляем стили для неподсвеченных ребер
             strokeWidth: 2,
             strokeDasharray: '5,5',
             opacity: 0.3,

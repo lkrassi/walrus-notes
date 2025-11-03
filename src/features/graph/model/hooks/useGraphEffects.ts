@@ -15,6 +15,7 @@ interface UseGraphEffectsProps {
 export const useGraphEffects = ({
   initialNodes,
   initialEdges,
+  tempEdges,
   selectedNodeId,
   hoveredNodeId,
   setNodes,

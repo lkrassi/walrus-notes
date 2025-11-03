@@ -54,9 +54,8 @@ export const useDropdown = <T>(
       const nextPage = currentPage + 1;
       await paginationOptions.onLoadMore(nextPage);
       setCurrentPage(nextPage);
-    } catch (error) {
-      console.error('Error loading more items:', error);
-    } finally {
+    }
+     finally {
       setIsLoadingMore(false);
     }
   }, [currentPage, enablePagination, isLoadingMore, options]);
