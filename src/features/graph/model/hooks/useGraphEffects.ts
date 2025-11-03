@@ -15,7 +15,6 @@ interface UseGraphEffectsProps {
 export const useGraphEffects = ({
   initialNodes,
   initialEdges,
-  tempEdges,
   selectedNodeId,
   hoveredNodeId,
   setNodes,
@@ -46,17 +45,12 @@ export const useGraphEffects = ({
           ? selectedNodeId === edge.source || selectedNodeId === edge.target
           : false;
 
-        const isHovered =
-          !!hoveredNodeId &&
-          (hoveredNodeId === edge.source || hoveredNodeId === edge.target);
-
         return {
           ...edge,
-          animated: isHovered,
           style: {
             strokeWidth: isRelatedToSelected ? 3 : 2,
             strokeDasharray: isRelatedToSelected ? '0' : '5,5',
-            opacity: isHovered ? 1 : isRelatedToSelected ? 1 : 0.3,
+            opacity: isRelatedToSelected ? 1 : 0.3,
             transition: 'opacity 0.2s ease-in-out',
           },
           data: {
