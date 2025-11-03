@@ -41,74 +41,59 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
       }}
       title='Двойной клик для открытия заметки'
     >
-      {/* ✅ Source handles - ОТКУДА идут линии (ИЗ этой заметки) */}
       <Handle
         type='source'
         position={Position.Right}
         id='source-right'
         style={handleStyle}
-        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Left}
         id='source-left'
         style={handleStyle}
-        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Top}
         id='source-top'
         style={handleStyle}
-        title='Создать связь ИЗ этой заметки'
       />
       <Handle
         type='source'
         position={Position.Bottom}
         id='source-bottom'
         style={handleStyle}
-        title='Создать связь ИЗ этой заметки'
       />
 
-      {/* ✅ Target handles - КУДА приходят линии (В эту заметку) */}
       <Handle
         type='target'
         position={Position.Right}
         id='target-right'
         style={handleStyle}
-        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Left}
         id='target-left'
         style={handleStyle}
-        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Top}
         id='target-top'
         style={handleStyle}
-        title='Создать связь В эту заметку'
       />
       <Handle
         type='target'
         position={Position.Bottom}
         id='target-bottom'
         style={handleStyle}
-        title='Создать связь В эту заметку'
       />
 
-      <h3 className='text-dark-text m-3 text-center font-semibold'>
+      <h3 className='text-dark-text m-3 text-center font-semibold line-clamp-2 overflow-hidden text-ellipsis'>
         {data.note.title}
       </h3>
-
-      {/* ✅ ИСПРАВЛЕНО: Показываем исходящие связи */}
-      <div className='text-dark-text/70 text-center text-xs'>
-        {data.note.linkedWith?.length || 0} исходящих связей
-      </div>
     </button>
   );
 };

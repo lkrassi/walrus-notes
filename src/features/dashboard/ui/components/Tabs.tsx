@@ -82,6 +82,7 @@ export const Tabs = ({
                 : undefined,
             transition: 'all 0.2s ease',
             zIndex: draggedTab === tab.id ? 50 : 10,
+            maxWidth: '200px', // Ограничение максимальной ширины
           }}
           className={`border-border dark:border-dark-border group relative flex min-w-0 cursor-pointer items-center border-r px-4 py-2 whitespace-nowrap select-none ${
             tab.isActive
@@ -89,14 +90,15 @@ export const Tabs = ({
               : 'text-text dark:text-dark-text bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700'
           } `}
           onClick={() => onTabClick(tab.id)}
+          title={tab.item.title} // Показываем полный текст при наведении
         >
-          <div className='mr-2 flex min-w-0 flex-1 items-center'>
+          <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>
             {tab.item.type === 'note' ? (
               <FileText className='mr-2 h-4 w-4' />
             ) : (
               <Folder className='mr-2 h-4 w-4' />
             )}
-            <div className='min-w-0 flex-1'>
+            <div className='min-w-0 flex-1 overflow-hidden'>
               <div className='truncate text-sm font-medium'>
                 {tab.item.title}
               </div>
@@ -107,7 +109,7 @@ export const Tabs = ({
               e.stopPropagation();
               onTabClose(tab.id);
             }}
-            className={` ${tab.isActive ? 'text-white' : 'text-text dark:text-dark-text'}`}
+            className={`ml-2 ${tab.isActive ? 'text-white' : 'text-text dark:text-dark-text'}`}
           >
             <X
               className={`${tab.isActive ? 'hover:bg-white hover:text-black' : 'hover:bg-primary'} h-3 w-3 rounded-xl duration-200`}

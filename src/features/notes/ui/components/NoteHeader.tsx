@@ -36,7 +36,9 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
             disabled={isLoading}
           />
         ) : (
-          <p className='text-text dark:text-dark-text px-3 py-2'>{title}</p>
+          <p className='text-text dark:text-dark-text max-w-md truncate px-3 py-2'>
+            {title}
+          </p>
         )}
       </div>
 
