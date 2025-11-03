@@ -42,7 +42,7 @@ export const useGraphConnections = ({
 
   const createEdge = useCallback((source: string, target: string): Edge => {
     return {
-      id: `temp-${source}-${target}`,
+      id: `temp-${source}-${target}-${Date.now()}`,
       source,
       target,
       type: 'multiColor' as const,
@@ -54,7 +54,6 @@ export const useGraphConnections = ({
   }, []);
 
   const onConnectStart = useCallback((event: any, params: any) => {
-
     if (!isValidNoteId(params.nodeId)) {
       return;
     }
@@ -69,7 +68,6 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: any) => {
-
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
         setTempEdge(null);
         return;
@@ -124,6 +122,7 @@ export const useGraphConnections = ({
           secondNoteId: targetNodeId,
         }).unwrap();
 
+        setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
       } catch (error) {
         setTempEdges(prev =>
           prev.filter(
@@ -147,7 +146,6 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
-
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
@@ -176,6 +174,7 @@ export const useGraphConnections = ({
           secondNoteId: target,
         }).unwrap();
 
+        setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
       } catch (error) {
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)

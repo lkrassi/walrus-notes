@@ -95,5 +95,5 @@ h6 {
 }
 
 .bg-gradient {
-  @apply bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
+  @apply from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
 }

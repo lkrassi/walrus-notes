@@ -91,7 +91,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         style={handleStyle}
       />
 
-      <h3 className='text-dark-text m-3 text-center font-semibold line-clamp-2 overflow-hidden text-ellipsis'>
+      <h3 className='text-dark-text m-3 line-clamp-2 overflow-hidden text-center font-semibold text-ellipsis'>
         {data.note.title}
       </h3>
     </button>

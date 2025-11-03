@@ -356,7 +356,6 @@ export const notesApi = apiSlice.injectEndpoints({
               );
 
               if (noteIndex !== -1) {
-                // Обновляем позицию существующей заметки
                 draft.data[noteIndex].position = {
                   xPos: arg.xPos,
                   yPos: arg.yPos,
@@ -413,15 +412,12 @@ export const notesApi = apiSlice.injectEndpoints({
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults = [];
 
-        // ✅ ИСПРАВЛЕНО: linkedWith - массив ID заметок, К КОТОРЫМ идут линии ИЗ ЭТОЙ заметки
-        // Добавляем target в linkedWith массива source заметки
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
             layoutId: arg.layoutId,
           })(getState() as any);
 
           if (posedNotesCache.data?.data) {
-            // Обновляем ИСХОДНУЮ заметку (source) - добавляем target в linkedWith
             const patchResult = dispatch(
               notesApi.util.updateQueryData(
                 'getPosedNotes',
@@ -430,7 +426,6 @@ export const notesApi = apiSlice.injectEndpoints({
                   const sourceNote = draft.data.find(
                     n => n.id === arg.firstNoteId
                   );
-                  // ✅ ИСПРАВЛЕНО: Обновляем source note (ИЗ которой идет связь)
                   if (sourceNote) {
                     if (!sourceNote.linkedWith) {
                       sourceNote.linkedWith = [];
@@ -451,7 +446,6 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           await queryFulfilled;
         } catch {
-          // Откатываем все изменения в случае ошибки
           patchResults.forEach(patchResult => patchResult.undo());
         }
       },
@@ -466,12 +460,8 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: 'Notes', id: arg.layoutId },
-        { type: 'Notes', id: arg.firstNoteId },
-        { type: 'Notes', id: arg.secondNoteId },
-        'Notes',
-      ],
+      // ✅ УБРАНО: invalidatesTags чтобы не делать лишние запросы
+      invalidatesTags: [],
       extraOptions: {
         loadingKey: null,
       },
@@ -485,7 +475,6 @@ export const notesApi = apiSlice.injectEndpoints({
           })(getState() as any);
 
           if (posedNotesCache.data?.data) {
-            // ✅ ИСПРАВЛЕНО: Удаляем только из ИСХОДНОЙ заметки (source)
             const patchResult = dispatch(
               notesApi.util.updateQueryData(
                 'getPosedNotes',

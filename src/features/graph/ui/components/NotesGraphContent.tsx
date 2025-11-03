@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import ReactFlow, {
   useEdgesState,
   useNodesState,
@@ -10,9 +10,12 @@ import type { Note } from 'shared/model/types/layouts';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphEffects } from '../../model/hooks/useGraphEffects';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
+import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
 import { GraphBackground } from './GraphBackground';
+import { GraphContainer } from './GraphContainer';
 import { GraphControls } from './GraphControls';
+import { GraphDropZone } from './GraphDropZone';
 import { GraphLoading } from './GraphLoading';
 import { GraphMiniMap } from './GraphMiniMap';
 import { MultiColorEdge } from './MultiColorEdge';
@@ -24,7 +27,6 @@ interface NotesGraphContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
 }
 
-// ✅ ИСПРАВЛЕНО: Мемоизация вынесена за пределы компонента
 const edgeTypes = {
   multiColor: MultiColorEdge,
 };
@@ -79,43 +81,24 @@ export const NotesGraphContent = React.memo(
       setTempEdges,
     });
 
-    const edgesWithSelection = (() => {
-      const combinedEdges = [...edges, ...tempEdges];
+    const handleNoteOpen = useCallback(
+      (noteId: string) => {
+        const node = nodes.find(n => n.id === noteId);
+        if (node && node.data.note) {
+          onNoteOpen?.({ noteId, note: node.data.note });
+        }
+      },
+      [nodes, onNoteOpen]
+    );
 
-      if (!selectedNodeId) {
-        return combinedEdges.map(edge => ({
-          ...edge,
-          style: {
-            strokeWidth: 2,
-            strokeDasharray: '5,5',
-            opacity: 0.3,
-          },
-          data: {
-            ...edge.data,
-            isRelatedToSelected: false,
-            isSelected: false,
-          },
-        }));
-      }
-
-      return combinedEdges.map(edge => {
-        const isRelated =
-          selectedNodeId === edge.source || selectedNodeId === edge.target;
-        return {
-          ...edge,
-          style: {
-            strokeWidth: isRelated ? 3 : 2,
-            strokeDasharray: isRelated ? '0' : '5,5',
-            opacity: isRelated ? 1 : 0.3,
-          },
-          data: {
-            ...edge.data,
-            isRelatedToSelected: isRelated,
-            isSelected: isRelated,
-          },
-        };
-      });
-    })();
+    const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
+      nodes,
+      edges,
+      tempEdges,
+      selectedNodeId,
+      allEdges,
+      onNoteOpen: handleNoteOpen,
+    });
 
     const {
       handleAddNoteToGraph,
@@ -124,7 +107,7 @@ export const NotesGraphContent = React.memo(
       handleNodeClick,
       handleNodeMouseEnter,
       handleNodeMouseLeave,
-      onDrop,
+      onDrop: onNoteDrop,
     } = useGraphHandlers({
       updatePositionCallback,
       onNodeClick,
@@ -134,73 +117,42 @@ export const NotesGraphContent = React.memo(
       screenToFlowPosition,
     });
 
-    const handleNoteOpen = (noteId: string) => {
-      const node = nodes.find(n => n.id === noteId);
-      if (node && node.data.note) {
-        onNoteOpen?.({ noteId, note: node.data.note });
-      }
-    };
+    const handleNodeDoubleClick = useCallback(
+      (event: React.MouseEvent, node: Node) => {
+        event.stopPropagation();
+        node.data?.onNoteClick?.(node.id);
+      },
+      []
+    );
 
-    const nodesWithSelection = (() => {
-      if (!selectedNodeId) {
-        return nodes.map(node => ({
-          ...node,
-          data: {
-            ...node.data,
-            selected: false,
-            isRelatedToSelected: true,
-            onNoteClick: handleNoteOpen,
-          },
-          style: {
-            ...node.style,
-            opacity: 1,
-          },
-        }));
-      }
+    const handleDrop = useCallback(
+      (event: React.DragEvent) => {
+        event.preventDefault();
 
-      const relatedNodeIds = new Set<string>([selectedNodeId]);
-      allEdges.forEach(edge => {
-        if (edge.source === selectedNodeId) relatedNodeIds.add(edge.target);
-        if (edge.target === selectedNodeId) relatedNodeIds.add(edge.source);
-      });
-
-      return nodes.map(node => {
-        const isRelated = relatedNodeIds.has(node.id);
-        const isSelected = selectedNodeId === node.id;
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            selected: isSelected,
-            isRelatedToSelected: isRelated,
-            onNoteClick: handleNoteOpen,
-          },
-          style: {
-            ...node.style,
-            opacity: isRelated ? 1 : 0.5,
-            transition: 'opacity 0.3s ease-in-out',
-          },
-        };
-      });
-    })();
-
-    const handleNodeDoubleClick = (event: React.MouseEvent, node: Node) => {
-      event.stopPropagation();
-      node.data?.onNoteClick?.(node.id);
-    };
+        const noteData = event.dataTransfer.getData('application/reactflow');
+        if (noteData) {
+          try {
+            const note = JSON.parse(noteData);
+            const dropPosition = screenToFlowPosition({
+              x: event.clientX,
+              y: event.clientY,
+            });
+            handleAddNoteToGraph(note, dropPosition);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      },
+      [handleAddNoteToGraph, screenToFlowPosition]
+    );
 
     if (isLoading) {
       return <GraphLoading />;
     }
 
     return (
-      <div className='bg-bg dark:bg-dark-bg relative flex h-full w-full'>
-        <div
-          className='flex-1'
-          onDrop={onDrop}
-          onDragOver={e => e.preventDefault()}
-        >
+      <GraphContainer>
+        <GraphDropZone onDrop={handleDrop}>
           <ReactFlow
             nodes={nodesWithSelection}
             edges={edgesWithSelection}
@@ -237,8 +189,8 @@ export const NotesGraphContent = React.memo(
               onNoteSelect={handleAddNoteToGraph}
             />
           </ReactFlow>
-        </div>
-      </div>
+        </GraphDropZone>
+      </GraphContainer>
     );
   }
 );
