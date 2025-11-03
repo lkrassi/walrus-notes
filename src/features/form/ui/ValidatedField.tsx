@@ -58,10 +58,6 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
           {({ field, form }: FieldProps) => {
             const hasError =
               form.errors[name] && (form.touched[name] || form.submitCount > 0);
-            const errorMessage =
-              typeof form.errors[name] === 'string'
-                ? (form.errors[name] as string)
-                : undefined;
 
             return (
               <>

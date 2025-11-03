@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'shared';
-import {
-  useLocalization,
-  useNotifications,
-} from 'widgets/hooks';
+import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useCreateLayoutMutation } from 'widgets/model/stores/api';
-import { useModalContext } from 'widgets/ui';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface CreateLayoutFormProps {
   onLayoutCreated?: () => void;
@@ -17,7 +14,7 @@ export const CreateLayoutForm = ({
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
   const { showError } = useNotifications();
-  const { closeModal } = useModalContext();
+  const { closeModal } = useModalContentContext();
   const [createLayout, { isLoading }] = useCreateLayoutMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +35,7 @@ export const CreateLayoutForm = ({
         onLayoutCreated();
       }
       closeModal();
-    } catch (err: any) {
+    } catch {
       showError(t('layout:layoutCreationError'));
     }
   };

@@ -4,7 +4,7 @@ import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useDeleteNoteMutation } from 'widgets/model/stores/api';
 import { closeTabsByItemId } from 'widgets/model/stores/slices/tabsSlice';
-import { useModalContext } from 'widgets/ui';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface DeleteNoteFormProps {
   noteId: string;
@@ -19,7 +19,7 @@ export const DeleteNoteForm = ({
 }: DeleteNoteFormProps) => {
   const { t } = useLocalization();
   const { showError } = useNotifications();
-  const { closeModal } = useModalContext();
+  const { closeModal } = useModalContentContext();
   const dispatch = useAppDispatch();
   const [deleteNote, { isLoading }] = useDeleteNoteMutation();
 
@@ -38,7 +38,7 @@ export const DeleteNoteForm = ({
       }
 
       closeModal();
-    } catch (err: any) {
+    } catch {
       showError(t('notes:noteDeletionError'));
     }
   };
@@ -82,7 +82,7 @@ export const DeleteNoteForm = ({
           className='px-6 py-3'
           disabled={isLoading}
         >
-          {t('common:cancel')}
+          {t('notes:cancel')}
         </Button>
         <Button
           type='submit'

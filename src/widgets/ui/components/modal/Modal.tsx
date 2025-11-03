@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
+import { ModalContentContext } from './ModalContentContext';
 
 interface ModalProps {
   modalState: ModalState;
@@ -22,8 +23,6 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
     'entering' | 'open' | 'exiting'
   >('entering');
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const triggerPosition = options.triggerPosition;
 
   useEffect(() => {
     if (isOpen) {
@@ -67,19 +66,16 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   };
 
   const getModalTransform = () => {
-    if (!triggerPosition) {
+    if (!options.triggerPosition) {
       return animationState === 'open' ? 'scale(1)' : 'scale(0.8)';
     }
 
     const scrollX = window.scrollX || window.pageXOffset;
     const scrollY = window.scrollY || window.pageYOffset;
-
     const viewportCenterX = window.innerWidth / 2;
     const viewportCenterY = window.innerHeight / 2;
-
-    const triggerCenterX = triggerPosition.x + scrollX;
-    const triggerCenterY = triggerPosition.y + scrollY;
-
+    const triggerCenterX = options.triggerPosition.x + scrollX;
+    const triggerCenterY = options.triggerPosition.y + scrollY;
     const deltaX = triggerCenterX - viewportCenterX;
     const deltaY = triggerCenterY - viewportCenterY;
 
@@ -165,7 +161,9 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         )}
 
         <div className='max-h-[calc(90vh-120px)] overflow-y-auto'>
-          {content}
+          <ModalContentContext.Provider value={{ closeModal: handleClose }}>
+            {content}
+          </ModalContentContext.Provider>
         </div>
       </div>
     </div>

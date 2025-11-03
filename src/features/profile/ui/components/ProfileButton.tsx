@@ -6,10 +6,10 @@ import { UserProfileModal } from './UserProfileModal';
 
 export const ProfileButton: React.FC = () => {
   const { profile } = useAppSelector(state => state.user);
-  const { createAnimatedOpener } = useModalActions();
   const { t } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
 
-  const handleOpenProfile = createAnimatedOpener(<UserProfileModal />, {
+  const handleOpenProfile = openModalFromTrigger(<UserProfileModal />, {
     title: t('profile:title') || 'Профиль',
     size: 'md',
     closeOnOverlayClick: true,

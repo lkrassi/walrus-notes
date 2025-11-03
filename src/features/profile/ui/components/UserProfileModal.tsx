@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useGetUserProfileQuery } from 'widgets/model/stores/api';
 import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { ChangeProfilePictureForm } from './ChangeProfilePictureForm';
+import { ImageViewerModal } from './ImageViewerModal';
 
 export const UserProfileModal: React.FC = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector(state => state.user);
-  const { openModal } = useModalContext();
   const userId = localStorage.getItem('userId');
   const { data: userProfileData } = useGetUserProfileQuery(userId || '', {
     skip: !userId,
@@ -23,13 +23,28 @@ export const UserProfileModal: React.FC = () => {
     }
   }, [userProfileData, profile, dispatch]);
 
-  const handleChangePhoto = () => {
-    openModal(<ChangeProfilePictureForm />, {
-      title: t('profile:changePhoto'),
-      size: 'sm',
-      closeOnOverlayClick: true,
-    });
-  };
+  const { openModalFromTrigger } = useModalActions();
+
+  const handleChangePhoto = openModalFromTrigger(<ChangeProfilePictureForm />, {
+    title: t('profile:changePhoto'),
+    size: 'xl',
+    closeOnOverlayClick: true,
+  });
+
+  const handleViewImage = profile?.imgUrl
+    ? openModalFromTrigger(
+        <ImageViewerModal
+          imageUrl={`https://${profile.imgUrl}`}
+          alt={t('profile:profileImage')}
+        />,
+        {
+          title: ' ',
+          size: 'full',
+          closeOnOverlayClick: true,
+          showCloseButton: true,
+        }
+      )
+    : undefined;
 
   if (!profile) {
     return (
@@ -42,12 +57,13 @@ export const UserProfileModal: React.FC = () => {
   return (
     <div className='space-y-6 p-6'>
       <div className='flex flex-col items-center space-y-4'>
-        <div className='h-24 w-24 overflow-hidden rounded-full'>
+        <div className='h-24 w-24 cursor-pointer overflow-hidden rounded-full'>
           {profile.imgUrl ? (
             <img
               src={`https://${profile.imgUrl}`}
               alt='Аватар'
               className='h-full w-full object-cover'
+              onClick={handleViewImage}
             />
           ) : (
             <div className='flex h-full w-full items-center justify-center bg-gray-300 text-2xl font-semibold text-gray-600 dark:bg-gray-600 dark:text-gray-300'>

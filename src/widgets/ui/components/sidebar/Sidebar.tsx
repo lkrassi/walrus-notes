@@ -1,23 +1,17 @@
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
-import { forwardRef, useImperativeHandle, useState, type Ref } from 'react';
+import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import { useParams } from 'react-router-dom';
 import type { Note } from 'shared/model/types/layouts';
-import {
-  useDebounce,
-  useFileTree,
-  useLocalization,
-  useSidebar,
-} from 'widgets/hooks';
+import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import {
   closeLayoutTabs,
   closeTabsByItemId,
 } from 'widgets/model/stores/slices/tabsSlice';
-import { useModalActions } from '../../../hooks/useModalActions';
 import { FileTree } from '../fileTree';
-import { SearchInput } from './SearchInput';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;
@@ -35,8 +29,6 @@ const SidebarComponent = (
     layoutId?: string;
     noteId?: string;
   }>();
-  const [searchQuery, setSearchQuery] = useState('');
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const dispatch = useAppDispatch();
   const {
@@ -47,13 +39,13 @@ const SidebarComponent = (
     addNoteToTree,
   } = useFileTree();
 
-  const { createAnimatedOpener } = useModalActions();
+  const { openModalFromTrigger } = useModalActions();
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }));
 
   const currentSelectedItemId = selectedItemId || noteId || layoutId;
 
-  const handleCreateLayout = createAnimatedOpener(<CreateLayoutForm />, {
+  const handleCreateLayout = openModalFromTrigger(<CreateLayoutForm />, {
     title: t('fileTree:createNewLayout'),
     size: 'md',
   });
@@ -137,16 +129,6 @@ const SidebarComponent = (
               <Plus className='h-5 w-5' />
             </button>
           </div>
-
-          <div className='mt-3'>
-            <div>
-              <SearchInput
-                searchQuery={debouncedSearchQuery}
-                onSearchChange={setSearchQuery}
-                debounceDelay={300}
-              />
-            </div>
-          </div>
         </div>
 
         <div className='flex-1 overflow-y-auto'>
@@ -157,7 +139,6 @@ const SidebarComponent = (
             addNoteToTree={addNoteToTree}
             onItemSelect={handleItemSelect}
             selectedItemId={currentSelectedItemId}
-            searchQuery={searchQuery}
             onOpenGraph={handleOpenGraph}
             onDeleteNote={handleDeleteNote}
             onDeleteLayout={handleDeleteLayout}

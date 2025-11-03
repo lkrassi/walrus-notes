@@ -1,5 +1,5 @@
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { ChevronDown } from 'lucide-react';
+import React, { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -10,6 +10,7 @@ interface DropdownProps {
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
+  showArrow?: boolean;
 }
 
 export const Dropdown = ({
@@ -21,6 +22,7 @@ export const Dropdown = ({
   isOpen: controlledIsOpen,
   onOpenChange,
   disabled = false,
+  showArrow = true,
 }: DropdownProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,12 +72,21 @@ export const Dropdown = ({
   };
 
   const triggerClassName = `cursor-pointer ${disabled ? 'cursor-not-allowed' : ''}`;
-  const contentClassNameFull = `absolute z-50 rounded-lg border border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm ${positionClasses[position]} ${contentClassName || ''}`;
+  const contentClassNameFull = `absolute z-50 rounded-lg border border-gray-200 shadow-lg backdrop-blur-sm ${positionClasses[position]} ${contentClassName || ''}`;
+
+  const renderTrigger = () => {
+    if (showArrow && React.isValidElement(trigger)) {
+      return React.cloneElement(trigger as React.ReactElement<any>, {
+        isOpen,
+      });
+    }
+    return trigger;
+  };
 
   return (
     <div ref={dropdownRef} className={`relative ${className || ''}`}>
       <div onClick={handleToggle} className={triggerClassName}>
-        {trigger}
+        {renderTrigger()}
       </div>
 
       {isOpen && <div className={contentClassNameFull}>{children}</div>}
@@ -102,56 +113,14 @@ export const DropdownTrigger = ({
     >
       {children}
       {showArrow && (
-        <div className='flex items-center'>
-          {isOpen ? (
-            <ChevronDown className='h-3 w-3 text-gray-500' />
-          ) : (
-            <ChevronRight className='h-3 w-3 text-gray-500' />
-          )}
+        <div className='flex items-center transition-transform duration-200'>
+          <ChevronDown
+            className={`h-3 w-3 text-gray-500 transition-transform duration-200 ${
+              isOpen ? 'rotate-0' : '-rotate-90'
+            }`}
+          />
         </div>
       )}
-    </div>
-  );
-};
-
-interface DropdownContentProps {
-  children: ReactNode;
-  className?: string;
-  maxHeight?: string;
-}
-
-export const DropdownContent = ({
-  children,
-  className,
-  maxHeight = 'max-h-48',
-}: DropdownContentProps) => {
-  return (
-    <div
-      className={`overflow-y-auto border-t border-gray-100 ${maxHeight} ${className || ''}`}
-    >
-      {children}
-    </div>
-  );
-};
-
-interface DropdownItemProps {
-  children: ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}
-
-export const DropdownItem = ({
-  children,
-  onClick,
-  className,
-  disabled = false,
-}: DropdownItemProps) => {
-  const itemClassName = `cursor-pointer p-2 transition-colors ${disabled ? 'cursor-not-allowed' : ''} ${className || ''}`;
-
-  return (
-    <div onClick={disabled ? undefined : onClick} className={itemClassName}>
-      {children}
     </div>
   );
 };

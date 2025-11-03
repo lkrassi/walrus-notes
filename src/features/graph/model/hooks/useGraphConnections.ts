@@ -28,8 +28,6 @@ export const useGraphConnections = ({
   layoutId,
   nodes,
   edges,
-  selectedNodeId,
-  hoveredNodeId,
   screenToFlowPosition,
 }: UseGraphConnectionsProps) => {
   const [createNoteLink] = useCreateNoteLinkMutation();
@@ -53,7 +51,7 @@ export const useGraphConnections = ({
     };
   }, []);
 
-  const onConnectStart = useCallback((event: any, params: any) => {
+  const onConnectStart = useCallback((params: any) => {
     if (!isValidNoteId(params.nodeId)) {
       return;
     }
@@ -123,7 +121,7 @@ export const useGraphConnections = ({
           firstNoteId: tempEdge.source,
           secondNoteId: targetNodeId,
         }).unwrap();
-      } catch (error) {
+      } catch {
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `${tempEdge.source}-${targetNodeId}`)
         );
@@ -144,17 +142,25 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
+      console.log('onConnect called:', connection);
+
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
       ) {
+        console.log('Invalid connection IDs');
         return;
       }
 
       const source = connection.source;
       const target = connection.target;
 
-      if (source === target) return;
+      console.log(`Connecting ${source} to ${target}`);
+
+      if (source === target) {
+        console.log('Cannot connect node to itself');
+        return;
+      }
 
       const edgeExists = allEdges.some(
         edge =>
@@ -162,18 +168,27 @@ export const useGraphConnections = ({
           (edge.source === target && edge.target === source)
       );
 
-      if (edgeExists) return;
+      if (edgeExists) {
+        console.log('Edge already exists');
+        return;
+      }
+
+      console.log('Creating new edge...');
 
       try {
         const newEdge = createEdge(source, target);
         setTempEdges(prev => [...prev, newEdge]);
 
+        console.log('Sending API request...');
         await createNoteLink({
           layoutId,
           firstNoteId: source,
           secondNoteId: target,
         }).unwrap();
+
+        console.log('Connection created successfully');
       } catch (error) {
+        console.error('Failed to create connection:', error);
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `${source}-${target}`)
         );

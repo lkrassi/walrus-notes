@@ -128,7 +128,6 @@ interface UpdateNotePositionResponse {
   };
 }
 
-// Типы для связей между заметками
 interface CreateNoteLinkRequest {
   firstNoteId: string;
   layoutId: string;
@@ -179,9 +178,9 @@ const createTempNote = (
   layoutId,
   title,
   payload: '',
-  ownerId: '', // добавляем обязательные поля
-  haveAccess: [], // добавляем обязательные поля
-  linkedWith: [], // добавляем обязательные поля
+  ownerId: '',
+  haveAccess: [],
+  linkedWith: [],
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });

@@ -1,23 +1,23 @@
+import { Form, Formik } from 'formik';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
 import { useNotifications } from 'widgets';
-import { Formik, Form } from 'formik';
 
 import { usePasswordVisibility } from 'features/auth/hooks';
+import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
+import { ValidatedField } from 'features/form/ui/ValidatedField';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
 import { useLoginMutation } from 'widgets/model/stores/api';
-import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
-import { ValidatedField } from 'features/form/ui/ValidatedField';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
 };
 
 export const Login: React.FC<LoginProps> = () => {
-  const {showError } = useNotifications();
+  const { showError } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
 
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export const Login: React.FC<LoginProps> = () => {
 
       window.dispatchEvent(new Event('tokenSet'));
       navigate('/dashboard');
-    } catch (error) {
+    } catch {
       showError(t('auth:login.error'));
     }
   };
@@ -55,7 +55,7 @@ export const Login: React.FC<LoginProps> = () => {
       validateOnChange={true}
       validateOnBlur={true}
     >
-      {({ isSubmitting: formikSubmitting, errors, touched }) => (
+      {({ isSubmitting: formikSubmitting }) => (
         <Form
           ref={formRef}
           className='border-border dark:border-dark-border bg-gradient rounded-2xl border p-8 shadow-sm backdrop-blur-sm'

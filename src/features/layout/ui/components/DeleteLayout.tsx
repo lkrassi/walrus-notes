@@ -1,8 +1,7 @@
-// widgets/ui/components/DeleteLayout.tsx
 import { memo, useCallback } from 'react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets';
-import { useModalContext } from 'widgets/ui';
+import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { DeleteLayoutForm } from './DeleteLayoutForm';
 
 interface DeleteLayoutProps {

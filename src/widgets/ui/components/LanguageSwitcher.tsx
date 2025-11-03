@@ -9,7 +9,7 @@ import { RussianFlagIcon } from 'public/RussianFlagIcon';
 import { UKFlagIcon } from 'public/UKFlagIcon';
 
 export const LanguageSwitcher: React.FC = () => {
-  const { currentLanguage, changeLanguage } = useLocalization();
+  const { changeLanguage } = useLocalization();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [effectiveLanguage, setEffectiveLanguage] = useState('ru');

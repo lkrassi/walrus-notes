@@ -4,6 +4,7 @@ export * from './components/header/PrivateHeader';
 export * from './components/header/PublicHeader';
 export * from './components/loader';
 export * from './components/modal';
+export * from './components/modal/ModalContentContext';
 export * from './components/modal/ModalProvider';
 export * from './components/notifications/Notification';
 export * from './components/notifications/NotificationsContainer';

@@ -1,4 +1,3 @@
-// hooks/useDashboardTabs.ts
 import { useCallback, useState } from 'react';
 import type { FileTreeItem } from 'widgets/hooks';
 
@@ -48,7 +47,6 @@ export const useDashboardTabs = () => {
     [activeTabId]
   );
 
-  // Функция для правильного разбиения tabId на тип и ID
   const parseTabId = (tabId: string) => {
     const firstDashIndex = tabId.indexOf('-');
     if (firstDashIndex === -1) {
@@ -61,7 +59,6 @@ export const useDashboardTabs = () => {
     return { type, id };
   };
 
-  // Функция закрытия вкладок по ID элемента
   const closeTabsByItemId = useCallback(
     (itemId: string, itemType?: 'note' | 'layout') => {
       setOpenTabs(prev => {
@@ -94,7 +91,6 @@ export const useDashboardTabs = () => {
     [activeTabId]
   );
 
-  // Функция закрытия всех вкладок папки и её заметок
   const closeLayoutTabs = useCallback(
     (layoutId: string) => {
       setOpenTabs(prev => {

@@ -1,9 +1,9 @@
-// widgets/ui/components/DashboardContent.tsx
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
+import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import {
@@ -23,11 +23,12 @@ interface DashboardContentProps {
 export const DashboardContent = ({
   onNoteOpen,
   getItemPath,
-  onItemSelect,
 }: DashboardContentProps) => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
-  const { openTabs, activeTabId } = useTabs();
+  const { openTabs } = useTabs();
+
+  const isMobile = useIsMobile();
 
   const activeTab = openTabs.find(tab => tab.isActive);
 
@@ -59,7 +60,10 @@ export const DashboardContent = ({
     }
   };
 
-  const handleNoteOpenFromGraph = (noteData: { noteId: string; note: Note }) => {
+  const handleNoteOpenFromGraph = (noteData: {
+    noteId: string;
+    note: Note;
+  }) => {
     if (onNoteOpen) {
       onNoteOpen(noteData);
       return;
@@ -138,24 +142,21 @@ export const DashboardContent = ({
       );
     }
 
-    if (activeTab.item.type === 'layout' || activeTab.item.type === 'graph') {
-      const layoutId =
-        activeTab.item.type === 'layout'
-          ? activeTab.item.id
-          : activeTab.item.layoutId;
+    if (!isMobile) {
+      if (activeTab.item.type === 'layout' || activeTab.item.type === 'graph') {
+        const layoutId =
+          activeTab.item.type === 'layout'
+            ? activeTab.item.id
+            : activeTab.item.layoutId;
 
-      return <NotesGraph layoutId={layoutId!} onNoteOpen={handleNoteOpenFromGraph} />;
+        return (
+          <NotesGraph
+            layoutId={layoutId!}
+            onNoteOpen={handleNoteOpenFromGraph}
+          />
+        );
+      }
     }
-
-    return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-center'>
-          <p className='text-secondary dark:text-dark-secondary'>
-            Неподдерживаемый тип контента
-          </p>
-        </div>
-      </div>
-    );
   };
 
   return (

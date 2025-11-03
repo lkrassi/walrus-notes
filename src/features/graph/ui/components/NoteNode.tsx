@@ -41,53 +41,55 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
       }}
       title='Двойной клик для открытия заметки'
     >
+      {/* Source handles */}
       <Handle
         type='source'
         position={Position.Right}
-        id='right'
+        id='source-right' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='source'
         position={Position.Left}
-        id='left'
+        id='source-left' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='source'
         position={Position.Top}
-        id='top'
+        id='source-top' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='source'
         position={Position.Bottom}
-        id='bottom'
+        id='source-bottom' // Уникальный id
         style={handleStyle}
       />
 
+      {/* Target handles */}
       <Handle
         type='target'
         position={Position.Right}
-        id='right'
+        id='target-right' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='target'
         position={Position.Left}
-        id='left'
+        id='target-left' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='target'
         position={Position.Top}
-        id='top'
+        id='target-top' // Уникальный id
         style={handleStyle}
       />
       <Handle
         type='target'
         position={Position.Bottom}
-        id='bottom'
+        id='target-bottom' // Уникальный id
         style={handleStyle}
       />
 

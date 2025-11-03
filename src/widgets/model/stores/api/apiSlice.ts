@@ -59,7 +59,7 @@ const baseQueryWithReauth: BaseQueryFn<
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
         }
-      } catch (error) {
+      } catch {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       }

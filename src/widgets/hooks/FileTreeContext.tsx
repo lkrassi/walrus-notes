@@ -43,7 +43,7 @@ export const FileTreeProvider = ({
     initialFileTreeState
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { showSuccess, showError } = useNotifications();
+  const { showSuccess } = useNotifications();
 
   const { fileTree, expandedItems } = state;
 
@@ -76,7 +76,6 @@ export const FileTreeProvider = ({
   const {
     data: layoutsResponse,
     isLoading: isLayoutsLoading,
-    error: layoutsError,
     refetch,
   } = useGetMyLayoutsQuery(undefined, {
     skip: !hasToken,
@@ -94,7 +93,7 @@ export const FileTreeProvider = ({
 
   const loadLayoutsOnly = async () => {};
 
-  const loadMoreNotes = async (layoutId: string) => {};
+  const loadMoreNotes = async () => {};
 
   const toggleExpanded = (itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });

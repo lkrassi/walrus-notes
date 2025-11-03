@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
+import { useModalActions } from 'widgets/hooks/useModalActions'; // ← изменено
 import { useIsMobile, useLocalization } from '../../../hooks';
-import { useModalActions } from '../../../hooks/useModalActions';
 import { DeleteNoteForm } from './DeleteNoteForm';
 
 type FileTreeItemHeaderProps = {
@@ -41,7 +41,7 @@ export const FileTreeItemHeader = ({
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { t } = useLocalization();
-  const { createAnimatedOpener } = useModalActions();
+  const { openModalFromTrigger } = useModalActions(); // ← изменено
 
   useEffect(() => {
     return () => {
@@ -63,8 +63,7 @@ export const FileTreeItemHeader = ({
 
   const handleItemClick = () => onItemClick(item);
 
-  // Обработчики с анимацией
-  const handleDeleteNote = createAnimatedOpener(
+  const handleDeleteNote = openModalFromTrigger(
     <DeleteNoteForm
       noteId={item.id}
       noteTitle={item.title}
@@ -78,15 +77,15 @@ export const FileTreeItemHeader = ({
     }
   );
 
-  const handleCreateNote = createAnimatedOpener(
-    <CreateNoteForm layoutId={item.id} onNoteCreated={note => {}} />,
+  const handleCreateNote = openModalFromTrigger(
+    <CreateNoteForm layoutId={item.id} />,
     {
       title: t('fileTree:createNewNote'),
       size: 'lg',
     }
   );
 
-  const handleDeleteLayout = createAnimatedOpener(
+  const handleDeleteLayout = openModalFromTrigger(
     <DeleteLayoutForm
       layoutId={item.id}
       layoutTitle={item.title}
@@ -147,7 +146,10 @@ export const FileTreeItemHeader = ({
         {item.type === 'layout' && (
           <>
             <button
-              onClick={handleCreateNote}
+              onClick={e => {
+                e.stopPropagation();
+                handleCreateNote(e);
+              }}
               className={`transition-opacity duration-150 ${
                 isMobile
                   ? 'text-gray-600 opacity-100'
@@ -162,7 +164,10 @@ export const FileTreeItemHeader = ({
               <Plus className='h-4 w-4' />
             </button>
             <button
-              onClick={handleDeleteLayout}
+              onClick={e => {
+                e.stopPropagation();
+                handleDeleteLayout(e);
+              }}
               className={`transition-opacity duration-150 ${
                 isMobile
                   ? 'text-red-600 opacity-100'
@@ -181,11 +186,20 @@ export const FileTreeItemHeader = ({
 
         {item.type === 'note' && (
           <button
-            onClick={handleDeleteNote}
+            onClick={e => {
+              e.stopPropagation();
+              handleDeleteNote(e);
+            }}
             className={`transition-opacity duration-150 ${
-              isMobile ? 'opacity-100' : isHovered ? 'opacity-100' : 'opacity-0'
+              isMobile
+                ? 'text-red-600 opacity-100'
+                : `opacity-0 group-hover:opacity-100 ${
+                    isSelected
+                      ? 'text-white hover:text-red-200'
+                      : 'text-gray-400 hover:text-red-600'
+                  }`
             }`}
-            title={t('notes:delete')}
+            title={t('notes:deleteNote')}
           >
             <Trash2 className='h-4 w-4' />
           </button>

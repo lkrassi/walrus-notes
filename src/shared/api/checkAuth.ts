@@ -4,7 +4,7 @@ export const checkAuth = (): boolean => {
     const refreshToken = localStorage.getItem('refreshToken');
 
     return !!(accessToken && refreshToken);
-  } catch (error) {
+  } catch {
     return false;
   }
 };

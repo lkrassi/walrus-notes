@@ -1,6 +1,5 @@
 import * as yup from 'yup';
 
-// Кастомные методы валидации
 declare module 'yup' {
   interface StringSchema {
     passwordStrength(message: string): StringSchema;
@@ -10,7 +9,7 @@ declare module 'yup' {
 
 yup.addMethod(yup.string, 'passwordStrength', function (message) {
   return this.test('password-strength', message, function (value) {
-    if (!value) return true; // Пропускаем если пустое (обработается required)
+    if (!value) return true;
 
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);

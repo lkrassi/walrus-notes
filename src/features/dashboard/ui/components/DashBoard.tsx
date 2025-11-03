@@ -1,10 +1,5 @@
-// widgets/ui/components/Dashboard.tsx
-import {
-  useDashboardNavigation,
-  useDashboardUser,
-} from 'features/dashboard/hooks';
+import { useDashboardNavigation } from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useFileTree } from 'widgets/hooks';
@@ -17,7 +12,6 @@ import { DashboardHeader } from './DashboardHeader';
 
 export const DashBoard = () => {
   const { fileTree } = useFileTree();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { openTabs, activeTabId } = useTabs();
   const sidebarRef = useRef<{
@@ -28,8 +22,6 @@ export const DashBoard = () => {
     openTabs,
   });
 
-  useDashboardUser();
-
   useEffect(() => {
     if (activeTabId) {
       updateUrlForTab(activeTabId);
@@ -37,7 +29,6 @@ export const DashBoard = () => {
   }, [activeTabId, updateUrlForTab]);
 
   const handleItemSelect = (item: FileTreeItem) => {
-    // ИСПРАВЛЕНО: используем новый формат ID
     const tabId = `${item.type}::${item.id}`;
     const existingTab = openTabs.find(tab => tab.id === tabId);
 

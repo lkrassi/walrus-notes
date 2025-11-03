@@ -1,5 +1,12 @@
 import { useCallback, useState } from 'react';
 
+export interface TriggerPosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export type ModalOptions = {
   title?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
@@ -9,13 +16,6 @@ export type ModalOptions = {
   className?: string;
   triggerPosition?: TriggerPosition;
 };
-
-export interface TriggerPosition {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 
 export type ModalState = {
   isOpen: boolean;

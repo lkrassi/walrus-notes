@@ -40,7 +40,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       if (onSwitchToLogin) {
         onSwitchToLogin();
       }
-    } catch (error) {
+    } catch {
       showError(t('auth:register.error'));
     }
   };
@@ -53,7 +53,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       validateOnChange={true}
       validateOnBlur={true}
     >
-      {({ isSubmitting: formikSubmitting, errors, touched }) => (
+      {({ isSubmitting: formikSubmitting }) => (
         <Form
           ref={formRef}
           className='border-border dark:border-dark-border bg-gradient rounded-2xl border p-8 shadow-sm backdrop-blur-sm'

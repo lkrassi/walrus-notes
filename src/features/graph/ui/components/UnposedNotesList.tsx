@@ -3,7 +3,7 @@ import type { Note } from 'shared/model/types/layouts';
 import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
 import { useDropdown } from 'widgets/hooks/useDropdown';
 import { useGetUnposedNotesQuery } from 'widgets/model/stores/api';
-import { DropdownContent as UniversalDropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
+import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
 
 interface UnposedNotesListProps {
   layoutId: string;
@@ -50,56 +50,47 @@ export const UnposedNotesList = ({
         isOpen={isExpanded}
         onOpenChange={setIsExpanded}
         trigger={
-          <DropdownTrigger className='border-border bg-bg dark:border-dark-border dark:bg-dark-bg dark:hover:bg-dark-primary/10 rounded-lg border p-3 transition-all'>
+          <DropdownTrigger
+            isOpen={isExpanded}
+            className='border-border rounded-lg border p-3 transition-all'
+          >
             <div className='flex items-center gap-2'>
               <span className='text-text dark:text-dark-text text-xs font-semibold'>
                 Без позиции ({unposedNotes.length})
               </span>
-              <div className='bg-primary/20 text-primary dark:bg-dark-primary/20 dark:text-dark-primary flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium'>
-                {unposedNotes.length}
-              </div>
             </div>
           </DropdownTrigger>
         }
-        contentClassName='w-64'
+        contentClassName='w-64 max-h-60 overflow-y-auto'
       >
-        <UniversalDropdownContent
+        <DropdownContent
           isOpen={isExpanded}
           state={contentState}
-          loadingContent={
-            <div className='text-text-secondary dark:text-dark-text-secondary p-3 text-xs'>
-              Загрузка...
-            </div>
-          }
           emptyContent={null}
+          className='dark:bg-dark-bg border-border dark:border-dark-border rounded-lg border bg-white shadow-lg'
         >
-          <div className='max-h-48 space-y-1 overflow-y-auto p-2'>
-            {visibleItems.map(note => (
-              <div
-                key={note.id}
-                draggable
-                onDragStart={e => {
-                  e.dataTransfer.setData(
-                    'application/reactflow',
-                    JSON.stringify(note)
-                  );
-                  e.dataTransfer.effectAllowed = 'move';
-                }}
-                onClick={() => handleNoteClick(note)}
-                className='group border-border bg-bg hover:border-primary hover:bg-primary/5 dark:border-dark-border dark:bg-dark-bg dark:hover:border-dark-primary dark:hover:bg-dark-primary/5 flex cursor-pointer items-start gap-2 rounded-md border p-2 transition-all hover:shadow-sm'
-              >
-                <div className='min-w-0 flex-1'>
-                  <h4 className='text-text group-hover:text-primary dark:text-dark-text dark:group-hover:text-dark-primary truncate text-xs font-medium'>
-                    {note.title}
-                  </h4>
-                  <p className='text-text-secondary group-hover:text-primary/80 dark:text-dark-text-secondary dark:group-hover:text-dark-primary/80 mt-0.5 line-clamp-2 text-[10px]'>
-                    {note.payload || 'Нет содержимого'}
-                  </p>
-                </div>
+          {visibleItems.map(note => (
+            <button
+              key={note.id}
+              draggable
+              onDragStart={e => {
+                e.dataTransfer.setData(
+                  'application/reactflow',
+                  JSON.stringify(note)
+                );
+                e.dataTransfer.effectAllowed = 'move';
+              }}
+              onClick={() => handleNoteClick(note)}
+              className='dark:bg-dark-bg hover:bg-primary/30 dark:hover:bg-primary-dark flex w-full items-center gap-3 rounded-md px-4 py-3 transition duration-200'
+            >
+              <div className='min-w-0 flex-1 text-left'>
+                <h4 className='text-text dark:text-dark-text truncate text-sm font-medium'>
+                  {note.title}
+                </h4>
               </div>
-            ))}
-          </div>
-        </UniversalDropdownContent>
+            </button>
+          ))}
+        </DropdownContent>
       </Dropdown>
     </div>
   );

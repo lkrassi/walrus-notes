@@ -38,7 +38,6 @@ export const useDropdown = <T>(
   const [currentPage, setCurrentPage] = useState(1);
 
   const loadMore = useCallback(async () => {
-    // Если пагинация отключена, ничего не делаем
     if (!enablePagination) return;
 
     const paginationOptions = options as UseDropdownWithPaginationOptions<T>;
@@ -62,7 +61,6 @@ export const useDropdown = <T>(
     }
   }, [currentPage, enablePagination, isLoadingMore, options]);
 
-  // Определяем hasMore в зависимости от режима
   const hasMore = enablePagination
     ? (options as UseDropdownWithPaginationOptions<T>).hasMore || false
     : false;

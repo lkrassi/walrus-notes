@@ -159,11 +159,7 @@ export const FileTreeItemContent = ({
     <DropdownContent
       isOpen={isExpanded && item.type === 'layout'}
       state={contentState}
-      loadingContent={
-        <div className='mt-2 ml-6 text-sm text-gray-500'>
-          {t('fileTree:loading')}
-        </div>
-      }
+      
       emptyContent={
         <div className='mt-2 ml-6 text-sm text-gray-500'>
           {t('fileTree:folderEmpty')}

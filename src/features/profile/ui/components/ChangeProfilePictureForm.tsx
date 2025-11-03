@@ -2,15 +2,14 @@ import React, { useRef, useState } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useChangeProfilePictureMutation } from 'widgets/model/stores/api';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 export const ChangeProfilePictureForm: React.FC = () => {
   const { t } = useLocalization();
-  const { closeModal } = useModalContext();
+  const { closeModal } = useModalContentContext();
   const { showSuccess, showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [changeProfilePicture, { isLoading }] =
-    useChangeProfilePictureMutation();
+  const [changeProfilePicture] = useChangeProfilePictureMutation();
   const userId = localStorage.getItem('userId');
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

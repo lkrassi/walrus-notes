@@ -1,11 +1,7 @@
-import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
 import { memo, useCallback, useMemo } from 'react';
 import type { Note } from 'shared/model/types/layouts';
-import { useLocalization } from 'widgets/hooks';
-import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
-import { useModalContext } from '../modal';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
 
@@ -16,7 +12,6 @@ interface FileTreeProps {
   addNoteToTree: (layoutId: string, note: Note) => void;
   onItemSelect?: (item: FileTreeItemType) => void;
   selectedItemId?: string;
-  searchQuery?: string;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
@@ -28,10 +23,8 @@ export const FileTree = memo(
     toggleExpanded,
     onItemSelect,
     selectedItemId,
-    searchQuery,
     onOpenGraph,
   }: Omit<FileTreeProps, 'fileTree' | 'onNotesLoaded' | 'loadMoreNotes'>) => {
-
     const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 
     const fileTree = useMemo(() => {
@@ -47,41 +40,6 @@ export const FileTree = memo(
         isNotesLoaded: false,
       }));
     }, [layoutsResponse?.data]);
-
-    const filterFileTree = useCallback(
-      (items: FileTreeItemType[], query: string): FileTreeItemType[] => {
-        if (!query.trim()) return items;
-
-        const lowerQuery = query.toLowerCase();
-
-        return items
-          .map(item => {
-            const matchesTitle = item.title.toLowerCase().includes(lowerQuery);
-            const matchesPayload =
-              item.type === 'note' &&
-              item.note?.payload?.toLowerCase().includes(lowerQuery);
-
-            if (matchesTitle || matchesPayload) {
-              return item;
-            }
-
-            if (item.children) {
-              const filteredChildren = filterFileTree(item.children, query);
-              if (filteredChildren.length > 0) {
-                return { ...item, children: filteredChildren };
-              }
-            }
-
-            return null;
-          })
-          .filter((item): item is FileTreeItemType => item !== null);
-      },
-      []
-    );
-
-    const filteredFileTree = useMemo(() => {
-      return searchQuery ? filterFileTree(fileTree, searchQuery) : fileTree;
-    }, [fileTree, searchQuery, filterFileTree]);
 
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
@@ -114,22 +72,17 @@ export const FileTree = memo(
           </div>
         );
       },
-      [
-        expandedItems,
-        selectedItemId,
-        handleItemClick,
-        onOpenGraph,
-      ]
+      [expandedItems, selectedItemId, handleItemClick, onOpenGraph]
     );
 
     return (
       <div className='flex h-full flex-col'>
         <div className='flex-1 overflow-y-auto p-2'>
-          {filteredFileTree.length === 0 ? (
-            <FileTreeEmpty searchQuery={searchQuery} />
+          {fileTree.length === 0 ? (
+            <FileTreeEmpty />
           ) : (
             <div className='space-y-1'>
-              {filteredFileTree.map(item => renderTreeItem(item))}
+              {fileTree.map(item => renderTreeItem(item))}
             </div>
           )}
         </div>

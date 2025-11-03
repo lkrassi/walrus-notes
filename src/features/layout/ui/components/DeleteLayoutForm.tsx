@@ -4,7 +4,7 @@ import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useDeleteLayoutMutation } from 'widgets/model/stores/api';
 import { closeLayoutTabs } from 'widgets/model/stores/slices/tabsSlice';
-import { useModalContext } from 'widgets/ui';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface DeleteLayoutFormProps {
   layoutId: string;
@@ -19,7 +19,7 @@ export const DeleteLayoutForm = ({
 }: DeleteLayoutFormProps) => {
   const { t } = useLocalization();
   const { showError } = useNotifications();
-  const { closeModal } = useModalContext();
+  const { closeModal } = useModalContentContext();
   const dispatch = useAppDispatch();
   const [deleteLayout, { isLoading }] = useDeleteLayoutMutation();
 
@@ -38,7 +38,7 @@ export const DeleteLayoutForm = ({
       }
 
       closeModal();
-    } catch (err: any) {
+    } catch {
       showError(t('layout:layoutDeletionError'));
     }
   };
