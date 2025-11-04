@@ -95,5 +95,17 @@ h6 {
 }
 
 .bg-gradient {
-  @apply from-teal-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-teal-950 dark:to-emerald-900;
+  background: linear-gradient(135deg,
+    var(--color-bg) 0%,
+    #f0fdf4 50%,
+    #ecfdf5 100%
+  );
+}
+
+.dark .bg-gradient {
+  background: linear-gradient(135deg,
+    var(--color-dark-bg) 0%,
+    #134e4a 50%,
+    #042f2e 100%
+  );
 }

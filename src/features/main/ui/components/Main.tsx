@@ -14,7 +14,6 @@ export const Main = () => {
   const navigate = useNavigate();
   const { t } = useLocalization();
 
-  // Правильная локализация features
   const featureKeys = [
     'visualThinking',
     'fastOrganization',

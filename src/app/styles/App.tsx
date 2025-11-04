@@ -11,10 +11,10 @@ import {
 
 export const App = () => {
   return (
-    <Provider store={store}>
-      <SidebarProvider>
-        <ModalProvider>
-          <div className='bg-gradient min-h-screen'>
+    <div className='bg-gradient min-h-screen'>
+      <Provider store={store}>
+        <SidebarProvider>
+          <ModalProvider>
             <Routes>
               {appRoutesConfig.map(route => (
                 <Route
@@ -26,9 +26,9 @@ export const App = () => {
             </Routes>
             <NotificationsContainer />
             <LoaderContainer />
-          </div>
-        </ModalProvider>
-      </SidebarProvider>
-    </Provider>
+          </ModalProvider>
+        </SidebarProvider>
+      </Provider>
+    </div>
   );
 };

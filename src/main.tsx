@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'widgets';
 
-import { App } from 'app/App';
+import { App } from 'app/styles/App';
 import { createRoot } from 'react-dom/client';
 
 import { StrictMode } from 'react';
