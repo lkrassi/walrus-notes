@@ -1,4 +1,3 @@
-// widgets/model/stores/index.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from 'widgets/model/stores/api';
 import loaderReducer from 'widgets/model/stores/slices/loaderSlice';

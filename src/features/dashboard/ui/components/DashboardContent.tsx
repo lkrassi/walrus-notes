@@ -88,7 +88,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const renderContent = () => {
     if (!activeTab) {
       return (
-        <div className='flex h-full items-center justify-center'>
+        <div className='bg-bg dark:bg-dark-bg flex h-full items-center justify-center'>
           <div className='text-center'>
             <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
               <svg viewBox='0 0 24 24' fill='currentColor'>

@@ -460,7 +460,6 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      // ✅ УБРАНО: invalidatesTags чтобы не делать лишние запросы
       invalidatesTags: [],
       extraOptions: {
         loadingKey: null,
