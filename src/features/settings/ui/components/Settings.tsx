@@ -2,7 +2,6 @@ import React from 'react';
 import { useLocalization } from 'widgets/hooks';
 import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
-import AreaSelectionDemoWrapper from './AreaSelectionDemo';
 
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
@@ -10,7 +9,6 @@ export const Settings: React.FC = () => {
   return (
     <div className='bg-bg dark:bg-dark-bg min-h-screen'>
       <PrivateHeader />
-      <AreaSelectionDemoWrapper />
 
       <main className='container mx-auto px-4 py-8'>
         <div className='mx-auto max-w-4xl'>
