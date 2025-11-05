@@ -19,7 +19,7 @@ interface StyledEdge extends Omit<Edge, 'style' | 'data'> {
   data: {
     isRelatedToSelected: boolean;
     isSelected: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -28,12 +28,12 @@ interface StyledNode extends Omit<Node, 'data' | 'style'> {
     selected: boolean;
     isRelatedToSelected: boolean;
     onNoteClick: (noteId: string) => void;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   style?: {
     opacity: number;
     transition?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

@@ -1,3 +1,11 @@
+import type { DashboardTab } from 'app/store/slices/tabsSlice';
+import {
+  closeTab,
+  openTab,
+  reorderTabs,
+  switchTab,
+  updateTabNote,
+} from 'app/store/slices/tabsSlice';
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
@@ -6,13 +14,6 @@ import type { FileTreeItem } from 'widgets/hooks';
 import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-import {
-  closeTab,
-  openTab,
-  reorderTabs,
-  switchTab,
-  updateTabNote,
-} from 'widgets/model/stores/slices/tabsSlice';
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
@@ -36,7 +37,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
     dispatch(closeTab(tabId));
   };
 
-  const handleTabReorder = (tabs: any[]) => {
+  const handleTabReorder = (tabs: DashboardTab[]) => {
     dispatch(reorderTabs(tabs));
   };
 
@@ -146,10 +147,6 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
             : activeTab.item.layoutId;
 
         if (!layoutId) {
-          console.error(
-            '❌ Cannot render graph: layoutId is undefined',
-            activeTab
-          );
           return (
             <div className='flex h-full items-center justify-center'>
               <div className='text-center'>

@@ -1,9 +1,9 @@
+import { useDeleteLayoutMutation } from 'app/store/api';
+import { closeLayoutTabs } from 'app/store/slices/tabsSlice';
 import React from 'react';
 import { Button } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { useDeleteLayoutMutation } from 'widgets/model/stores/api';
-import { closeLayoutTabs } from 'widgets/model/stores/slices/tabsSlice';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface DeleteLayoutFormProps {

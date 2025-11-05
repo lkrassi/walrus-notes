@@ -4,7 +4,12 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { startLoading, stopLoading, startLoadingByKey, stopLoadingByKey } from '../slices/loaderSlice';
+import {
+  startLoading,
+  startLoadingByKey,
+  stopLoading,
+  stopLoadingByKey,
+} from 'app/store/slices/loaderSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
@@ -23,13 +28,21 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  const loadingKey = (extraOptions as any)?.loadingKey;
+  const loadingKey = (() => {
+    if (typeof extraOptions === 'object' && extraOptions !== null) {
+      const opts = extraOptions as Record<string, unknown>;
+      const v = opts['loadingKey'];
+      if (v === null || typeof v === 'string') return v;
+    }
+    return undefined;
+  })();
 
-  if (loadingKey === null) {
-  } else if (loadingKey) {
-    api.dispatch(startLoadingByKey(loadingKey));
-  } else {
-    api.dispatch(startLoading());
+  if (loadingKey !== null) {
+    if (loadingKey) {
+      api.dispatch(startLoadingByKey(loadingKey));
+    } else {
+      api.dispatch(startLoading());
+    }
   }
 
   let result = await baseQuery(args, api, extraOptions);
@@ -50,11 +63,25 @@ const baseQueryWithReauth: BaseQueryFn<
           extraOptions
         );
 
-        if (refreshResult.data) {
-          const data = (refreshResult.data as any).data;
-          localStorage.setItem('accessToken', data.accessToken);
-          localStorage.setItem('refreshToken', data.refreshToken);
-          result = await baseQuery(args, api, extraOptions);
+        if (
+          refreshResult.data &&
+          typeof refreshResult.data === 'object' &&
+          'data' in (refreshResult.data as Record<string, unknown>)
+        ) {
+          const inner = (refreshResult.data as Record<string, unknown>)['data'];
+          if (inner && typeof inner === 'object') {
+            const innerObj = inner as Record<string, unknown>;
+            const accessTok = innerObj['accessToken'];
+            const refreshTok = innerObj['refreshToken'];
+            if (typeof accessTok === 'string')
+              localStorage.setItem('accessToken', accessTok);
+            if (typeof refreshTok === 'string')
+              localStorage.setItem('refreshToken', refreshTok);
+            result = await baseQuery(args, api, extraOptions);
+          } else {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          }
         } else {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
@@ -69,11 +96,12 @@ const baseQueryWithReauth: BaseQueryFn<
     }
   }
 
-  if (loadingKey === null) {
-  } else if (loadingKey) {
-    api.dispatch(stopLoadingByKey(loadingKey));
-  } else {
-    api.dispatch(stopLoading());
+  if (loadingKey !== null) {
+    if (loadingKey) {
+      api.dispatch(stopLoadingByKey(loadingKey));
+    } else {
+      api.dispatch(stopLoading());
+    }
   }
 
   return result;

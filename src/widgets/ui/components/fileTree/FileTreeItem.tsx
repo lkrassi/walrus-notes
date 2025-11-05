@@ -1,3 +1,4 @@
+import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { FileTreeItemContent } from './FileTreeItemContent';
 import { FileTreeItemHeader } from './FileTreeItemHeader';
@@ -13,7 +14,7 @@ type FileTreeItemProps = {
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
-  onNotesLoaded?: (layoutId: string, notes: any[]) => void;
+  onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
 
 export const FileTreeItem = ({

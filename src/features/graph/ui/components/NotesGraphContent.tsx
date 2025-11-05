@@ -1,3 +1,7 @@
+import {
+  useCreateNoteLinkMutation,
+  useDeleteNoteLinkMutation,
+} from 'app/store/api';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useEdgesState,
@@ -6,10 +10,6 @@ import {
   type Node,
 } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
-import {
-  useCreateNoteLinkMutation,
-  useDeleteNoteLinkMutation,
-} from 'widgets/model/stores/api';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
@@ -72,6 +72,12 @@ export const NotesGraphContent = React.memo(
       selectedNodeId,
       hoveredNodeId,
       screenToFlowPosition,
+      onEdgeCreated: newEdge => {
+        setEdgesState(prev => {
+          if (prev.some(e => e.id === newEdge.id)) return prev;
+          return [...prev, newEdge];
+        });
+      },
     });
 
     useEffect(() => {
@@ -150,8 +156,7 @@ export const NotesGraphContent = React.memo(
             });
             setEdgesState(eds => eds.filter(edge => edge.id !== edgeId));
           }
-        } catch (error) {
-          console.error('Error handling edge delete drop:', error);
+        } catch (_error) {
         } finally {
           isProcessingRef.current = false;
         }
@@ -220,8 +225,7 @@ export const NotesGraphContent = React.memo(
               y: event.clientY,
             });
             handleAddNoteToGraph(note, dropPosition);
-          } catch (error) {
-            console.error('Error handling note drop:', error);
+          } catch (_error) {
           }
         }
       },
@@ -253,5 +257,8 @@ export const NotesGraphContent = React.memo(
     );
   }
 );
+
+(NotesGraphContent as unknown as { displayName?: string }).displayName =
+  'NotesGraphContent';
 
 export default NotesGraphContent;

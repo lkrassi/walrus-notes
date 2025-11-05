@@ -1,7 +1,7 @@
+import { useCreateLayoutMutation } from 'app/store/api';
 import React, { useState } from 'react';
 import { Button, Input } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useCreateLayoutMutation } from 'widgets/model/stores/api';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface CreateLayoutFormProps {

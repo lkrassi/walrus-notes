@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
-import type { Edge } from 'reactflow';
+import type { Edge, Node } from 'reactflow';
 
 interface UseGraphEffectsProps {
-  initialNodes: any[];
+  initialNodes: Node[];
   initialEdges: Edge[];
   tempEdges: Edge[];
   selectedNodeId: string | null;
   hoveredNodeId: string | null;
-  setNodes: (nodes: any[]) => void;
+  setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   setTempEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
 }

@@ -1,6 +1,4 @@
 import { useContext } from 'react';
-import { ThemeContext } from 'widgets/model/stores/ThemeProvider';
+import { ThemeContext } from 'widgets';
 
-export const useTheme = () => {
-  return useContext(ThemeContext);
-};
+export const useTheme = () => useContext(ThemeContext);

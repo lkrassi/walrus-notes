@@ -30,8 +30,7 @@ export const useGraphEventHandlers = ({
             y: event.clientY,
           });
           handleAddNoteToGraph(note, dropPosition);
-        } catch (error) {
-          console.error('Error handling note drop:', error);
+        } catch (_error) {
         }
       }
     },

@@ -1,8 +1,8 @@
+import { useCreateNoteMutation } from 'app/store/api';
 import { useState } from 'react';
 import { Button, Input } from 'shared';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization, useNotifications } from 'widgets';
-import { useCreateNoteMutation } from 'widgets/model/stores/api';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface CreateNoteFormProps {

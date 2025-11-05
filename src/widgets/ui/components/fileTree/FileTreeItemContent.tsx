@@ -1,4 +1,3 @@
-// components/FileTree/FileTreeItemContent.tsx
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
@@ -9,7 +8,7 @@ import {
   notesApi,
   useGetNotesQuery,
   useLazyGetNotesQuery,
-} from '../../../model/stores/api';
+} from '../../../model';
 import { DropdownContent } from '../dropdown/DropdownContent';
 import { LoadMoreButton } from '../dropdown/LoadMoreButton';
 
@@ -122,7 +121,7 @@ export const FileTreeItemContent = ({
             onNotesLoaded(item.id, notesWithLayout);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         setHasMore(false);
       }
     },
@@ -159,7 +158,6 @@ export const FileTreeItemContent = ({
     <DropdownContent
       isOpen={isExpanded && item.type === 'layout'}
       state={contentState}
-      
       emptyContent={
         <div className='mt-2 ml-6 text-sm text-gray-500'>
           {t('fileTree:folderEmpty')}

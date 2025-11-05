@@ -1,6 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
-import { createTabId, parseTabId, type TabType } from '../../utils/tabUtils';
+import {
+  createTabId,
+  parseTabId,
+  type TabType,
+} from 'widgets/model/utils/tabUtils';
 
 export interface DashboardTab {
   id: string;
@@ -18,7 +23,6 @@ const initialState: TabsState = {
   activeTabId: null,
 };
 
-// Хелпер для обновления активного таба
 const updateActiveTab = (state: TabsState) => {
   if (
     state.activeTabId &&
@@ -116,7 +120,7 @@ export const tabsSlice = createSlice({
 
     updateTabNote: (
       state,
-      action: PayloadAction<{ noteId: string; updates: any }>
+      action: PayloadAction<{ noteId: string; updates: Partial<Note> }>
     ) => {
       const { noteId, updates } = action.payload;
 

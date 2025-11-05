@@ -1,8 +1,8 @@
+import { useGetUnposedNotesQuery } from 'app/store/api';
 import { useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
 import { useDropdown } from 'widgets/hooks/useDropdown';
-import { useGetUnposedNotesQuery } from 'widgets/model/stores/api';
 import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
 
 interface UnposedNotesListProps {

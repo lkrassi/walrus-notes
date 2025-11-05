@@ -1,11 +1,11 @@
+import { useCreateNoteLinkMutation } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
-import type { Connection, Edge } from 'reactflow';
-import { useCreateNoteLinkMutation } from 'widgets/model/stores/api';
+import type { Connection, Edge, Node } from 'reactflow';
 import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface UseGraphConnectionsProps {
   layoutId: string;
-  nodes: any[];
+  nodes: Node[];
   edges: Edge[];
   selectedNodeId: string | null;
   hoveredNodeId: string | null;
@@ -13,9 +13,10 @@ interface UseGraphConnectionsProps {
     x: number;
     y: number;
   };
+  onEdgeCreated?: (edge: Edge) => void;
 }
 
-const isValidNoteId = (id: string | null): id is string => {
+const isValidNoteId = (id: string | null | undefined): id is string => {
   return (
     typeof id === 'string' &&
     id.length > 0 &&
@@ -29,6 +30,7 @@ export const useGraphConnections = ({
   nodes,
   edges,
   screenToFlowPosition,
+  onEdgeCreated,
 }: UseGraphConnectionsProps) => {
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [tempEdge, setTempEdge] = useState<Connection | null>(null);
@@ -51,21 +53,27 @@ export const useGraphConnections = ({
     };
   }, []);
 
-  const onConnectStart = useCallback((event: any, params: any) => {
-    if (!isValidNoteId(params.nodeId)) {
-      return;
-    }
+  const onConnectStart = useCallback(
+    (
+      _event: unknown,
+      params: { nodeId: string | null; handleId?: string | null }
+    ) => {
+      if (!isValidNoteId(params.nodeId)) {
+        return;
+      }
 
-    setTempEdge({
-      source: params.nodeId,
-      sourceHandle: params.handleId,
-      target: null,
-      targetHandle: null,
-    });
-  }, []);
+      setTempEdge({
+        source: params.nodeId,
+        sourceHandle: params.handleId ?? null,
+        target: null,
+        targetHandle: null,
+      });
+    },
+    []
+  );
 
   const onConnectEnd = useCallback(
-    async (event: any) => {
+    async (event: unknown) => {
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
         setTempEdge(null);
         return;
@@ -80,10 +88,10 @@ export const useGraphConnections = ({
         });
 
         const targetNode = nodes.find(node => {
-          const nodeX = node.position.x;
-          const nodeY = node.position.y;
-          const nodeWidth = node.width || 100;
-          const nodeHeight = node.height || 100;
+          const nodeX = node.position.x as number;
+          const nodeY = node.position.y as number;
+          const nodeWidth = (node.width as number) || 100;
+          const nodeHeight = (node.height as number) || 100;
 
           return (
             flowPosition.x >= nodeX &&
@@ -121,7 +129,11 @@ export const useGraphConnections = ({
         }).unwrap();
 
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
-      } catch (error) {
+        try {
+          onEdgeCreated?.(newEdge);
+        } catch (e) {
+        }
+      } catch (_error) {
         setTempEdges(prev =>
           prev.filter(
             edge => edge.id !== `temp-${tempEdge.source}-${targetNodeId}`
@@ -173,7 +185,12 @@ export const useGraphConnections = ({
         }).unwrap();
 
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
-      } catch (error) {
+        try {
+          onEdgeCreated?.(newEdge);
+        } catch (_error) {
+        }
+      } catch (_error) {
+
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );

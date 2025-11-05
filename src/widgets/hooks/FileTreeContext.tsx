@@ -1,3 +1,4 @@
+import { useGetMyLayoutsQuery } from 'app/store/api';
 import {
   createContext,
   useContext,
@@ -6,7 +7,6 @@ import {
   useState,
 } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
-import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import {
   fileTreeReducer,
   initialFileTreeState,

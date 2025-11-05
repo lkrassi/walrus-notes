@@ -1,4 +1,4 @@
-export interface TreeNode<T = any> {
+export interface TreeNode<T = unknown> {
   id: string;
   title: string;
   children?: TreeNode<T>[];

@@ -3,14 +3,14 @@ import React from 'react';
 import { Button } from 'shared';
 import { useNotifications } from 'widgets';
 
+import { useRegisterMutation } from 'app/store/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useRegisterMutation } from 'widgets/model/stores/api';
 
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
-import { useMobileForm } from 'widgets/hooks/useMobileForm';
 import { ValidatedField } from 'features/form/ui/ValidatedField';
+import { useMobileForm } from 'widgets/hooks/useMobileForm';
 
 type RegisterProps = {
   onSwitchToLogin?: () => void;

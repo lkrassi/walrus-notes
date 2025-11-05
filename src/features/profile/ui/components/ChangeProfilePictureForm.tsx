@@ -1,7 +1,7 @@
+import { useChangeProfilePictureMutation } from 'app/store/api';
 import React, { useRef, useState } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useChangeProfilePictureMutation } from 'widgets/model/stores/api';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 export const ChangeProfilePictureForm: React.FC = () => {
@@ -41,9 +41,24 @@ export const ChangeProfilePictureForm: React.FC = () => {
         showSuccess(t('profile:uploadSuccess'));
         closeModal();
       }, 1000);
-    } catch (error: any) {
-      const message =
-        error.data?.meta?.message || error.message || t('profile:uploadError');
+    } catch (_error: unknown) {
+      const err = _error as Record<string, unknown>;
+      let message = t('profile:uploadError');
+
+      if (err && typeof err === 'object') {
+        const data = err['data'];
+        if (data && typeof data === 'object') {
+          const meta = (data as Record<string, unknown>)['meta'];
+          if (meta && typeof meta === 'object') {
+            const m = (meta as Record<string, unknown>)['message'];
+            if (typeof m === 'string') message = m;
+          }
+        }
+
+        const msg = err['message'];
+        if (typeof msg === 'string') message = msg;
+      }
+
       showError(message);
     }
   };

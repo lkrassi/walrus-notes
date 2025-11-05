@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { apiSlice } from 'widgets/model/stores/api';
-import loaderReducer from 'widgets/model/stores/slices/loaderSlice';
-import notificationsReducer from 'widgets/model/stores/slices/notificationsSlice';
-import tabsReducer from 'widgets/model/stores/slices/tabsSlice';
-import userReducer from 'widgets/model/stores/slices/userSlice';
+import { apiSlice } from 'app/store/api/apiSlice';
+import loaderReducer from 'app/store/slices/loaderSlice';
+import notificationsReducer from 'app/store/slices/notificationsSlice';
+import tabsReducer from 'app/store/slices/tabsSlice';
+import userReducer from 'app/store/slices/userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,3 +24,6 @@ export type AppDispatch = typeof store.dispatch;
 export type LoaderState = RootState['loader'];
 export type NotificationsState = RootState['notifications'];
 export type UserProfileState = RootState['user'];
+
+export * from 'app/store/api';
+export * from 'app/store/slices';

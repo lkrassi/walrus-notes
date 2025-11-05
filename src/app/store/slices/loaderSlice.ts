@@ -30,13 +30,19 @@ export const loaderSlice = createSlice({
     },
     stopLoadingByKey: (state, action: PayloadAction<string>) => {
       state.loadingKeys[action.payload] = false;
-      // Check if any loading keys are still active
-      state.isLoading = Object.values(state.loadingKeys).some(loading => loading);
+      state.isLoading = Object.values(state.loadingKeys).some(
+        loading => loading
+      );
     },
-    setLoadingByKey: (state, action: PayloadAction<{ key: string; loading: boolean }>) => {
+    setLoadingByKey: (
+      state,
+      action: PayloadAction<{ key: string; loading: boolean }>
+    ) => {
       const { key, loading } = action.payload;
       state.loadingKeys[key] = loading;
-      state.isLoading = Object.values(state.loadingKeys).some(isLoading => isLoading);
+      state.isLoading = Object.values(state.loadingKeys).some(
+        isLoading => isLoading
+      );
     },
   },
 });
@@ -47,7 +53,7 @@ export const {
   setLoading,
   startLoadingByKey,
   stopLoadingByKey,
-  setLoadingByKey
+  setLoadingByKey,
 } = loaderSlice.actions;
 
 export default loaderSlice.reducer;

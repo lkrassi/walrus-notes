@@ -7,7 +7,7 @@ export const Input: React.FC<InputProps> = ({
   type = 'text',
   disabled = false,
   variant = 'default',
-  ring = true, // Добавляем значение по умолчанию
+  ring = true,
   className = '',
   autoFocus = false,
   maxLength,

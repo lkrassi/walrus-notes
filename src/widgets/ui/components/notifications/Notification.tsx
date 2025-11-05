@@ -1,5 +1,5 @@
+import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
 import React from 'react';
-import type { Notification as NotificationType } from 'widgets/model/stores/slices/notificationsSlice';
 
 interface NotificationProps {
   notification: NotificationType;

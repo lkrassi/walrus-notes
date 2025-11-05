@@ -1,4 +1,3 @@
-// widgets/model/stores/api/layoutApi.ts
 import type { Layout } from 'shared/model/types/layouts';
 import { apiSlice } from './apiSlice';
 

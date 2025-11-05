@@ -25,7 +25,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev: string) => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   return (
@@ -34,3 +34,5 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
+
+export default ThemeProvider;

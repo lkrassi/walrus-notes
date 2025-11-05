@@ -1,10 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
-import type { Edge, Node } from 'reactflow';
-import type { Note } from 'shared/model/types/layouts';
 import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
-} from 'widgets/model/stores/api';
+} from 'app/store/api';
+import { useCallback, useMemo, useState } from 'react';
+import type { Edge, Node } from 'reactflow';
+import type { Note } from 'shared/model/types/layouts';
 import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface UseNotesGraphProps {
@@ -94,8 +94,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           xPos,
           yPos,
         }).unwrap();
-      } catch (error) {
-        console.error(error);
+      } catch (_error) {
       }
     },
     [layoutId, updatePosition]

@@ -1,3 +1,4 @@
+import { useDeleteNoteLinkMutation } from 'app/store/api';
 import { useCallback, useRef, useState } from 'react';
 import {
   BaseEdge,
@@ -5,7 +6,6 @@ import {
   getBezierPath,
   useReactFlow,
 } from 'reactflow';
-import { useDeleteNoteLinkMutation } from 'widgets/model/stores/api';
 
 interface MultiColorStepEdgeData {
   sourceColor: string;
@@ -156,8 +156,7 @@ export const MultiColorEdge = ({
       }).unwrap();
 
       setEdges(eds => eds.filter(e => e.id !== id));
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
     }
   }, [id, source, target, deleteNoteLink, setEdges]);
 

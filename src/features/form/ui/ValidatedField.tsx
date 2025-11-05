@@ -78,7 +78,6 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   required={required}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     field.onChange(e);
-                    // Форсируем валидацию при каждом изменении
                     form.validateField(name);
                   }}
                 />

@@ -1,8 +1,8 @@
+import { useDeleteNoteMutation } from 'app/store/api';
 import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useNotifications } from 'widgets/hooks/useNotifications';
-import { useDeleteNoteMutation } from 'widgets/model/stores/api';
 import { useModalContext } from './ModalProvider';
 
 interface DeleteNoteModalProps {
@@ -25,7 +25,7 @@ export const DeleteNoteModal: React.FC<DeleteNoteModalProps> = ({
       onNoteDeleted();
       showSuccess(t('common:deleteNote.success'));
       openModal(null);
-    } catch (error) {
+    } catch (_error) {
       showError(t('common:deleteNote.error'));
     }
   };
@@ -50,8 +50,15 @@ export const DeleteNoteModal: React.FC<DeleteNoteModalProps> = ({
           <Button onClick={handleCancel} className='px-6 py-3'>
             {t('common:deleteNote.cancel')}
           </Button>
-          <Button onClick={handleDelete} className='px-6 py-3' variant='escape'>
-            {t('common:deleteNote.confirm')}
+          <Button
+            onClick={handleDelete}
+            className='px-6 py-3'
+            variant='escape'
+            disabled={isLoading}
+          >
+            {isLoading
+              ? t('common:deleteNote.deleting')
+              : t('common:deleteNote.confirm')}
           </Button>
         </div>
       </div>

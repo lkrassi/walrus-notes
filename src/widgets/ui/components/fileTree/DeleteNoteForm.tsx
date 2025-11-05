@@ -1,9 +1,9 @@
+import { useDeleteNoteMutation } from 'app/store/api';
+import { closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import React from 'react';
 import { Button } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { useDeleteNoteMutation } from 'widgets/model/stores/api';
-import { closeTabsByItemId } from 'widgets/model/stores/slices/tabsSlice';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface DeleteNoteFormProps {
@@ -66,7 +66,7 @@ export const DeleteNoteForm = ({
         </h3>
 
         <p className='text-text dark:text-dark-text mt-2 text-sm'>
-          Вы уверены, что хотите удалить заметку "{noteTitle}"?
+          Вы уверены, что хотите удалить заметку «{noteTitle}»?
         </p>
 
         <p className='text-text dark:text-dark-text mt-1 text-xs'>

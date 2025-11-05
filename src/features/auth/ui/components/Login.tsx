@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
 import { useNotifications } from 'widgets';
 
+import { useLoginMutation } from 'app/store/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { ValidatedField } from 'features/form/ui/ValidatedField';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
-import { useLoginMutation } from 'widgets/model/stores/api';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;

@@ -76,9 +76,12 @@ export const Dropdown = ({
 
   const renderTrigger = () => {
     if (showArrow && React.isValidElement(trigger)) {
-      return React.cloneElement(trigger as React.ReactElement<any>, {
-        isOpen,
-      });
+      return React.cloneElement(
+        trigger as React.ReactElement<Record<string, unknown>>,
+        {
+          isOpen,
+        }
+      );
     }
     return trigger;
   };

@@ -1,3 +1,4 @@
+import type { RootState } from 'app/store';
 import type { Note } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
@@ -170,19 +171,13 @@ interface DeleteNoteLinkResponse {
   };
 }
 
-const createTempNote = (
-  layoutId: string,
-  title: string = 'Новая заметка'
-): Note => ({
+const createTempNote = (title: string = 'Новая заметка'): Note => ({
   id: `temp-${Date.now()}`,
-  layoutId,
   title,
   payload: '',
   ownerId: '',
   haveAccess: [],
   linkedWith: [],
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
 });
 
 export const notesApi = apiSlice.injectEndpoints({
@@ -190,7 +185,7 @@ export const notesApi = apiSlice.injectEndpoints({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
       query: ({ layoutId, page = 1 }) =>
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
-      providesTags: (result, error, arg) => [
+      providesTags: (result, _error, arg) => [
         { type: 'Notes', id: arg.layoutId },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -209,7 +204,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, arg) => [
+      invalidatesTags: (_result, _error, arg) => [
         { type: 'Notes', id: arg.layoutId },
         'Notes',
       ],
@@ -256,7 +251,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: { noteId, ...body },
       }),
-      invalidatesTags: (result, error, arg) => [
+      invalidatesTags: (_result, _error, arg) => [
         { type: 'Notes', id: arg.noteId },
         'Notes',
       ],
@@ -273,7 +268,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
-      providesTags: (result, error, arg) => [
+      providesTags: (result, _error, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -289,7 +284,7 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
-      providesTags: (result, error, arg) => [
+      providesTags: (result, _error, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -313,7 +308,7 @@ export const notesApi = apiSlice.injectEndpoints({
         loadingKey: null,
       },
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        const state = getState() as any;
+        const state = getState() as RootState;
 
         let realNoteData: Note | undefined;
 
@@ -415,7 +410,7 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
             layoutId: arg.layoutId,
-          })(getState() as any);
+          })(getState() as RootState);
 
           if (posedNotesCache.data?.data) {
             const patchResult = dispatch(
@@ -471,7 +466,7 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
             layoutId: arg.layoutId,
-          })(getState() as any);
+          })(getState() as RootState);
 
           if (posedNotesCache.data?.data) {
             const patchResult = dispatch(

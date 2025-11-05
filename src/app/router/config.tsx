@@ -1,4 +1,3 @@
-// router/config.tsx
 import { AuthPage, DashBoardPage, MainPage, NotFoundPage } from 'pages';
 import { SettingsPage } from 'pages/settings/ui/SettingsPage';
 import { GuestRoute } from './GuestRoute';

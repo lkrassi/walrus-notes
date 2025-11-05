@@ -14,7 +14,7 @@ yup.addMethod(yup.string, 'passwordStrength', function (message) {
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumbers = /\d/.test(value);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(value);
     const isLongEnough = value.length >= 8;
 
     return (
@@ -32,10 +32,29 @@ yup.addMethod(yup.string, 'noCommonPasswords', function (message) {
     if (!value) return true;
 
     const commonPasswords = [
-      'password', '123456', '123456789', 'qwerty', 'abc123', 'password123',
-      'admin', 'letmein', 'welcome', 'monkey', '1234567890', 'iloveyou',
-      'princess', 'rockyou', '1234567', '12345678', 'password1', '123123',
-      'football', 'baseball', 'welcome1', 'admin123', 'qwerty123'
+      'password',
+      '123456',
+      '123456789',
+      'qwerty',
+      'abc123',
+      'password123',
+      'admin',
+      'letmein',
+      'welcome',
+      'monkey',
+      '1234567890',
+      'iloveyou',
+      'princess',
+      'rockyou',
+      '1234567',
+      '12345678',
+      'password1',
+      '123123',
+      'football',
+      'baseball',
+      'welcome1',
+      'admin123',
+      'qwerty123',
     ];
 
     return !commonPasswords.includes(value.toLowerCase());
@@ -48,9 +67,7 @@ const createValidationSchema = (t: (key: string) => string) => ({
       .string()
       .email(t('auth:validation.emailInvalid'))
       .required(t('auth:validation.emailRequired')),
-    password: yup
-      .string()
-      .required(t('auth:validation.passwordRequired')),
+    password: yup.string().required(t('auth:validation.passwordRequired')),
   }),
 
   register: yup.object().shape({

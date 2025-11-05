@@ -3,12 +3,15 @@ export interface Note {
   title: string;
   payload: string;
   ownerId: string;
+  layoutId?: string;
   haveAccess: string[];
   position?: {
     xPos: number;
     yPos: number;
   };
   linkedWith?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Layout {
@@ -16,6 +19,8 @@ export interface Layout {
   title: string;
   ownerId: string;
   isMain: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface EdgeDeleteEventDetail {

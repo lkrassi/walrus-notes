@@ -1,7 +1,7 @@
+import { useUpdateNoteMutation } from 'app/store/api';
 import { useEffect, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import { useNotifications } from 'widgets';
-import { useUpdateNoteMutation } from 'widgets/model/stores/api';
 
 export const useNoteEditor = (
   note: Note,

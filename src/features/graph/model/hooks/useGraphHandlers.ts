@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { Node, NodeChange, OnNodesChange } from 'reactflow';
+import type { Note } from 'shared/model/types/layouts';
 
 interface UseGraphHandlersProps {
   updatePositionCallback: (
@@ -26,7 +27,7 @@ export const useGraphHandlers = ({
   screenToFlowPosition,
 }: UseGraphHandlersProps) => {
   const handleAddNoteToGraph = useCallback(
-    (note: any, dropPosition?: { x: number; y: number }) => {
+    (note: Note, dropPosition?: { x: number; y: number }) => {
       if (!dropPosition) {
         return;
       }
@@ -36,7 +37,7 @@ export const useGraphHandlers = ({
   );
 
   const onNodeDragStop = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       updatePositionCallback(node.id, node.position.x, node.position.y);
     },
     [updatePositionCallback]
@@ -50,21 +51,21 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       onNodeClick(node.id);
     },
     [onNodeClick]
   );
 
   const handleNodeMouseEnter = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       onNodeMouseEnter(node.id);
     },
     [onNodeMouseEnter]
   );
 
   const handleNodeMouseLeave = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       onNodeMouseLeave(node?.id);
     },
     [onNodeMouseLeave]
@@ -83,8 +84,7 @@ export const useGraphHandlers = ({
             y: event.clientY,
           });
           handleAddNoteToGraph(note, dropPosition);
-        } catch (error) {
-          console.error(error);
+        } catch (_error) {
         }
       }
     },

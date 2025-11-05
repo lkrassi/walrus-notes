@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useLocalStorage = <T>(
   key: string,
@@ -14,11 +14,16 @@ export const useLocalStorage = <T>(
       if (item === null) {
         return initialValue;
       }
-      if (typeof initialValue === 'string' && !item.startsWith('"') && !item.startsWith('{') && !item.startsWith('[')) {
+      if (
+        typeof initialValue === 'string' &&
+        !item.startsWith('"') &&
+        !item.startsWith('{') &&
+        !item.startsWith('[')
+      ) {
         return item;
       }
       return JSON.parse(item);
-    } catch (error) {
+    } catch (_error) {
       return initialValue;
     }
   });
@@ -26,14 +31,15 @@ export const useLocalStorage = <T>(
   const setValue = useCallback(
     (value: T | ((prevValue: T) => T)) => {
       try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
 
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
-        console.warn(error);
+      } catch (_error) {
+        console.warn(_error);
       }
     },
     [key, storedValue]
@@ -45,8 +51,8 @@ export const useLocalStorage = <T>(
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key);
       }
-    } catch (error) {
-      console.warn(error);
+    } catch (_error) {
+      console.warn(_error);
     }
   }, [key, initialValue]);
 
@@ -55,8 +61,8 @@ export const useLocalStorage = <T>(
       if (e.key === key && e.newValue !== null) {
         try {
           setStoredValue(JSON.parse(e.newValue));
-        } catch (error) {
-          console.warn(error);
+        } catch (_error) {
+          console.warn(_error);
         }
       }
     };
@@ -70,19 +76,28 @@ export const useLocalStorage = <T>(
   return [storedValue, setValue, removeValue];
 };
 
-export const useLocalStorageString = (key: string, initialValue: string = '') => {
+export const useLocalStorageString = (
+  key: string,
+  initialValue: string = ''
+) => {
   return useLocalStorage(key, initialValue);
 };
 
-export const useLocalStorageNumber = (key: string, initialValue: number = 0) => {
+export const useLocalStorageNumber = (
+  key: string,
+  initialValue: number = 0
+) => {
   return useLocalStorage(key, initialValue);
 };
 
-export const useLocalStorageBoolean = (key: string, initialValue: boolean = false) => {
+export const useLocalStorageBoolean = (
+  key: string,
+  initialValue: boolean = false
+) => {
   return useLocalStorage(key, initialValue);
 };
 
-export const useLocalStorageObject = <T extends Record<string, any>>(
+export const useLocalStorageObject = <T extends Record<string, unknown>>(
   key: string,
   initialValue: T
 ) => {

@@ -1,9 +1,9 @@
+import { openTab, switchTab } from 'app/store/slices/tabsSlice';
 import { useDashboardNavigation } from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
-import { openTab, switchTab } from 'widgets/model/stores/slices/tabsSlice';
 import { Sidebar } from 'widgets/ui';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';

@@ -1,4 +1,3 @@
-// hooks/useDropdown.ts
 import { useCallback, useState } from 'react';
 
 interface UseDropdownBaseOptions<T> {

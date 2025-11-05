@@ -27,7 +27,6 @@ export const useFormValidation = <T extends Record<string, any>>(
     onSubmit,
   });
 
-  // Расширенная логика валидации
   const validateField = async (fieldName: keyof T) => {
     if (validationSchema) {
       try {

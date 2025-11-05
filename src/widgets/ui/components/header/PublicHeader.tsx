@@ -39,3 +39,6 @@ export const PublicHeader = memo(() => {
     </header>
   );
 });
+
+(PublicHeader as unknown as { displayName?: string }).displayName =
+  'PublicHeader';

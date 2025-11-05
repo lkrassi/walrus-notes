@@ -72,3 +72,5 @@ export const DeleteLayout = memo(
     );
   }
 );
+(DeleteLayout as unknown as { displayName?: string }).displayName =
+  'DeleteLayout';

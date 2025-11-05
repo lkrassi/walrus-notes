@@ -1,3 +1,4 @@
+import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
@@ -7,10 +8,6 @@ import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import {
-  closeLayoutTabs,
-  closeTabsByItemId,
-} from 'widgets/model/stores/slices/tabsSlice';
 import { FileTree } from '../fileTree';
 
 type SidebarProps = {

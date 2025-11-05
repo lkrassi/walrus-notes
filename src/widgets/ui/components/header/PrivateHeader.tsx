@@ -49,3 +49,7 @@ export const PrivateHeader = memo(() => {
     </header>
   );
 });
+
+// display name for devtools / ESLint
+(PrivateHeader as unknown as { displayName?: string }).displayName =
+  'PrivateHeader';

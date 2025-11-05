@@ -1,4 +1,4 @@
-import type { RootState } from 'widgets/model/stores';
+import type { RootState } from 'app/store';
 
 export const selectOpenTabs = (state: RootState) => state.tabs.openTabs;
 export const selectActiveTab = (state: RootState) =>

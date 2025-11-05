@@ -1,7 +1,7 @@
+import { useGetMyLayoutsQuery } from 'app/store/api';
 import { memo, useCallback, useMemo } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useGetMyLayoutsQuery } from 'widgets/model/stores/api';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
 

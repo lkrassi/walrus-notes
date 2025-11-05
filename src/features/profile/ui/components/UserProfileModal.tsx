@@ -1,10 +1,10 @@
+import { useGetUserProfileQuery } from 'app/store/api';
+import { setUserProfile } from 'app/store/slices/userSlice';
 import React, { useEffect } from 'react';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useGetUserProfileQuery } from 'widgets/model/stores/api';
-import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { ChangeProfilePictureForm } from './ChangeProfilePictureForm';
 import { ImageViewerModal } from './ImageViewerModal';
 

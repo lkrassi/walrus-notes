@@ -1,8 +1,8 @@
+import { useGetUserProfileQuery } from 'app/store/api';
+import { setUserProfile } from 'app/store/slices/userSlice';
 import { useEffect } from 'react';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import { useGetUserProfileQuery } from 'widgets/model/stores/api';
-import { setUserProfile } from 'widgets/model/stores/slices/userSlice';
 import { checkAuth } from 'shared/api/checkAuth';
+import { useAppDispatch } from 'widgets/hooks/redux';
 import { PrivateHeader } from 'widgets/ui';
 
 export const DashboardHeader = () => {
