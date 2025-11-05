@@ -1,56 +1,26 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactFlow, {
+import {
   useEdgesState,
   useNodesState,
   useReactFlow,
   type Node,
 } from 'reactflow';
-import 'reactflow/dist/style.css';
 import type { Note } from 'shared/model/types/layouts';
 import {
   useCreateNoteLinkMutation,
   useDeleteNoteLinkMutation,
 } from 'widgets/model/stores/api';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
-import { useGraphEffects } from '../../model/hooks/useGraphEffects';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
-import { GraphBackground } from './GraphBackground';
-import { GraphContainer } from './GraphContainer';
-import { GraphControls } from './GraphControls';
-import { GraphDropZone } from './GraphDropZone';
-import { GraphMiniMap } from './GraphMiniMap';
-import { MultiColorEdge } from './MultiColorEdge';
-import { NoteNodeComponent } from './NoteNode';
-import { UnposedNotesList } from './UnposedNotesList';
-
-interface EdgeDeleteEventDetail {
-  edgeId: string;
-  source: string;
-  target: string;
-  newTarget?: string | null;
-}
-
-declare global {
-  interface DocumentEventMap {
-    edgeDeleteDrop: CustomEvent<EdgeDeleteEventDetail>;
-    edgeDeleteStart: CustomEvent<EdgeDeleteEventDetail>;
-  }
-}
+import NotesGraphView from './NotesGraphView';
+import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 
 interface NotesGraphContentProps {
   layoutId: string;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
 }
-
-const edgeTypes = {
-  multiColor: MultiColorEdge,
-};
-
-const nodeTypes = {
-  note: NoteNodeComponent,
-};
 
 export const NotesGraphContent = React.memo(
   ({ layoutId, onNoteOpen }: NotesGraphContentProps) => {
@@ -67,13 +37,26 @@ export const NotesGraphContent = React.memo(
     } = useNotesGraph({ layoutId });
 
     const { screenToFlowPosition, getEdges } = useReactFlow();
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdgesState, onEdgesChange] = useEdgesState(initialEdges);
+
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
     const [deleteNoteLink] = useDeleteNoteLinkMutation();
     const [createNoteLink] = useCreateNoteLinkMutation();
     const [isDraggingEdge, setIsDraggingEdge] = useState(false);
 
     const isProcessingRef = useRef(false);
+    const prevLayoutIdRef = useRef(layoutId);
+
+    useEffect(() => {
+      if (prevLayoutIdRef.current !== layoutId) {
+        setNodes(initialNodes);
+        setEdgesState(initialEdges);
+        prevLayoutIdRef.current = layoutId;
+      } else {
+        setNodes(initialNodes);
+        setEdgesState(initialEdges);
+      }
+    }, [initialNodes, initialEdges, layoutId, setNodes, setEdgesState]);
 
     const {
       tempEdges,
@@ -91,29 +74,28 @@ export const NotesGraphContent = React.memo(
       screenToFlowPosition,
     });
 
-    useGraphEffects({
-      initialNodes,
-      initialEdges,
-      tempEdges,
-      selectedNodeId,
-      hoveredNodeId,
-      setNodes,
-      setEdges: setEdgesState,
-      setTempEdges,
-    });
-
     useEffect(() => {
-      const handleEdgeDeleteDrop = async (
-        event: CustomEvent<EdgeDeleteEventDetail>
+      if (tempEdges.length > 0) {
+        setTempEdges(prev =>
+          prev.filter(tempEdge => !edges.some(edge => edge.id === tempEdge.id))
+        );
+      }
+    }, [edges, tempEdges.length, setTempEdges]);
+
+    const handleEdgeDeleteDrop = useCallback(
+      async (
+        event: CustomEvent<{
+          edgeId: string;
+          source: string;
+          target: string;
+          newTarget?: string | null;
+        }>
       ) => {
         const { edgeId, source, target, newTarget } = event.detail;
 
-        if (isProcessingRef.current) {
-          return;
-        }
+        if (isProcessingRef.current) return;
 
         isProcessingRef.current = true;
-
         setIsDraggingEdge(false);
 
         try {
@@ -124,36 +106,27 @@ export const NotesGraphContent = React.memo(
               edge => edge.source === source && edge.target === newTarget
             );
 
-            if (connectionExists) {
-              isProcessingRef.current = false;
-              return;
-            }
+            if (connectionExists) return;
 
             await deleteNoteLink({
               layoutId,
               firstNoteId: source,
               secondNoteId: target,
-            }).unwrap();
-
+            });
             await createNoteLink({
               layoutId,
               firstNoteId: source,
               secondNoteId: newTarget,
-            }).unwrap();
+            });
 
             setEdgesState(eds => {
-              const filteredEdges = eds.filter(edge => {
-                const shouldRemove = edge.id !== edgeId;
-                return shouldRemove;
-              });
-
+              const filteredEdges = eds.filter(edge => edge.id !== edgeId);
               const edgesWithoutNewTarget = filteredEdges.filter(
                 edge => !(edge.source === source && edge.target === newTarget)
               );
 
-              const newEdgeId = `edge-${source}-${newTarget}`;
               const newEdge = {
-                id: newEdgeId,
+                id: `edge-${source}-${newTarget}`,
                 source,
                 target: newTarget,
                 type: 'multiColor' as const,
@@ -167,62 +140,35 @@ export const NotesGraphContent = React.memo(
                 },
               };
 
-              const result = [...edgesWithoutNewTarget, newEdge];
-
-              return result;
+              return [...edgesWithoutNewTarget, newEdge];
             });
           } else {
             await deleteNoteLink({
               layoutId,
               firstNoteId: source,
               secondNoteId: target,
-            }).unwrap();
-
-            setEdgesState(eds => {
-              const result = eds.filter(edge => {
-                const shouldRemove = edge.id !== edgeId;
-                return shouldRemove;
-              });
-
-              return result;
             });
+            setEdgesState(eds => eds.filter(edge => edge.id !== edgeId));
           }
         } catch (error) {
-          console.error(error);
+          console.error('Error handling edge delete drop:', error);
         } finally {
           isProcessingRef.current = false;
         }
-      };
+      },
+      [layoutId, deleteNoteLink, createNoteLink, setEdgesState, getEdges]
+    );
 
-      const handleEdgeDeleteStart = (
-        event: CustomEvent<EdgeDeleteEventDetail>
-      ) => {
-        setIsDraggingEdge(true);
-      };
+    const handleEdgeDeleteStart = useCallback(() => {
+      setIsDraggingEdge(true);
+    }, []);
 
-      const dropEventHandler = (event: Event) => {
-        handleEdgeDeleteDrop(event as CustomEvent<EdgeDeleteEventDetail>);
-      };
-
-      const startEventHandler = (event: Event) => {
-        handleEdgeDeleteStart(event as CustomEvent<EdgeDeleteEventDetail>);
-      };
-
-      document.addEventListener('edgeDeleteDrop', dropEventHandler);
-      document.addEventListener('edgeDeleteStart', startEventHandler);
-
-      return () => {
-        document.removeEventListener('edgeDeleteDrop', dropEventHandler);
-        document.removeEventListener('edgeDeleteStart', startEventHandler);
-        // Сбрасываем флаг при размонтировании
-        isProcessingRef.current = false;
-      };
-    }, [layoutId, deleteNoteLink, createNoteLink, setEdgesState, getEdges]);
+    useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
 
     const handleNoteOpen = useCallback(
       (noteId: string) => {
         const node = nodes.find(n => n.id === noteId);
-        if (node && node.data.note) {
+        if (node?.data?.note) {
           onNoteOpen?.({ noteId, note: node.data.note });
         }
       },
@@ -262,11 +208,9 @@ export const NotesGraphContent = React.memo(
       []
     );
 
-    // Обработчик дропа для заметок
     const handleNoteDrop = useCallback(
       (event: React.DragEvent) => {
         event.preventDefault();
-
         const noteData = event.dataTransfer.getData('application/reactflow');
         if (noteData) {
           try {
@@ -277,7 +221,7 @@ export const NotesGraphContent = React.memo(
             });
             handleAddNoteToGraph(note, dropPosition);
           } catch (error) {
-            console.error(error);
+            console.error('Error handling note drop:', error);
           }
         }
       },
@@ -285,46 +229,29 @@ export const NotesGraphContent = React.memo(
     );
 
     return (
-      <GraphContainer>
-        <GraphDropZone onDrop={handleNoteDrop} isDraggingEdge={isDraggingEdge}>
-          <ReactFlow
-            nodes={nodesWithSelection}
-            edges={edgesWithSelection}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onConnectStart={onConnectStart}
-            onConnectEnd={onConnectEnd}
-            onNodeDragStop={onNodeDragStop}
-            onNodeClick={handleNodeClick}
-            onNodeMouseEnter={handleNodeMouseEnter}
-            onNodeMouseLeave={handleNodeMouseLeave}
-            onPaneClick={onPaneClick}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            attributionPosition='bottom-left'
-            nodesDraggable={true}
-            nodesConnectable={true}
-            elementsSelectable={true}
-            selectNodesOnDrag={false}
-            minZoom={0.1}
-            maxZoom={2}
-            proOptions={{ hideAttribution: true }}
-            key={layoutId}
-            onNodeDoubleClick={handleNodeDoubleClick}
-          >
-            <GraphBackground />
-            <GraphControls />
-            <GraphMiniMap />
-
-            <UnposedNotesList
-              layoutId={layoutId}
-              onNoteSelect={handleAddNoteToGraph}
-            />
-          </ReactFlow>
-        </GraphDropZone>
-      </GraphContainer>
+      <NotesGraphView
+        layoutId={layoutId}
+        nodes={nodes}
+        edges={edges}
+        nodesWithSelection={nodesWithSelection}
+        edgesWithSelection={edgesWithSelection}
+        onNodesChange={handleNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
+        onNodeDragStop={onNodeDragStop}
+        onNodeClick={handleNodeClick}
+        onNodeMouseEnter={handleNodeMouseEnter}
+        onNodeMouseLeave={handleNodeMouseLeave}
+        onPaneClick={onPaneClick}
+        onNodeDoubleClick={handleNodeDoubleClick}
+        isDraggingEdge={isDraggingEdge}
+        onDrop={handleNoteDrop}
+        onAddNoteToGraph={handleAddNoteToGraph}
+      />
     );
   }
 );
+
+export default NotesGraphContent;

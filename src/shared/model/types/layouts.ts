@@ -1,21 +1,4 @@
-export type CreateLayoutRequest = {
-  title: string;
-};
-
-export type CreateLayoutResponse = {
-  id: string;
-};
-
-export type Layout = {
-  id: string;
-  title: string;
-  ownerId: string;
-  createdAt?: string;
-  updatedAt?: string;
-  notes?: Note[];
-};
-
-export type Note = {
+export interface Note {
   id: string;
   title: string;
   payload: string;
@@ -25,65 +8,45 @@ export type Note = {
     xPos: number;
     yPos: number;
   };
-  linkedWith: string[];
-  layoutId?: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+  linkedWith?: string[];
+}
 
-export type GetMyLayoutsResponse = {
-  data: Layout[];
-  meta: {
-    code: string;
-    error: string;
-    message: string;
-    requestId: string;
-  };
-  pagination: {
-    page: number;
-    pages: number;
-    perPage: number;
-  };
-};
+export interface Layout {
+  id: string;
+  title: string;
+  ownerId: string;
+  isMain: boolean;
+}
 
-export type CreateNoteLinkRequest = {
-  firstNoteId: string;
-  layoutId: string;
-  secondNoteId: string;
-};
+export interface EdgeDeleteEventDetail {
+  edgeId: string;
+  source: string;
+  target: string;
+  newTarget?: string | null;
+}
 
-export type CreateNoteLinkResponse = {
-  data: string;
-  meta: {
-    code: string;
-    message: string;
-    error: string;
-    requestId: string;
-  };
-  pagination: {
-    page: number;
-    pages: number;
-    perPage: number;
-  };
-};
+export interface NoteNodeData {
+  note: Note;
+  onNoteClick?: (noteId: string) => void;
+  isSelected?: boolean;
+  isHovered?: boolean;
+}
 
-export type DeleteNoteLinkRequest = {
-  firstNoteId: string;
-  layoutId: string;
-  secondNoteId: string;
-};
+export interface MultiColorEdgeData {
+  sourceColor: string;
+  targetColor: string;
+}
 
-export type DeleteNoteLinkResponse = {
-  data: string;
-  meta: {
-    code: string;
-    message: string;
-    error: string;
-    requestId: string;
-  };
-  pagination: {
-    page: number;
-    pages: number;
-    perPage: number;
-  };
-};
+declare module 'reactflow' {
+  interface NodeData {
+    note?: Note;
+    onNoteClick?: (noteId: string) => void;
+    isSelected?: boolean;
+    isHovered?: boolean;
+  }
+
+  interface EdgeData {
+    sourceColor?: string;
+    targetColor?: string;
+  }
+}

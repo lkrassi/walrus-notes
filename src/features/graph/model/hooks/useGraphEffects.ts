@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Edge } from 'reactflow';
 
 interface UseGraphEffectsProps {
@@ -22,26 +22,46 @@ export const useGraphEffects = ({
   setEdges,
   setTempEdges,
 }: UseGraphEffectsProps) => {
+  const prevInitialNodesRef = useRef(initialNodes);
+  const prevInitialEdgesRef = useRef(initialEdges);
+  const prevSelectedNodeIdRef = useRef(selectedNodeId);
+  const prevHoveredNodeIdRef = useRef(hoveredNodeId);
+
   useEffect(() => {
-    setNodes(initialNodes);
+    if (prevInitialNodesRef.current !== initialNodes) {
+      setNodes(initialNodes);
+      prevInitialNodesRef.current = initialNodes;
+    }
   }, [initialNodes, setNodes]);
 
   useEffect(() => {
-    setEdges(initialEdges);
+    if (prevInitialEdgesRef.current !== initialEdges) {
+      setEdges(initialEdges);
+      prevInitialEdgesRef.current = initialEdges;
+    }
   }, [initialEdges, setEdges]);
 
   useEffect(() => {
-    setTempEdges(prev =>
-      prev.filter(
-        tempEdge =>
-          !initialEdges.some(cacheEdge => cacheEdge.id === tempEdge.id)
-      )
-    );
-  }, [initialEdges, setTempEdges]);
+    if (tempEdges.length > 0) {
+      setTempEdges(prev =>
+        prev.filter(
+          tempEdge =>
+            !initialEdges.some(cacheEdge => cacheEdge.id === tempEdge.id)
+        )
+      );
+    }
+  }, [initialEdges, tempEdges.length, setTempEdges]);
 
   useEffect(() => {
-    setTempEdges(prev =>
-      prev.map(edge => {
+    if (
+      prevSelectedNodeIdRef.current === selectedNodeId &&
+      prevHoveredNodeIdRef.current === hoveredNodeId
+    ) {
+      return;
+    }
+
+    setTempEdges(prev => {
+      const newTempEdges = prev.map(edge => {
         const isRelatedToSelected = selectedNodeId
           ? selectedNodeId === edge.source || selectedNodeId === edge.target
           : false;
@@ -49,10 +69,10 @@ export const useGraphEffects = ({
         return {
           ...edge,
           style: {
+            ...edge.style,
             strokeWidth: isRelatedToSelected ? 3 : 2,
             strokeDasharray: isRelatedToSelected ? '0' : '5,5',
             opacity: isRelatedToSelected ? 1 : 0.3,
-            transition: 'opacity 0.2s ease-in-out',
           },
           data: {
             ...edge.data,
@@ -60,7 +80,12 @@ export const useGraphEffects = ({
             isSelected: isRelatedToSelected,
           },
         };
-      })
-    );
-  }, [hoveredNodeId, selectedNodeId, setTempEdges]);
+      });
+
+      return newTempEdges;
+    });
+
+    prevSelectedNodeIdRef.current = selectedNodeId;
+    prevHoveredNodeIdRef.current = hoveredNodeId;
+  }, [selectedNodeId, hoveredNodeId, setTempEdges]);
 };

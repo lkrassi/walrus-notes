@@ -28,8 +28,6 @@ export const useGraphConnections = ({
   layoutId,
   nodes,
   edges,
-  selectedNodeId,
-  hoveredNodeId,
   screenToFlowPosition,
 }: UseGraphConnectionsProps) => {
   const [createNoteLink] = useCreateNoteLinkMutation();
