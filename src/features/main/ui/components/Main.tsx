@@ -31,9 +31,9 @@ export const Main = () => {
   return (
     <>
       <PublicHeader />
-      <div className='flex min-h-[80vh] items-center justify-center px-4 sm:px-6 lg:px-8'>
+      <div className='flex min-h-[80vh] items-center justify-center'>
         <motion.div
-          className='mx-40'
+          className='mx-40 max-lg:m-10'
           variants={containerVariants}
           initial='hidden'
           animate='visible'
@@ -42,7 +42,7 @@ export const Main = () => {
             <div className='flex-1 text-left'>
               <motion.h1
                 variants={itemVariants}
-                className='text-text dark:text-dark-text mb-6 text-4xl leading-tight font-bold sm:text-5xl lg:text-6xl'
+                className='text-text dark:text-dark-text mb-6 text-4xl font-bold max-lg:w-full max-lg:text-center sm:text-5xl lg:text-6xl'
               >
                 {t('main:title.line1')}
                 <br />
@@ -50,7 +50,7 @@ export const Main = () => {
               </motion.h1>
               <motion.p
                 variants={itemVariants}
-                className='text-secondary dark:text-dark-secondary mb-8 text-xl leading-relaxed'
+                className='text-secondary dark:text-dark-secondary mb-8 text-xl leading-relaxed max-lg:w-full max-lg:text-center'
               >
                 {t('main:subtitle')}
               </motion.p>
@@ -94,32 +94,7 @@ export const Main = () => {
             </div>
           </div>
 
-          <motion.div
-            className='bg-primary/5 dark:bg-dark-primary/5 absolute top-1/4 left-1/4 -z-10 h-64 w-64 rounded-full blur-3xl'
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: 'easeInOut' as const,
-            }}
-          />
 
-          <motion.div
-            className='bg-primary/3 dark:bg-dark-primary/3 absolute right-1/4 bottom-1/4 -z-10 h-96 w-96 rounded-full blur-3xl'
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.2, 0.4, 0.2],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: 'easeInOut' as const,
-              delay: 1,
-            }}
-          />
         </motion.div>
       </div>
     </>

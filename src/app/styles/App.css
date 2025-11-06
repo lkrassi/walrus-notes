@@ -95,7 +95,8 @@ h6 {
 }
 
 .bg-gradient {
-  background: linear-gradient(135deg,
+  background: linear-gradient(
+    135deg,
     var(--color-bg) 0%,
     #f0fdf4 50%,
     #ecfdf5 100%
@@ -103,7 +104,8 @@ h6 {
 }
 
 .dark .bg-gradient {
-  background: linear-gradient(135deg,
+  background: linear-gradient(
+    135deg,
     var(--color-dark-bg) 0%,
     #134e4a 50%,
     #042f2e 100%
