@@ -1,5 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization, useTheme } from 'widgets/hooks';
 
 export const ThemeSwitcher = () => {
@@ -10,7 +11,15 @@ export const ThemeSwitcher = () => {
     <Button
       data-tour='theme-switcher'
       onClick={toggleTheme}
-      className='flex h-10 w-5 items-center justify-center px-8 py-5'
+      className={cn(
+        'flex',
+        'h-10',
+        'w-5',
+        'items-center',
+        'justify-center',
+        'px-8',
+        'py-5'
+      )}
       aria-label={
         theme === 'dark'
           ? t('common:theme.switchToLight')

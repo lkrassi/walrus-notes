@@ -2,6 +2,7 @@ import { useDeleteLayoutMutation } from 'app/store/api';
 import { closeLayoutTabs } from 'app/store/slices/tabsSlice';
 import React from 'react';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
@@ -44,11 +45,23 @@ export const DeleteLayoutForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6 p-6'>
-      <div className='text-center'>
-        <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
+    <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
+      <div className={cn('text-center')}>
+        <div
+          className={cn(
+            'mx-auto',
+            'flex',
+            'h-12',
+            'w-12',
+            'items-center',
+            'justify-center',
+            'rounded-full',
+            'bg-red-100',
+            'dark:bg-red-900/20'
+          )}
+        >
           <svg
-            className='h-6 w-6 text-red-600 dark:text-red-400'
+            className={cn('h-6', 'w-6', 'text-red-600', 'dark:text-red-400')}
             fill='none'
             viewBox='0 0 24 24'
             strokeWidth='1.5'
@@ -61,23 +74,21 @@ export const DeleteLayoutForm = ({
             />
           </svg>
         </div>
-        <h3 className='text-text dark:text-dark-text mt-4 text-lg font-semibold'>
-          {t('layout:deleteLayout')}
-        </h3>
-        <p className='text-text dark:text-dark-text mt-2 text-sm'>
+        <h3 className={cn('heading-lg')}>{t('layout:deleteLayout')}</h3>
+        <p className={cn('muted-text', 'mt-2', 'text-sm')}>
           {t('layout:deleteLayoutConfirmation', { title: layoutTitle })}
         </p>
-        <p className='text-text dark:text-dark-text mt-1 text-xs'>
+        <p className={cn('muted-text', 'mt-1', 'text-xs')}>
           {t('layout:deleteLayoutWarning')}
         </p>
       </div>
 
-      <div className='flex justify-center gap-3'>
+      <div className={cn('flex', 'justify-center', 'gap-3')}>
         <Button
           type='button'
           onClick={closeModal}
           variant='default'
-          className='px-6 py-3'
+          className={cn('px-6', 'py-3')}
           disabled={isLoading}
         >
           {t('layout:cancel')}
@@ -85,7 +96,7 @@ export const DeleteLayoutForm = ({
         <Button
           type='submit'
           variant='escape'
-          className='px-6 py-3'
+          className={cn('px-6', 'py-3')}
           disabled={isLoading}
         >
           {isLoading ? t('layout:deleting') : t('layout:delete')}

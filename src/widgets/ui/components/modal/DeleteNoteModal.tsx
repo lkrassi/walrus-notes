@@ -1,6 +1,7 @@
 import { useDeleteNoteMutation } from 'app/store/api';
 import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useNotifications } from 'widgets/hooks/useNotifications';
 import { useModalContext } from './ModalProvider';
@@ -35,24 +36,47 @@ export const DeleteNoteModal: React.FC<DeleteNoteModalProps> = ({
   };
 
   return (
-    <div className='p-6'>
-      <div className='text-center'>
-        <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
-          <Trash2 className='h-6 w-6 text-red-600 dark:text-red-400' />
+    <div className={cn('p-6')}>
+      <div className={cn('text-center')}>
+        <div
+          className={cn(
+            'mx-auto',
+            'mb-4',
+            'flex',
+            'h-12',
+            'w-12',
+            'items-center',
+            'justify-center',
+            'rounded-full',
+            'bg-red-100',
+            'dark:bg-red-900/20'
+          )}
+        >
+          <Trash2
+            className={cn('h-6', 'w-6', 'text-red-600', 'dark:text-red-400')}
+          />
         </div>
-        <h3 className='text-text dark:text-dark-text mb-2 text-lg font-medium'>
+        <h3
+          className={cn(
+            'text-text',
+            'dark:text-dark-text',
+            'mb-2',
+            'text-lg',
+            'font-medium'
+          )}
+        >
           {t('common:deleteNote.title')}
         </h3>
-        <p className='text-secondary dark:text-dark-secondary mb-6'>
+        <p className={cn('text-secondary', 'dark:text-dark-secondary', 'mb-6')}>
           {t('common:deleteNote.description')}
         </p>
-        <div className='flex justify-center gap-3'>
-          <Button onClick={handleCancel} className='px-6 py-3'>
+        <div className={cn('flex', 'justify-center', 'gap-3')}>
+          <Button onClick={handleCancel} className={cn('px-6', 'py-3')}>
             {t('common:deleteNote.cancel')}
           </Button>
           <Button
             onClick={handleDelete}
-            className='px-6 py-3'
+            className={cn('px-6', 'py-3')}
             variant='escape'
             disabled={isLoading}
           >

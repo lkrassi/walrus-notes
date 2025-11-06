@@ -1,6 +1,7 @@
 import { useGetUserProfileQuery } from 'app/store/api';
 import { setUserProfile } from 'app/store/slices/userSlice';
 import React, { useEffect } from 'react';
+import cn from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
@@ -48,25 +49,47 @@ export const UserProfileModal: React.FC = () => {
 
   if (!profile) {
     return (
-      <div className='flex items-center justify-center p-8'>
-        <div className='text-red-500'>{t('profile:profileNotFound')}</div>
+      <div className={cn('flex', 'items-center', 'justify-center', 'p-8')}>
+        <div className={cn('text-red-500')}>{t('profile:profileNotFound')}</div>
       </div>
     );
   }
 
   return (
-    <div className='space-y-6 p-6'>
-      <div className='flex flex-col items-center space-y-4'>
-        <div className='h-24 w-24 cursor-pointer overflow-hidden rounded-full'>
+    <div className={cn('space-y-6', 'p-6')}>
+      <div className={cn('flex', 'flex-col', 'items-center', 'space-y-4')}>
+        <div
+          className={cn(
+            'h-24',
+            'w-24',
+            'cursor-pointer',
+            'overflow-hidden',
+            'rounded-full'
+          )}
+        >
           {profile.imgUrl ? (
             <img
               src={`https://${profile.imgUrl}`}
               alt='Аватар'
-              className='h-full w-full object-cover'
+              className={cn('h-full', 'w-full', 'object-cover')}
               onClick={handleViewImage}
             />
           ) : (
-            <div className='flex h-full w-full items-center justify-center bg-gray-300 text-2xl font-semibold text-gray-600 dark:bg-gray-600 dark:text-gray-300'>
+            <div
+              className={cn(
+                'flex',
+                'h-full',
+                'w-full',
+                'items-center',
+                'justify-center',
+                'bg-gray-300',
+                'text-2xl',
+                'font-semibold',
+                'text-gray-600',
+                'dark:bg-gray-600',
+                'dark:text-gray-300'
+              )}
+            >
               {profile.username.charAt(0).toUpperCase()}
             </div>
           )}
@@ -74,38 +97,26 @@ export const UserProfileModal: React.FC = () => {
         <Button
           onClick={handleChangePhoto}
           variant='default'
-          className='px-4 py-2'
+          className={cn('btn')}
         >
           {t('profile:changePhoto')}
         </Button>
       </div>
 
-      <div className='space-y-4'>
+      <div className={cn('space-y-4')}>
         <div>
-          <label className='text-text dark:text-dark-text mb-1 block text-sm font-medium'>
-            {t('profile:username')}
-          </label>
-          <div className='text-text dark:text-dark-text rounded-md bg-gray-100 px-3 py-2 dark:bg-gray-800'>
-            {profile.username}
-          </div>
+          <label className={cn('tw-label')}>{t('profile:username')}</label>
+          <div className={cn('field-box')}>{profile.username}</div>
         </div>
 
         <div>
-          <label className='text-text dark:text-dark-text mb-1 block text-sm font-medium'>
-            {t('profile:email')}
-          </label>
-          <div className='text-text dark:text-dark-text rounded-md bg-gray-100 px-3 py-2 dark:bg-gray-800'>
-            {profile.email}
-          </div>
+          <label className={cn('tw-label')}>{t('profile:email')}</label>
+          <div className={cn('field-box')}>{profile.email}</div>
         </div>
 
         <div>
-          <label className='text-text dark:text-dark-text mb-1 block text-sm font-medium'>
-            {t('profile:role')}
-          </label>
-          <div className='text-text dark:text-dark-text rounded-md bg-gray-100 px-3 py-2 dark:bg-gray-800'>
-            {profile.role}
-          </div>
+          <label className={cn('tw-label')}>{t('profile:role')}</label>
+          <div className={cn('field-box')}>{profile.role}</div>
         </div>
       </div>
     </div>

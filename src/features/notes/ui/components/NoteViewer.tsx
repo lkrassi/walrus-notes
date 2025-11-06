@@ -1,3 +1,4 @@
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
 import { NoteContent } from './NoteContent';
@@ -24,7 +25,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
   } = useNoteEditor(note, onNoteUpdated);
 
   return (
-    <div className='flex h-full w-full flex-col'>
+    <div className={cn('flex', 'h-full', 'w-full', 'flex-col', 'bg-gradient')}>
       <NoteHeader
         isEditing={isEditing}
         title={title}
@@ -35,7 +36,7 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
         onCancel={handleCancel}
       />
 
-      <div className='flex-1 overflow-hidden'>
+      <div className={cn('flex-1', 'overflow-hidden')}>
         <NoteContent
           isEditing={isEditing}
           payload={payload}

@@ -1,6 +1,7 @@
 import { useCreateNoteMutation } from 'app/store/api';
 import { useState } from 'react';
-import { Button, Input } from 'shared';
+import { Button, Input, Textarea } from 'shared';
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization, useNotifications } from 'widgets';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
@@ -51,12 +52,9 @@ export const CreateNoteForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6 p-6'>
+    <form onSubmit={handleSubmit} className={cn('space-y-6 p-6')}>
       <div>
-        <label
-          htmlFor='note-title'
-          className='text-text dark:text-dark-text mb-2 block text-sm font-medium'
-        >
+        <label htmlFor='note-title' className={cn('tw-label')}>
           {t('notes:noteTitle')}
         </label>
         <Input
@@ -65,36 +63,33 @@ export const CreateNoteForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('notes:noteTitlePlaceholder')}
-          className='w-full rounded-xl border-2 px-4 py-3'
+          className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
           autoFocus
         />
       </div>
 
       <div>
-        <label
-          htmlFor='note-content'
-          className='text-text dark:text-dark-text mb-2 block text-sm font-medium'
-        >
+        <label htmlFor='note-content' className={cn('tw-label')}>
           {t('notes:noteContent')}
         </label>
-        <textarea
+        <Textarea
           id='note-content'
           value={payload}
           onChange={e => setPayload(e.target.value)}
           placeholder={t('notes:noteContentPlaceholderTextarea')}
           rows={6}
-          className='border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary w-full resize-none rounded-lg border bg-white px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 dark:bg-gray-800'
+          className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
         />
       </div>
 
-      <div className='flex justify-center gap-3'>
+      <div className={cn('flex', 'justify-center', 'gap-3')}>
         <Button
           type='button'
           onClick={closeModal}
           variant='escape'
-          className='h-12 w-42'
+          className={cn('btn')}
           disabled={isLoading}
         >
           {t('layout:cancel')}
@@ -102,7 +97,7 @@ export const CreateNoteForm = ({
         <Button
           type='submit'
           variant='submit'
-          className='h-12 w-42'
+          className={cn('btn')}
           disabled={isLoading}
         >
           {isLoading ? t('notes:creating') : t('notes:createNote')}

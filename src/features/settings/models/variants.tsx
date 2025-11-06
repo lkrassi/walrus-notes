@@ -1,4 +1,5 @@
 import { Bell, HelpCircle, Palette, Shield, User } from 'lucide-react';
+import cn from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { ProfileButton } from '../../profile';
 
@@ -16,7 +17,7 @@ export const settingsSections = [
     icon: Palette,
     description: 'Тема, шрифты и настройки отображения',
     action: (
-      <Button variant='default' className='h-10 w-30'>
+      <Button variant='default' className={cn('h-10', 'w-30')}>
         Настроить
       </Button>
     ),
@@ -27,7 +28,7 @@ export const settingsSections = [
     icon: Bell,
     description: 'Настройки оповещений и email-рассылок',
     action: (
-      <Button variant='default' className='h-10 w-30'>
+      <Button variant='default' className={cn('h-10', 'w-30')}>
         Управлять
       </Button>
     ),
@@ -38,7 +39,7 @@ export const settingsSections = [
     icon: Shield,
     description: 'Пароль, двухфакторная аутентификация',
     action: (
-      <Button variant='default' className='h-10 w-30'>
+      <Button variant='default' className={cn('h-10', 'w-30')}>
         Защитить
       </Button>
     ),
@@ -49,7 +50,7 @@ export const settingsSections = [
     icon: HelpCircle,
     description: 'Документация и поддержка',
     action: (
-      <Button variant='default' className='h-10 w-30'>
+      <Button variant='default' className={cn('h-10', 'w-30')}>
         Перейти
       </Button>
     ),

@@ -8,6 +8,8 @@ import { Sidebar } from 'widgets/ui';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
 
+import cn from 'shared/lib/cn';
+
 export const DashBoard = () => {
   const dispatch = useAppDispatch();
   const { openTabs, activeTabId } = useTabs();
@@ -53,9 +55,9 @@ export const DashBoard = () => {
   };
 
   return (
-    <div className='flex h-screen flex-col'>
+    <div className={cn('flex', 'h-screen', 'flex-col')}>
       <DashboardHeader />
-      <div className='flex min-h-0 flex-1 max-md:flex-col'>
+      <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
         <Sidebar
           ref={sidebarRef}
           onItemSelect={handleItemSelect}

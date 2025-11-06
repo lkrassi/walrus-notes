@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useModalActions } from 'widgets/hooks/useModalActions';
@@ -19,17 +20,38 @@ export const ProfileButton: React.FC = () => {
     <button
       data-tour='profile'
       onClick={handleOpenProfile}
-      className='flex h-10 w-10 items-center justify-center overflow-hidden rounded-full'
+      className={cn(
+        'flex',
+        'h-10',
+        'w-10',
+        'items-center',
+        'justify-center',
+        'overflow-hidden',
+        'rounded-full'
+      )}
       title={t('profile:title')}
     >
       {profile?.imgUrl ? (
         <img
           src={`https://${profile.imgUrl}`}
           alt='Аватар'
-          className='h-full w-full object-cover'
+          className={cn('h-full', 'w-full', 'object-cover')}
         />
       ) : (
-        <div className='flex h-full w-full items-center justify-center bg-gray-300 font-semibold text-gray-600 dark:bg-gray-600 dark:text-gray-300'>
+        <div
+          className={cn(
+            'flex',
+            'h-full',
+            'w-full',
+            'items-center',
+            'justify-center',
+            'bg-gray-300',
+            'font-semibold',
+            'text-gray-600',
+            'dark:bg-gray-600',
+            'dark:text-gray-300'
+          )}
+        >
           U
         </div>
       )}

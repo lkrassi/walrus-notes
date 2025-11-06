@@ -9,6 +9,7 @@ import {
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useIsMobile } from 'widgets/hooks';
@@ -89,17 +90,43 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const renderContent = () => {
     if (!activeTab) {
       return (
-        <div className='bg-bg dark:bg-dark-bg flex h-full items-center justify-center'>
-          <div className='text-center'>
-            <div className='text-secondary dark:text-dark-secondary mx-auto mb-4 h-16 w-16'>
+        <div
+          className={cn(
+            'bg-bg',
+            'dark:bg-dark-bg',
+            'flex',
+            'h-full',
+            'items-center',
+            'justify-center'
+          )}
+        >
+          <div className={cn('text-center')}>
+            <div
+              className={cn(
+                'text-secondary',
+                'dark:text-dark-secondary',
+                'mx-auto',
+                'mb-4',
+                'h-16',
+                'w-16'
+              )}
+            >
               <svg viewBox='0 0 24 24' fill='currentColor'>
                 <path d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' />
               </svg>
             </div>
-            <h3 className='text-text dark:text-dark-text mb-2 text-xl font-semibold'>
+            <h3
+              className={cn(
+                'text-text',
+                'dark:text-dark-text',
+                'mb-2',
+                'text-xl',
+                'font-semibold'
+              )}
+            >
               {t('dashboard:selectFileOrFolder')}
             </h3>
-            <p className='text-secondary dark:text-dark-secondary'>
+            <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
               {t('dashboard:selectItemDescription')}
             </p>
           </div>
@@ -112,9 +139,11 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
       if (!note) {
         return (
-          <div className='flex h-full items-center justify-center'>
-            <div className='text-center'>
-              <p className='text-secondary dark:text-dark-secondary'>
+          <div
+            className={cn('flex', 'h-full', 'items-center', 'justify-center')}
+          >
+            <div className={cn('text-center')}>
+              <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
                 Загрузка заметки...
               </p>
             </div>
@@ -148,9 +177,11 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
         if (!layoutId) {
           return (
-            <div className='flex h-full items-center justify-center'>
-              <div className='text-center'>
-                <p className='text-secondary dark:text-dark-secondary'>
+            <div
+              className={cn('flex', 'h-full', 'items-center', 'justify-center')}
+            >
+              <div className={cn('text-center')}>
+                <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
                   Ошибка: не указан layoutId
                 </p>
               </div>
@@ -168,9 +199,9 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
     }
 
     return (
-      <div className='flex h-full items-center justify-center'>
-        <div className='text-center'>
-          <p className='text-secondary dark:text-dark-secondary'>
+      <div className={cn('flex', 'h-full', 'items-center', 'justify-center')}>
+        <div className={cn('text-center')}>
+          <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
             Неподдерживаемый тип вкладки
           </p>
         </div>
@@ -179,7 +210,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   };
 
   return (
-    <main className='flex min-h-0 min-w-0 flex-1 flex-col'>
+    <main className={cn('flex', 'min-h-0', 'min-w-0', 'flex-1', 'flex-col')}>
       {openTabs.length > 0 && (
         <Tabs
           tabs={openTabs}
@@ -188,7 +219,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
           onTabReorder={handleTabReorder}
         />
       )}
-      <div className='min-h-0 flex-1'>{renderContent()}</div>
+      <div className={cn('min-h-0', 'flex-1')}>{renderContent()}</div>
     </main>
   );
 };

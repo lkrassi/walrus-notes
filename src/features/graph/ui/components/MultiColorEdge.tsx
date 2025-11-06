@@ -6,6 +6,7 @@ import {
   getBezierPath,
   useReactFlow,
 } from 'reactflow';
+import cn from 'shared/lib/cn';
 
 interface MultiColorStepEdgeData {
   sourceColor: string;
@@ -156,8 +157,7 @@ export const MultiColorEdge = ({
       }).unwrap();
 
       setEdges(eds => eds.filter(e => e.id !== id));
-    } catch (_error) {
-    }
+    } catch (_error) {}
   }, [id, source, target, deleteNoteLink, setEdges]);
 
   const handleClick = useCallback(
@@ -258,7 +258,7 @@ export const MultiColorEdge = ({
           strokeWidth='3'
           strokeDasharray='5,5'
           markerEnd={markerEnd}
-          className='animate-pulse'
+          className={cn('animate-pulse')}
         />
       )}
 
@@ -267,7 +267,7 @@ export const MultiColorEdge = ({
         fill='none'
         stroke='transparent'
         strokeWidth='20'
-        className='react-flow__edge-interaction cursor-crosshair'
+        className={cn('react-flow__edge-interaction cursor-crosshair')}
         onMouseDown={handleMouseDown}
       />
 
@@ -280,7 +280,9 @@ export const MultiColorEdge = ({
             fill='white'
             stroke='#ff6b6b'
             strokeWidth='2'
-            className='cursor-grab opacity-0 transition-opacity duration-200 hover:opacity-100'
+            className={cn(
+              'cursor-grab opacity-0 transition-opacity duration-200 hover:opacity-100'
+            )}
             onMouseDown={handleMouseDown}
             onClick={handleClick}
           />
@@ -292,7 +294,9 @@ export const MultiColorEdge = ({
             fontSize='10'
             fontWeight='bold'
             fill='#ff6b6b'
-            className='pointer-events-none opacity-0 transition-opacity duration-200 hover:opacity-100'
+            className={cn(
+              'pointer-events-none opacity-0 transition-opacity duration-200 hover:opacity-100'
+            )}
           >
             ×
           </text>

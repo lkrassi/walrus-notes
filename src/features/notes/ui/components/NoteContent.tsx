@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { Textarea } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 
 interface NoteContentProps {
@@ -47,13 +49,23 @@ export const NoteContent: React.FC<NoteContentProps> = ({
 
   if (isEditing) {
     return (
-      <textarea
+      <Textarea
         ref={textareaRef}
         value={payload}
         onChange={e => onPayloadChange(e.target.value)}
-        className='text-text dark:text-dark-text focus:ring-primary dark:focus:ring-dark-primary h-full w-full resize-none bg-transparent p-4 outline-none'
+        className={cn(
+          'form-input',
+          'rounded-none',
+          'bg-transparent',
+          'resize-none',
+          'h-full',
+          'p-4',
+          'outline-none'
+        )}
+        style={{ background: 'transparent' }}
         placeholder={t('notes:noteContentPlaceholder')}
         disabled={isLoading}
+        rows={6}
         onClick={e => {
           const textarea = e.currentTarget;
           if (textarea.selectionStart === textarea.value.length) {
@@ -65,14 +77,27 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   }
 
   return (
-    <div className='h-full overflow-y-auto p-4'>
-      <div className='prose dark:prose-invert max-w-none'>
+    <div className={cn('h-full', 'overflow-y-auto', 'p-4')}>
+      <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
         {payload ? (
-          <div className='text-text dark:text-dark-text whitespace-pre-wrap'>
+          <div
+            className={cn(
+              'text-text',
+              'dark:text-dark-text',
+              'wrap-break-word',
+              'whitespace-pre-wrap'
+            )}
+          >
             {payload}
           </div>
         ) : (
-          <p className='text-secondary dark:text-dark-secondary italic'>
+          <p
+            className={cn(
+              'text-secondary',
+              'dark:text-dark-secondary',
+              'italic'
+            )}
+          >
             {t('notes:emptyNoteMessage')}
           </p>
         )}

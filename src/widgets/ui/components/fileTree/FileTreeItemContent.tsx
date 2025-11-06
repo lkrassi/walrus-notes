@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
 import { useLocalization } from '../../../hooks';
@@ -159,11 +160,11 @@ export const FileTreeItemContent = ({
       isOpen={isExpanded && item.type === 'layout'}
       state={contentState}
       emptyContent={
-        <div className='mt-2 ml-6 text-sm text-gray-500'>
+        <div className={cn('mt-2', 'ml-6', 'text-sm', 'text-gray-500')}>
           {t('fileTree:folderEmpty')}
         </div>
       }
-      className='overflow-hidden'
+      className={cn('overflow-hidden')}
     >
       <div>
         {visibleItems.map(note => (
@@ -189,7 +190,7 @@ export const FileTreeItemContent = ({
           onLoadMore={dropdownLoadMore}
           loadingText={t('fileTree:loading')}
           loadMoreText={t('fileTree:uploadMore')}
-          className='ml-4'
+          className={cn('ml-4')}
         />
       </div>
     </DropdownContent>

@@ -131,8 +131,7 @@ export const useGraphConnections = ({
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
         try {
           onEdgeCreated?.(newEdge);
-        } catch (e) {
-        }
+        } catch (_e) {}
       } catch (_error) {
         setTempEdges(prev =>
           prev.filter(
@@ -187,10 +186,8 @@ export const useGraphConnections = ({
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
         try {
           onEdgeCreated?.(newEdge);
-        } catch (_error) {
-        }
+        } catch (_error) {}
       } catch (_error) {
-
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );

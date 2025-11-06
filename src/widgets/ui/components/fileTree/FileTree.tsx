@@ -1,5 +1,6 @@
 import { useGetMyLayoutsQuery } from 'app/store/api';
 import { memo, useCallback, useMemo } from 'react';
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { FileTreeEmpty } from './FileTreeEmpty';
@@ -76,12 +77,12 @@ export const FileTree = memo(
     );
 
     return (
-      <div className='flex h-full flex-col'>
-        <div className='flex-1 overflow-y-auto p-2'>
+      <div className={cn('flex', 'h-full', 'flex-col')}>
+        <div className={cn('flex-1', 'overflow-y-auto', 'p-2')}>
           {fileTree.length === 0 ? (
             <FileTreeEmpty />
           ) : (
-            <div className='space-y-1'>
+            <div className={cn('space-y-1')}>
               {fileTree.map(item => renderTreeItem(item))}
             </div>
           )}

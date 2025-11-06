@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import cn from 'shared/lib/cn';
 import { useNotifications } from 'widgets/hooks';
 import { Notification } from 'widgets/ui/components/notifications/Notification';
 
@@ -28,9 +29,19 @@ export const NotificationsContainer: React.FC = () => {
   }
 
   return (
-    <div className={`fixed right-4 bottom-4 z-51 flex flex-col gap-3`}>
+    <div
+      className={cn(
+        'fixed',
+        'right-4',
+        'bottom-4',
+        'z-51',
+        'flex',
+        'flex-col',
+        'gap-3'
+      )}
+    >
       {notifications.map(notification => (
-        <div key={notification.id} className='w-full'>
+        <div key={notification.id} className={cn('w-full')}>
           <Notification notification={notification} />
         </div>
       ))}

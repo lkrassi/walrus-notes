@@ -2,6 +2,7 @@ import type { FieldProps } from 'formik';
 import { Field } from 'formik';
 import React from 'react';
 import { Input } from 'shared';
+import cn from 'shared/lib/cn';
 import { FieldError } from './FieldError';
 
 interface ValidatedFieldProps {
@@ -46,14 +47,19 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
   children,
 }) => {
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
+    <div className={cn('flex', 'flex-col', 'gap-3', className)}>
       <label
         htmlFor={name}
-        className='text-secondary dark:text-dark-secondary text-sm font-medium'
+        className={cn(
+          'text-secondary',
+          'dark:text-dark-secondary',
+          'text-sm',
+          'font-medium'
+        )}
       >
         {label}
       </label>
-      <div className='relative'>
+      <div className={cn('relative')}>
         <Field name={name}>
           {({ field, form }: FieldProps) => {
             const hasError =
@@ -67,11 +73,17 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   id={name}
                   placeholder={placeholder}
                   variant='default'
-                  className={`w-full rounded-xl border-2 px-4 py-3 ${
+                  className={cn(
+                    'w-full',
+                    'rounded-xl',
+                    'border-2',
+                    'px-4',
+                    'py-3',
                     hasError
                       ? 'border-red-500'
-                      : 'border-border dark:border-dark-border'
-                  } ${inputClassName}`}
+                      : 'border-border dark:border-dark-border',
+                    inputClassName
+                  )}
                   inputMode={inputMode}
                   autoComplete={autoComplete}
                   enterKeyHint={enterKeyHint}

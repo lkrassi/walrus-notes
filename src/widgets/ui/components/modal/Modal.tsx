@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
 import { ModalContentContext } from './ModalContentContext';
@@ -112,7 +113,18 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300'
+      className={cn(
+        'fixed',
+        'inset-0',
+        'z-50',
+        'flex',
+        'items-center',
+        'justify-center',
+        'bg-black/50',
+        'backdrop-blur-sm',
+        'transition-opacity',
+        'duration-300'
+      )}
       style={{
         opacity: animationState === 'entering' ? 0 : 1,
       }}
@@ -120,9 +132,24 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
     >
       <div
         ref={modalRef}
-        className={`relative w-full ${sizeClass} dark:bg-dark-bg border-border dark:border-dark-border max-h-[90vh] overflow-hidden rounded-xl border bg-white shadow-2xl transition-all duration-300 ease-out ${
+        className={cn(
+          'relative',
+          'w-full',
+          sizeClass,
+          'dark:bg-dark-bg',
+          'border-border',
+          'dark:border-dark-border',
+          'max-h-[90vh]',
+          'overflow-hidden',
+          'rounded-xl',
+          'border',
+          'bg-white',
+          'shadow-2xl',
+          'transition-all',
+          'duration-300',
+          'ease-out',
           options.className || ''
-        }`}
+        )}
         style={{
           transform: getModalTransform(),
           opacity: getModalOpacity(),
@@ -130,20 +157,18 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         onClick={e => e.stopPropagation()}
       >
         {(options.title || options.showCloseButton) && (
-          <div className='border-border dark:border-dark-border flex items-center justify-between border-b p-6'>
+          <div className={cn('modal-header')}>
             {options.title && (
-              <h2 className='text-text dark:text-dark-text text-xl font-bold'>
-                {options.title}
-              </h2>
+              <h2 className={cn('modal-title')}>{options.title}</h2>
             )}
             {options.showCloseButton && (
               <button
                 onClick={handleClose}
-                className='text-secondary dark:text-dark-secondary hover:text-text dark:hover:text-dark-text focus:ring-primary dark:focus:ring-dark-primary rounded-lg p-2 transition-colors duration-200 hover:bg-gray-100 focus:ring-2 focus:outline-none dark:hover:bg-gray-800'
+                className={cn('icon-btn', 'text-text', 'dark:text-dark-text')}
                 aria-label={t('common:modal.close')}
               >
                 <svg
-                  className='h-5 w-5'
+                  className={cn('h-5', 'w-5')}
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
@@ -160,7 +185,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
           </div>
         )}
 
-        <div className='max-h-[calc(90vh-120px)] overflow-y-auto'>
+        <div className={cn('max-h-[calc(90vh-120px)]', 'overflow-y-auto')}>
           <ModalContentContext.Provider value={{ closeModal: handleClose }}>
             {content}
           </ModalContentContext.Provider>

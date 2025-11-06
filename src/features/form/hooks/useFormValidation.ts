@@ -1,16 +1,16 @@
-import { useFormik } from 'formik';
+import { useFormik, type FormikErrors, type FormikHelpers } from 'formik';
 import * as yup from 'yup';
 
-interface UseFormValidationOptions {
-  validationSchema?: yup.ObjectSchema<any>;
+interface UseFormValidationOptions<T> {
+  validationSchema?: yup.Schema<T> | yup.AnySchema;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
-  onSubmit: (values: any) => void | Promise<void>;
+  onSubmit: (values: T, helpers?: FormikHelpers<T>) => void | Promise<void>;
 }
 
-export const useFormValidation = <T extends Record<string, any>>(
+export const useFormValidation = <T extends Record<string, unknown>>(
   initialValues: T,
-  options: UseFormValidationOptions
+  options: UseFormValidationOptions<T>
 ) => {
   const {
     validationSchema,
@@ -19,7 +19,7 @@ export const useFormValidation = <T extends Record<string, any>>(
     onSubmit,
   } = options;
 
-  const formik = useFormik({
+  const formik = useFormik<T>({
     initialValues,
     validationSchema,
     validateOnChange,
@@ -30,10 +30,17 @@ export const useFormValidation = <T extends Record<string, any>>(
   const validateField = async (fieldName: keyof T) => {
     if (validationSchema) {
       try {
-        await validationSchema.validateAt(fieldName as string, formik.values);
+        await validationSchema.validateAt(
+          fieldName as string,
+          formik.values as T
+        );
         formik.setFieldError(fieldName as string, undefined);
-      } catch (error: any) {
-        formik.setFieldError(fieldName as string, error.message);
+      } catch (error: unknown) {
+        if (error instanceof yup.ValidationError) {
+          formik.setFieldError(fieldName as string, error.message);
+        } else {
+          formik.setFieldError(fieldName as string, String(error ?? ''));
+        }
       }
     }
   };
@@ -41,26 +48,32 @@ export const useFormValidation = <T extends Record<string, any>>(
   const validateAllFields = async () => {
     if (validationSchema) {
       try {
-        await validationSchema.validate(formik.values, { abortEarly: false });
-        formik.setErrors({});
-      } catch (error: any) {
-        const errors: Record<string, string> = {};
-        error.inner.forEach((err: any) => {
-          errors[err.path] = err.message;
+        await validationSchema.validate(formik.values as T, {
+          abortEarly: false,
         });
-        formik.setErrors(errors as any);
+        formik.setErrors({} as FormikErrors<T>);
+      } catch (error: unknown) {
+        if (error instanceof yup.ValidationError) {
+          const errors: Record<string, string> = {};
+          error.inner.forEach(err => {
+            if (err.path) {
+              errors[err.path] = err.message;
+            }
+          });
+          formik.setErrors(errors as unknown as FormikErrors<T>);
+        }
       }
     }
   };
 
   const isFieldValid = (fieldName: keyof T): boolean => {
-    const error = formik.errors[fieldName as string];
+    const error = formik.errors[fieldName as keyof T];
     const touched = formik.touched[fieldName as string];
     return !error && Boolean(touched);
   };
 
   const getFieldError = (fieldName: keyof T): string | undefined => {
-    const error = formik.errors[fieldName as string];
+    const error = formik.errors[fieldName as keyof T];
     return typeof error === 'string' ? error : undefined;
   };
 

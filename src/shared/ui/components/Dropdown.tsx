@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 import React, { useEffect, useRef, useState, type ReactNode } from 'react';
+import cn from 'shared/lib/cn';
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -71,8 +72,39 @@ export const Dropdown = ({
     right: 'left-full ml-1',
   };
 
-  const triggerClassName = `cursor-pointer ${disabled ? 'cursor-not-allowed' : ''}`;
-  const contentClassNameFull = `absolute z-50 rounded-lg border border-gray-200 shadow-lg backdrop-blur-sm ${positionClasses[position]} ${contentClassName || ''}`;
+  const triggerClassName = cn(
+    'cursor-pointer',
+    disabled ? 'cursor-not-allowed' : ''
+  );
+  const triggerHasGroup =
+    React.isValidElement(trigger) &&
+    String(
+      ((trigger as React.ReactElement).props as Record<string, unknown>)
+        ?.className || ''
+    )
+      .split(/\s+/)
+      .includes('group');
+  const outerClassName = cn(
+    'relative',
+    triggerHasGroup ||
+      String(className || '')
+        .split(/\s+/)
+        .includes('group')
+      ? 'group'
+      : '',
+    className || ''
+  );
+  const contentClassNameFull = cn(
+    'absolute',
+    'z-50',
+    'rounded-lg',
+    'border',
+    'border-gray-200',
+    'shadow-lg',
+    'backdrop-blur-sm',
+    positionClasses[position],
+    contentClassName || ''
+  );
 
   const renderTrigger = () => {
     if (showArrow && React.isValidElement(trigger)) {
@@ -87,7 +119,7 @@ export const Dropdown = ({
   };
 
   return (
-    <div ref={dropdownRef} className={`relative ${className || ''}`}>
+    <div ref={dropdownRef} className={outerClassName}>
       <div onClick={handleToggle} className={triggerClassName}>
         {renderTrigger()}
       </div>
@@ -112,15 +144,33 @@ export const DropdownTrigger = ({
 }: DropdownTriggerProps) => {
   return (
     <div
-      className={`flex w-full items-center justify-between ${className || ''}`}
+      className={cn(
+        'flex',
+        'w-full',
+        'items-center',
+        'justify-between',
+        className || ''
+      )}
     >
       {children}
       {showArrow && (
-        <div className='flex items-center transition-transform duration-200'>
+        <div
+          className={cn(
+            'flex',
+            'items-center',
+            'transition-transform',
+            'duration-200'
+          )}
+        >
           <ChevronDown
-            className={`h-3 w-3 text-gray-500 transition-transform duration-200 ${
+            className={cn(
+              'h-3',
+              'w-3',
+              'text-gray-500',
+              'transition-transform',
+              'duration-200',
               isOpen ? 'rotate-0' : '-rotate-90'
-            }`}
+            )}
           />
         </div>
       )}

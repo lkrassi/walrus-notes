@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import cn from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { PublicHeader } from 'widgets/ui';
@@ -31,61 +32,101 @@ export const Main = () => {
   return (
     <>
       <PublicHeader />
-      <div className='flex min-h-[80vh] items-center justify-center'>
+      <div
+        className={cn('flex', 'min-h-[80vh]', 'items-center', 'justify-center')}
+      >
         <motion.div
-          className='mx-40 max-lg:m-10'
+          className={cn('mx-40', 'max-lg:m-10')}
           variants={containerVariants}
           initial='hidden'
           animate='visible'
         >
-          <div className='flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:gap-16'>
-            <div className='flex-1 text-left'>
-              <motion.h1
-                variants={itemVariants}
-                className='text-text dark:text-dark-text mb-6 text-4xl font-bold max-lg:w-full max-lg:text-center sm:text-5xl lg:text-6xl'
-              >
+          <div
+            className={cn(
+              'flex',
+              'flex-col',
+              'items-start',
+              'gap-12',
+              'lg:flex-row',
+              'lg:items-center',
+              'lg:gap-16'
+            )}
+          >
+            <div className={cn('flex-1', 'text-left')}>
+              <motion.h1 variants={itemVariants} className={cn('hero-h1')}>
                 {t('main:title.line1')}
                 <br />
-                <span className='text-primary'>{t('main:title.line2')}</span>
+                <span className={cn('text-primary')}>
+                  {t('main:title.line2')}
+                </span>
               </motion.h1>
               <motion.p
                 variants={itemVariants}
-                className='text-secondary dark:text-dark-secondary mb-8 text-xl leading-relaxed max-lg:w-full max-lg:text-center'
+                className={cn(
+                  'muted-text',
+                  'mb-8',
+                  'text-xl',
+                  'leading-relaxed',
+                  'max-lg:w-full',
+                  'max-lg:text-center'
+                )}
               >
                 {t('main:subtitle')}
               </motion.p>
               <motion.div
                 variants={itemVariants}
-                className='flex flex-col gap-4 sm:flex-row sm:items-center'
+                className={cn(
+                  'flex',
+                  'flex-col',
+                  'gap-4',
+                  'sm:flex-row',
+                  'sm:items-center'
+                )}
               >
                 <Button
                   onClick={() => {
                     navigate('/auth');
                   }}
-                  className='px-8 py-4 text-lg font-semibold'
+                  className={cn('px-8', 'py-4', 'text-lg', 'font-semibold')}
                 >
                   {t('main:cta.primary')}
                 </Button>
               </motion.div>
             </div>
-            <div className='flex-1'>
+            <div className={cn('flex-1')}>
               <motion.div
                 variants={containerVariants}
-                className='grid grid-cols-1 gap-4 sm:grid-cols-2'
+                className={cn('grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2')}
               >
                 {localizedFeatures.map((feature, index) => (
                   <motion.div
                     key={featureKeys[index]}
                     variants={featureVariants}
-                    className='group border-border dark:border-dark-border dark:bg-dark-bg/50 dark:hover:border-dark-primary/30 hover:border-primary/30 rounded-xl border bg-white/50 p-4 transition-all duration-300 hover:shadow-lg'
+                    className={cn('feature-card')}
                   >
-                    <div className='bg-primary/10 text-primary dark:bg-dark-primary/10 dark:text-dark-primary mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110'>
-                      <feature.icon className='h-5 w-5' />
+                    <div
+                      className={cn(
+                        'bg-primary/10',
+                        'text-primary',
+                        'dark:bg-dark-primary/10',
+                        'dark:text-dark-primary',
+                        'mb-3',
+                        'inline-flex',
+                        'h-10',
+                        'w-10',
+                        'items-center',
+                        'justify-center',
+                        'rounded-lg',
+                        'transition-transform',
+                        'duration-300'
+                      )}
+                    >
+                      <feature.icon className={cn('h-5', 'w-5')} />
                     </div>
-                    <h3 className='text-text dark:text-dark-text mb-2 text-base font-semibold'>
-                      {feature.title}
-                    </h3>
-                    <p className='text-secondary dark:text-dark-secondary text-xs leading-relaxed'>
+                    <h3 className={cn('feature-title')}>{feature.title}</h3>
+                    <p
+                      className={cn('muted-text', 'text-xs', 'leading-relaxed')}
+                    >
                       {feature.description}
                     </p>
                   </motion.div>
@@ -93,8 +134,6 @@ export const Main = () => {
               </motion.div>
             </div>
           </div>
-
-
         </motion.div>
       </div>
     </>

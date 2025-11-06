@@ -1,6 +1,7 @@
 import { useCreateLayoutMutation } from 'app/store/api';
 import React, { useState } from 'react';
 import { Button, Input } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
@@ -41,12 +42,9 @@ export const CreateLayoutForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6 p-6'>
+    <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
       <div>
-        <label
-          htmlFor='layout-title'
-          className='text-text dark:text-dark-text mb-2 block text-sm font-medium'
-        >
+        <label htmlFor='layout-title' className={cn('tw-label')}>
           {t('layout:layoutTitle')}
         </label>
         <Input
@@ -55,18 +53,18 @@ export const CreateLayoutForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('layout:layoutTitlePlaceholder')}
-          className='w-full rounded-xl border-2 px-4 py-3'
+          className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
           autoFocus
         />
       </div>
 
-      <div className='flex justify-end gap-3'>
+      <div className={cn('flex', 'justify-end', 'gap-3')}>
         <Button
           type='button'
           onClick={closeModal}
           variant='escape'
-          className='px-6 py-3'
+          className={cn('btn')}
           disabled={isLoading}
         >
           {t('layout:cancel')}
@@ -74,7 +72,7 @@ export const CreateLayoutForm = ({
         <Button
           type='submit'
           variant='submit'
-          className='px-6 py-3'
+          className={cn('btn')}
           disabled={isLoading}
         >
           {isLoading ? t('layout:creating') : t('layout:createLayout')}

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 
 type PasswordVisibilityToggleProps = {
@@ -18,15 +19,15 @@ export const PasswordVisibilityToggle: React.FC<
     <Button
       type='button'
       onClick={onToggle}
-      className={`${className} bg-btn-bg hover:bg-btn-hover flex h-8 w-9 items-center justify-center`}
+      className={cn('w-full', 'px-2', 'py-1', `${className}`)}
       aria-label={
         isVisible ? t('common:password.hide') : t('common:password.show')
       }
     >
       {isVisible ? (
-        <Eye size={18} className='text-dark-text' />
+        <Eye size={18} className={cn('text-dark-text')} />
       ) : (
-        <EyeOff size={18} className='text-dark-text' />
+        <EyeOff size={18} className={cn('text-dark-text')} />
       )}
     </Button>
   );

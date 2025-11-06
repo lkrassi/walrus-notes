@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { SidebarProvider, store } from 'widgets';
 
+import cn from 'shared/lib/cn';
 import {
   LoaderContainer,
   ModalProvider,
@@ -11,7 +12,7 @@ import {
 
 export const App = () => {
   return (
-    <div className='bg-gradient min-h-screen'>
+    <div className={cn('bg-gradient', 'min-h-screen')}>
       <Provider store={store}>
         <SidebarProvider>
           <ModalProvider>

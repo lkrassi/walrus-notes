@@ -1,3 +1,4 @@
+import cn from 'shared/lib/cn';
 import type { InputProps } from 'shared/model/inputProps';
 
 export const Input: React.FC<InputProps> = ({
@@ -63,7 +64,7 @@ export const Input: React.FC<InputProps> = ({
         `;
     }
 
-    return `${baseClasses} ${ringClasses} ${colorClasses}`;
+    return cn(baseClasses, ringClasses, colorClasses);
   };
 
   const variantClasses = getVariantClasses();
@@ -75,7 +76,7 @@ export const Input: React.FC<InputProps> = ({
       onChange={onChange}
       placeholder={placeholder}
       disabled={disabled}
-      className={`${variantClasses} ${className}`}
+      className={cn(variantClasses, className)}
       autoFocus={autoFocus}
       maxLength={maxLength}
       minLength={minLength}

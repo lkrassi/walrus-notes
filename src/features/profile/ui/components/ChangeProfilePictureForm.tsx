@@ -1,5 +1,6 @@
 import { useChangeProfilePictureMutation } from 'app/store/api';
 import React, { useRef, useState } from 'react';
+import cn from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
@@ -68,49 +69,47 @@ export const ChangeProfilePictureForm: React.FC = () => {
   };
 
   return (
-    <div className='space-y-6 p-6'>
-      <div className='space-y-4'>
+    <div className={cn('space-y-6', 'p-6')}>
+      <div className={cn('space-y-4')}>
         <div>
-          <label className='text-text dark:text-dark-text mb-2 block text-sm font-medium'>
-            {t('profile:selectFile')}
-          </label>
+          <label className={cn('tw-label')}>{t('profile:selectFile')}</label>
           <input
             ref={fileInputRef}
             type='file'
             accept='image/*'
             onChange={handleFileSelect}
-            className='hidden'
+            className={cn('hidden')}
           />
           <Button
             onClick={() => fileInputRef.current?.click()}
-            className='w-full px-4 py-2'
+            className={cn('btn', 'w-full')}
             variant='default'
           >
             {selectedFile ? t('profile:selectedFile') : t('profile:selectFile')}
           </Button>
           {previewUrl && (
-            <div className='mt-4 flex justify-center'>
+            <div className={cn('mt-4', 'flex', 'justify-center')}>
               <img
                 src={previewUrl}
                 alt='Предпросмотр'
-                className='h-24 w-24 rounded-full object-cover'
+                className={cn('h-24', 'w-24', 'rounded-full', 'object-cover')}
               />
             </div>
           )}
         </div>
       </div>
 
-      <div className='flex gap-3'>
+      <div className={cn('flex', 'gap-3')}>
         <Button
           onClick={handleCancel}
           variant='escape'
-          className='flex-1 px-4 py-2'
+          className={cn('btn', 'flex-1')}
         >
           {t('profile:cancel')}
         </Button>
         <Button
           onClick={handleUpload}
-          className='flex-1 px-4 py-2'
+          className={cn('btn', 'flex-1')}
           variant={selectedFile ? 'submit' : 'disabled'}
         >
           {t('profile:upload')}

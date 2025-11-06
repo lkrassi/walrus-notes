@@ -10,6 +10,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import cn from 'shared/lib/cn';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useIsMobile, useLocalization } from '../../../hooks';
@@ -35,7 +36,7 @@ export const FileTreeItemHeader = ({
   onDeleteNote,
   onDeleteLayout,
 }: FileTreeItemHeaderProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [_isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   const paddingLeft = 20 + level * 16;
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,11 +102,21 @@ export const FileTreeItemHeader = ({
 
   return (
     <div
-      className={`group relative flex w-full cursor-pointer items-center gap-2 rounded-lg py-2 transition-all duration-150 ${
+      className={cn(
+        'relative',
+        'flex',
+        'w-full',
+        'cursor-pointer',
+        'items-center',
+        'gap-2',
+        'rounded-lg',
+        'py-2',
+        'transition-all',
+        'duration-150',
         isSelected
           ? 'bg-primary dark:bg-dark-primary text-white'
           : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'
-      }`}
+      )}
       style={{
         paddingLeft: `${paddingLeft}px`,
         paddingRight: '12px',
@@ -117,32 +128,36 @@ export const FileTreeItemHeader = ({
       onClick={handleItemClick}
     >
       {item.type === 'layout' && (
-        <div className='flex h-4 w-4 items-center justify-center'>
+        <div
+          className={cn('flex', 'h-4', 'w-4', 'items-center', 'justify-center')}
+        >
           {isExpanded ? (
-            <ChevronDown className='h-4 w-4' />
+            <ChevronDown className={cn('h-4', 'w-4')} />
           ) : (
-            <ChevronRight className='h-4 w-4' />
+            <ChevronRight className={cn('h-4', 'w-4')} />
           )}
         </div>
       )}
 
-      {item.type === 'note' && <div className='h-4 w-4' />}
+      {item.type === 'note' && <div className={cn('h-4', 'w-4')} />}
 
       <div>
         {item.type === 'layout' ? (
           isExpanded ? (
-            <FolderOpen className='h-4 w-4' />
+            <FolderOpen className={cn('h-4', 'w-4')} />
           ) : (
-            <Folder className='h-4 w-4' />
+            <Folder className={cn('h-4', 'w-4')} />
           )
         ) : (
-          <FileText className='h-4 w-4' />
+          <FileText className={cn('h-4', 'w-4')} />
         )}
       </div>
 
-      <span className='flex-1 truncate text-sm font-medium'>{item.title}</span>
+      <span className={cn('flex-1', 'truncate', 'text-sm', 'font-medium')}>
+        {item.title}
+      </span>
 
-      <div className='flex items-center gap-1'>
+      <div className={cn('flex', 'items-center', 'gap-1')}>
         {item.type === 'layout' && (
           <>
             <button
@@ -150,36 +165,42 @@ export const FileTreeItemHeader = ({
                 e.stopPropagation();
                 handleCreateNote(e);
               }}
-              className={`transition-opacity duration-150 ${
+              className={cn(
+                'transition-opacity',
+                'duration-150',
+                isMobile || _isHovered || isSelected
+                  ? 'opacity-100'
+                  : 'opacity-0',
                 isMobile
-                  ? 'text-gray-600 opacity-100'
-                  : `opacity-0 group-hover:opacity-100 ${
-                      isSelected
-                        ? 'text-white hover:text-gray-200'
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`
-              }`}
+                  ? 'text-gray-600'
+                  : isSelected
+                    ? 'text-white hover:text-gray-200'
+                    : 'text-gray-400 hover:text-gray-600'
+              )}
               title={t('fileTree:createNote')}
             >
-              <Plus className='h-4 w-4' />
+              <Plus className={cn('h-4', 'w-4')} />
             </button>
             <button
               onClick={e => {
                 e.stopPropagation();
                 handleDeleteLayout(e);
               }}
-              className={`transition-opacity duration-150 ${
+              className={cn(
+                'transition-opacity',
+                'duration-150',
+                isMobile || _isHovered || isSelected
+                  ? 'opacity-100'
+                  : 'opacity-0',
                 isMobile
-                  ? 'text-red-600 opacity-100'
-                  : `opacity-0 group-hover:opacity-100 ${
-                      isSelected
-                        ? 'text-white hover:text-red-200'
-                        : 'text-gray-400 hover:text-red-600'
-                    }`
-              }`}
+                  ? 'text-red-600'
+                  : isSelected
+                    ? 'text-white hover:text-red-200'
+                    : 'text-gray-400 hover:text-red-600'
+              )}
               title={t('layout:deleteLayout')}
             >
-              <Trash2 className='h-4 w-4' />
+              <Trash2 className={cn('h-4', 'w-4')} />
             </button>
           </>
         )}
@@ -190,18 +211,21 @@ export const FileTreeItemHeader = ({
               e.stopPropagation();
               handleDeleteNote(e);
             }}
-            className={`transition-opacity duration-150 ${
+            className={cn(
+              'transition-opacity',
+              'duration-150',
+              isMobile || _isHovered || isSelected
+                ? 'opacity-100'
+                : 'opacity-0',
               isMobile
-                ? 'text-red-600 opacity-100'
-                : `opacity-0 group-hover:opacity-100 ${
-                    isSelected
-                      ? 'text-white hover:text-red-200'
-                      : 'text-gray-400 hover:text-red-600'
-                  }`
-            }`}
+                ? 'text-red-600'
+                : isSelected
+                  ? 'text-white hover:text-red-200'
+                  : 'text-gray-400 hover:text-red-600'
+            )}
             title={t('notes:deleteNote')}
           >
-            <Trash2 className='h-4 w-4' />
+            <Trash2 className={cn('h-4', 'w-4')} />
           </button>
         )}
       </div>

@@ -1,4 +1,5 @@
 import React, { forwardRef, memo } from 'react';
+import cn from 'shared/lib/cn';
 
 export type ButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
 
@@ -94,7 +95,7 @@ export const Button = memo(
           ref={ref}
           type={type}
           disabled={disabled}
-          className={`${baseClasses} ${className}`}
+          className={cn(baseClasses, className)}
           onClick={handleClick}
           title={title}
           {...restProps}

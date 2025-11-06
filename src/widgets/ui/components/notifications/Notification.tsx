@@ -1,5 +1,6 @@
 import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
 import React from 'react';
+import cn from 'shared/lib/cn';
 
 interface NotificationProps {
   notification: NotificationType;
@@ -24,12 +25,16 @@ export const Notification: React.FC<NotificationProps> = ({ notification }) => {
   `;
 
   return (
-    <div className={`${baseStyles} ${NOTIFICATION_STYLES[type]}`}>
-      <div className=''>
+    <div className={cn(baseStyles, NOTIFICATION_STYLES[type])}>
+      <div className={cn('')}>
         {notification.title && (
-          <h3 className='mb-1 text-sm font-semibold'>{notification.title}</h3>
+          <h3 className={cn('mb-1', 'text-sm', 'font-semibold')}>
+            {notification.title}
+          </h3>
         )}
-        <p className='text-sm leading-relaxed'>{notification.message}</p>
+        <p className={cn('text-sm', 'leading-relaxed')}>
+          {notification.message}
+        </p>
       </div>
     </div>
   );

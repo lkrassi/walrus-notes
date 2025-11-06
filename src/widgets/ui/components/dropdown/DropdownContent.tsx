@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
+import cn from '../../../../shared/lib/cn';
 
 export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
 
@@ -30,14 +31,20 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
     switch (state) {
       case 'empty':
         return (
-          emptyContent || <div className='text-sm text-gray-500'>Пусто</div>
+          emptyContent || (
+            <div className={cn('text-sm', 'text-gray-500')}>Пусто</div>
+          )
         );
       case 'error':
         return (
-          errorContent || <div className='text-sm text-red-500'>Ошибка</div>
+          errorContent || (
+            <div className={cn('text-sm', 'text-red-500')}>Ошибка</div>
+          )
         );
       case 'content':
-        return <div className={`overflow-y-auto ${maxHeight}`}>{children}</div>;
+        return (
+          <div className={cn('overflow-y-auto', maxHeight)}>{children}</div>
+        );
       default:
         return null;
     }
@@ -51,7 +58,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
         animate={{ opacity: 1, height: 'auto' }}
         exit={{ opacity: 0, height: 0 }}
         transition={{ duration: animationDuration, ease: 'easeOut' }}
-        className={`${className} w-full`}
+        className={cn(className, 'w-full')}
       >
         {renderContent()}
       </motion.div>

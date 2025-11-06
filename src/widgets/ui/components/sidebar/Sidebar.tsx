@@ -3,6 +3,7 @@ import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import { useParams } from 'react-router-dom';
+import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
@@ -77,28 +78,89 @@ const SidebarComponent = (
       {!isMobileOpen && (
         <button
           onClick={() => setIsMobileOpen(true)}
-          className='mobile-menu-button text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text fixed top-4 left-4 z-50 rounded-lg p-2 transition-colors hover:bg-gray-100 md:hidden dark:hover:bg-gray-800'
+          className={cn(
+            'mobile-menu-button',
+            'text-secondary',
+            'hover:text-text',
+            'dark:text-dark-secondary',
+            'dark:hover:text-dark-text',
+            'fixed',
+            'top-4',
+            'left-4',
+            'z-50',
+            'rounded-lg',
+            'p-2',
+            'transition-colors',
+            'hover:bg-gray-100',
+            'md:hidden',
+            'dark:hover:bg-gray-800'
+          )}
           title={t('common:menu.open')}
           aria-label={t('common:menu.open')}
         >
-          <Menu className='h-6 w-6' />
+          <Menu className={cn('h-6 w-6')} />
         </button>
       )}
 
       {isMobileOpen && (
         <div
-          className='fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden'
+          className={cn(
+            'fixed',
+            'inset-0',
+            'z-40',
+            'bg-black/20',
+            'backdrop-blur-sm',
+            'md:hidden'
+          )}
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       <aside
-        className={`text-text border-border fixed top-0 bottom-0 left-0 z-50 flex w-80 flex-col border-r bg-white transition-transform duration-300 ease-in-out ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} dark:bg-dark-bg dark:border-dark-border dark:text-dark-text md:relative md:flex md:translate-x-0`}
+        className={cn(
+          'text-text',
+          'border-border',
+          'fixed',
+          'top-0',
+          'bottom-0',
+          'left-0',
+          'z-50',
+          'flex',
+          'w-80',
+          'flex-col',
+          'border-r',
+          'bg-white',
+          'transition-transform',
+          'duration-300',
+          'ease-in-out',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full',
+          'dark:bg-dark-bg',
+          'dark:border-dark-border',
+          'dark:text-dark-text',
+          'md:relative',
+          'md:flex',
+          'md:translate-x-0'
+        )}
       >
-        <div className='border-border dark:border-dark-border border-b p-4'>
+        <div
+          className={cn('border-border dark:border-dark-border border-b p-4')}
+        >
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className='text-secondary hover:text-text dark:text-dark-secondary dark:hover:text-dark-text mb-2 self-start rounded-lg p-2 transition-colors hover:bg-gray-100 md:hidden dark:hover:bg-gray-800'
+            className={cn(
+              'text-secondary',
+              'hover:text-text',
+              'dark:text-dark-secondary',
+              'dark:hover:text-dark-text',
+              'mb-2',
+              'self-start',
+              'rounded-lg',
+              'p-2',
+              'transition-colors',
+              'hover:bg-gray-100',
+              'md:hidden',
+              'dark:hover:bg-gray-800'
+            )}
             title={
               isMobileOpen ? t('common:menu.close') : t('common:menu.open')
             }
@@ -107,28 +169,35 @@ const SidebarComponent = (
             }
           >
             {isMobileOpen ? (
-              <X className='h-5 w-5' />
+              <X className={cn('h-5 w-5')} />
             ) : (
-              <Menu className='h-5 w-5' />
+              <Menu className={cn('h-5 w-5')} />
             )}
           </button>
 
-          <div className='flex items-center justify-between'>
-            <h2 className='text-lg font-semibold'>
+          <div className={cn('flex items-center justify-between')}>
+            <h2 className={cn('text-lg font-semibold')}>
               {t('fileTree:fileStructure')}
             </h2>
             <button
               onClick={handleCreateLayout}
               title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
-              className='text-text hover:text-primary dark:text-dark-text dark:hover:text-primary rounded p-1'
+              className={cn(
+                'text-text',
+                'hover:text-primary',
+                'dark:text-dark-text',
+                'dark:hover:text-primary',
+                'rounded',
+                'p-1'
+              )}
             >
-              <Plus className='h-5 w-5' />
+              <Plus className={cn('h-5 w-5')} />
             </button>
           </div>
         </div>
 
-        <div className='flex-1 overflow-y-auto'>
+        <div className={cn('flex-1 overflow-y-auto')}>
           <FileTree
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}

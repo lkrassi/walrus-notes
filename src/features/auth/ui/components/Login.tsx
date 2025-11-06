@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 
 import { useLoginMutation } from 'app/store/api';
@@ -56,15 +57,10 @@ export const Login: React.FC<LoginProps> = () => {
       validateOnBlur={true}
     >
       {({ isSubmitting: formikSubmitting }) => (
-        <Form
-          ref={formRef}
-          className='border-border dark:border-dark-border bg-gradient rounded-2xl border p-8 shadow-sm backdrop-blur-sm'
-        >
-          <h2 className='text-text dark:text-dark-text mb-8 text-center text-3xl font-light tracking-tight'>
-            {t('auth:login.title')}
-          </h2>
+        <Form ref={formRef} className={cn('form-card')}>
+          <h2 className={cn('hero-title')}>{t('auth:login.title')}</h2>
 
-          <div className='space-y-6'>
+          <div className={cn('space-y-6')}>
             <ValidatedField
               name='email'
               label={t('auth:login.email')}
@@ -84,9 +80,17 @@ export const Login: React.FC<LoginProps> = () => {
               autoComplete='current-password'
               enterKeyHint='done'
               required
-              inputClassName='pr-12'
+              inputClassName={cn('pr-12')}
             >
-              <div className='absolute top-1/2 right-3 -translate-y-2/3 transform'>
+              <div
+                className={cn(
+                  'absolute',
+                  'top-1/2',
+                  'right-3',
+                  '-translate-y-2/3',
+                  'transform'
+                )}
+              >
                 <PasswordVisibilityToggle
                   isVisible={passwordVisibility.isVisible}
                   onToggle={passwordVisibility.toggleVisibility}
@@ -97,11 +101,22 @@ export const Login: React.FC<LoginProps> = () => {
             <Button
               type='submit'
               disabled={formikSubmitting || isSubmitting}
-              className='w-full px-8 py-3'
+              className={cn('w-full', 'px-8', 'py-3')}
             >
               {formikSubmitting || isSubmitting ? (
-                <div className='flex items-center justify-center'>
-                  <div className='mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                <div className={cn('flex', 'items-center', 'justify-center')}>
+                  <div
+                    className={cn(
+                      'mr-2',
+                      'h-5',
+                      'w-5',
+                      'animate-spin',
+                      'rounded-full',
+                      'border-2',
+                      'border-white',
+                      'border-t-transparent'
+                    )}
+                  ></div>
                   {t('auth:login.submitting')}
                 </div>
               ) : (

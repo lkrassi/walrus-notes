@@ -2,6 +2,7 @@ import { useDeleteNoteMutation } from 'app/store/api';
 import { closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import React from 'react';
 import { Button } from 'shared';
+import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
@@ -44,11 +45,15 @@ export const DeleteNoteForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6 p-6'>
-      <div className='text-center'>
-        <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
+    <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
+      <div className={cn('text-center')}>
+        <div
+          className={cn(
+            'mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'
+          )}
+        >
           <svg
-            className='h-6 w-6 text-red-600 dark:text-red-400'
+            className={cn('h-6 w-6 text-red-600 dark:text-red-400')}
             fill='none'
             viewBox='0 0 24 24'
             strokeWidth='1.5'
@@ -61,25 +66,22 @@ export const DeleteNoteForm = ({
             />
           </svg>
         </div>
-        <h3 className='text-text dark:text-dark-text mt-4 text-lg font-semibold'>
-          {t('notes:deleteNote')}
-        </h3>
+        <h3 className={cn('heading-lg')}>{t('notes:deleteNote')}</h3>
 
-        <p className='text-text dark:text-dark-text mt-2 text-sm'>
+        <p className={cn('muted-text mt-2 text-sm')}>
           Вы уверены, что хотите удалить заметку «{noteTitle}»?
         </p>
-
-        <p className='text-text dark:text-dark-text mt-1 text-xs'>
+        <p className={cn('muted-text mt-1 text-xs')}>
           {t('notes:deleteNoteWarning')}
         </p>
       </div>
 
-      <div className='flex justify-center gap-3'>
+      <div className={cn('flex', 'justify-center', 'gap-3')}>
         <Button
           type='button'
           onClick={closeModal}
           variant='default'
-          className='px-6 py-3'
+          className={cn('px-6 py-3')}
           disabled={isLoading}
         >
           {t('notes:cancel')}
@@ -87,7 +89,7 @@ export const DeleteNoteForm = ({
         <Button
           type='submit'
           variant='escape'
-          className='px-6 py-3'
+          className={cn('px-6 py-3')}
           disabled={isLoading}
         >
           {isLoading ? t('notes:deleting') : t('notes:delete')}
