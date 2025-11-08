@@ -98,8 +98,6 @@ export const Dropdown = ({
     'absolute',
     'z-50',
     'rounded-lg',
-    'border',
-    'border-gray-200',
     'shadow-lg',
     'backdrop-blur-sm',
     positionClasses[position],
@@ -124,7 +122,9 @@ export const Dropdown = ({
         {renderTrigger()}
       </div>
 
-      {isOpen && <div className={contentClassNameFull}>{children}</div>}
+      <div className={contentClassNameFull} aria-hidden={!isOpen}>
+        {children}
+      </div>
     </div>
   );
 };

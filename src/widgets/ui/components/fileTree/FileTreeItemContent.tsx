@@ -144,10 +144,8 @@ export const FileTreeItemContent = ({
   let contentState: 'loading' | 'content' | 'empty' = 'empty';
 
   if (!isExpanded || item.type !== 'layout') {
-    return null;
-  }
-
-  if (!isInitialLoadDone && isQueryLoading) {
+    contentState = 'empty';
+  } else if (!isInitialLoadDone && isQueryLoading) {
     contentState = 'loading';
   } else if (isInitialLoadDone && allNotes.length > 0) {
     contentState = 'content';

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import cn from 'shared/lib/cn';
@@ -11,6 +12,7 @@ interface NoteNodeProps {
     onNoteClick?: (noteId: string) => void;
     selected?: boolean;
     isRelatedToSelected?: boolean;
+    appearIndex?: number;
   };
   selected: boolean;
 }
@@ -40,7 +42,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
   };
 
   return (
-    <button
+    <motion.button
       onDoubleClick={handleDoubleClick}
       onPointerDown={e => {
         pointerStartRef.current = { x: e.clientX, y: e.clientY };
@@ -60,8 +62,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
           try {
             const rect = btnRef.current?.getBoundingClientRect() ?? null;
             setAnchorRect(rect);
-          } catch (_e) {
-          }
+          } catch (_e) {}
           if (pointerMoveHandlerRef.current)
             window.removeEventListener(
               'pointermove',
@@ -110,6 +111,13 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
       }}
       title='Двойной клик для открытия заметки'
+      initial={{ y: 12, opacity: 0, scale: 0.97 }}
+      animate={{ y: 0, opacity: 1, scale: 1 }}
+      transition={{
+        delay: ((data?.appearIndex as number) || 0) * 0.06,
+        duration: 0.36,
+        ease: 'easeOut',
+      }}
     >
       <Handle
         type='source'
@@ -180,6 +188,6 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         size='lg'
         anchorRect={anchorRect}
       />
-    </button>
+    </motion.button>
   );
 };

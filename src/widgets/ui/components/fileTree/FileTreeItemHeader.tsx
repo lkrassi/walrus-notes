@@ -2,7 +2,6 @@ import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm
 import { CreateNoteForm } from 'features/notes';
 import {
   ChevronDown,
-  ChevronRight,
   FileText,
   Folder,
   FolderOpen,
@@ -129,13 +128,27 @@ export const FileTreeItemHeader = ({
     >
       {item.type === 'layout' && (
         <div
-          className={cn('flex', 'h-4', 'w-4', 'items-center', 'justify-center')}
-        >
-          {isExpanded ? (
-            <ChevronDown className={cn('h-4', 'w-4')} />
-          ) : (
-            <ChevronRight className={cn('h-4', 'w-4')} />
+          className={cn(
+            'flex',
+            'h-4',
+            'w-4',
+            'items-center',
+            'justify-center',
+            'transition-transform',
+            'duration-200'
           )}
+        >
+          <ChevronDown
+            className={cn(
+              'h-4',
+              'w-4',
+              'transform',
+              'transition-transform',
+              'duration-200',
+              'text-white',
+              isExpanded ? 'rotate-0' : '-rotate-90 text-text'
+            )}
+          />
         </div>
       )}
 

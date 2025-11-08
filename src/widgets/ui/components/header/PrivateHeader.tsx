@@ -1,7 +1,8 @@
 import { SettingsButton } from 'features/settings';
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import cn from 'shared/lib/cn';
+import { BackButton } from 'shared/ui/components/BackButton';
 import { useLocalization } from 'widgets/hooks';
 import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
@@ -10,6 +11,8 @@ import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
 const PrivateHeaderComponent = () => {
   const { t } = useLocalization();
+  const location = useLocation();
+  const isSettingsPage = location.pathname === '/settings';
 
   return (
     <header
@@ -81,31 +84,33 @@ const PrivateHeaderComponent = () => {
           </div>
         </Link>
 
-        <div className={cn('flex', 'gap-x-2', 'max-md:flex-col')}>
-          <div className={cn('flex', 'gap-x-2', 'max-md:justify-center')}>
+        <div
+          className={cn(
+            'flex',
+            'items-center',
+            'gap-2',
+            'max-md:flex-col',
+            'max-md:gap-4'
+          )}
+        >
+          <div className={cn('flex', 'gap-2', 'items-center')}>
             <LogoutButton />
             <ThemeSwitcher />
             <LanguageSwitcher />
           </div>
 
-          <div
-            className={cn(
-              'flex',
-              'w-full',
-              'flex-col',
-              'items-stretch',
-              'gap-2',
-              'max-md:mt-5',
-              'max-md:items-center',
-              'md:w-auto',
-              'md:flex-row',
-              'md:gap-x-2'
+          <div className={cn('flex', 'items-center')}>
+            {isSettingsPage ? (
+              <BackButton
+                title={t('common:back')}
+                ariaLabel={t('common:back') as string}
+              />
+            ) : (
+              <SettingsButton />
             )}
-          >
-            <SettingsButton />
           </div>
         </div>
-      </div>{' '}
+      </div>
     </header>
   );
 };

@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=PT+Mono&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700');
-
+@import '../../assets/fonts/fonts.css';
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -10,11 +9,6 @@
 
 .dark ::selection {
   @apply bg-primary/30 text-dark-text;
-}
-
-body {
-  @apply box-border;
-  font-family: 'PT Mono', monospace;
 }
 
 a,

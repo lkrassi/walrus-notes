@@ -25,8 +25,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   animationDuration = 0.2,
   maxHeight = 'max-h-full',
 }) => {
-  if (!isOpen) return null;
-
   const renderContent = () => {
     switch (state) {
       case 'empty':
@@ -52,16 +50,18 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
 
   return (
     <AnimatePresence mode='wait'>
-      <motion.div
-        key={state}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: 1, height: 'auto' }}
-        exit={{ opacity: 0, height: 0 }}
-        transition={{ duration: animationDuration, ease: 'easeOut' }}
-        className={cn(className, 'w-full')}
-      >
-        {renderContent()}
-      </motion.div>
+      {isOpen && (
+        <motion.div
+          key={state}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: animationDuration, ease: 'easeOut' }}
+          className={cn(className, 'w-full')}
+        >
+          {renderContent()}
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };

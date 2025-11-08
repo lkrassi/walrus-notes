@@ -40,6 +40,12 @@ interface NotesGraphViewProps {
   isDraggingEdge: boolean;
   onDrop: (event: React.DragEvent) => void;
   onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;
+  onBoxSelect?: (rect: {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  }) => void;
 }
 
 export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
@@ -60,10 +66,15 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   isDraggingEdge,
   onDrop,
   onAddNoteToGraph,
-}) => {
+  onBoxSelect,
+}: NotesGraphViewProps) => {
   return (
     <GraphContainer>
-      <GraphDropZone onDrop={onDrop} isDraggingEdge={isDraggingEdge}>
+      <GraphDropZone
+        onDrop={onDrop}
+        isDraggingEdge={isDraggingEdge}
+        onBoxSelect={onBoxSelect}
+      >
         <ReactFlow
           nodes={nodesWithSelection}
           edges={edgesWithSelection}

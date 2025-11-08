@@ -54,9 +54,12 @@ export const UnposedNotesList = ({
           <DropdownTrigger
             isOpen={isExpanded}
             className={cn(
-              'border-border',
               'rounded-lg',
               'border',
+              'border-border',
+              'dark:border-dark-border',
+              'bg-white',
+              'dark:bg-dark-bg',
               'p-3',
               'transition-all'
             )}

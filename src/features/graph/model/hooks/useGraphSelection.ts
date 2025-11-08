@@ -51,6 +51,34 @@ export const useGraphSelection = ({
   const edgesWithSelection: StyledEdge[] = useMemo(() => {
     const combinedEdges = [...edges, ...tempEdges];
 
+    const multiSelectedIds = new Set(
+      nodes.filter(n => (n as any).selected).map(n => n.id)
+    );
+
+    if (multiSelectedIds.size > 0) {
+      return combinedEdges.map(edge => {
+        const isRelated =
+          multiSelectedIds.has(edge.source) ||
+          multiSelectedIds.has(edge.target);
+        const isSelected =
+          multiSelectedIds.has(edge.source) &&
+          multiSelectedIds.has(edge.target);
+        return {
+          ...edge,
+          style: {
+            strokeWidth: isRelated ? 3 : 2,
+            strokeDasharray: isSelected ? '0' : '5,5',
+            opacity: isRelated ? 1 : 0.3,
+          },
+          data: {
+            ...edge.data,
+            isRelatedToSelected: isRelated,
+            isSelected: isSelected,
+          },
+        } as StyledEdge;
+      });
+    }
+
     if (!selectedNodeId) {
       return combinedEdges.map(edge => ({
         ...edge,
@@ -100,9 +128,41 @@ export const useGraphSelection = ({
         },
       } as StyledEdge;
     });
-  }, [edges, tempEdges, selectedNodeId]);
+  }, [edges, tempEdges, selectedNodeId, nodes]);
 
   const nodesWithSelection: StyledNode[] = useMemo(() => {
+    const multiSelectedIds = new Set(
+      nodes.filter(n => (n as any).selected).map(n => n.id)
+    );
+
+    if (multiSelectedIds.size > 0) {
+      const relatedNodeIds = new Set<string>(Array.from(multiSelectedIds));
+      allEdges.forEach(edge => {
+        if (multiSelectedIds.has(edge.source)) relatedNodeIds.add(edge.target);
+        if (multiSelectedIds.has(edge.target)) relatedNodeIds.add(edge.source);
+      });
+
+      return nodes.map(node => {
+        const isRelated = relatedNodeIds.has(node.id);
+        const isSelected = multiSelectedIds.has(node.id);
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            selected: isSelected,
+            isRelatedToSelected: isRelated,
+            onNoteClick: onNoteOpen,
+          },
+          style: {
+            ...node.style,
+            opacity: isRelated ? 1 : 0.5,
+            transition: 'opacity 0.3s ease-in-out',
+          },
+        } as StyledNode;
+      });
+    }
+
     if (!selectedNodeId) {
       return nodes.map(node => ({
         ...node,

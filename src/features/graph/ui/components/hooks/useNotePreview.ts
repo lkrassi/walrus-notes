@@ -11,7 +11,7 @@ export const useNotePreview = (size: 'md' | 'lg' = 'lg') => {
   const wrapperClass = cn(
     base,
     sizes[size],
-    'bg-white dark:bg-gray-800',
+    'dark:bg-dark-bg bg-white',
     'border-border dark:border-dark-border'
   );
   const titleClass = cn(
@@ -22,7 +22,7 @@ export const useNotePreview = (size: 'md' | 'lg' = 'lg') => {
     'line-clamp-2'
   );
   const textClass = cn(
-    'text-muted',
+    'muted-text',
     'leading-relaxed',
     'text-sm',
     'text-text dark:text-dark-text',

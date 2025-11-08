@@ -81,7 +81,7 @@ export const NotePreview: React.FC<NotePreviewProps> = ({
       {hasContent ? (
         <p className={textClass}>{text}</p>
       ) : (
-        <p className={cn('text-muted', 'italic', 'text-sm')}>нет содержимого</p>
+        <p className={cn('muted-text', 'italic', 'text-sm')}>нет содержимого</p>
       )}
     </div>
   );

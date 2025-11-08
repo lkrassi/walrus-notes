@@ -2,13 +2,13 @@ import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
-import { useParams } from 'react-router-dom';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
+import { parseTabId } from 'widgets/model/utils/tabUtils';
 import { FileTree } from '../fileTree';
 
 type SidebarProps = {
@@ -23,10 +23,6 @@ const SidebarComponent = (
   }>
 ) => {
   const { t } = useLocalization();
-  const { layoutId, noteId } = useParams<{
-    layoutId?: string;
-    noteId?: string;
-  }>();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const dispatch = useAppDispatch();
   const {
@@ -41,7 +37,11 @@ const SidebarComponent = (
 
   useImperativeHandle(ref, () => ({ updateNoteInTree }));
 
-  const currentSelectedItemId = selectedItemId || noteId || layoutId;
+  const currentSelectedItemId = selectedItemId
+    ? selectedItemId.includes('::')
+      ? parseTabId(selectedItemId).id
+      : selectedItemId
+    : undefined;
 
   const handleCreateLayout = openModalFromTrigger(<CreateLayoutForm />, {
     title: t('fileTree:createNewLayout'),

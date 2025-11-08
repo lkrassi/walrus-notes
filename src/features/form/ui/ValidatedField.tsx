@@ -76,7 +76,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   className={cn(
                     'w-full',
                     'rounded-xl',
-                    'border-2',
+                    'border',
                     'px-4',
                     'py-3',
                     hasError
