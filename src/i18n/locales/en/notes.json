@@ -3,7 +3,7 @@
   "noteUpdatedSuccess": "Note updated successfully",
   "noteUpdateError": "An error occurred while updating the note",
   "noteContentPlaceholder": "Enter note content...",
-  "emptyNoteMessage": "Note is empty. Click \"Edit\" to add content.",
+  "emptyNoteMessage": "Note is empty",
   "save": "Save",
   "cancel": "Cancel",
   "edit": "Edit",
@@ -38,4 +38,4 @@
   "noteDeletionError": "Error deleting note",
   "deleting": "Deleting...",
   "delete": "Delete"
-} 
+}

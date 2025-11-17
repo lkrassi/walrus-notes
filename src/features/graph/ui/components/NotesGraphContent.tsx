@@ -58,7 +58,7 @@ const NotesGraphContentComponent = ({
       setNodes(
         initialNodes.map((n, i) => ({
           ...n,
-          data: { ...(n.data || {}), appearIndex: i },
+          data: { ...(n.data || {}) },
         }))
       );
       setEdgesState(initialEdges);
@@ -67,7 +67,7 @@ const NotesGraphContentComponent = ({
       setNodes(
         initialNodes.map((n, i) => ({
           ...n,
-          data: { ...(n.data || {}), appearIndex: i },
+          data: { ...(n.data || {}) },
         }))
       );
       setEdgesState(initialEdges);

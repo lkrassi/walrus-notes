@@ -210,7 +210,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   };
 
   return (
-    <main className={cn('flex', 'min-h-0', 'min-w-0', 'flex-1', 'flex-col')}>
+    <main className={cn('flex-col', 'flex', 'min-h-0', 'min-w-0', 'flex-1')}>
       {openTabs.length > 0 && (
         <Tabs
           tabs={openTabs}

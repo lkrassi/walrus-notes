@@ -9,7 +9,6 @@ export type TextareaProps = {
   rows?: number;
   className?: string;
   variant?: 'default' | 'error';
-  ring?: boolean;
 } & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -22,7 +21,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       rows = 4,
       className = '',
       variant = 'default',
-      ring = true,
       ...rest
     },
     ref
@@ -31,21 +29,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       px-3
       py-2
       text-base
-      border
       focus:outline-none
       disabled:opacity-50
       disabled:cursor-not-allowed
       resize-none
+      w-full
     `;
-
-    const ringClasses = ring ? 'focus:ring-2' : 'focus:ring-0';
 
     let colorClasses = '';
     switch (variant) {
       case 'default':
         colorClasses = `
           text-text dark:text-dark-text
-          border-border dark:border-dark-border
           placeholder-secondary dark:placeholder-dark-secondary
           }
         `;
@@ -53,7 +48,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       case 'error':
         colorClasses = `
           text-text dark:text-dark-text
-          border-red-500 dark:border-red-400
           placeholder-red-400 dark:placeholder-red-300
           }
         `;
@@ -61,13 +55,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       default:
         colorClasses = `
           text-text dark:text-dark-text
-          border-border dark:border-dark-border
           placeholder-secondary dark:placeholder-dark-secondary
           }
         `;
     }
 
-    const classes = cn(baseClasses, ringClasses, colorClasses, className);
+    const classes = cn(baseClasses, colorClasses, className);
 
     return (
       <textarea

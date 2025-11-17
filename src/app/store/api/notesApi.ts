@@ -171,6 +171,25 @@ interface DeleteNoteLinkResponse {
   };
 }
 
+interface SearchNotesRequest {
+  search: string;
+}
+
+interface SearchNotesResponse {
+  data: Note[];
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+  pagination: {
+    page: number;
+    pages: number;
+    perPage: number;
+  };
+}
+
 const createTempNote = (title: string = 'Новая заметка'): Note => ({
   id: `temp-${Date.now()}`,
   title,
@@ -498,6 +517,22 @@ export const notesApi = apiSlice.injectEndpoints({
         }
       },
     }),
+
+    searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({
+      query: ({ search }) =>
+        `/notes/search?search=${encodeURIComponent(search)}`,
+      providesTags: (result, _error, arg) => [
+        { type: 'Notes', id: `search-${arg.search}` },
+        ...(result?.data?.map(note => ({
+          type: 'Notes' as const,
+          id: note.id,
+        })) || []),
+        'Notes',
+      ],
+      extraOptions: {
+        loadingKey: null,
+      },
+    }),
   }),
 });
 
@@ -512,4 +547,6 @@ export const {
   useUpdateNotePositionMutation,
   useCreateNoteLinkMutation,
   useDeleteNoteLinkMutation,
+  useSearchNotesQuery,
+  useLazySearchNotesQuery,
 } = notesApi;

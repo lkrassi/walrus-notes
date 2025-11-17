@@ -9,6 +9,7 @@
   "noSearchResults": "No results found",
   "tryDifferentQuery": "Try a different search query",
   "folderEmpty": "Folder is empty",
-  "loading": "Loading"
-  ,"uploadMore" : "Upload more..."
-}
+  "loading": "Loading",
+  "uploadMore": "Upload more...",
+  "clearSearch": "Clear search field",
+  "searchPlaceholder": "Search..."}

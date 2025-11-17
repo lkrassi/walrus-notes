@@ -4,7 +4,13 @@ import { Menu, Plus, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
-import { useFileTree, useLocalization, useSidebar } from 'widgets/hooks';
+import {
+  useFileTree,
+  useLocalization,
+  useSidebar,
+  useIsMobile,
+} from 'widgets/hooks';
+import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
@@ -24,6 +30,8 @@ const SidebarComponent = (
 ) => {
   const { t } = useLocalization();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
+  const isMobile = useIsMobile();
+  const { width, onPointerDown } = useResizableSidebar();
   const dispatch = useAppDispatch();
   const {
     fileTree,
@@ -58,7 +66,11 @@ const SidebarComponent = (
 
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
-    setIsMobileOpen(false);
+    // Don't close sidebar on mobile when user clicks a folder (layout)
+    // so they can expand it and select a note inside.
+    if (item.type !== 'layout') {
+      setIsMobileOpen(false);
+    }
   };
 
   const handleOpenGraph = (layoutId: string) => {
@@ -141,6 +153,7 @@ const SidebarComponent = (
           'md:flex',
           'md:translate-x-0'
         )}
+        style={width ? { width } : undefined}
       >
         <div
           className={cn('border-border dark:border-dark-border border-b p-4')}
@@ -210,6 +223,27 @@ const SidebarComponent = (
             onDeleteLayout={handleDeleteLayout}
           />
         </div>
+        {/* resizer handle for desktop */}
+        {!isMobile && (
+          <div
+            role='separator'
+            aria-orientation='vertical'
+            onPointerDown={onPointerDown}
+            className={cn(
+              'hidden',
+              'md:block',
+              'absolute',
+              'top-0',
+              'right-0',
+              'h-full',
+              'w-2',
+              'cursor-col-resize',
+              'z-50',
+              'hover:bg-gray-100',
+              'dark:hover:bg-gray-800'
+            )}
+          />
+        )}
       </aside>
     </>
   );

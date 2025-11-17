@@ -98,6 +98,7 @@ h6 {
 }
 
 @import './components.css';
+@import './scrollbar.css';
 
 .dark .bg-gradient {
   background: linear-gradient(

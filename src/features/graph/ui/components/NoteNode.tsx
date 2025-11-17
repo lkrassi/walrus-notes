@@ -12,7 +12,6 @@ interface NoteNodeProps {
     onNoteClick?: (noteId: string) => void;
     selected?: boolean;
     isRelatedToSelected?: boolean;
-    appearIndex?: number;
   };
   selected: boolean;
 }
@@ -111,13 +110,6 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
       }}
       title='Двойной клик для открытия заметки'
-      initial={{ y: 12, opacity: 0, scale: 0.97 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
-      transition={{
-        delay: ((data?.appearIndex as number) || 0) * 0.06,
-        duration: 0.36,
-        ease: 'easeOut',
-      }}
     >
       <Handle
         type='source'

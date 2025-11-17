@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import cn from 'shared/lib/cn';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
+import type { Note } from 'shared/model/types/layouts';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useIsMobile, useLocalization } from '../../../hooks';
 import { DeleteNoteForm } from './DeleteNoteForm';
@@ -62,6 +63,32 @@ export const FileTreeItemHeader = ({
   };
 
   const handleItemClick = () => onItemClick(item);
+
+  const renderHighlighted = (text: string, query?: string) => {
+    if (!query) return text;
+    const q = query.toLowerCase();
+    const lower = text.toLowerCase();
+    const idx = lower.indexOf(q);
+    if (idx === -1) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <span
+          className={cn(
+            'bg-yellow-200',
+            'dark:bg-yellow-600',
+            'text-black',
+            'dark:text-white',
+            'px-0.5',
+            'rounded'
+          )}
+        >
+          {text.slice(idx, idx + query.length)}
+        </span>
+        {text.slice(idx + query.length)}
+      </>
+    );
+  };
 
   const handleDeleteNote = openModalFromTrigger(
     <DeleteNoteForm
@@ -145,8 +172,8 @@ export const FileTreeItemHeader = ({
               'transform',
               'transition-transform',
               'duration-200',
-              'text-white',
-              isExpanded ? 'rotate-0' : '-rotate-90 text-text'
+              isExpanded ? 'rotate-0' : '-rotate-90',
+              isSelected ? 'text-white' : 'text-text dark:text-dark-text'
             )}
           />
         </div>
@@ -168,6 +195,37 @@ export const FileTreeItemHeader = ({
 
       <span className={cn('flex-1', 'truncate', 'text-sm', 'font-medium')}>
         {item.title}
+        {item.type === 'note' &&
+          (() => {
+            const noteWithMatch = (
+              item as unknown as {
+                note?: Note & {
+                  _match?: {
+                    field: 'title' | 'payload';
+                    snippet: string;
+                    query: string;
+                  };
+                };
+              }
+            ).note;
+            const match = noteWithMatch?._match;
+            if (!match) return null;
+            return (
+              <div
+                className={cn(
+                  'text-xs',
+                  'mt-0.5',
+                  'text-gray-500',
+                  'dark:text-gray-400',
+                  'truncate'
+                )}
+              >
+                <span className={cn('align-middle')}>
+                  {renderHighlighted(match.snippet, match.query)}
+                </span>
+              </div>
+            );
+          })()}
       </span>
 
       <div className={cn('flex', 'items-center', 'gap-1')}>
@@ -206,10 +264,10 @@ export const FileTreeItemHeader = ({
                   ? 'opacity-100'
                   : 'opacity-0',
                 isMobile
-                  ? 'text-red-600'
+                  ? 'text-gray-600'
                   : isSelected
-                    ? 'text-white hover:text-red-200'
-                    : 'text-gray-400 hover:text-red-600'
+                    ? 'text-white hover:text-gray-200'
+                    : 'text-gray-400 hover:text-gray-600'
               )}
               title={t('layout:deleteLayout')}
             >
@@ -231,10 +289,10 @@ export const FileTreeItemHeader = ({
                 ? 'opacity-100'
                 : 'opacity-0',
               isMobile
-                ? 'text-red-600'
+                ? 'text-gray-600'
                 : isSelected
-                  ? 'text-white hover:text-red-200'
-                  : 'text-gray-400 hover:text-red-600'
+                  ? 'text-white hover:text-gray-200'
+                  : 'text-gray-400 hover:text-gray-600'
             )}
             title={t('notes:deleteNote')}
           >

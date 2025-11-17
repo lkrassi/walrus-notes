@@ -54,7 +54,7 @@ export const NoteContent: React.FC<NoteContentProps> = ({
         value={payload}
         onChange={e => onPayloadChange(e.target.value)}
         className={cn(
-          'form-input',
+          'no-border',
           'rounded-none',
           'bg-transparent',
           'resize-none',
@@ -62,7 +62,6 @@ export const NoteContent: React.FC<NoteContentProps> = ({
           'p-4',
           'outline-none'
         )}
-        style={{ background: 'transparent' }}
         placeholder={t('notes:noteContentPlaceholder')}
         disabled={isLoading}
         rows={6}
@@ -91,13 +90,7 @@ export const NoteContent: React.FC<NoteContentProps> = ({
             {payload}
           </div>
         ) : (
-          <p
-            className={cn(
-              'text-secondary',
-              'dark:text-dark-secondary',
-              'italic'
-            )}
-          >
+          <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
             {t('notes:emptyNoteMessage')}
           </p>
         )}

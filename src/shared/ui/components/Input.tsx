@@ -42,7 +42,7 @@ export const Input: React.FC<InputProps> = ({
           bg-white dark:bg-dark-bg
           border-border dark:border-dark-border
           placeholder-secondary dark:placeholder-dark-secondary
-          ${ring ? 'focus:ring-primary dark:focus:ring-dark-primary focus:border-primary dark:focus:border-dark-primary' : 'focus:border-border dark:focus:border-dark-border'}
+          ${ring ? 'focus:ring-primary dark:focus:ring-dark-primary focus:border-primary dark:focus:border-dark-primary' : ''}
         `;
         break;
       case 'error':
@@ -51,7 +51,7 @@ export const Input: React.FC<InputProps> = ({
           bg-white dark:bg-dark-bg
           border-red-500 dark:border-red-400
           placeholder-red-400 dark:placeholder-red-300
-          ${ring ? 'focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400' : 'focus:border-red-500 dark:focus:border-red-400'}
+          ${ring ? 'focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400' : ''}
         `;
         break;
       default:
@@ -60,7 +60,7 @@ export const Input: React.FC<InputProps> = ({
           bg-white dark:bg-dark-bg
           border-border dark:border-dark-border
           placeholder-secondary dark:placeholder-dark-secondary
-          ${ring ? 'focus:ring-primary dark:focus:ring-dark-primary focus:border-primary dark:focus:border-dark-primary' : 'focus:border-border dark:focus:border-dark-border'}
+          ${ring ? 'focus:ring-primary dark:focus:ring-dark-primary focus:border-primary dark:focus:border-dark-primary' : ''}
         `;
     }
 

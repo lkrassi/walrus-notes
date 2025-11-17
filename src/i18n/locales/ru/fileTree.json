@@ -10,5 +10,7 @@
   "tryDifferentQuery": "Попробуйте другой запрос",
   "folderEmpty": "Папка пуста",
   "loading": "Загрузка",
-  "uploadMore": "Загрузить ещё..."
+  "uploadMore": "Загрузить ещё...",
+  "searchPlaceholder": "Поиск...",
+  "clearSearch": "Очистить поле поиска"
 }
