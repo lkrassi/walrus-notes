@@ -1,6 +1,15 @@
 import { useEffect, useRef } from 'react';
 import type { Edge, Node } from 'reactflow';
 
+type AnyEdge = Edge & {
+  style?: { strokeWidth?: number; strokeDasharray?: string; opacity?: number };
+  data?: {
+    isRelatedToSelected?: boolean;
+    isSelected?: boolean;
+    [key: string]: unknown;
+  };
+};
+
 interface UseGraphEffectsProps {
   initialNodes: Node[];
   initialEdges: Edge[];
@@ -59,31 +68,48 @@ export const useGraphEffects = ({
     ) {
       return;
     }
-
     setTempEdges(prev => {
-      const newTempEdges = prev.map(edge => {
-        const activeId = selectedNodeId ?? hoveredNodeId ?? null;
+      const activeId = selectedNodeId ?? hoveredNodeId ?? null;
+
+      let changed = false;
+      const newTempEdges = prev.map(e => {
+        const edge = e as AnyEdge;
         const isRelatedToSelected = activeId
           ? activeId === edge.source || activeId === edge.target
           : false;
 
+        const newStyle = {
+          ...edge.style,
+          strokeWidth: isRelatedToSelected ? 3 : 2,
+          strokeDasharray: isRelatedToSelected ? '0' : '5,5',
+          opacity: isRelatedToSelected ? 1 : 0.3,
+        };
+
+        const newData = {
+          ...edge.data,
+          isRelatedToSelected,
+          isSelected: isRelatedToSelected,
+        };
+
+        const styleChanged =
+          edge.style?.strokeWidth !== newStyle.strokeWidth ||
+          edge.style?.strokeDasharray !== newStyle.strokeDasharray ||
+          edge.style?.opacity !== newStyle.opacity;
+        const dataChanged =
+          edge.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+          edge.data?.isSelected !== newData.isSelected;
+
+        if (!styleChanged && !dataChanged) return e;
+
+        changed = true;
         return {
           ...edge,
-          style: {
-            ...edge.style,
-            strokeWidth: isRelatedToSelected ? 3 : 2,
-            strokeDasharray: isRelatedToSelected ? '0' : '5,5',
-            opacity: isRelatedToSelected ? 1 : 0.3,
-          },
-          data: {
-            ...edge.data,
-            isRelatedToSelected,
-            isSelected: isRelatedToSelected,
-          },
-        };
+          style: newStyle,
+          data: newData,
+        } as AnyEdge;
       });
 
-      return newTempEdges;
+      return changed ? newTempEdges : prev;
     });
 
     prevSelectedNodeIdRef.current = selectedNodeId;

@@ -1,5 +1,5 @@
 import { useDeleteNoteLinkMutation } from 'app/store/api';
-import { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
 import {
   BaseEdge,
   type EdgeProps,
@@ -22,7 +22,7 @@ interface EdgeDeleteEventDetail {
   newTarget?: string | null;
 }
 
-export const MultiColorEdge = ({
+const MultiColorEdgeInner = ({
   id,
   sourceX,
   sourceY,
@@ -34,12 +34,10 @@ export const MultiColorEdge = ({
   data,
   markerEnd,
 }: EdgeProps<MultiColorStepEdgeData>) => {
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+  const edgePath = useMemo(
+    () => getBezierPath({ sourceX, sourceY, targetX, targetY })[0],
+    [sourceX, sourceY, targetX, targetY]
+  );
 
   const { setEdges, screenToFlowPosition, getNodes, getEdges } = useReactFlow();
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
@@ -309,3 +307,4 @@ export const MultiColorEdge = ({
     </>
   );
 };
+export const MultiColorEdge = React.memo(MultiColorEdgeInner);

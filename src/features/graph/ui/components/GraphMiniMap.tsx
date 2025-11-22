@@ -1,10 +1,17 @@
-import { MiniMap } from 'reactflow';
+import React, { useCallback } from 'react';
+import { MiniMap, type Node } from 'reactflow';
 import { generateColorFromId } from '../../model/utils/graphUtils';
 
-export const GraphMiniMap = () => {
+const GraphMiniMapInner = () => {
+  const nodeColor = useCallback((node: Node) => {
+    // prefer precomputed color in node.data
+    const maybeData = node.data as { nodeColor?: string } | undefined;
+    return maybeData?.nodeColor || generateColorFromId(node.id);
+  }, []);
+
   return (
     <MiniMap
-      nodeColor={node => generateColorFromId(node.id)}
+      nodeColor={nodeColor}
       maskColor='rgba(0, 0, 0, 0.1)'
       nodeStrokeColor='#000'
       nodeBorderRadius={2}
@@ -19,3 +26,6 @@ export const GraphMiniMap = () => {
     />
   );
 };
+
+export const GraphMiniMap = React.memo(GraphMiniMapInner);
+GraphMiniMap.displayName = 'GraphMiniMap';

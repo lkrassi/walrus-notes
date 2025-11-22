@@ -1,5 +1,23 @@
 import { useMemo } from 'react';
 import type { Edge, Node } from 'reactflow';
+type AnyEdge = Edge & {
+  style?: { strokeWidth?: number; strokeDasharray?: string; opacity?: number };
+  data?: {
+    isRelatedToSelected?: boolean;
+    isSelected?: boolean;
+    [key: string]: unknown;
+  };
+};
+
+type AnyNode = Node & {
+  data?: {
+    selected?: boolean;
+    isRelatedToSelected?: boolean;
+    onNoteClick?: (id: string) => void;
+    [key: string]: unknown;
+  };
+  style?: { opacity?: number; [key: string]: unknown };
+};
 
 interface UseGraphSelectionProps {
   nodes: Node[];
@@ -67,18 +85,32 @@ export const useGraphSelection = ({
         const isSelected =
           multiSelectedIds.has(edge.source) &&
           multiSelectedIds.has(edge.target);
+        const newStyle = {
+          strokeWidth: isRelated ? 3 : 2,
+          strokeDasharray: isSelected ? '0' : '5,5',
+          opacity: isRelated ? 1 : 0.3,
+        };
+        const newData = {
+          ...edge.data,
+          isRelatedToSelected: isRelated,
+          isSelected: isSelected,
+        };
+        // reuse original object if nothing changed to avoid re-renders
+        const e = edge as AnyEdge;
+        const styleChanged =
+          e.style?.strokeWidth !== newStyle.strokeWidth ||
+          e.style?.strokeDasharray !== newStyle.strokeDasharray ||
+          e.style?.opacity !== newStyle.opacity;
+        const dataChanged =
+          e.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+          e.data?.isSelected !== newData.isSelected;
+
+        if (!styleChanged && !dataChanged) return edge as StyledEdge;
+
         return {
           ...edge,
-          style: {
-            strokeWidth: isRelated ? 3 : 2,
-            strokeDasharray: isSelected ? '0' : '5,5',
-            opacity: isRelated ? 1 : 0.3,
-          },
-          data: {
-            ...edge.data,
-            isRelatedToSelected: isRelated,
-            isSelected: isSelected,
-          },
+          style: newStyle,
+          data: newData,
         } as StyledEdge;
       });
     }
@@ -105,34 +137,31 @@ export const useGraphSelection = ({
       const isRelated =
         effectiveSelected === edge.source || effectiveSelected === edge.target;
 
-      if (isRelated) {
-        return {
-          ...edge,
-          style: {
-            strokeWidth: 3,
-            strokeDasharray: '0',
-            opacity: 1,
-          },
-          data: {
-            ...edge.data,
-            isRelatedToSelected: true,
-            isSelected: true,
-          },
-        } as StyledEdge;
-      }
+      const newStyle = isRelated
+        ? { strokeWidth: 3, strokeDasharray: '0', opacity: 1 }
+        : { strokeWidth: 2, strokeDasharray: '5,5', opacity: 0.3 };
+
+      const newData = {
+        ...edge.data,
+        isRelatedToSelected: !!isRelated,
+        isSelected: !!isRelated,
+      };
+
+      const e = edge as AnyEdge;
+      const styleChanged =
+        e.style?.strokeWidth !== newStyle.strokeWidth ||
+        e.style?.strokeDasharray !== newStyle.strokeDasharray ||
+        e.style?.opacity !== newStyle.opacity;
+      const dataChanged =
+        e.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+        e.data?.isSelected !== newData.isSelected;
+
+      if (!styleChanged && !dataChanged) return edge as StyledEdge;
 
       return {
         ...edge,
-        style: {
-          strokeWidth: 2,
-          strokeDasharray: '5,5',
-          opacity: 0.3,
-        },
-        data: {
-          ...edge.data,
-          isRelatedToSelected: false,
-          isSelected: false,
-        },
+        style: newStyle,
+        data: newData,
       } as StyledEdge;
     });
   }, [edges, tempEdges, selectedNodeId, hoveredNodeId, nodes]);
@@ -155,19 +184,30 @@ export const useGraphSelection = ({
         const isRelated = relatedNodeIds.has(node.id);
         const isSelected = multiSelectedIds.has(node.id);
 
+        const newData = {
+          ...node.data,
+          selected: isSelected,
+          isRelatedToSelected: isRelated,
+          onNoteClick: onNoteOpen,
+        };
+        const newStyle = {
+          ...node.style,
+          opacity: isRelated ? 1 : 0.5,
+          transition: 'opacity 0.3s ease-in-out',
+        };
+
+        const n = node as AnyNode;
+        const dataChanged =
+          n.data?.selected !== newData.selected ||
+          n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+        const styleChanged = n.style?.opacity !== newStyle.opacity;
+
+        if (!dataChanged && !styleChanged) return node as StyledNode;
+
         return {
           ...node,
-          data: {
-            ...node.data,
-            selected: isSelected,
-            isRelatedToSelected: isRelated,
-            onNoteClick: onNoteOpen,
-          },
-          style: {
-            ...node.style,
-            opacity: isRelated ? 1 : 0.5,
-            transition: 'opacity 0.3s ease-in-out',
-          },
+          data: newData,
+          style: newStyle,
         } as StyledNode;
       });
     }
@@ -175,19 +215,29 @@ export const useGraphSelection = ({
     const effectiveSelected = selectedNodeId ?? hoveredNodeId ?? null;
 
     if (!effectiveSelected) {
-      return nodes.map(node => ({
-        ...node,
-        data: {
+      return nodes.map(node => {
+        const newData = {
           ...node.data,
           selected: false,
           isRelatedToSelected: true,
           onNoteClick: onNoteOpen,
-        },
-        style: {
+        };
+        const newStyle = {
           ...node.style,
           opacity: 1,
-        },
-      })) as StyledNode[];
+        };
+        const n = node as AnyNode;
+        const dataChanged =
+          n.data?.selected !== newData.selected ||
+          n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+        const styleChanged = n.style?.opacity !== newStyle.opacity;
+        if (!dataChanged && !styleChanged) return node as StyledNode;
+        return {
+          ...node,
+          data: newData,
+          style: newStyle,
+        } as StyledNode;
+      }) as StyledNode[];
     }
 
     const relatedNodeIds = new Set<string>([effectiveSelected]);
@@ -200,19 +250,30 @@ export const useGraphSelection = ({
       const isRelated = relatedNodeIds.has(node.id);
       const isSelected = effectiveSelected === node.id;
 
+      const newData = {
+        ...node.data,
+        selected: isSelected,
+        isRelatedToSelected: isRelated,
+        onNoteClick: onNoteOpen,
+      };
+      const newStyle = {
+        ...node.style,
+        opacity: isRelated ? 1 : 0.5,
+        transition: 'opacity 0.3s ease-in-out',
+      };
+
+      const n = node as AnyNode;
+      const dataChanged =
+        n.data?.selected !== newData.selected ||
+        n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+      const styleChanged = n.style?.opacity !== newStyle.opacity;
+
+      if (!dataChanged && !styleChanged) return node as StyledNode;
+
       return {
         ...node,
-        data: {
-          ...node.data,
-          selected: isSelected,
-          isRelatedToSelected: isRelated,
-          onNoteClick: onNoteOpen,
-        },
-        style: {
-          ...node.style,
-          opacity: isRelated ? 1 : 0.5,
-          transition: 'opacity 0.3s ease-in-out',
-        },
+        data: newData,
+        style: newStyle,
       } as StyledNode;
     });
   }, [nodes, selectedNodeId, hoveredNodeId, allEdges, onNoteOpen]);

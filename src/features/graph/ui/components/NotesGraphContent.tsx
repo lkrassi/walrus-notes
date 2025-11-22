@@ -55,21 +55,11 @@ const NotesGraphContentComponent = ({
 
   useEffect(() => {
     if (prevLayoutIdRef.current !== layoutId) {
-      setNodes(
-        initialNodes.map((n, i) => ({
-          ...n,
-          data: { ...(n.data || {}) },
-        }))
-      );
+      setNodes(initialNodes);
       setEdgesState(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      setNodes(
-        initialNodes.map((n, i) => ({
-          ...n,
-          data: { ...(n.data || {}) },
-        }))
-      );
+      setNodes(initialNodes);
       setEdgesState(initialEdges);
     }
   }, [initialNodes, initialEdges, layoutId, setNodes, setEdgesState]);
@@ -222,6 +212,33 @@ const NotesGraphContentComponent = ({
     screenToFlowPosition,
   });
 
+  const isNodeDraggingRef = useRef(false);
+  const [isNodeDragging, setIsNodeDragging] = useState(false);
+
+  const handleNodeDragStart = useCallback(
+    (_event: React.MouseEvent, _node: Node) => {
+      isNodeDraggingRef.current = true;
+      setIsNodeDragging(true);
+    },
+    []
+  );
+
+  const handleNodeMouseEnterWrapped = useCallback(
+    (e: React.MouseEvent, node: Node) => {
+      if (isNodeDraggingRef.current) return;
+      handleNodeMouseEnter(e, node);
+    },
+    [handleNodeMouseEnter]
+  );
+
+  const handleNodeMouseLeaveWrapped = useCallback(
+    (e: React.MouseEvent, node: Node) => {
+      if (isNodeDraggingRef.current) return;
+      handleNodeMouseLeave(e, node);
+    },
+    [handleNodeMouseLeave]
+  );
+
   const handleNodeDragStopMulti = useCallback(
     (_event: React.MouseEvent, node: Node) => {
       try {
@@ -240,6 +257,11 @@ const NotesGraphContentComponent = ({
       } catch (_e) {
         onNodeDragStop(_event, node);
       }
+      // stop node dragging flag after drag stop
+      try {
+        isNodeDraggingRef.current = false;
+        setIsNodeDragging(false);
+      } catch (_e) {}
     },
     [nodes, updatePositionCallback, onNodeDragStop]
   );
@@ -479,10 +501,12 @@ const NotesGraphContentComponent = ({
       onConnect={onConnect}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
+      onNodeDragStart={handleNodeDragStart}
       onNodeDragStop={handleNodeDragStopMulti}
       onNodeClick={handleNodeClick}
-      onNodeMouseEnter={handleNodeMouseEnter}
-      onNodeMouseLeave={handleNodeMouseLeave}
+      onNodeMouseEnter={handleNodeMouseEnterWrapped}
+      onNodeMouseLeave={handleNodeMouseLeaveWrapped}
+      disableZoomDuringDrag={isNodeDragging}
       onPaneClick={onPaneClick}
       onNodeDoubleClick={handleNodeDoubleClick}
       isDraggingEdge={isDraggingEdge}

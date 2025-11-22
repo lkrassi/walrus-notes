@@ -40,7 +40,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           x: note.position!.xPos,
           y: note.position!.yPos,
         },
-        data: { note },
+        data: { note, nodeColor: generateColorFromId(note.id) },
       })),
     [notesWithPositions]
   );
@@ -94,8 +94,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           xPos,
           yPos,
         }).unwrap();
-      } catch (_error) {
-      }
+      } catch (_error) {}
     },
     [layoutId, updatePosition]
   );

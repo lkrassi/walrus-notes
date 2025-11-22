@@ -40,7 +40,7 @@ export const UserProfileModal: React.FC = () => {
         />,
         {
           title: ' ',
-          size: 'full',
+          size: 'xl',
           closeOnOverlayClick: true,
           showCloseButton: true,
         }

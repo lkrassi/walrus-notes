@@ -40,18 +40,29 @@ export const useGraphConnections = ({
     return [...edges, ...tempEdges];
   }, [edges, tempEdges]);
 
-  const createEdge = useCallback((source: string, target: string): Edge => {
-    return {
-      id: `temp-${source}-${target}-${Date.now()}`,
-      source,
-      target,
-      type: 'multiColor' as const,
-      data: {
-        sourceColor: generateColorFromId(source),
-        targetColor: generateColorFromId(target),
-      },
-    };
-  }, []);
+  const createEdge = useCallback(
+    (source: string, target: string): Edge => {
+      // try to reuse precomputed nodeColor from nodes data if available
+      const sourceNode = nodes.find(n => n.id === source);
+      const targetNode = nodes.find(n => n.id === target);
+      const sourceColor =
+        (sourceNode?.data as any)?.nodeColor || generateColorFromId(source);
+      const targetColor =
+        (targetNode?.data as any)?.nodeColor || generateColorFromId(target);
+
+      return {
+        id: `temp-${source}-${target}-${Date.now()}`,
+        source,
+        target,
+        type: 'multiColor' as const,
+        data: {
+          sourceColor,
+          targetColor,
+        },
+      };
+    },
+    [nodes]
+  );
 
   const onConnectStart = useCallback(
     (

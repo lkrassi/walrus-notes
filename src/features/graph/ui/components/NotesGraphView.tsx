@@ -32,6 +32,7 @@ interface NotesGraphViewProps {
   onConnectStart: ReactFlowProps['onConnectStart'];
   onConnectEnd: ReactFlowProps['onConnectEnd'];
   onNodeDragStop: ReactFlowProps['onNodeDragStop'];
+  onNodeDragStart?: ReactFlowProps['onNodeDragStart'];
   onNodeClick: ReactFlowProps['onNodeClick'];
   onNodeMouseEnter: ReactFlowProps['onNodeMouseEnter'];
   onNodeMouseLeave: ReactFlowProps['onNodeMouseLeave'];
@@ -46,6 +47,7 @@ interface NotesGraphViewProps {
     x2: number;
     y2: number;
   }) => void;
+  disableZoomDuringDrag?: boolean;
 }
 
 export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
@@ -61,6 +63,8 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   onNodeClick,
   onNodeMouseEnter,
   onNodeMouseLeave,
+  onNodeDragStart,
+  disableZoomDuringDrag,
   onPaneClick,
   onNodeDoubleClick,
   isDraggingEdge,
@@ -83,6 +87,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
           onConnect={onConnect}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
+          onNodeDragStart={onNodeDragStart}
           onNodeDragStop={onNodeDragStop}
           onNodeClick={onNodeClick}
           onNodeMouseEnter={onNodeMouseEnter}
@@ -100,6 +105,8 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
           maxZoom={2}
           proOptions={{ hideAttribution: true }}
           onNodeDoubleClick={onNodeDoubleClick}
+          zoomOnScroll={!disableZoomDuringDrag}
+          zoomOnPinch={!disableZoomDuringDrag}
           key={layoutId}
         >
           <GraphBackground />

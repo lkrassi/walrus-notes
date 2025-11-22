@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
@@ -11,14 +11,14 @@ interface NoteNodeProps {
     onNoteClick?: (noteId: string) => void;
     selected?: boolean;
     isRelatedToSelected?: boolean;
+    nodeColor?: string;
   };
   selected: boolean;
 }
 
-export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
-  const nodeColor = generateColorFromId(data.note.id);
+const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
+  const resolvedColor = data.nodeColor || generateColorFromId(data.note.id);
   const [hover, setHover] = useState(false);
-  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -28,7 +28,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
   const pointerUpHandlerRef = useRef<((e: PointerEvent) => void) | null>(null);
 
   const handleStyle = {
-    background: nodeColor,
+    background: resolvedColor,
     border: '2px solid white',
     width: 15,
     height: 15,
@@ -62,8 +62,10 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
           pointerStartRef.current = null;
           setIsDragging(false);
           try {
-            const rect = btnRef.current?.getBoundingClientRect() ?? null;
-            setAnchorRect(rect);
+            // keep a reference to button rect if needed in future
+            try {
+              btnRef.current?.getBoundingClientRect();
+            } catch (_e) {}
           } catch (_e) {}
           if (pointerMoveHandlerRef.current)
             window.removeEventListener(
@@ -85,15 +87,8 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         window.addEventListener('pointerup', upHandler);
       }}
       ref={btnRef}
-      onMouseEnter={() => {
-        setHover(true);
-        const rect = btnRef.current?.getBoundingClientRect() ?? null;
-        setAnchorRect(rect);
-      }}
-      onMouseLeave={() => {
-        setHover(false);
-        setAnchorRect(null);
-      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       className={cn(
         'relative',
         'max-w-40',
@@ -103,7 +98,7 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         'p-2',
         'text-left'
       )}
-      style={{ backgroundColor: nodeColor }}
+      style={{ backgroundColor: resolvedColor }}
       title='Клик по ЛКМ для открытия заметки'
       whileHover={{ scale: 1.03 }}
       animate={{
@@ -182,3 +177,16 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
     </motion.button>
   );
 };
+
+export const NoteNodeComponent = React.memo(
+  NoteNodeInner,
+  (prev: NoteNodeProps, next: NoteNodeProps) => {
+    // shallow compare important props to avoid unnecessary re-renders
+    if (prev.selected !== next.selected) return false;
+    if (prev.data.nodeColor !== next.data.nodeColor) return false;
+    if (prev.data.note?.id !== next.data.note?.id) return false;
+    if (prev.data.isRelatedToSelected !== next.data.isRelatedToSelected)
+      return false;
+    return true;
+  }
+);
