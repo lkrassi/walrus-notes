@@ -164,6 +164,11 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.dark .markdown-content table {
+  color: var(--color-dark-text);
 }
 .markdown-content th,
 .markdown-content td {
