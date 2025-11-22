@@ -11,8 +11,10 @@ interface NotesGraphProps {
 
 export const NotesGraph = ({ layoutId, onNoteOpen }: NotesGraphProps) => {
   return (
-    <ReactFlowProvider>
-      <NotesGraphContent layoutId={layoutId} onNoteOpen={onNoteOpen} />
-    </ReactFlowProvider>
+    <>
+      <ReactFlowProvider>
+        <NotesGraphContent layoutId={layoutId} onNoteOpen={onNoteOpen} />
+      </ReactFlowProvider>
+    </>
   );
 };

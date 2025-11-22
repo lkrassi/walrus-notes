@@ -1,10 +1,9 @@
 import { motion } from 'framer-motion';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { generateColorFromId } from '../../model/utils/graphUtils';
-import NotePreview from './NotePreview';
 
 interface NoteNodeProps {
   data: {
@@ -35,14 +34,8 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
     height: 15,
   };
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    data.onNoteClick?.(data.note.id);
-  };
-
   return (
     <motion.button
-      onDoubleClick={handleDoubleClick}
       onPointerDown={e => {
         pointerStartRef.current = { x: e.clientX, y: e.clientY };
 
@@ -55,7 +48,17 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
             setIsDragging(true);
           }
         };
-        const upHandler = () => {
+        const upHandler = (upEvent: PointerEvent) => {
+          if (pointerStartRef.current) {
+            const dx = Math.abs(upEvent.clientX - pointerStartRef.current.x);
+            const dy = Math.abs(upEvent.clientY - pointerStartRef.current.y);
+            const threshold = 6;
+            const moved = dx > threshold || dy > threshold;
+            if (!isDragging && !moved) {
+              data.onNoteClick?.(data.note.id);
+            }
+          }
+
           pointerStartRef.current = null;
           setIsDragging(false);
           try {
@@ -98,18 +101,20 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
         'cursor-pointer',
         'rounded-xl',
         'p-2',
-        'text-left',
-        'transition-all',
-        'duration-200',
-        selected
-          ? 'shadow-lg ring-4 ring-blue-400'
-          : 'shadow-md hover:shadow-lg'
+        'text-left'
       )}
-      style={{
-        backgroundColor: nodeColor,
+      style={{ backgroundColor: nodeColor }}
+      title='Клик по ЛКМ для открытия заметки'
+      whileHover={{ scale: 1.03 }}
+      animate={{
         opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
+        boxShadow: selected
+          ? '0 20px 40px rgba(59,130,246,0.35)'
+          : hover
+            ? '0 10px 25px rgba(0,0,0,0.12)'
+            : '0 4px 8px rgba(0,0,0,0.08)',
       }}
-      title='Двойной клик для открытия заметки'
+      transition={{ duration: 0.18 }}
     >
       <Handle
         type='source'
@@ -174,12 +179,6 @@ export const NoteNodeComponent = ({ data, selected }: NoteNodeProps) => {
       >
         {data.note.title}
       </h3>
-      <NotePreview
-        note={data.note}
-        visible={hover && !isDragging}
-        size='lg'
-        anchorRect={anchorRect}
-      />
     </motion.button>
   );
 };

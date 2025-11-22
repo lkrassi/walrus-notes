@@ -4,11 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SidebarProvider, store } from 'widgets';
 
 import cn from 'shared/lib/cn';
-import {
-  LoaderContainer,
-  ModalProvider,
-  NotificationsContainer,
-} from 'widgets/ui';
+import { ModalProvider, NotificationsContainer } from 'widgets/ui';
 
 export const App = () => {
   return (
@@ -26,7 +22,6 @@ export const App = () => {
               ))}
             </Routes>
             <NotificationsContainer />
-            <LoaderContainer />
           </ModalProvider>
         </SidebarProvider>
       </Provider>

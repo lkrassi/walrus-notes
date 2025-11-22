@@ -116,9 +116,7 @@ export const Main = () => {
                         'w-10',
                         'items-center',
                         'justify-center',
-                        'rounded-lg',
-                        'transition-transform',
-                        'duration-300'
+                        'rounded-lg'
                       )}
                     >
                       <feature.icon className={cn('h-5', 'w-5')} />

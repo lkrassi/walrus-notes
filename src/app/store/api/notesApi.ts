@@ -2,6 +2,7 @@ import type { RootState } from 'app/store';
 import type { Note } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
+import { layoutApi } from './layoutApi';
 
 interface GetNotesRequest {
   layoutId: string;
@@ -212,9 +213,6 @@ export const notesApi = apiSlice.injectEndpoints({
         })) || []),
         'Notes',
       ],
-      extraOptions: {
-        loadingKey: null,
-      },
     }),
 
     createNote: builder.mutation<CreateNoteResponse, CreateNoteRequest>({
@@ -233,7 +231,7 @@ export const notesApi = apiSlice.injectEndpoints({
             'getNotes',
             { layoutId, page: 1 },
             draft => {
-              const tempNote = createTempNote(layoutId);
+              const tempNote = createTempNote();
               draft.data.unshift(tempNote);
             }
           )
@@ -274,6 +272,79 @@ export const notesApi = apiSlice.injectEndpoints({
         { type: 'Notes', id: arg.noteId },
         'Notes',
       ],
+      onQueryStarted: async (
+        { noteId, title, payload },
+        { dispatch, queryFulfilled, getState }
+      ) => {
+        const patchResults: Array<{ undo?: () => void }> = [];
+        try {
+          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
+            getState() as RootState
+          );
+          const layouts = layoutsCache.data?.data || [];
+          for (const l of layouts) {
+            try {
+              const pr = dispatch(
+                notesApi.util.updateQueryData(
+                  'getNotes',
+                  { layoutId: l.id, page: 1 },
+                  draft => {
+                    const idx = draft.data.findIndex(n => n.id === noteId);
+                    if (idx !== -1) {
+                      if (title !== undefined) draft.data[idx].title = title;
+                      if (payload !== undefined)
+                        draft.data[idx].payload = payload;
+                    }
+                  }
+                )
+              );
+              patchResults.push(pr);
+            } catch {}
+
+            try {
+              const pr2 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    const idx = draft.data.findIndex(n => n.id === noteId);
+                    if (idx !== -1) {
+                      if (title !== undefined) draft.data[idx].title = title;
+                      if (payload !== undefined)
+                        draft.data[idx].payload = payload;
+                    }
+                  }
+                )
+              );
+              patchResults.push(pr2);
+            } catch {}
+
+            try {
+              const pr3 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getUnposedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    const idx = draft.data.findIndex(n => n.id === noteId);
+                    if (idx !== -1) {
+                      if (title !== undefined) draft.data[idx].title = title;
+                      if (payload !== undefined)
+                        draft.data[idx].payload = payload;
+                    }
+                  }
+                )
+              );
+              patchResults.push(pr3);
+            } catch {}
+          }
+        } catch {}
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResults.forEach(p => p.undo && p.undo());
+        }
+      },
     }),
 
     deleteNote: builder.mutation<DeleteNoteResponse, DeleteNoteRequest>({
@@ -283,6 +354,64 @@ export const notesApi = apiSlice.injectEndpoints({
         body: { noteId },
       }),
       invalidatesTags: ['Notes'],
+      onQueryStarted: async (
+        { noteId },
+        { dispatch, queryFulfilled, getState }
+      ) => {
+        const patchResults: Array<{ undo?: () => void }> = [];
+        try {
+          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
+            getState() as RootState
+          );
+          const layouts = layoutsCache.data?.data || [];
+          for (const l of layouts) {
+            try {
+              const pr = dispatch(
+                notesApi.util.updateQueryData(
+                  'getNotes',
+                  { layoutId: l.id, page: 1 },
+                  draft => {
+                    draft.data = draft.data.filter(n => n.id !== noteId);
+                  }
+                )
+              );
+              patchResults.push(pr);
+            } catch {}
+
+            try {
+              const pr2 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    draft.data = draft.data.filter(n => n.id !== noteId);
+                  }
+                )
+              );
+              patchResults.push(pr2);
+            } catch {}
+
+            try {
+              const pr3 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getUnposedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    draft.data = draft.data.filter(n => n.id !== noteId);
+                  }
+                )
+              );
+              patchResults.push(pr3);
+            } catch {}
+          }
+        } catch {}
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResults.forEach(p => p.undo && p.undo());
+        }
+      },
     }),
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
@@ -323,9 +452,6 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-      extraOptions: {
-        loadingKey: null,
-      },
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const state = getState() as RootState;
 
@@ -383,7 +509,7 @@ export const notesApi = apiSlice.injectEndpoints({
                         yPos: arg.yPos,
                       },
                     }
-                  : createTempNote(arg.layoutId);
+                  : createTempNote();
                 draft.data.push(newNote);
               }
             }
@@ -419,12 +545,9 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-      extraOptions: {
-        loadingKey: null,
-      },
 
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        const patchResults = [];
+        const patchResults: Array<{ undo?: () => void }> = [];
 
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
@@ -460,7 +583,7 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           await queryFulfilled;
         } catch {
-          patchResults.forEach(patchResult => patchResult.undo());
+          patchResults.forEach(patchResult => patchResult.undo?.());
         }
       },
     }),
@@ -475,12 +598,9 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-      extraOptions: {
-        loadingKey: null,
-      },
 
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        const patchResults = [];
+        const patchResults: Array<{ undo?: () => void }> = [];
 
         try {
           const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
@@ -513,7 +633,7 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           await queryFulfilled;
         } catch {
-          patchResults.forEach(patchResult => patchResult.undo());
+          patchResults.forEach(patchResult => patchResult.undo?.());
         }
       },
     }),
@@ -529,9 +649,6 @@ export const notesApi = apiSlice.injectEndpoints({
         })) || []),
         'Notes',
       ],
-      extraOptions: {
-        loadingKey: null,
-      },
     }),
   }),
 });

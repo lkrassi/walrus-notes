@@ -6,6 +6,7 @@ interface UseGraphSelectionProps {
   edges: Edge[];
   tempEdges: Edge[];
   selectedNodeId: string | null;
+  hoveredNodeId?: string | null;
   allEdges: Edge[];
   onNoteOpen: (noteId: string) => void;
 }
@@ -42,6 +43,7 @@ export const useGraphSelection = ({
   edges,
   tempEdges,
   selectedNodeId,
+  hoveredNodeId,
   allEdges,
   onNoteOpen,
 }: UseGraphSelectionProps): {
@@ -52,7 +54,9 @@ export const useGraphSelection = ({
     const combinedEdges = [...edges, ...tempEdges];
 
     const multiSelectedIds = new Set(
-      nodes.filter(n => (n as any).selected).map(n => n.id)
+      nodes
+        .filter(n => (n as unknown as { selected?: boolean }).selected)
+        .map(n => n.id)
     );
 
     if (multiSelectedIds.size > 0) {
@@ -79,7 +83,9 @@ export const useGraphSelection = ({
       });
     }
 
-    if (!selectedNodeId) {
+    const effectiveSelected = selectedNodeId ?? hoveredNodeId ?? null;
+
+    if (!effectiveSelected) {
       return combinedEdges.map(edge => ({
         ...edge,
         style: {
@@ -96,9 +102,10 @@ export const useGraphSelection = ({
     }
 
     return combinedEdges.map(edge => {
-      const isOutgoingEdge = selectedNodeId === edge.source;
+      const isRelated =
+        effectiveSelected === edge.source || effectiveSelected === edge.target;
 
-      if (isOutgoingEdge) {
+      if (isRelated) {
         return {
           ...edge,
           style: {
@@ -128,11 +135,13 @@ export const useGraphSelection = ({
         },
       } as StyledEdge;
     });
-  }, [edges, tempEdges, selectedNodeId, nodes]);
+  }, [edges, tempEdges, selectedNodeId, hoveredNodeId, nodes]);
 
   const nodesWithSelection: StyledNode[] = useMemo(() => {
     const multiSelectedIds = new Set(
-      nodes.filter(n => (n as any).selected).map(n => n.id)
+      nodes
+        .filter(n => (n as unknown as { selected?: boolean }).selected)
+        .map(n => n.id)
     );
 
     if (multiSelectedIds.size > 0) {
@@ -163,7 +172,9 @@ export const useGraphSelection = ({
       });
     }
 
-    if (!selectedNodeId) {
+    const effectiveSelected = selectedNodeId ?? hoveredNodeId ?? null;
+
+    if (!effectiveSelected) {
       return nodes.map(node => ({
         ...node,
         data: {
@@ -179,15 +190,15 @@ export const useGraphSelection = ({
       })) as StyledNode[];
     }
 
-    const relatedNodeIds = new Set<string>([selectedNodeId]);
+    const relatedNodeIds = new Set<string>([effectiveSelected]);
     allEdges.forEach(edge => {
-      if (edge.source === selectedNodeId) relatedNodeIds.add(edge.target);
-      if (edge.target === selectedNodeId) relatedNodeIds.add(edge.source);
+      if (edge.source === effectiveSelected) relatedNodeIds.add(edge.target);
+      if (edge.target === effectiveSelected) relatedNodeIds.add(edge.source);
     });
 
     return nodes.map(node => {
       const isRelated = relatedNodeIds.has(node.id);
-      const isSelected = selectedNodeId === node.id;
+      const isSelected = effectiveSelected === node.id;
 
       return {
         ...node,
@@ -204,7 +215,7 @@ export const useGraphSelection = ({
         },
       } as StyledNode;
     });
-  }, [nodes, selectedNodeId, allEdges, onNoteOpen]);
+  }, [nodes, selectedNodeId, hoveredNodeId, allEdges, onNoteOpen]);
 
   return {
     edgesWithSelection,

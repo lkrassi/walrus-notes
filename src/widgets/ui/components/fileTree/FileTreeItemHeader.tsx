@@ -137,8 +137,6 @@ export const FileTreeItemHeader = ({
         'gap-2',
         'rounded-lg',
         'py-2',
-        'transition-all',
-        'duration-150',
         isSelected
           ? 'bg-primary dark:bg-dark-primary text-white'
           : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'

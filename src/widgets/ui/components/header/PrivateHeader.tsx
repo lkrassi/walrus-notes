@@ -22,7 +22,7 @@ const PrivateHeaderComponent = () => {
         'dark:border-dark-border',
         'flex',
         'flex-col',
-        'gap-4',
+        'gap-3',
         'border-b',
         'max-md:py-5',
         'md:px-5'
@@ -33,12 +33,13 @@ const PrivateHeaderComponent = () => {
           'flex',
           'flex-col',
           'items-center',
-          'gap-4',
+          'gap-3',
           'md:flex-row',
           'md:items-center',
           'md:justify-between'
         )}
       >
+        <div className={cn('w-6', 'md:hidden')} />
         <Link
           to='/dashboard'
           className={cn(
@@ -46,6 +47,7 @@ const PrivateHeaderComponent = () => {
             'flex-col',
             'items-center',
             'gap-2',
+            'max-md:hidden',
             'md:flex-row',
             'md:gap-3'
           )}
@@ -83,14 +85,13 @@ const PrivateHeaderComponent = () => {
             </h1>
           </div>
         </Link>
-
         <div
           className={cn(
             'flex',
             'items-center',
             'gap-2',
             'max-md:flex-col',
-            'max-md:gap-4'
+            'max-md:gap-3'
           )}
         >
           <div className={cn('flex', 'gap-2', 'items-center')}>
@@ -110,6 +111,25 @@ const PrivateHeaderComponent = () => {
             )}
           </div>
         </div>
+        <Link
+          to='/dashboard'
+          className={cn(
+            'flex',
+            'items-center',
+            'justify-center',
+            'max-md:absolute',
+            'max-md:right-4',
+            'md:hidden'
+          )}
+          aria-label={t('common:header.goToHomepage')}
+        >
+          <img
+            src={logo}
+            alt={t('common:header.logoAlt')}
+            className={cn('h-15', 'w-15')}
+            loading='lazy'
+          />
+        </Link>
       </div>
     </header>
   );

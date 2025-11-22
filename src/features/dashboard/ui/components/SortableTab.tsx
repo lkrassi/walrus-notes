@@ -57,11 +57,10 @@ export const SortableTab = ({
       {...attributes}
       {...listeners}
     >
-      {/* 👇 Обработчик среднего клика — на контент, а не на корень с DnD */}
       <div
         className={cn('mr-2 flex min-w-0 flex-1 items-center overflow-hidden')}
         onClick={handleContentClick}
-        onMouseDown={handleMiddleClick} // ✅ вот здесь!
+        onMouseDown={handleMiddleClick}
       >
         {tab.item.type === 'note' ? (
           <FileText className='mr-2 h-4 w-4' />
@@ -86,7 +85,7 @@ export const SortableTab = ({
         <X
           className={cn(
             isActive ? 'hover:bg-white hover:text-black' : 'hover:bg-primary',
-            'h-3 w-3 rounded-xl duration-200'
+            'h-3 w-3 rounded-xl'
           )}
         />
       </button>

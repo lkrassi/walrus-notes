@@ -62,6 +62,37 @@ export const layoutApi = apiSlice.injectEndpoints({
         body: { title: body.title },
       }),
       invalidatesTags: ['Layouts'],
+      onQueryStarted: async (
+        { title },
+        { dispatch, queryFulfilled, getState }
+      ) => {
+        const tempId = `temp-${Date.now()}`;
+        const tempLayout: Layout = {
+          id: tempId,
+          title,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as Layout;
+
+        const patchResult = dispatch(
+          layoutApi.util.updateQueryData('getMyLayouts', undefined, draft => {
+            draft.data.unshift(tempLayout);
+          })
+        );
+
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            layoutApi.util.updateQueryData('getMyLayouts', undefined, draft => {
+              const idx = draft.data.findIndex(l => l.id === tempId);
+              if (idx !== -1) draft.data[idx] = data.data;
+              else draft.data.unshift(data.data);
+            })
+          );
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     deleteLayout: builder.mutation<DeleteLayoutResponse, DeleteLayoutRequest>({
       query: body => ({
@@ -70,6 +101,19 @@ export const layoutApi = apiSlice.injectEndpoints({
         body: { layoutId: body.layoutId },
       }),
       invalidatesTags: ['Layouts'],
+      onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          layoutApi.util.updateQueryData('getMyLayouts', undefined, draft => {
+            draft.data = draft.data.filter(l => l.id !== layoutId);
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
   }),
 });

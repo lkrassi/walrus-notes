@@ -116,6 +116,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
       className={cn(
         'fixed',
         'inset-0',
+        'overflow-hidden',
         'z-50',
         'flex',
         'items-center',
@@ -148,6 +149,10 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
           'transition-all',
           'duration-300',
           'ease-out',
+          'text-text',
+          'dark:text-dark-text',
+          'flex',
+          'flex-col',
           options.className || ''
         )}
         style={{
@@ -185,7 +190,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
           </div>
         )}
 
-        <div className={cn('max-h-[calc(90vh-120px)]', 'overflow-y-auto')}>
+        <div className={cn('flex-1', 'overflow-auto', 'p-4')}>
           <ModalContentContext.Provider value={{ closeModal: handleClose }}>
             {content}
           </ModalContentContext.Provider>

@@ -4,12 +4,8 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {
-  startLoading,
-  startLoadingByKey,
-  stopLoading,
-  stopLoadingByKey,
-} from 'app/store/slices/loaderSlice';
+import { addNotification } from 'app/store/slices/notificationsSlice';
+import i18n from '../../../i18n';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
@@ -28,23 +24,6 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  const loadingKey = (() => {
-    if (typeof extraOptions === 'object' && extraOptions !== null) {
-      const opts = extraOptions as Record<string, unknown>;
-      const v = opts['loadingKey'];
-      if (v === null || typeof v === 'string') return v;
-    }
-    return undefined;
-  })();
-
-  if (loadingKey !== null) {
-    if (loadingKey) {
-      api.dispatch(startLoadingByKey(loadingKey));
-    } else {
-      api.dispatch(startLoading());
-    }
-  }
-
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {
@@ -96,11 +75,50 @@ const baseQueryWithReauth: BaseQueryFn<
     }
   }
 
-  if (loadingKey !== null) {
-    if (loadingKey) {
-      api.dispatch(stopLoadingByKey(loadingKey));
-    } else {
-      api.dispatch(stopLoading());
+  if (result.error) {
+    try {
+      const err = result.error as unknown;
+      let maybeMsg = '';
+
+      const getStringAt = (
+        root: unknown,
+        path: string[]
+      ): string | undefined => {
+        let cur: unknown = root;
+        for (const p of path) {
+          if (!cur || typeof cur !== 'object') return undefined;
+          cur = (cur as Record<string, unknown>)[p];
+        }
+        return typeof cur === 'string' ? cur : undefined;
+      };
+
+      if (err && typeof err === 'object') {
+        maybeMsg =
+          getStringAt(err, ['data', 'meta', 'message']) ||
+          getStringAt(err, ['data', 'message']) ||
+          getStringAt(err, ['error']) ||
+          '';
+      } else if (typeof err === 'string') {
+        maybeMsg = err;
+      } else {
+        try {
+          maybeMsg = JSON.stringify(err);
+        } catch {
+          maybeMsg = '';
+        }
+      }
+
+      const title = i18n.t('errors.requestTitle') || 'Request error';
+      const fallback = i18n.t('errors.requestFallback') || 'Request failed';
+      api.dispatch(
+        addNotification({
+          type: 'error',
+          title,
+          message: String(maybeMsg || fallback),
+          duration: 5000,
+        })
+      );
+    } catch {
     }
   }
 

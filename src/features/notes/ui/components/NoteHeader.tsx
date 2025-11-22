@@ -1,7 +1,9 @@
-import { Edit3, Save, X } from 'lucide-react';
+import { Edit3, Save, X, CircleQuestionMark, Code } from 'lucide-react';
 import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
+import { useModalActions } from 'widgets/hooks/useModalActions';
+import { MarkdownHelp } from './MarkdownHelp';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -23,6 +25,12 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   onCancel,
 }) => {
   const { t } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
+
+  const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
+    title: t('notes:markdownGuide'),
+    size: 'lg',
+  });
 
   return (
     <div className={cn('panel-header')}>
@@ -73,6 +81,14 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
             <Edit3 className={cn('h-4', 'w-4')} />
           </Button>
         )}
+        <Button
+          onClick={handleOpenMarkdownHelp}
+          className={cn('px-4', 'py-2')}
+          title={t('notes:editorHelp')}
+          variant='default'
+        >
+          <CircleQuestionMark className={cn('h-4', 'w-4')} />
+        </Button>
       </div>
     </div>
   );

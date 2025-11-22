@@ -201,6 +201,7 @@ const NotesGraphContentComponent = ({
     edges,
     tempEdges,
     selectedNodeId,
+    hoveredNodeId,
     allEdges,
     onNoteOpen: handleNoteOpen,
   });
@@ -461,8 +462,7 @@ const NotesGraphContentComponent = ({
         setNodes(prev =>
           prev.map(n => ({ ...n, selected: nodesToSelect.includes(n.id) }))
         );
-      } catch (_e) {
-      }
+      } catch (_e) {}
     },
     [nodes, screenToFlowPosition, setNodes]
   );

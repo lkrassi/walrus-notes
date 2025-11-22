@@ -73,7 +73,7 @@
 }
 
 .feature-card {
-  @apply border-border dark:border-dark-border dark:bg-dark-bg/50 dark:hover:border-dark-primary/30 hover:border-primary/30 rounded-xl border bg-white/50 p-4 transition-all duration-300 hover:shadow-lg;
+  @apply border-border dark:border-dark-border dark:bg-dark-bg/50 dark:hover:border-dark-primary/30 hover:border-primary/30 rounded-xl border bg-white/50 p-4 hover:shadow-lg;
 }
 
 .feature-title {

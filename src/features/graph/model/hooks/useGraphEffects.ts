@@ -62,8 +62,9 @@ export const useGraphEffects = ({
 
     setTempEdges(prev => {
       const newTempEdges = prev.map(edge => {
-        const isRelatedToSelected = selectedNodeId
-          ? selectedNodeId === edge.source || selectedNodeId === edge.target
+        const activeId = selectedNodeId ?? hoveredNodeId ?? null;
+        const isRelatedToSelected = activeId
+          ? activeId === edge.source || activeId === edge.target
           : false;
 
         return {

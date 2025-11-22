@@ -239,6 +239,8 @@ export const MultiColorEdge = ({
           style={{
             stroke: `url(#${gradientId})`,
             fill: 'none',
+            transition:
+              'stroke-width 180ms ease, opacity 180ms ease, stroke-dasharray 180ms ease',
             ...style,
           }}
         />

@@ -7,7 +7,17 @@
   @apply bg-primary/30 text-text;
 }
 
+input::selection,
+textarea::selection {
+  @apply bg-primary/30 text-text;
+}
+
 .dark ::selection {
+  @apply bg-primary/30 text-dark-text;
+}
+
+.dark input::selection,
+.dark textarea::selection {
   @apply bg-primary/30 text-dark-text;
 }
 

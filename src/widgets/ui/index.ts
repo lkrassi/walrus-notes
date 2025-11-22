@@ -2,7 +2,6 @@ export * from './components/fileTree';
 export * from './components/header/MobileMenu';
 export * from './components/header/PrivateHeader';
 export * from './components/header/PublicHeader';
-export * from './components/loader';
 export * from './components/modal';
 export * from './components/modal/ModalContentContext';
 export * from './components/modal/ModalProvider';

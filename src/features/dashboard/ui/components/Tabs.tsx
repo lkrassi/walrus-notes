@@ -1,4 +1,3 @@
-// components/Tabs.tsx
 import { FileText, Folder } from 'lucide-react';
 import { useState } from 'react';
 import { useIsMobile } from 'widgets/hooks';
@@ -18,7 +17,7 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { SortableTab } from './SortableTab'; // ✅ 
+import { SortableTab } from './SortableTab';
 
 export const Tabs = ({
   tabs,
@@ -63,7 +62,7 @@ export const Tabs = ({
   return (
     <div
       className={cn(
-        'border-border dark:border-dark-border dark:bg-dark-bg dark:text-dark-text relative flex border-b bg-white transition-colors duration-150'
+        'border-border dark:border-dark-border dark:bg-dark-bg dark:text-dark-text relative flex border-b bg-white'
       )}
     >
       <DndContext
@@ -93,7 +92,7 @@ export const Tabs = ({
           {activeTab ? (
             <div
               className={cn(
-                'border-border dark:border-dark-border relative flex max-w-[200px] min-w-[120px] cursor-grab items-center border-r bg-white px-4 py-2 whitespace-nowrap shadow-lg transition-colors duration-150 select-none dark:bg-gray-800'
+                'border-border dark:border-dark-border relative flex max-w-[200px] min-w-[120px] cursor-grab items-center border-r bg-white px-4 py-2 whitespace-nowrap shadow-lg select-none dark:bg-gray-800'
               )}
             >
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>

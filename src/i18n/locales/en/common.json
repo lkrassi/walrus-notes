@@ -51,5 +51,9 @@
     "goHome": "Return home",
     "goBack": "Go back",
     "helpText": "If you believe this is an error, please contact support"
+  },
+  "errors": {
+    "requestTitle": "Request error",
+    "requestFallback": "An error occurred while performing the operation"
   }
 }

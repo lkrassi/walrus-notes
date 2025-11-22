@@ -66,8 +66,6 @@ const SidebarComponent = (
 
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
-    // Don't close sidebar on mobile when user clicks a folder (layout)
-    // so they can expand it and select a note inside.
     if (item.type !== 'layout') {
       setIsMobileOpen(false);
     }
@@ -223,7 +221,6 @@ const SidebarComponent = (
             onDeleteLayout={handleDeleteLayout}
           />
         </div>
-        {/* resizer handle for desktop */}
         {!isMobile && (
           <div
             role='separator'
