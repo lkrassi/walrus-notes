@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import cn from 'shared/lib/cn';
 import CodeHighlighter from './CodeHighlighter';
-// theme not required for plain code blocks
 import type { Note } from 'shared/model/types/layouts';
 import RelatedNotesDropdown from './RelatedNotesDropdown';
 
