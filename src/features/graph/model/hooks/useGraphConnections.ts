@@ -42,7 +42,6 @@ export const useGraphConnections = ({
 
   const createEdge = useCallback(
     (source: string, target: string): Edge => {
-      // try to reuse precomputed nodeColor from nodes data if available
       const sourceNode = nodes.find(n => n.id === source);
       const targetNode = nodes.find(n => n.id === target);
       const sourceColor =

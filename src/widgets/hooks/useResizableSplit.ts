@@ -7,8 +7,18 @@ type Options = {
   max?: number;
 };
 
-export const useResizableSplit = ({ storageKey, defaultLeft = 480, min = 200, max = 1200 }: Options = {}) => {
-  const base = useResizableBase({ storageKey, defaultSize: defaultLeft, min, max });
+export const useResizableSplit = ({
+  storageKey,
+  defaultLeft = 480,
+  min = 200,
+  max = 1200,
+}: Options = {}) => {
+  const base = useResizableBase({
+    storageKey,
+    defaultSize: defaultLeft,
+    min,
+    max,
+  });
 
   return {
     leftWidth: base.size,
@@ -16,6 +26,7 @@ export const useResizableSplit = ({ storageKey, defaultLeft = 480, min = 200, ma
     onDividerPointerDown: base.onPointerDown,
     min,
     max,
+    isResizing: base.isResizing,
   } as const;
 };
 

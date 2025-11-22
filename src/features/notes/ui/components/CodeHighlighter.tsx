@@ -27,7 +27,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   const style = theme === 'dark' ? oneDark : oneLight;
 
   return (
-    <div className={cn('m-0', 'overflow-x-auto', 'rounded-lg')}>
+    <div className={cn('m-0', 'overflow-x-auto', 'rounded-lg', 'relative')}>
       {language && (
         <div
           style={{

@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import cn from 'shared/lib/cn';
 import CodeHighlighter from './CodeHighlighter';
-// theme not required for plain code blocks
 import type { Note } from 'shared/model/types/layouts';
 import RelatedNotesDropdown from './RelatedNotesDropdown';
 
@@ -32,7 +31,24 @@ const CodeBlock = ({
       </code>
     );
 
-  return <CodeHighlighter className={className}>{children}</CodeHighlighter>;
+  // For block code we don't render here; the `pre` handler will render it.
+  return (
+    <code className={cn('block-code', className)} {...props}>
+      {children}
+    </code>
+  );
+};
+
+const PreBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = props => {
+  const { children } = props;
+  const child = Array.isArray(children) ? children[0] : children;
+  if (child && child.props) {
+    const className = child.props.className;
+    const code = child.props.children;
+    return <CodeHighlighter className={className}>{code}</CodeHighlighter>;
+  }
+
+  return <pre>{children}</pre>;
 };
 
 export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
@@ -61,7 +77,7 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            components={{ code: CodeBlock }}
+            components={{ code: CodeBlock, pre: PreBlock }}
           >
             {content}
           </ReactMarkdown>

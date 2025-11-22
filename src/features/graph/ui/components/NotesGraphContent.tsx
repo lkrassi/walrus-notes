@@ -257,7 +257,7 @@ const NotesGraphContentComponent = ({
       } catch (_e) {
         onNodeDragStop(_event, node);
       }
-      // stop node dragging flag after drag stop
+
       try {
         isNodeDraggingRef.current = false;
         setIsNodeDragging(false);

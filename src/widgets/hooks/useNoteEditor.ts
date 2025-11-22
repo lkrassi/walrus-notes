@@ -26,6 +26,7 @@ export const useNoteEditor = (
     setTitle(note.title);
     setPayload(note.payload);
     setIsEditing(false);
+    return true;
   };
 
   const handleSave = async () => {
@@ -50,8 +51,10 @@ export const useNoteEditor = (
 
       onNoteUpdated?.(updatedNote);
       setIsEditing(false);
+      return true;
     } catch {
       showError('notes:noteUpdateError');
+      return false;
     }
   };
 

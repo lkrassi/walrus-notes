@@ -45,8 +45,12 @@ export const NoteViewer = ({
         isLoading={isLoading}
         onTitleChange={setTitle}
         onEdit={handleEdit}
-        onSave={handleSave}
-        onCancel={handleCancel}
+        onSave={async () => {
+          await handleSave();
+        }}
+        onCancel={async () => {
+          await handleCancel();
+        }}
       />
 
       <div className={cn('flex-1', 'overflow-hidden')}>

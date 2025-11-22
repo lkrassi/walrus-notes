@@ -62,7 +62,6 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
           pointerStartRef.current = null;
           setIsDragging(false);
           try {
-            // keep a reference to button rect if needed in future
             try {
               btnRef.current?.getBoundingClientRect();
             } catch (_e) {}
@@ -181,7 +180,6 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
 export const NoteNodeComponent = React.memo(
   NoteNodeInner,
   (prev: NoteNodeProps, next: NoteNodeProps) => {
-    // shallow compare important props to avoid unnecessary re-renders
     if (prev.selected !== next.selected) return false;
     if (prev.data.nodeColor !== next.data.nodeColor) return false;
     if (prev.data.note?.id !== next.data.note?.id) return false;

@@ -57,41 +57,32 @@ h6 {
 }
 
 @theme {
-  /* основные цвета */
   --color-bg: #f8fcfa;
   --color-dark-bg: #0c1e1a;
   --color-text: #1a2b26;
   --color-dark-text: #e8f5f1;
 
-  /* акцентный цвет */
   --color-primary: #0d9488;
   --color-dark-primary: #2dd4bf;
 
-  /* темные варианты акцента */
   --color-primary-dark: #0f766e;
   --color-dark-primary-dark: #0d9488;
 
-  /* градиентные цвета */
   --color-primary-gradient: #2dd4bf;
   --color-dark-primary-gradient: #5eead4;
 
-  /* вторичные цвета */
   --color-secondary: #64748b;
   --color-dark-secondary: #94a3b8;
 
-  /* границы */
   --color-border: #d1e8e2;
   --color-dark-border: #2d4a45;
 
-  /* плейсхолдеры */
   --color-input-placeholder: #94a3b8;
   --color-dark-input-placeholder: #64748b;
 
-  /* фокус состояния */
   --color-border-focus: #0d9488;
   --color-dark-border-focus: #2dd4bf;
 
-  /* кнопки */
   --color-btn: #0d9488;
   --color-btn-cancel: #dc2626;
   --color-btn-disabled: #b0bec5;

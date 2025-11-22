@@ -4,7 +4,6 @@ import { generateColorFromId } from '../../model/utils/graphUtils';
 
 const GraphMiniMapInner = () => {
   const nodeColor = useCallback((node: Node) => {
-    // prefer precomputed color in node.data
     const maybeData = node.data as { nodeColor?: string } | undefined;
     return maybeData?.nodeColor || generateColorFromId(node.id);
   }, []);

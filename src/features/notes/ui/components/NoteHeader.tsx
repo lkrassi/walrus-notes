@@ -1,4 +1,4 @@
-import { Edit3, Save, X, CircleQuestionMark, Code } from 'lucide-react';
+import { Edit3, Save, X, CircleQuestionMark } from 'lucide-react';
 import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
