@@ -28,7 +28,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setAnimationState('entering');
-      const timer = setTimeout(() => setAnimationState('open'), 50);
+      const timer = setTimeout(() => setAnimationState('open'), 0);
       return () => clearTimeout(timer);
     } else {
       setAnimationState('exiting');

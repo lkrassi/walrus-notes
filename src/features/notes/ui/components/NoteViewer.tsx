@@ -11,7 +11,11 @@ interface NoteViewerProps {
   onNoteDeleted?: (noteId: string) => void;
 }
 
-export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
+export const NoteViewer = ({
+  note,
+  layoutId,
+  onNoteUpdated,
+}: NoteViewerProps) => {
   const {
     isEditing,
     title,
@@ -25,7 +29,16 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
   } = useNoteEditor(note, onNoteUpdated);
 
   return (
-    <div className={cn('flex', 'h-full', 'w-full', 'flex-col', 'bg-gradient')}>
+    <div
+      className={cn(
+        'relative',
+        'flex',
+        'h-full',
+        'w-full',
+        'flex-col',
+        'bg-gradient'
+      )}
+    >
       <NoteHeader
         isEditing={isEditing}
         title={title}
@@ -42,6 +55,8 @@ export const NoteViewer = ({ note, onNoteUpdated }: NoteViewerProps) => {
           payload={payload}
           isLoading={isLoading}
           onPayloadChange={setPayload}
+          note={note}
+          layoutId={layoutId}
         />
       </div>
     </div>

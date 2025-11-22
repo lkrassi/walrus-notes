@@ -41,7 +41,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
             ring={false}
             value={title}
             onChange={e => onTitleChange(e.target.value)}
-            className={cn('w-[50%]', 'border-none')}
+            className={cn('w-[50%]', 'border-none', 'max-sm:w-full')}
             disabled={isLoading}
           />
         ) : (

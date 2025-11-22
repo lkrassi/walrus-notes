@@ -99,6 +99,7 @@ export const MarkdownEditor = forwardRef<
         'h-full',
         'p-4',
         'outline-none',
+        'mt-15',
         className
       )}
     />

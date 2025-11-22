@@ -7,11 +7,15 @@ import useResizableSplit from 'widgets/hooks/useResizableSplit';
 import { syncScroll } from '../../lib/syncScroll';
 import { useIsDesktop } from 'widgets/hooks';
 
+import type { Note } from 'shared/model/types/layouts';
+
 interface NoteContentProps {
   isEditing: boolean;
   payload: string;
   isLoading: boolean;
   onPayloadChange: (payload: string) => void;
+  note?: Note;
+  layoutId?: string;
 }
 
 export const NoteContent: React.FC<NoteContentProps> = ({
@@ -19,6 +23,8 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   payload,
   isLoading,
   onPayloadChange,
+  note,
+  layoutId,
 }) => {
   const { t } = useLocalization();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -129,7 +135,13 @@ export const NoteContent: React.FC<NoteContentProps> = ({
               !isDesktop && 'min-h-0'
             )}
           >
-            <MarkdownPreview ref={previewRef} content={payload} />
+            <MarkdownPreview
+              ref={previewRef}
+              content={payload}
+              note={note}
+              layoutId={layoutId}
+              showRelated={!isEditing}
+            />
           </div>
         </div>
       </div>
@@ -140,7 +152,12 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     <div className={cn('h-full', 'overflow-y-auto', 'p-4', 'bg-transparent')}>
       <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
         {payload ? (
-          <MarkdownPreview content={payload} />
+          <MarkdownPreview
+            content={payload}
+            note={note}
+            layoutId={layoutId}
+            showRelated={!isEditing}
+          />
         ) : (
           <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
             {t('notes:emptyNoteMessage')}
