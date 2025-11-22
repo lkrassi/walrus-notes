@@ -1,9 +1,9 @@
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
 import cn from 'shared/lib/cn';
-import { useTheme } from 'widgets/hooks';
+import CodeHighlighter from './CodeHighlighter';
+// theme not required for plain code blocks
 import type { Note } from 'shared/model/types/layouts';
 import RelatedNotesDropdown from './RelatedNotesDropdown';
 
@@ -15,40 +15,28 @@ interface MarkdownPreviewProps {
   showRelated?: boolean;
 }
 
-const CodeBlock = ({ inline, className, children, ...props }: any) => {
+const CodeBlock = ({
+  inline,
+  className,
+  children,
+  ...props
+}: {
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}) => {
   if (inline)
     return (
-      <code className={className} {...props}>
+      <code className={cn('inline-code', className)} {...props}>
         {children}
       </code>
     );
-  return (
-    <pre
-      className={cn(
-        'm-0',
-        'overflow-x-auto',
-        'p-4',
-        'bg-gray-50',
-        'dark:bg-gray-900',
-        'rounded-lg'
-      )}
-    >
-      <code className={className} {...props}>
-        {children}
-      </code>
-    </pre>
-  );
+
+  return <CodeHighlighter className={className}>{children}</CodeHighlighter>;
 };
 
 export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
   ({ content, className, note, layoutId, showRelated = true }, ref) => {
-    const { theme } = useTheme();
-
-    useEffect(() => {
-      if (theme === 'dark') import('highlight.js/styles/github-dark.css');
-      else import('highlight.js/styles/github.css');
-    }, [theme]);
-
     return (
       <div
         ref={ref}
@@ -73,7 +61,6 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
             components={{ code: CodeBlock }}
           >
             {content}
