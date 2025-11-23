@@ -95,7 +95,7 @@ export const useGraphSelection = ({
           isRelatedToSelected: isRelated,
           isSelected: isSelected,
         };
-        // reuse original object if nothing changed to avoid re-renders
+
         const e = edge as AnyEdge;
         const styleChanged =
           e.style?.strokeWidth !== newStyle.strokeWidth ||
@@ -206,6 +206,7 @@ export const useGraphSelection = ({
 
         return {
           ...node,
+          selected: isSelected,
           data: newData,
           style: newStyle,
         } as StyledNode;
@@ -234,6 +235,7 @@ export const useGraphSelection = ({
         if (!dataChanged && !styleChanged) return node as StyledNode;
         return {
           ...node,
+          selected: false,
           data: newData,
           style: newStyle,
         } as StyledNode;
@@ -272,6 +274,7 @@ export const useGraphSelection = ({
 
       return {
         ...node,
+        selected: isSelected,
         data: newData,
         style: newStyle,
       } as StyledNode;

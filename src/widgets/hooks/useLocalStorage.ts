@@ -38,9 +38,7 @@ export const useLocalStorage = <T>(
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (_error) {
-        console.warn(_error);
-      }
+      } catch (_e) {}
     },
     [key, storedValue]
   );
@@ -51,9 +49,7 @@ export const useLocalStorage = <T>(
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key);
       }
-    } catch (_error) {
-      console.warn(_error);
-    }
+    } catch (_e) {}
   }, [key, initialValue]);
 
   useEffect(() => {
@@ -61,9 +57,7 @@ export const useLocalStorage = <T>(
       if (e.key === key && e.newValue !== null) {
         try {
           setStoredValue(JSON.parse(e.newValue));
-        } catch (_error) {
-          console.warn(_error);
-        }
+        } catch (_e) {}
       }
     };
 

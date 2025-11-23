@@ -214,6 +214,7 @@ const NotesGraphContentComponent = ({
 
   const isNodeDraggingRef = useRef(false);
   const [isNodeDragging, setIsNodeDragging] = useState(false);
+  const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
   const handleNodeDragStart = useCallback(
     (_event: React.MouseEvent, _node: Node) => {
@@ -241,6 +242,14 @@ const NotesGraphContentComponent = ({
 
   const handleNodeDragStopMulti = useCallback(
     (_event: React.MouseEvent, node: Node) => {
+      if (!node) {
+        try {
+          isNodeDraggingRef.current = false;
+          setIsNodeDragging(false);
+        } catch (_e) {}
+        return;
+      }
+
       try {
         const selectedNodes = nodes.filter(n => (n as any).selected);
         if (
@@ -250,6 +259,10 @@ const NotesGraphContentComponent = ({
           selectedNodes.forEach(n => {
             updatePositionCallback(n.id, n.position.x, n.position.y);
           });
+          try {
+            isNodeDraggingRef.current = false;
+            setIsNodeDragging(false);
+          } catch (_e) {}
           return;
         }
 
@@ -257,7 +270,7 @@ const NotesGraphContentComponent = ({
       } catch (_e) {
         onNodeDragStop(_event, node);
       }
-      // stop node dragging flag after drag stop
+
       try {
         isNodeDraggingRef.current = false;
         setIsNodeDragging(false);
@@ -296,11 +309,21 @@ const NotesGraphContentComponent = ({
                   ch.type === 'select' &&
                   typeof (ch as any).selected === 'boolean'
                 ) {
-                  (updated[idx] as any).selected = (ch as any).selected;
+                  const changingId = (ch as any).id as string;
+                  const requested = (ch as any).selected as boolean;
+                  if (
+                    !requested &&
+                    lastBoxSelectedIdsRef.current.has(changingId)
+                  ) {
+                    (updated[idx] as any).selected = true;
+                  } else {
+                    (updated[idx] as any).selected = requested;
+                  }
                 }
               }
             }
           });
+
           return updated;
         }
 
@@ -333,7 +356,16 @@ const NotesGraphContentComponent = ({
                 ch.type === 'select' &&
                 typeof (ch as any).selected === 'boolean'
               ) {
-                (updated[idx] as any).selected = (ch as any).selected;
+                const changingId = (ch as any).id as string;
+                const requested = (ch as any).selected as boolean;
+                if (
+                  !requested &&
+                  lastBoxSelectedIdsRef.current.has(changingId)
+                ) {
+                  (updated[idx] as any).selected = true;
+                } else {
+                  (updated[idx] as any).selected = requested;
+                }
               }
             }
           }
@@ -346,8 +378,9 @@ const NotesGraphContentComponent = ({
   );
 
   const handleNodeDoubleClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (event: React.MouseEvent, node?: Node | null) => {
       event.stopPropagation();
+      if (!node?.id) return;
       node.data?.onNoteClick?.(node.id);
     },
     []
@@ -481,9 +514,20 @@ const NotesGraphContentComponent = ({
 
         if (nodesToSelect.length === 0) return;
 
-        setNodes(prev =>
-          prev.map(n => ({ ...n, selected: nodesToSelect.includes(n.id) }))
-        );
+        setNodes(prev => {
+          const res = prev.map(n => ({
+            ...n,
+            selected: nodesToSelect.includes(n.id),
+          }));
+          lastBoxSelectedIdsRef.current = new Set(nodesToSelect);
+          setTimeout(() => {
+            setNodes(curr =>
+              curr.map(n => ({ ...n, selected: nodesToSelect.includes(n.id) }))
+            );
+            setTimeout(() => lastBoxSelectedIdsRef.current.clear(), 300);
+          }, 50);
+          return res;
+        });
       } catch (_e) {}
     },
     [nodes, screenToFlowPosition, setNodes]

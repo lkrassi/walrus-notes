@@ -62,10 +62,7 @@ export const layoutApi = apiSlice.injectEndpoints({
         body: { title: body.title },
       }),
       invalidatesTags: ['Layouts'],
-      onQueryStarted: async (
-        { title },
-        { dispatch, queryFulfilled, getState }
-      ) => {
+      onQueryStarted: async ({ title }, { dispatch, queryFulfilled }) => {
         const tempId = `temp-${Date.now()}`;
         const tempLayout: Layout = {
           id: tempId,

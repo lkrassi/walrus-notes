@@ -3,6 +3,7 @@ import type { Note } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
 import { layoutApi } from './layoutApi';
+import { updateTabNote } from 'app/store/slices/tabsSlice';
 
 interface GetNotesRequest {
   layoutId: string;
@@ -205,7 +206,7 @@ export const notesApi = apiSlice.injectEndpoints({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
       query: ({ layoutId, page = 1 }) =>
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: arg.layoutId },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -221,10 +222,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.layoutId },
-        'Notes',
-      ],
+      invalidatesTags: [],
       onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
           notesApi.util.updateQueryData(
@@ -256,7 +254,7 @@ export const notesApi = apiSlice.injectEndpoints({
               }
             )
           );
-        } catch {
+        } catch (_e) {
           patchResult.undo();
         }
       },
@@ -268,10 +266,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: { noteId, ...body },
       }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.noteId },
-        'Notes',
-      ],
+      invalidatesTags: [],
       onQueryStarted: async (
         { noteId, title, payload },
         { dispatch, queryFulfilled, getState }
@@ -299,7 +294,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr2 = dispatch(
@@ -317,7 +312,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr2);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr3 = dispatch(
@@ -335,13 +330,13 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr3);
-            } catch {}
+            } catch (_e) {}
           }
-        } catch {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(p => p.undo && p.undo());
         }
       },
@@ -376,7 +371,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr2 = dispatch(
@@ -389,7 +384,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr2);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr3 = dispatch(
@@ -402,13 +397,13 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr3);
-            } catch {}
+            } catch (_e) {}
           }
-        } catch {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(p => p.undo && p.undo());
         }
       },
@@ -416,7 +411,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -432,7 +427,7 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -466,9 +461,7 @@ export const notesApi = apiSlice.injectEndpoints({
               note => note.id === arg.noteId
             );
           }
-        } catch (error) {
-          console.warn(error);
-        }
+        } catch (_e) {}
 
         if (!realNoteData) {
           try {
@@ -481,9 +474,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 note => note.id === arg.noteId
               );
             }
-          } catch (error) {
-            console.warn(error);
-          }
+          } catch (_e) {}
         }
 
         const patchResult = dispatch(
@@ -528,7 +519,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResult.undo();
           unposedPatchResult.undo();
         }
@@ -545,45 +536,99 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
+        let originalTabLinkedWith: string[] | undefined;
 
         try {
-          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-            layoutId: arg.layoutId,
-          })(getState() as RootState);
+          try {
+            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+              layoutId: arg.layoutId,
+            })(getState() as RootState);
 
-          if (posedNotesCache.data?.data) {
-            const patchResult = dispatch(
-              notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
-                draft => {
-                  const sourceNote = draft.data.find(
-                    n => n.id === arg.firstNoteId
-                  );
-                  if (sourceNote) {
-                    if (!sourceNote.linkedWith) {
-                      sourceNote.linkedWith = [];
+            if (posedNotesCache.data?.data) {
+              const patchResult = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: arg.layoutId },
+                  draft => {
+                    const sourceNote = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
+                    if (sourceNote) {
+                      if (!sourceNote.linkedWith) {
+                        sourceNote.linkedWith = [];
+                      }
+                      if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
+                        sourceNote.linkedWith.push(arg.secondNoteId);
+                      }
                     }
-                    if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
-                      sourceNote.linkedWith.push(arg.secondNoteId);
+                  }
+                )
+              );
+              patchResults.push(patchResult);
+            }
+          } catch (_e) {}
+
+          try {
+            const getNotesPatch = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  if (!draft || !draft.data) return;
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (source) {
+                    if (!source.linkedWith) source.linkedWith = [];
+                    if (!source.linkedWith.includes(arg.secondNoteId)) {
+                      source.linkedWith.push(arg.secondNoteId);
                     }
                   }
                 }
               )
             );
-            patchResults.push(patchResult);
-          }
-        } catch (error) {
-          console.warn(error);
-        }
+            patchResults.push(getNotesPatch);
+          } catch (_e) {}
+
+          try {
+            const state = getState() as RootState;
+            const tabsState = state.tabs;
+            if (tabsState?.openTabs) {
+              const tab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
+              );
+              if (tab && tab.item && tab.item.note) {
+                originalTabLinkedWith = tab.item.note.linkedWith;
+                const newLinked = Array.isArray(originalTabLinkedWith)
+                  ? [...originalTabLinkedWith]
+                  : [];
+                if (!newLinked.includes(arg.secondNoteId))
+                  newLinked.push(arg.secondNoteId);
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.firstNoteId,
+                    updates: { linkedWith: newLinked },
+                  })
+                );
+              }
+            }
+          } catch (_e) {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
+          try {
+            if (originalTabLinkedWith !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.firstNoteId,
+                  updates: { linkedWith: originalTabLinkedWith },
+                })
+              );
+            }
+          } catch (_e) {}
         }
       },
     }),
@@ -598,42 +643,95 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
+        let originalTabLinkedWithDel: string[] | undefined;
 
         try {
-          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-            layoutId: arg.layoutId,
-          })(getState() as RootState);
+          try {
+            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+              layoutId: arg.layoutId,
+            })(getState() as RootState);
 
-          if (posedNotesCache.data?.data) {
-            const patchResult = dispatch(
+            if (posedNotesCache.data?.data) {
+              const patchResult = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: arg.layoutId },
+                  draft => {
+                    const sourceNote = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
+                    if (sourceNote && sourceNote.linkedWith) {
+                      sourceNote.linkedWith = sourceNote.linkedWith.filter(
+                        id => id !== arg.secondNoteId
+                      );
+                    }
+                  }
+                )
+              );
+              patchResults.push(patchResult);
+            }
+          } catch (_e) {}
+
+          try {
+            const getNotesPatch = dispatch(
               notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
                 draft => {
-                  const sourceNote = draft.data.find(
-                    n => n.id === arg.firstNoteId
-                  );
-                  if (sourceNote && sourceNote.linkedWith) {
-                    sourceNote.linkedWith = sourceNote.linkedWith.filter(
+                  if (!draft || !draft.data) return;
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (source && source.linkedWith) {
+                    source.linkedWith = source.linkedWith.filter(
                       id => id !== arg.secondNoteId
                     );
                   }
                 }
               )
             );
-            patchResults.push(patchResult);
-          }
-        } catch (error) {
-          console.warn(error);
-        }
+            patchResults.push(getNotesPatch);
+          } catch (_e) {}
+
+          try {
+            const state = getState() as RootState;
+            const tabsState = state.tabs;
+            if (tabsState?.openTabs) {
+              const tab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
+              );
+              if (tab && tab.item && tab.item.note) {
+                originalTabLinkedWithDel = tab.item.note.linkedWith;
+                const newLinked = Array.isArray(originalTabLinkedWithDel)
+                  ? originalTabLinkedWithDel.filter(
+                      id => id !== arg.secondNoteId
+                    )
+                  : [];
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.firstNoteId,
+                    updates: { linkedWith: newLinked },
+                  })
+                );
+              }
+            }
+          } catch (_e) {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
+          try {
+            if (originalTabLinkedWithDel !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.firstNoteId,
+                  updates: { linkedWith: originalTabLinkedWithDel },
+                })
+              );
+            }
+          } catch (_e) {}
         }
       },
     }),
@@ -641,7 +739,7 @@ export const notesApi = apiSlice.injectEndpoints({
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({
       query: ({ search }) =>
         `/notes/search?search=${encodeURIComponent(search)}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `search-${arg.search}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
