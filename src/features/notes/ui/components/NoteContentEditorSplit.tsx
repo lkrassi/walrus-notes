@@ -20,6 +20,8 @@ interface Props {
   note?: Note;
   layoutId?: string;
   enterFromLeft?: boolean;
+  isEditing?: boolean;
+  isResizing?: boolean;
 }
 
 const NoteContentEditorSplit: React.FC<Props> = ({
@@ -35,55 +37,77 @@ const NoteContentEditorSplit: React.FC<Props> = ({
   isDesktop,
   note,
   layoutId,
-  enterFromLeft = false,
+  isEditing = false,
+  isResizing = false,
 }) => {
+  const computeWidth = () => {
+    if (isDesktop) {
+      if (isEditing) return leftWidth ? `${leftWidth}px` : '480px';
+      return '0px';
+    }
+    return isEditing ? '50%' : '0%';
+  };
+
+  const widthValue = computeWidth();
+
+  const computeHeight = () => {
+    if (isDesktop) return '100%';
+    return isEditing ? '50%' : '0%';
+  };
+
+  const heightValue = computeHeight();
+
   return (
-    <motion.div
-      key='editing'
-      initial={enterFromLeft ? { x: -120, opacity: 0 } : { x: 120, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={enterFromLeft ? { x: -120, opacity: 0 } : { x: 120, opacity: 0 }}
-      transition={{ duration: 0.22 }}
-      className={cn('flex', 'flex-col', 'h-full')}
-    >
+    <div className={cn('flex', 'flex-col', 'h-full')}>
       <div
         className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
       >
-        <div
+        <motion.div
+          initial={false}
+          animate={isDesktop ? { width: widthValue } : { height: heightValue }}
+          transition={{ duration: isResizing ? 0 : 0.22 }}
           className={cn(
             'h-full',
             'bg-transparent',
-            !isDesktop && 'basis-1/2',
-            !isDesktop && 'min-h-0'
+            'min-h-0',
+            'overflow-hidden'
           )}
           style={
-            isDesktop && leftWidth
-              ? {
-                  width: `${leftWidth}px`,
-                  minWidth: `${min}px`,
-                  maxWidth: `${max}px`,
-                }
-              : undefined
+            isDesktop && leftWidth && isEditing
+              ? { minWidth: `${min}px`, maxWidth: `${max}px`, height: '100%' }
+              : !isDesktop
+                ? { width: '100%' }
+                : undefined
           }
         >
-          <MarkdownEditor
-            ref={textareaRef}
-            value={payload}
-            onChange={onPayloadChange}
-            disabled={isLoading}
-          />
-        </div>
+          <div
+            className={cn(
+              'h-full',
+              'p-0',
+              !isEditing && 'pointer-events-none',
+              !isEditing && 'select-none'
+            )}
+            aria-hidden={!isEditing}
+          >
+            <MarkdownEditor
+              ref={textareaRef}
+              value={payload}
+              onChange={onPayloadChange}
+              disabled={!isEditing || isLoading}
+              className={cn('h-full', 'min-h-0')}
+            />
+          </div>
+        </motion.div>
 
         <div
           role='separator'
-          aria-orientation='vertical'
+          aria-orientation={isDesktop ? 'vertical' : 'horizontal'}
           onPointerDown={onDividerPointerDown}
           className={cn(
-            'hidden',
-            'md:block',
-            'h-full',
-            'w-2',
-            'cursor-col-resize',
+            isEditing ? 'block' : 'hidden',
+            isDesktop
+              ? 'h-full w-2 cursor-col-resize'
+              : 'h-2 w-full cursor-row-resize',
             'select-none',
             'touch-none',
             'bg-transparent',
@@ -93,13 +117,13 @@ const NoteContentEditorSplit: React.FC<Props> = ({
         />
 
         <motion.div
-          initial={{ x: 0, opacity: 1 }}
+          initial={false}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 120, opacity: 0 }}
           transition={{ duration: 0.22 }}
           className={cn(
             'flex-1',
             'h-full',
+            'min-h-0',
             'border-border',
             'dark:border-dark-border',
             isDesktop ? 'border-l' : 'border-t',
@@ -114,11 +138,11 @@ const NoteContentEditorSplit: React.FC<Props> = ({
             content={payload}
             note={note}
             layoutId={layoutId}
-            showRelated={false}
+            showRelated={!isEditing}
           />
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -59,7 +59,6 @@ h6 {
 }
 
 @theme {
-  /* Светлая тема - Морская свежесть */
   --color-bg: #f0fdfc;
   --color-text: #16433e;
   --color-primary: #0d9488;
@@ -74,7 +73,6 @@ h6 {
   --color-btn-disabled: #b0d4d0;
   --color-btn-submit: #10b981;
 
-  /* Темная тема - Глубина океана */
   --color-dark-bg: #052925;
   --color-dark-text: #d1f5f0;
   --color-dark-primary: #2dd4bf;

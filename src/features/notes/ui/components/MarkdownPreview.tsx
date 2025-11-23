@@ -61,7 +61,13 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
     return (
       <div
         ref={ref}
-        className={cn('relative', 'h-full', 'overflow-visible', className)}
+        className={cn(
+          'relative',
+          'h-full',
+          'min-h-0',
+          'overflow-y-auto',
+          className
+        )}
       >
         {showRelated && note && (
           <div
@@ -72,37 +78,25 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
               'max-sm:justify-center'
             )}
           >
-            {(() => {
-              try {
-                console.log('[MarkdownPreview] render linked list', {
-                  noteId: note.id,
-                  linkedWith: note.linkedWith,
-                  effectiveLayoutId,
-                });
-              } catch (_e) {}
-
-              return (
-                <div className={cn('w-56')}>
-                  <LinkedNotesList
-                    layoutId={effectiveLayoutId}
-                    linkedIds={note.linkedWith || []}
-                    onNoteSelect={(selected: Note) => {
-                      try {
-                        const item: FileTreeItem = {
-                          id: selected.id,
-                          type: 'note',
-                          title: selected.title,
-                          parentId: note.layoutId || selected.layoutId,
-                          note: selected,
-                        };
-                        dispatch(openTab(item));
-                        dispatch(switchTab(createTabId('note', selected.id)));
-                      } catch (_e) {}
-                    }}
-                  />
-                </div>
-              );
-            })()}
+            <div className={cn('w-56')}>
+              <LinkedNotesList
+                layoutId={effectiveLayoutId}
+                linkedIds={note.linkedWith || []}
+                onNoteSelect={(selected: Note) => {
+                  try {
+                    const item: FileTreeItem = {
+                      id: selected.id,
+                      type: 'note',
+                      title: selected.title,
+                      parentId: note.layoutId || selected.layoutId,
+                      note: selected,
+                    };
+                    dispatch(openTab(item));
+                    dispatch(switchTab(createTabId('note', selected.id)));
+                  } catch (_e) {}
+                }}
+              />
+            </div>
           </div>
         )}
 
@@ -115,8 +109,7 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
             'wrap-break-word',
             'markdown-content',
             'text-text',
-            'dark:text-dark-text',
-            'mt-15'
+            'dark:text-dark-text'
           )}
         >
           <ReactMarkdown

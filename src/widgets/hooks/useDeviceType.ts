@@ -43,5 +43,5 @@ export const useIsTablet = (): boolean => {
 
 export const useIsDesktop = (): boolean => {
   const deviceType = useDeviceType();
-  return deviceType === 'desktop';
+  return deviceType !== 'mobile';
 };

@@ -35,22 +35,34 @@ export const useNoteEditor = (
       return;
     }
 
+    const newTitle = title.trim();
+    const newPayload = payload.trim();
+
+    // If nothing changed, close editor without making API call
+    if (newTitle === note.title && newPayload === note.payload) {
+      setIsEditing(false);
+      return true;
+    }
+
     try {
       await updateNote({
         noteId: note.id,
-        payload: payload.trim(),
-        title: title.trim(),
+        payload: newPayload,
+        title: newTitle,
       }).unwrap();
 
       const updatedNote: Note = {
         ...note,
-        title: title.trim(),
-        payload: payload.trim(),
+        title: newTitle,
+        payload: newPayload,
         updatedAt: new Date().toISOString(),
       };
 
-      onNoteUpdated?.(updatedNote);
+      // close editor first to allow exit animation to run cleanly,
+      // then inform parent about the updated note (prevents parent
+      // re-render while editor is still mounted which caused double animations)
       setIsEditing(false);
+      onNoteUpdated?.(updatedNote);
       return true;
     } catch {
       showError('notes:noteUpdateError');

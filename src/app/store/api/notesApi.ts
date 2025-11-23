@@ -206,7 +206,7 @@ export const notesApi = apiSlice.injectEndpoints({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
       query: ({ layoutId, page = 1 }) =>
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: arg.layoutId },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -254,7 +254,7 @@ export const notesApi = apiSlice.injectEndpoints({
               }
             )
           );
-        } catch {
+        } catch (_e) {
           patchResult.undo();
         }
       },
@@ -266,10 +266,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: { noteId, ...body },
       }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.noteId },
-        'Notes',
-      ],
+      invalidatesTags: [],
       onQueryStarted: async (
         { noteId, title, payload },
         { dispatch, queryFulfilled, getState }
@@ -297,7 +294,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr2 = dispatch(
@@ -315,7 +312,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr2);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr3 = dispatch(
@@ -333,13 +330,13 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr3);
-            } catch {}
+            } catch (_e) {}
           }
-        } catch {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(p => p.undo && p.undo());
         }
       },
@@ -374,7 +371,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr2 = dispatch(
@@ -387,7 +384,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr2);
-            } catch {}
+            } catch (_e) {}
 
             try {
               const pr3 = dispatch(
@@ -400,13 +397,13 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(pr3);
-            } catch {}
+            } catch (_e) {}
           }
-        } catch {}
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResults.forEach(p => p.undo && p.undo());
         }
       },
@@ -414,7 +411,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -430,7 +427,7 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,
@@ -464,9 +461,7 @@ export const notesApi = apiSlice.injectEndpoints({
               note => note.id === arg.noteId
             );
           }
-        } catch (error) {
-          console.warn(error);
-        }
+        } catch (_e) {}
 
         if (!realNoteData) {
           try {
@@ -479,9 +474,7 @@ export const notesApi = apiSlice.injectEndpoints({
                 note => note.id === arg.noteId
               );
             }
-          } catch (error) {
-            console.warn(error);
-          }
+          } catch (_e) {}
         }
 
         const patchResult = dispatch(
@@ -526,7 +519,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
-        } catch {
+        } catch (_e) {
           patchResult.undo();
           unposedPatchResult.undo();
         }
@@ -544,13 +537,10 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        console.log('[notesApi] createNoteLink onQueryStarted', arg);
         const patchResults: Array<{ undo?: () => void }> = [];
-        // keep originals in outer scope so we can revert on failure
         let originalTabLinkedWith: string[] | undefined;
 
         try {
-          // Patch posed notes cache (existing behaviour)
           try {
             const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
               layoutId: arg.layoutId,
@@ -577,20 +567,9 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(patchResult);
-              console.log(
-                '[notesApi] createNoteLink patched getPosedNotes cache',
-                {
-                  layoutId: arg.layoutId,
-                  first: arg.firstNoteId,
-                  second: arg.secondNoteId,
-                }
-              );
             }
-          } catch (e) {
-            console.warn('[notesApi] error patching posed notes', e);
-          }
+          } catch (_e) {}
 
-          // Optimistically patch getNotes (so UI that uses getNotes sees updated linkedWith without full refetch)
           try {
             const getNotesPatch = dispatch(
               notesApi.util.updateQueryData(
@@ -609,19 +588,8 @@ export const notesApi = apiSlice.injectEndpoints({
               )
             );
             patchResults.push(getNotesPatch);
-            console.log(
-              '[notesApi] createNoteLink optimistically patched getNotes cache',
-              {
-                layoutId: arg.layoutId,
-                first: arg.firstNoteId,
-                second: arg.secondNoteId,
-              }
-            );
-          } catch (e) {
-            console.warn('[notesApi] error patching getNotes cache', e);
-          }
+          } catch (_e) {}
 
-          // Optimistically update open tab's note (so NoteViewer/MarkdownPreview showing an open tab updates)
           try {
             const state = getState() as RootState;
             const tabsState = state.tabs;
@@ -642,30 +610,14 @@ export const notesApi = apiSlice.injectEndpoints({
                     updates: { linkedWith: newLinked },
                   })
                 );
-                console.log(
-                  '[notesApi] createNoteLink optimistically updated open tab note',
-                  {
-                    noteId: arg.firstNoteId,
-                    newLinked,
-                  }
-                );
               }
             }
-          } catch (e) {
-            console.warn('[notesApi] error patching open tab note', e);
-          }
-        } catch (error) {
-          console.warn('[notesApi] createNoteLink onQueryStarted error', error);
-        }
+          } catch (_e) {}
+        } catch (_e) {}
 
         try {
-          const { data } = await queryFulfilled;
-          console.log('[notesApi] createNoteLink fulfilled', { arg, data });
-        } catch (err) {
-          console.error(
-            '[notesApi] createNoteLink failed, undoing patches',
-            err
-          );
+          await queryFulfilled;
+        } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
           try {
             if (originalTabLinkedWith !== undefined) {
@@ -675,20 +627,8 @@ export const notesApi = apiSlice.injectEndpoints({
                   updates: { linkedWith: originalTabLinkedWith },
                 })
               );
-              console.log(
-                '[notesApi] createNoteLink reverted open tab note to original linkedWith',
-                {
-                  noteId: arg.firstNoteId,
-                  original: originalTabLinkedWith,
-                }
-              );
             }
-          } catch (e) {
-            console.warn(
-              '[notesApi] error reverting open tab note after failed createNoteLink',
-              e
-            );
-          }
+          } catch (_e) {}
         }
       },
     }),
@@ -704,13 +644,10 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        console.log('[notesApi] deleteNoteLink onQueryStarted', arg);
         const patchResults: Array<{ undo?: () => void }> = [];
-        // keep original for revert
         let originalTabLinkedWithDel: string[] | undefined;
 
         try {
-          // Patch posed notes cache (existing behaviour)
           try {
             const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
               layoutId: arg.layoutId,
@@ -734,20 +671,9 @@ export const notesApi = apiSlice.injectEndpoints({
                 )
               );
               patchResults.push(patchResult);
-              console.log(
-                '[notesApi] deleteNoteLink patched getPosedNotes cache',
-                {
-                  layoutId: arg.layoutId,
-                  first: arg.firstNoteId,
-                  second: arg.secondNoteId,
-                }
-              );
             }
-          } catch (e) {
-            console.warn('[notesApi] error patching posed notes on delete', e);
-          }
+          } catch (_e) {}
 
-          // Optimistically patch getNotes cache too
           try {
             const getNotesPatch = dispatch(
               notesApi.util.updateQueryData(
@@ -765,22 +691,8 @@ export const notesApi = apiSlice.injectEndpoints({
               )
             );
             patchResults.push(getNotesPatch);
-            console.log(
-              '[notesApi] deleteNoteLink optimistically patched getNotes cache',
-              {
-                layoutId: arg.layoutId,
-                first: arg.firstNoteId,
-                second: arg.secondNoteId,
-              }
-            );
-          } catch (e) {
-            console.warn(
-              '[notesApi] error patching getNotes cache on delete',
-              e
-            );
-          }
+          } catch (_e) {}
 
-          // Optimistically update open tab's note (remove linked id)
           try {
             const state = getState() as RootState;
             const tabsState = state.tabs;
@@ -801,33 +713,14 @@ export const notesApi = apiSlice.injectEndpoints({
                     updates: { linkedWith: newLinked },
                   })
                 );
-                console.log(
-                  '[notesApi] deleteNoteLink optimistically updated open tab note',
-                  {
-                    noteId: arg.firstNoteId,
-                    newLinked,
-                  }
-                );
               }
             }
-          } catch (e) {
-            console.warn(
-              '[notesApi] error patching open tab note on delete',
-              e
-            );
-          }
-        } catch (error) {
-          console.warn('[notesApi] deleteNoteLink onQueryStarted error', error);
-        }
+          } catch (_e) {}
+        } catch (_e) {}
 
         try {
-          const { data } = await queryFulfilled;
-          console.log('[notesApi] deleteNoteLink fulfilled', { arg, data });
-        } catch (err) {
-          console.error(
-            '[notesApi] deleteNoteLink failed, undoing patches',
-            err
-          );
+          await queryFulfilled;
+        } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
           try {
             if (originalTabLinkedWithDel !== undefined) {
@@ -837,20 +730,8 @@ export const notesApi = apiSlice.injectEndpoints({
                   updates: { linkedWith: originalTabLinkedWithDel },
                 })
               );
-              console.log(
-                '[notesApi] deleteNoteLink reverted open tab note to original linkedWith',
-                {
-                  noteId: arg.firstNoteId,
-                  original: originalTabLinkedWithDel,
-                }
-              );
             }
-          } catch (e) {
-            console.warn(
-              '[notesApi] error reverting open tab note after failed deleteNoteLink',
-              e
-            );
-          }
+          } catch (_e) {}
         }
       },
     }),
@@ -858,7 +739,7 @@ export const notesApi = apiSlice.injectEndpoints({
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({
       query: ({ search }) =>
         `/notes/search?search=${encodeURIComponent(search)}`,
-      providesTags: (result, _error, arg) => [
+      providesTags: (result, _e, arg) => [
         { type: 'Notes', id: `search-${arg.search}` },
         ...(result?.data?.map(note => ({
           type: 'Notes' as const,

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useLayoutEffect } from 'react';
 import useResizableSplit from 'widgets/hooks/useResizableSplit';
-import { AnimatePresence } from 'framer-motion';
+import {} from /* AnimatePresence */ 'framer-motion';
 import { syncScroll } from '../../lib/syncScroll';
 import { useIsDesktop } from 'widgets/hooks';
 import { useGetNotesQuery } from 'app/store/api';
@@ -8,7 +8,9 @@ import { useGetNotesQuery } from 'app/store/api';
 import type { Note } from 'shared/model/types/layouts';
 
 import NoteContentEditorSplit from './NoteContentEditorSplit';
-import NoteContentPreview from './NoteContentPreview';
+// NoteContentPreview is no longer used because the editor split handles both modes
+// keep the file in tree for reference
+// import NoteContentPreview from './NoteContentPreview';
 
 interface NoteContentProps {
   isEditing: boolean;
@@ -30,9 +32,10 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const prevIsEditingRef = useRef<boolean>(isEditing);
-  const { leftWidth, onDividerPointerDown, min, max } = useResizableSplit({
-    storageKey: 'wn.note.split',
-  });
+  const { leftWidth, onDividerPointerDown, min, max, isResizing } =
+    useResizableSplit({
+      storageKey: 'wn.note.split',
+    });
   const isDesktop = useIsDesktop();
 
   // prevent calling getNotes with empty layoutId
@@ -65,10 +68,11 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     }
   }, [payload, isEditing]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isEditing) return undefined;
     const ta = textareaRef.current;
     const pv = previewRef.current;
+
     const clean = syncScroll(ta, pv);
     return () => {
       try {
@@ -79,42 +83,31 @@ export const NoteContent: React.FC<NoteContentProps> = ({
 
   const wasEditing = prevIsEditingRef.current;
   const openingEditor = !wasEditing && isEditing;
-  const closingEditor = wasEditing && !isEditing;
+  const closingEditor = wasEditing && !isEditing; 
+  void closingEditor; 
 
   useEffect(() => {
     prevIsEditingRef.current = isEditing;
   }, [isEditing]);
 
   return (
-    <AnimatePresence mode='wait' initial={false}>
-      {isEditing ? (
-        <NoteContentEditorSplit
-          key='editing'
-          payload={payload}
-          onPayloadChange={onPayloadChange}
-          isLoading={isLoading}
-          textareaRef={textareaRef}
-          previewRef={previewRef}
-          leftWidth={leftWidth}
-          min={min}
-          max={max}
-          onDividerPointerDown={onDividerPointerDown}
-          isDesktop={isDesktop}
-          note={note}
-          layoutId={layoutId}
-          enterFromLeft={openingEditor}
-        />
-      ) : (
-        <NoteContentPreview
-          key='preview'
-          payload={payload}
-          layoutId={layoutId}
-          note={note}
-          isEditing={isEditing}
-          enterFromRight={closingEditor}
-        />
-      )}
-    </AnimatePresence>
+    <NoteContentEditorSplit
+      payload={payload}
+      onPayloadChange={onPayloadChange}
+      isLoading={isLoading}
+      textareaRef={textareaRef}
+      previewRef={previewRef}
+      leftWidth={leftWidth}
+      min={min}
+      max={max}
+      onDividerPointerDown={onDividerPointerDown}
+      isDesktop={isDesktop}
+      note={note}
+      layoutId={layoutId}
+      enterFromLeft={openingEditor}
+      isEditing={isEditing}
+      isResizing={isResizing}
+    />
   );
 };
 

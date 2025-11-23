@@ -28,8 +28,6 @@ export const LinkedNotesList = ({
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // prefer query result, but fall back to RTK Query cache (useful when the component
-  // was skipped but cache was patched optimistically)
   const cachedNotes = useAppSelector(
     state =>
       notesApi.endpoints.getNotes.select({ layoutId: layoutId || '', page: 1 })(
@@ -46,20 +44,6 @@ export const LinkedNotesList = ({
     isOpen: isExpanded,
     enablePagination: false,
   });
-
-  // Debug: log computed lists and loading state to diagnose visibility issues
-  try {
-    console.log('[LinkedNotesList] init', { layoutId, linkedIds, shouldSkip });
-    console.log('[LinkedNotesList] data', {
-      allNotesCount: allNotes.length,
-      linkedNotesCount: linkedNotes.length,
-      visibleItemsCount: visibleItems.length,
-      isLoading,
-      notesResponseSummary: notesResponse
-        ? { total: notesResponse.data?.length ?? 0 }
-        : null,
-    });
-  } catch (_e) {}
 
   const handleNoteClick = (note: Note) => {
     onNoteSelect?.(note);
