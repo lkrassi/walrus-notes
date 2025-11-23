@@ -37,7 +37,8 @@ export const useGraphHandlers = ({
   );
 
   const onNodeDragStop = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node?: Node | null) => {
+      if (!node) return;
       updatePositionCallback(node.id, node.position.x, node.position.y);
     },
     [updatePositionCallback]
@@ -51,21 +52,23 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeClick = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node?: Node | null) => {
+      if (!node?.id) return;
       onNodeClick(node.id);
     },
     [onNodeClick]
   );
 
   const handleNodeMouseEnter = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node?: Node | null) => {
+      if (!node?.id) return;
       onNodeMouseEnter(node.id);
     },
     [onNodeMouseEnter]
   );
 
   const handleNodeMouseLeave = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node?: Node | null) => {
       onNodeMouseLeave(node?.id);
     },
     [onNodeMouseLeave]
@@ -84,8 +87,7 @@ export const useGraphHandlers = ({
             y: event.clientY,
           });
           handleAddNoteToGraph(note, dropPosition);
-        } catch (_error) {
-        }
+        } catch (_error) {}
       }
     },
     [handleAddNoteToGraph, screenToFlowPosition]

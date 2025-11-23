@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import cn from 'shared/lib/cn';
-import { useLocalization } from 'widgets';
-import MarkdownEditor from './MarkdownEditor';
-import MarkdownPreview from './MarkdownPreview';
 import useResizableSplit from 'widgets/hooks/useResizableSplit';
+import { AnimatePresence } from 'framer-motion';
 import { syncScroll } from '../../lib/syncScroll';
 import { useIsDesktop } from 'widgets/hooks';
+import { useGetNotesQuery } from 'app/store/api';
 
 import type { Note } from 'shared/model/types/layouts';
+
+import NoteContentEditorSplit from './NoteContentEditorSplit';
+import NoteContentPreview from './NoteContentPreview';
 
 interface NoteContentProps {
   isEditing: boolean;
@@ -26,13 +27,16 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   note,
   layoutId,
 }) => {
-  const { t } = useLocalization();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
+  const prevIsEditingRef = useRef<boolean>(isEditing);
   const { leftWidth, onDividerPointerDown, min, max } = useResizableSplit({
     storageKey: 'wn.note.split',
   });
   const isDesktop = useIsDesktop();
+
+  // prevent calling getNotes with empty layoutId
+  useGetNotesQuery({ layoutId: layoutId || '' }, { skip: !layoutId });
 
   const focusAndScrollToEnd = () => {
     if (textareaRef.current) {
@@ -49,12 +53,12 @@ export const NoteContent: React.FC<NoteContentProps> = ({
       const timer = setTimeout(focusAndScrollToEnd, 10);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isEditing]);
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       const textarea = textareaRef.current;
-
       if (textarea.selectionStart === textarea.value.length) {
         textarea.scrollTop = textarea.scrollHeight;
       }
@@ -62,7 +66,7 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   }, [payload, isEditing]);
 
   useEffect(() => {
-    if (!isEditing) return;
+    if (!isEditing) return undefined;
     const ta = textareaRef.current;
     const pv = previewRef.current;
     const clean = syncScroll(ta, pv);
@@ -73,97 +77,45 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     };
   }, [isEditing]);
 
-  if (isEditing) {
-    return (
-      <div className={cn('flex', 'flex-col', 'h-full')}>
-        <div
-          className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
-        >
-          <div
-            className={cn(
-              'h-full',
-              'bg-transparent',
-              !isDesktop && 'basis-1/2',
-              !isDesktop && 'min-h-0'
-            )}
-            style={
-              isDesktop && leftWidth
-                ? {
-                    width: `${leftWidth}px`,
-                    minWidth: `${min}px`,
-                    maxWidth: `${max}px`,
-                  }
-                : undefined
-            }
-          >
-            <MarkdownEditor
-              ref={textareaRef}
-              value={payload}
-              onChange={onPayloadChange}
-              disabled={isLoading}
-            />
-          </div>
+  const wasEditing = prevIsEditingRef.current;
+  const openingEditor = !wasEditing && isEditing;
+  const closingEditor = wasEditing && !isEditing;
 
-          <div
-            role='separator'
-            aria-orientation='vertical'
-            onPointerDown={onDividerPointerDown}
-            className={cn(
-              'hidden',
-              'md:block',
-              'h-full',
-              'w-2',
-              'cursor-col-resize',
-              'select-none',
-              'touch-none',
-              'bg-transparent',
-              'hover:bg-border',
-              'dark:hover:bg-dark-border'
-            )}
-          />
-
-          <div
-            className={cn(
-              'flex-1',
-              'h-full',
-              'border-border',
-              'dark:border-dark-border',
-              isDesktop ? 'border-l' : 'border-t',
-              'p-4',
-              'bg-transparent',
-              !isDesktop && 'basis-1/2',
-              !isDesktop && 'min-h-0'
-            )}
-          >
-            <MarkdownPreview
-              ref={previewRef}
-              content={payload}
-              note={note}
-              layoutId={layoutId}
-              showRelated={!isEditing}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    prevIsEditingRef.current = isEditing;
+  }, [isEditing]);
 
   return (
-    <div className={cn('h-full', 'overflow-y-auto', 'p-4', 'bg-transparent')}>
-      <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
-        {payload ? (
-          <MarkdownPreview
-            content={payload}
-            note={note}
-            layoutId={layoutId}
-            showRelated={!isEditing}
-          />
-        ) : (
-          <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
-            {t('notes:emptyNoteMessage')}
-          </p>
-        )}
-      </div>
-    </div>
+    <AnimatePresence mode='wait' initial={false}>
+      {isEditing ? (
+        <NoteContentEditorSplit
+          key='editing'
+          payload={payload}
+          onPayloadChange={onPayloadChange}
+          isLoading={isLoading}
+          textareaRef={textareaRef}
+          previewRef={previewRef}
+          leftWidth={leftWidth}
+          min={min}
+          max={max}
+          onDividerPointerDown={onDividerPointerDown}
+          isDesktop={isDesktop}
+          note={note}
+          layoutId={layoutId}
+          enterFromLeft={openingEditor}
+        />
+      ) : (
+        <NoteContentPreview
+          key='preview'
+          payload={payload}
+          layoutId={layoutId}
+          note={note}
+          isEditing={isEditing}
+          enterFromRight={closingEditor}
+        />
+      )}
+    </AnimatePresence>
   );
 };
+
+export default NoteContent;

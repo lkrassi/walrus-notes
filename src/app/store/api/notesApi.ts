@@ -3,6 +3,7 @@ import type { Note } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
 import { layoutApi } from './layoutApi';
+import { updateTabNote } from 'app/store/slices/tabsSlice';
 
 interface GetNotesRequest {
   layoutId: string;
@@ -221,10 +222,7 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.layoutId },
-        'Notes',
-      ],
+      invalidatesTags: [],
       onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
           notesApi.util.updateQueryData(
@@ -545,45 +543,152 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
+        console.log('[notesApi] createNoteLink onQueryStarted', arg);
         const patchResults: Array<{ undo?: () => void }> = [];
+        // keep originals in outer scope so we can revert on failure
+        let originalTabLinkedWith: string[] | undefined;
 
         try {
-          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-            layoutId: arg.layoutId,
-          })(getState() as RootState);
+          // Patch posed notes cache (existing behaviour)
+          try {
+            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+              layoutId: arg.layoutId,
+            })(getState() as RootState);
 
-          if (posedNotesCache.data?.data) {
-            const patchResult = dispatch(
-              notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
-                draft => {
-                  const sourceNote = draft.data.find(
-                    n => n.id === arg.firstNoteId
-                  );
-                  if (sourceNote) {
-                    if (!sourceNote.linkedWith) {
-                      sourceNote.linkedWith = [];
+            if (posedNotesCache.data?.data) {
+              const patchResult = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: arg.layoutId },
+                  draft => {
+                    const sourceNote = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
+                    if (sourceNote) {
+                      if (!sourceNote.linkedWith) {
+                        sourceNote.linkedWith = [];
+                      }
+                      if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
+                        sourceNote.linkedWith.push(arg.secondNoteId);
+                      }
                     }
-                    if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
-                      sourceNote.linkedWith.push(arg.secondNoteId);
+                  }
+                )
+              );
+              patchResults.push(patchResult);
+              console.log(
+                '[notesApi] createNoteLink patched getPosedNotes cache',
+                {
+                  layoutId: arg.layoutId,
+                  first: arg.firstNoteId,
+                  second: arg.secondNoteId,
+                }
+              );
+            }
+          } catch (e) {
+            console.warn('[notesApi] error patching posed notes', e);
+          }
+
+          // Optimistically patch getNotes (so UI that uses getNotes sees updated linkedWith without full refetch)
+          try {
+            const getNotesPatch = dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
+                draft => {
+                  if (!draft || !draft.data) return;
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (source) {
+                    if (!source.linkedWith) source.linkedWith = [];
+                    if (!source.linkedWith.includes(arg.secondNoteId)) {
+                      source.linkedWith.push(arg.secondNoteId);
                     }
                   }
                 }
               )
             );
-            patchResults.push(patchResult);
+            patchResults.push(getNotesPatch);
+            console.log(
+              '[notesApi] createNoteLink optimistically patched getNotes cache',
+              {
+                layoutId: arg.layoutId,
+                first: arg.firstNoteId,
+                second: arg.secondNoteId,
+              }
+            );
+          } catch (e) {
+            console.warn('[notesApi] error patching getNotes cache', e);
+          }
+
+          // Optimistically update open tab's note (so NoteViewer/MarkdownPreview showing an open tab updates)
+          try {
+            const state = getState() as RootState;
+            const tabsState = state.tabs;
+            if (tabsState?.openTabs) {
+              const tab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
+              );
+              if (tab && tab.item && tab.item.note) {
+                originalTabLinkedWith = tab.item.note.linkedWith;
+                const newLinked = Array.isArray(originalTabLinkedWith)
+                  ? [...originalTabLinkedWith]
+                  : [];
+                if (!newLinked.includes(arg.secondNoteId))
+                  newLinked.push(arg.secondNoteId);
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.firstNoteId,
+                    updates: { linkedWith: newLinked },
+                  })
+                );
+                console.log(
+                  '[notesApi] createNoteLink optimistically updated open tab note',
+                  {
+                    noteId: arg.firstNoteId,
+                    newLinked,
+                  }
+                );
+              }
+            }
+          } catch (e) {
+            console.warn('[notesApi] error patching open tab note', e);
           }
         } catch (error) {
-          console.warn(error);
+          console.warn('[notesApi] createNoteLink onQueryStarted error', error);
         }
 
         try {
-          await queryFulfilled;
-        } catch {
+          const { data } = await queryFulfilled;
+          console.log('[notesApi] createNoteLink fulfilled', { arg, data });
+        } catch (err) {
+          console.error(
+            '[notesApi] createNoteLink failed, undoing patches',
+            err
+          );
           patchResults.forEach(patchResult => patchResult.undo?.());
+          try {
+            if (originalTabLinkedWith !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.firstNoteId,
+                  updates: { linkedWith: originalTabLinkedWith },
+                })
+              );
+              console.log(
+                '[notesApi] createNoteLink reverted open tab note to original linkedWith',
+                {
+                  noteId: arg.firstNoteId,
+                  original: originalTabLinkedWith,
+                }
+              );
+            }
+          } catch (e) {
+            console.warn(
+              '[notesApi] error reverting open tab note after failed createNoteLink',
+              e
+            );
+          }
         }
       },
     }),
@@ -598,42 +703,154 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
+        console.log('[notesApi] deleteNoteLink onQueryStarted', arg);
         const patchResults: Array<{ undo?: () => void }> = [];
+        // keep original for revert
+        let originalTabLinkedWithDel: string[] | undefined;
 
         try {
-          const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-            layoutId: arg.layoutId,
-          })(getState() as RootState);
+          // Patch posed notes cache (existing behaviour)
+          try {
+            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
+              layoutId: arg.layoutId,
+            })(getState() as RootState);
 
-          if (posedNotesCache.data?.data) {
-            const patchResult = dispatch(
+            if (posedNotesCache.data?.data) {
+              const patchResult = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: arg.layoutId },
+                  draft => {
+                    const sourceNote = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
+                    if (sourceNote && sourceNote.linkedWith) {
+                      sourceNote.linkedWith = sourceNote.linkedWith.filter(
+                        id => id !== arg.secondNoteId
+                      );
+                    }
+                  }
+                )
+              );
+              patchResults.push(patchResult);
+              console.log(
+                '[notesApi] deleteNoteLink patched getPosedNotes cache',
+                {
+                  layoutId: arg.layoutId,
+                  first: arg.firstNoteId,
+                  second: arg.secondNoteId,
+                }
+              );
+            }
+          } catch (e) {
+            console.warn('[notesApi] error patching posed notes on delete', e);
+          }
+
+          // Optimistically patch getNotes cache too
+          try {
+            const getNotesPatch = dispatch(
               notesApi.util.updateQueryData(
-                'getPosedNotes',
-                { layoutId: arg.layoutId },
+                'getNotes',
+                { layoutId: arg.layoutId, page: 1 },
                 draft => {
-                  const sourceNote = draft.data.find(
-                    n => n.id === arg.firstNoteId
-                  );
-                  if (sourceNote && sourceNote.linkedWith) {
-                    sourceNote.linkedWith = sourceNote.linkedWith.filter(
+                  if (!draft || !draft.data) return;
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  if (source && source.linkedWith) {
+                    source.linkedWith = source.linkedWith.filter(
                       id => id !== arg.secondNoteId
                     );
                   }
                 }
               )
             );
-            patchResults.push(patchResult);
+            patchResults.push(getNotesPatch);
+            console.log(
+              '[notesApi] deleteNoteLink optimistically patched getNotes cache',
+              {
+                layoutId: arg.layoutId,
+                first: arg.firstNoteId,
+                second: arg.secondNoteId,
+              }
+            );
+          } catch (e) {
+            console.warn(
+              '[notesApi] error patching getNotes cache on delete',
+              e
+            );
+          }
+
+          // Optimistically update open tab's note (remove linked id)
+          try {
+            const state = getState() as RootState;
+            const tabsState = state.tabs;
+            if (tabsState?.openTabs) {
+              const tab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
+              );
+              if (tab && tab.item && tab.item.note) {
+                originalTabLinkedWithDel = tab.item.note.linkedWith;
+                const newLinked = Array.isArray(originalTabLinkedWithDel)
+                  ? originalTabLinkedWithDel.filter(
+                      id => id !== arg.secondNoteId
+                    )
+                  : [];
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.firstNoteId,
+                    updates: { linkedWith: newLinked },
+                  })
+                );
+                console.log(
+                  '[notesApi] deleteNoteLink optimistically updated open tab note',
+                  {
+                    noteId: arg.firstNoteId,
+                    newLinked,
+                  }
+                );
+              }
+            }
+          } catch (e) {
+            console.warn(
+              '[notesApi] error patching open tab note on delete',
+              e
+            );
           }
         } catch (error) {
-          console.warn(error);
+          console.warn('[notesApi] deleteNoteLink onQueryStarted error', error);
         }
 
         try {
-          await queryFulfilled;
-        } catch {
+          const { data } = await queryFulfilled;
+          console.log('[notesApi] deleteNoteLink fulfilled', { arg, data });
+        } catch (err) {
+          console.error(
+            '[notesApi] deleteNoteLink failed, undoing patches',
+            err
+          );
           patchResults.forEach(patchResult => patchResult.undo?.());
+          try {
+            if (originalTabLinkedWithDel !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.firstNoteId,
+                  updates: { linkedWith: originalTabLinkedWithDel },
+                })
+              );
+              console.log(
+                '[notesApi] deleteNoteLink reverted open tab note to original linkedWith',
+                {
+                  noteId: arg.firstNoteId,
+                  original: originalTabLinkedWithDel,
+                }
+              );
+            }
+          } catch (e) {
+            console.warn(
+              '[notesApi] error reverting open tab note after failed deleteNoteLink',
+              e
+            );
+          }
         }
       },
     }),

@@ -4,7 +4,11 @@ import remarkGfm from 'remark-gfm';
 import cn from 'shared/lib/cn';
 import CodeHighlighter from './CodeHighlighter';
 import type { Note } from 'shared/model/types/layouts';
-import RelatedNotesDropdown from './RelatedNotesDropdown';
+import LinkedNotesList from './LinkedNotesList';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import { openTab, switchTab } from 'app/store/slices/tabsSlice';
+import { createTabId } from 'widgets/model/utils/tabUtils';
+import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 
 interface MarkdownPreviewProps {
   content: string;
@@ -31,7 +35,6 @@ const CodeBlock = ({
       </code>
     );
 
-  // For block code we don't render here; the `pre` handler will render it.
   return (
     <code className={cn('block-code', className)} {...props}>
       {children}
@@ -53,13 +56,54 @@ const PreBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = props => {
 
 export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
   ({ content, className, note, layoutId, showRelated = true }, ref) => {
+    const dispatch = useAppDispatch();
+    const effectiveLayoutId = layoutId || note?.layoutId || '';
     return (
       <div
         ref={ref}
-        className={cn('relative', 'h-full', 'overflow-y-auto', className)}
+        className={cn('relative', 'h-full', 'overflow-visible', className)}
       >
         {showRelated && note && (
-          <RelatedNotesDropdown note={note} layoutId={layoutId} />
+          <div
+            className={cn(
+              'mb-4',
+              'flex',
+              'justify-end',
+              'max-sm:justify-center'
+            )}
+          >
+            {(() => {
+              try {
+                console.log('[MarkdownPreview] render linked list', {
+                  noteId: note.id,
+                  linkedWith: note.linkedWith,
+                  effectiveLayoutId,
+                });
+              } catch (_e) {}
+
+              return (
+                <div className={cn('w-56')}>
+                  <LinkedNotesList
+                    layoutId={effectiveLayoutId}
+                    linkedIds={note.linkedWith || []}
+                    onNoteSelect={(selected: Note) => {
+                      try {
+                        const item: FileTreeItem = {
+                          id: selected.id,
+                          type: 'note',
+                          title: selected.title,
+                          parentId: note.layoutId || selected.layoutId,
+                          note: selected,
+                        };
+                        dispatch(openTab(item));
+                        dispatch(switchTab(createTabId('note', selected.id)));
+                      } catch (_e) {}
+                    }}
+                  />
+                </div>
+              );
+            })()}
+          </div>
         )}
 
         <div

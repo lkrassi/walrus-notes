@@ -24,7 +24,8 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
   const [current, setCurrent] = useState<{ x: number; y: number } | null>(null);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 2) return;
+    // Start box selection only on left mouse button + Ctrl key
+    if (e.button !== 0 || !e.ctrlKey) return;
     e.preventDefault();
     setDragging(true);
     setStart({ x: e.clientX, y: e.clientY });
@@ -52,6 +53,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
     const y1 = Math.min(start.y, current.y);
     const y2 = Math.max(start.y, current.y);
 
+    // Logging to help debug selection issues
     onBoxSelect?.({ x1, y1, x2, y2 });
 
     setDragging(false);

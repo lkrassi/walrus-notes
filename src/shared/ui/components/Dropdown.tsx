@@ -7,7 +7,7 @@ interface DropdownProps {
   children: ReactNode;
   className?: string;
   contentClassName?: string;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'auto';
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
@@ -27,6 +27,10 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [chosenPosition, setChosenPosition] = useState<
+    'top' | 'bottom' | 'left' | 'right'
+  >(position === 'auto' ? 'bottom' : (position as any));
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
@@ -35,6 +39,24 @@ export const Dropdown = ({
     if (disabled) return;
 
     const newState = !isOpen;
+    // if opening and position is auto, decide preferred position
+    if (newState && position === 'auto' && triggerRef.current) {
+      try {
+        const rect = triggerRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+        // prefer bottom unless there's clearly more space above
+        if (spaceBelow < 200 && spaceAbove > spaceBelow) {
+          setChosenPosition('top');
+        } else {
+          setChosenPosition('bottom');
+        }
+      } catch (_e) {
+        setChosenPosition('bottom');
+      }
+    } else if (position !== 'auto') {
+      setChosenPosition(position as 'top' | 'bottom' | 'left' | 'right');
+    }
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(newState);
     }
@@ -100,7 +122,7 @@ export const Dropdown = ({
     'rounded-lg',
     'shadow-lg',
     'backdrop-blur-sm',
-    positionClasses[position],
+    positionClasses[chosenPosition],
     contentClassName || ''
   );
 
@@ -118,7 +140,7 @@ export const Dropdown = ({
 
   return (
     <div ref={dropdownRef} className={outerClassName}>
-      <div onClick={handleToggle} className={triggerClassName}>
+      <div onClick={handleToggle} ref={triggerRef} className={triggerClassName}>
         {renderTrigger()}
       </div>
 
