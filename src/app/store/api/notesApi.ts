@@ -223,12 +223,8 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-<<<<<<< HEAD
-      onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
-=======
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         const { layoutId } = arg;
->>>>>>> work
         const patchResult = dispatch(
           notesApi.util.updateQueryData(
             'getNotes',
@@ -243,8 +239,6 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data: createdNote } = await queryFulfilled;
 
-          // If server returned only id (or omitted title/payload), merge
-          // values from the original request so UI has a usable note object.
           let finalNote = createdNote.data as Note;
           if (!finalNote.title) {
             finalNote = {

@@ -60,12 +60,9 @@ export const NoteViewer = ({
         onCancel={async () => {
           await handleCancel();
         }}
-<<<<<<< HEAD
-=======
         onDiscardConfirm={async () => {
           await handleDiscard();
         }}
->>>>>>> work
       />
 
       <div className={cn('flex-1', 'overflow-hidden')}>

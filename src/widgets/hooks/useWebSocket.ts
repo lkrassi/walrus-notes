@@ -32,7 +32,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
   const connect = useCallback(() => {
     const full = getFullUrl();
     if (!full) {
-      console.warn('[WS] connect aborted - empty URL');
       return;
     }
 
@@ -64,14 +63,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
         socket.onmessage = ev => {
           try {
             const parsed: WSEvent = JSON.parse(ev.data);
-            try {
-              console.info(
-                '[WS][%s] IN %s',
-                instanceIdRef.current,
-                parsed.event,
-                parsed.payload
-              );
-            } catch (_e) {}
             if (parsed && parsed.event === 'PING') {
               try {
                 if (
@@ -79,9 +70,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
                   socket.readyState === WebSocket.OPEN
                 ) {
                   socket.send(JSON.stringify({ event: 'PONG', payload: {} }));
-                  try {
-                    console.info('[WS][%s] OUT PONG', instanceIdRef.current);
-                  } catch (_e) {}
                 }
               } catch (_e) {}
             }
@@ -140,14 +128,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
     try {
       const ws = wsRef.current;
       const data = JSON.stringify(eventObj);
-      try {
-        console.info(
-          '[WS][%s] OUT %s',
-          instanceIdRef.current,
-          eventObj.event,
-          eventObj.payload
-        );
-      } catch (_e) {}
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(data);
         return true;
@@ -178,7 +158,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
 
   return {
     trySendOrQueue,
-    // provide legacy/consistent `send` name as alias
     send: trySendOrQueue,
     subscribe,
     isConnected,

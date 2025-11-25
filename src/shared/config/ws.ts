@@ -29,11 +29,6 @@ export function buildWsUrl(baseHost?: string, userId?: string) {
     url = `${url}${sep}user_id=${encodeURIComponent(userId)}`;
   }
 
-  try {
-    // minimal debug output to help diagnose connection issues
-    console.debug('[buildWsUrl] ->', url);
-  } catch (_e) {}
-
   return url;
 }
 

@@ -24,9 +24,6 @@ export const WebSocketProvider: React.FC<Props> = ({ children }) => {
   const ws = useWebSocket({ url: wsUrl, userId });
 
   useEffect(() => {
-    try {
-      console.info('[WS Provider] wsUrl ->', wsUrl, 'userId ->', userId);
-    } catch (_e) {}
   }, [wsUrl, userId]);
 
   return (

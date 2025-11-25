@@ -16,7 +16,6 @@ export const useResizableBase = ({
 }: Options) => {
   const isMobile = useIsMobile();
   const [size, setSize] = useState<number>(() => {
-    // Do not persist size to localStorage anymore — return default
     return defaultSize;
   });
 
@@ -26,7 +25,6 @@ export const useResizableBase = ({
   const startSizeRef = useRef(size);
 
   useEffect(() => {
-    // Persisting sizes to localStorage has been removed intentionally.
   }, [size, storageKey]);
 
   const onPointerMove = useCallback(

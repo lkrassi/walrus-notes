@@ -8,9 +8,6 @@ import { useGetNotesQuery } from 'app/store/api';
 import type { Note } from 'shared/model/types/layouts';
 
 import NoteContentEditorSplit from './NoteContentEditorSplit';
-// NoteContentPreview is no longer used because the editor split handles both modes
-// keep the file in tree for reference
-// import NoteContentPreview from './NoteContentPreview';
 
 interface NoteContentProps {
   isEditing: boolean;
@@ -37,15 +34,6 @@ export const NoteContent: React.FC<NoteContentProps> = ({
       storageKey: 'wn.note.split',
     });
   const isDesktop = useIsDesktop();
-
-<<<<<<< HEAD
-  // prevent calling getNotes with empty layoutId
-  useGetNotesQuery({ layoutId: layoutId || '' }, { skip: !layoutId });
-=======
-  // Note: fetching notes is handled by parent components (file tree / list).
-  // Avoid calling `useGetNotesQuery` here to prevent duplicate requests when
-  // the parent already loaded notes for the current `layoutId`.
->>>>>>> work
 
   const focusAndScrollToEnd = () => {
     if (textareaRef.current) {
@@ -89,13 +77,8 @@ export const NoteContent: React.FC<NoteContentProps> = ({
 
   const wasEditing = prevIsEditingRef.current;
   const openingEditor = !wasEditing && isEditing;
-<<<<<<< HEAD
-  const closingEditor = wasEditing && !isEditing; 
-  void closingEditor; 
-=======
   const closingEditor = wasEditing && !isEditing;
   void closingEditor;
->>>>>>> work
 
   useEffect(() => {
     prevIsEditingRef.current = isEditing;

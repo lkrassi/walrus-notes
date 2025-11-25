@@ -39,13 +39,11 @@ export const Dropdown = ({
     if (disabled) return;
 
     const newState = !isOpen;
-    // if opening and position is auto, decide preferred position
     if (newState && position === 'auto' && triggerRef.current) {
       try {
         const rect = triggerRef.current.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
         const spaceAbove = rect.top;
-        // prefer bottom unless there's clearly more space above
         if (spaceBelow < 200 && spaceAbove > spaceBelow) {
           setChosenPosition('top');
         } else {

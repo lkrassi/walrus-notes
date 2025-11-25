@@ -13,25 +13,12 @@ export const useNoteEditor = (
 ) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState<string>(note.title ?? '');
-  // prefer pending draft from store, then server draft, then note payload
   const storeDraft = useAppSelector(s => s.drafts?.[note.id] ?? null);
   let initialPayload = note.payload ?? '';
   if (storeDraft && storeDraft.length) {
     initialPayload = storeDraft;
-    try {
-      console.debug('[useNoteEditor] using cached payload from store', {
-        noteId: note.id,
-        len: storeDraft.length,
-      });
-    } catch (_e) {}
   } else if (note.draft && note.draft.length) {
     initialPayload = note.draft;
-    try {
-      console.debug('[useNoteEditor] using server draft on init', {
-        noteId: note.id,
-        len: note.draft.length,
-      });
-    } catch (_e) {}
   }
 
   const [payload, setPayload] = useState<string>(initialPayload);
@@ -76,13 +63,6 @@ export const useNoteEditor = (
   const handleCancel = () => {
     setTitle(note.title);
     setIsEditing(false);
-<<<<<<< HEAD
-=======
-    try {
-      // NOTE: do not change `payload` on cancel — preserve user's in-progress draft
-      // so it can be restored when the note is opened again.
-    } catch (_e) {}
->>>>>>> work
     return true;
   };
 
@@ -95,15 +75,9 @@ export const useNoteEditor = (
       return;
     }
 
-<<<<<<< HEAD
-    const newTitle = title.trim();
-    const newPayload = payload.trim();
-=======
     const newTitle = safeTitle.trim();
     const newPayload = safePayload.trim();
->>>>>>> work
 
-    // If nothing changed, close editor without making API call
     if (newTitle === note.title && newPayload === note.payload) {
       setIsEditing(false);
       return true;
@@ -117,20 +91,7 @@ export const useNoteEditor = (
       }).unwrap();
 
       try {
-        // inform other clients / server to commit draft
-        const cres = commitDraft();
-        try {
-          console.debug('[useNoteEditor] commitDraft invoked', {
-            noteId: note.id,
-            res: cres,
-          });
-        } catch (_e) {}
-      } catch (_e) {}
-
-      // ensure local editor state reflects the saved payload immediately
-      try {
         setPayload(newPayload);
-        // mark the originalPayloadRef so incoming server props won't overwrite
         originalPayloadRef.current = newPayload;
       } catch (_e) {}
 
@@ -141,9 +102,6 @@ export const useNoteEditor = (
         updatedAt: new Date().toISOString(),
       };
 
-      // close editor first to allow exit animation to run cleanly,
-      // then inform parent about the updated note (prevents parent
-      // re-render while editor is still mounted which caused double animations)
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
       return true;
@@ -157,18 +115,14 @@ export const useNoteEditor = (
 
   const handleDiscard = async () => {
     try {
-      // revert local payload to original server payload
       setPayload(originalPayloadRef.current);
-      // send empty draft to notify server and clear remote draft
       try {
-        await sendUpdateDraft('');
+        sendUpdateDraft('');
       } catch (_e) {}
-      // clear pending draft in local store immediately
       try {
         dispatch(removeDraft({ noteId: note.id }));
       } catch (_e) {}
     } catch (_e) {}
-    // close editor
     setIsEditing(false);
     return true;
   };

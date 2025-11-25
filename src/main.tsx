@@ -19,7 +19,6 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
-// cleanup legacy localStorage keys that should not be used anymore
 try {
   if (typeof localStorage !== 'undefined') {
     try {
@@ -29,7 +28,6 @@ try {
       localStorage.removeItem('wn.sidebar.width');
     } catch (_e) {}
     try {
-      // remove old per-note draft keys
       const keys = Object.keys(localStorage);
       for (const k of keys) {
         if (k && k.startsWith('wn:noteDraft:')) {
