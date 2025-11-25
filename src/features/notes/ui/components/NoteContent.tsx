@@ -3,7 +3,6 @@ import useResizableSplit from 'widgets/hooks/useResizableSplit';
 import {} from /* AnimatePresence */ 'framer-motion';
 import { syncScroll } from '../../lib/syncScroll';
 import { useIsDesktop } from 'widgets/hooks';
-import { useGetNotesQuery } from 'app/store/api';
 
 import type { Note } from 'shared/model/types/layouts';
 
@@ -38,8 +37,9 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     });
   const isDesktop = useIsDesktop();
 
-  // prevent calling getNotes with empty layoutId
-  useGetNotesQuery({ layoutId: layoutId || '' }, { skip: !layoutId });
+  // Note: fetching notes is handled by parent components (file tree / list).
+  // Avoid calling `useGetNotesQuery` here to prevent duplicate requests when
+  // the parent already loaded notes for the current `layoutId`.
 
   const focusAndScrollToEnd = () => {
     if (textareaRef.current) {
@@ -83,8 +83,8 @@ export const NoteContent: React.FC<NoteContentProps> = ({
 
   const wasEditing = prevIsEditingRef.current;
   const openingEditor = !wasEditing && isEditing;
-  const closingEditor = wasEditing && !isEditing; 
-  void closingEditor; 
+  const closingEditor = wasEditing && !isEditing;
+  void closingEditor;
 
   useEffect(() => {
     prevIsEditingRef.current = isEditing;

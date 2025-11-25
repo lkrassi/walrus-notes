@@ -24,8 +24,8 @@ export const SettingsButton: React.FC = () => {
         'w-5',
         'items-center',
         'justify-center',
-        'px-8',
-        'py-5'
+        'px-7',
+        'py-2'
       )}
       title={t('settings:title')}
     >

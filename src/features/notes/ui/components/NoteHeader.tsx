@@ -3,29 +3,41 @@ import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
+import { useModalContext } from 'widgets/ui';
 import { MarkdownHelp } from './MarkdownHelp';
 
 interface NoteHeaderProps {
   isEditing: boolean;
   title: string;
   isLoading: boolean;
+  hasLocalChanges?: boolean;
+  hasServerDraft?: boolean;
+  isSaving?: boolean;
+  isPending?: boolean;
   onTitleChange: (title: string) => void;
   onEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
+  onDiscardConfirm?: () => void;
 }
 
 export const NoteHeader: React.FC<NoteHeaderProps> = ({
   isEditing,
   title,
   isLoading,
+  hasLocalChanges: _hasLocalChanges,
+  hasServerDraft: _hasServerDraft,
+  isSaving: _isSaving,
+  isPending: _isPending,
   onTitleChange,
   onEdit,
   onSave,
   onCancel,
+  onDiscardConfirm,
 }) => {
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
+  const { openModal } = useModalContext();
 
   const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
     title: t('notes:markdownGuide'),
@@ -45,7 +57,9 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
             disabled={isLoading}
           />
         ) : (
-          <p className={cn('note-title')}>{title}</p>
+          <div className={cn('flex', 'items-center', 'gap-3')}>
+            <p className={cn('note-title')}>{title}</p>
+          </div>
         )}
       </div>
 
@@ -62,7 +76,55 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
               <Save className={cn('h-4', 'w-4')} />
             </Button>
             <Button
-              onClick={onCancel}
+              onClick={e => {
+                if (!_hasLocalChanges) {
+                  onCancel();
+                  return;
+                }
+                const ModalContent: React.FC<{ onConfirm?: () => void }> = ({
+                  onConfirm,
+                }) => {
+                  const { openModal } = useModalContext();
+                  return (
+                    <div className={cn('p-6')}>
+                      <p className={cn('text-secondary', 'mb-6')}>
+                        {t('notes:unsavedConfirmDescription')}
+                      </p>
+                      <div className={cn('flex', 'justify-center', 'gap-3')}>
+                        <Button
+                          onClick={() => {
+                            openModal(null);
+                          }}
+                          className={cn('px-6', 'py-3')}
+                        >
+                          {t('layout:cancel')}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            try {
+                              onConfirm?.();
+                            } catch (_e) {}
+                            openModal(null);
+                          }}
+                          className={cn('px-6', 'py-3')}
+                          variant='escape'
+                        >
+                          {t('notes:unsavedConfirmButton')}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                };
+
+                const open = openModalFromTrigger(
+                  <ModalContent onConfirm={onDiscardConfirm} />,
+                  {
+                    title: t('notes:unsavedConfirmTitle'),
+                    size: 'sm',
+                  }
+                );
+                open(e as React.MouseEvent<HTMLElement>);
+              }}
               className={cn('px-4', 'py-2')}
               disabled={isLoading}
               title={t('notes:cancel')}

@@ -26,6 +26,11 @@ export const NoteViewer = ({
     handleEdit,
     handleCancel,
     handleSave,
+    hasLocalChanges,
+    hasServerDraft,
+    isSaving,
+    isPending,
+    handleDiscard,
   } = useNoteEditor(note, onNoteUpdated);
 
   return (
@@ -43,6 +48,10 @@ export const NoteViewer = ({
         isEditing={isEditing}
         title={title}
         isLoading={isLoading}
+        hasLocalChanges={hasLocalChanges}
+        hasServerDraft={hasServerDraft}
+        isSaving={isSaving}
+        isPending={isPending}
         onTitleChange={setTitle}
         onEdit={handleEdit}
         onSave={async () => {
@@ -50,6 +59,9 @@ export const NoteViewer = ({
         }}
         onCancel={async () => {
           await handleCancel();
+        }}
+        onDiscardConfirm={async () => {
+          await handleDiscard();
         }}
       />
 

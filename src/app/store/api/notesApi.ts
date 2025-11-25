@@ -223,13 +223,14 @@ export const notesApi = apiSlice.injectEndpoints({
         body,
       }),
       invalidatesTags: [],
-      onQueryStarted: async ({ layoutId }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const { layoutId } = arg;
         const patchResult = dispatch(
           notesApi.util.updateQueryData(
             'getNotes',
             { layoutId, page: 1 },
             draft => {
-              const tempNote = createTempNote();
+              const tempNote = createTempNote(arg.title ?? 'Новая заметка');
               draft.data.unshift(tempNote);
             }
           )
@@ -237,6 +238,22 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           const { data: createdNote } = await queryFulfilled;
+
+          // If server returned only id (or omitted title/payload), merge
+          // values from the original request so UI has a usable note object.
+          let finalNote = createdNote.data as Note;
+          if (!finalNote.title) {
+            finalNote = {
+              id: finalNote.id,
+              title: arg.title ?? '',
+              payload: arg.payload ?? '',
+              ownerId: finalNote.ownerId ?? '',
+              haveAccess: finalNote.haveAccess ?? [],
+              linkedWith: finalNote.linkedWith ?? [],
+              createdAt: finalNote.createdAt ?? new Date().toISOString(),
+              updatedAt: finalNote.updatedAt ?? new Date().toISOString(),
+            } as Note;
+          }
 
           dispatch(
             notesApi.util.updateQueryData(
@@ -247,9 +264,9 @@ export const notesApi = apiSlice.injectEndpoints({
                   note.id.startsWith('temp-')
                 );
                 if (tempIndex !== -1) {
-                  draft.data[tempIndex] = createdNote.data;
+                  draft.data[tempIndex] = finalNote;
                 } else {
-                  draft.data.unshift(createdNote.data);
+                  draft.data.unshift(finalNote);
                 }
               }
             )

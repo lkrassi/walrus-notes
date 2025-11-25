@@ -17,8 +17,8 @@ export const ThemeSwitcher = () => {
         'w-5',
         'items-center',
         'justify-center',
-        'px-8',
-        'py-5'
+        'px-7',
+        'py-2'
       )}
       aria-label={
         theme === 'dark'
@@ -35,11 +35,11 @@ export const ThemeSwitcher = () => {
       <span>
         {theme === 'dark' ? (
           <>
-            <Sun size={18} />
+            <Sun className={cn('h-4', 'w-4')} />
           </>
         ) : (
           <>
-            <Moon size={18} />
+            <Moon className={cn('h-4', 'w-4')} />
           </>
         )}
       </span>

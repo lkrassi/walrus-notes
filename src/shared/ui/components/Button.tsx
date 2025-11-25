@@ -42,23 +42,23 @@ export const Button = memo(
 
       const getVariantClasses = () => {
         const baseClasses = `
-      relative
-      text-white
-      text-base
-      font-semibold
-      cursor-pointer
-      transition-all
-      duration-200
-      transform
-      translate-y-0
-      shadow-[0_8px_0_0]
-      rounded-md
-      active:shadow-[0_0_0_0]
-      active:translate-y-1.5
-      disabled:shadow-[0_8px_0_0]
-      disabled:active:shadow-[0_8px_0_0]
-      disabled:active:translate-y-0
-    `;
+          relative
+          text-white
+          text-base
+          font-semibold
+          cursor-pointer
+          transition-all
+          duration-200
+          transform
+          translate-y-0
+          shadow-[0_8px_0_0]
+          rounded-md
+          active:shadow-[0_0_0_0]
+          active:translate-y-1.5
+          disabled:shadow-[0_8px_0_0]
+          disabled:active:shadow-[0_8px_0_0]
+          disabled:active:translate-y-0
+        `;
 
         let bgColor = '';
         let shadowColor = '';

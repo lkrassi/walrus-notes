@@ -10,6 +10,7 @@ export interface Note {
     yPos: number;
   };
   linkedWith?: string[];
+  draft?: string;
   createdAt?: string;
   updatedAt?: string;
 }

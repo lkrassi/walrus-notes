@@ -16,12 +16,7 @@ export const useResizableBase = ({
 }: Options) => {
   const isMobile = useIsMobile();
   const [size, setSize] = useState<number>(() => {
-    if (!storageKey) return defaultSize;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      const val = raw ? parseInt(raw, 10) : defaultSize;
-      if (Number.isFinite(val)) return Math.max(min, Math.min(max, val));
-    } catch (_e) {}
+    // Do not persist size to localStorage anymore — return default
     return defaultSize;
   });
 
@@ -31,11 +26,7 @@ export const useResizableBase = ({
   const startSizeRef = useRef(size);
 
   useEffect(() => {
-    if (storageKey) {
-      try {
-        localStorage.setItem(storageKey, String(size));
-      } catch (_e) {}
-    }
+    // Persisting sizes to localStorage has been removed intentionally.
   }, [size, storageKey]);
 
   const onPointerMove = useCallback(
