@@ -5,6 +5,7 @@ import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { Sidebar } from 'widgets/ui';
+import WebSocketProvider from 'widgets/providers/WebSocketProvider';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
 
@@ -55,19 +56,21 @@ export const DashBoard = () => {
   };
 
   return (
-    <div className={cn('flex', 'h-screen', 'flex-col')}>
-      <DashboardHeader />
-      <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
-        <Sidebar
-          ref={sidebarRef}
-          onItemSelect={handleItemSelect}
-          selectedItemId={activeTabId || undefined}
-        />
-        <DashboardContent
-          onNoteOpen={handleNoteOpenFromGraph}
-          onItemSelect={handleItemSelect}
-        />
+    <WebSocketProvider>
+      <div className={cn('flex', 'h-screen', 'flex-col')}>
+        <DashboardHeader />
+        <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
+          <Sidebar
+            ref={sidebarRef}
+            onItemSelect={handleItemSelect}
+            selectedItemId={activeTabId || undefined}
+          />
+          <DashboardContent
+            onNoteOpen={handleNoteOpenFromGraph}
+            onItemSelect={handleItemSelect}
+          />
+        </div>
       </div>
-    </div>
+    </WebSocketProvider>
   );
 };

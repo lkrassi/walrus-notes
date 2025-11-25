@@ -24,15 +24,16 @@ export const LogoutButton = () => {
         'w-5',
         'items-center',
         'justify-center',
-        'px-8',
-        'py-5'
+        'px-7',
+        'py-2'
       )}
+      
       aria-label='Выйти'
       variant='default'
       title={t('auth:common.logout')}
     >
       <span>
-        <LogOut />
+        <LogOut className={cn('h-4', 'w-4')} />
       </span>
     </Button>
   );

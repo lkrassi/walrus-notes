@@ -78,8 +78,8 @@ export const LanguageSwitcher: React.FC = () => {
           'w-5',
           'items-center',
           'justify-center',
-          'px-8',
-          'py-5'
+          'px-7',
+          'py-2'
         )}
         title={t('common:header.changeLanguage')}
       >
@@ -143,8 +143,8 @@ export const LanguageSwitcher: React.FC = () => {
                 'w-5',
                 'items-center',
                 'justify-center',
-                'px-8',
-                'py-5'
+                'px-7',
+                'py-2'
               )}
             >
               <div
