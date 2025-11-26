@@ -11,7 +11,6 @@ import {
   useLazyGetNotesQuery,
 } from '../../../model';
 import { DropdownContent } from '../dropdown/DropdownContent';
-import { LoadMoreButton } from '../dropdown/LoadMoreButton';
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;
@@ -54,6 +53,8 @@ export const FileTreeItemContent = ({
 
   useEffect(() => {
     if (!isExpanded || item.type !== 'layout' || !notesResponse) return;
+
+    // notesResponse arrived (debug logs removed)
 
     const notes = Array.isArray(notesResponse.data) ? notesResponse.data : [];
     const pagination = notesResponse.pagination;
@@ -100,7 +101,11 @@ export const FileTreeItemContent = ({
 
   const loadMoreNotes = useCallback(
     async (page: number) => {
-      if (!hasMore || page <= 1) return;
+      // loadMoreNotes invoked
+
+      if (!hasMore || page <= 1) {
+        return;
+      }
 
       try {
         const result = await triggerGetNotes({
@@ -109,6 +114,8 @@ export const FileTreeItemContent = ({
         }).unwrap();
 
         if (result.data) {
+          // loadMoreNotes result
+
           setLoadedPages(prev => new Set([...prev, page]));
 
           const more = page < totalPages;
@@ -137,9 +144,14 @@ export const FileTreeItemContent = ({
   } = useDropdown({
     items: allNotes,
     isOpen: isExpanded && item.type === 'layout',
+    enablePagination: true,
     hasMore: hasMore,
     onLoadMore: loadMoreNotes,
   });
+
+  useEffect(() => {
+    // visibleItems/loadedPages changed (debug logs removed)
+  }, [visibleItems, loadedPages, hasMore, totalPages]);
 
   let contentState: 'loading' | 'content' | 'empty' = 'empty';
 
@@ -163,6 +175,12 @@ export const FileTreeItemContent = ({
         </div>
       }
       className={cn('overflow-hidden')}
+      onReachEnd={() => {
+        // trigger loading next page when user scrolls near end
+        if (dropdownHasMore) {
+          dropdownLoadMore();
+        }
+      }}
     >
       <div>
         {visibleItems.map(note => (
@@ -181,15 +199,6 @@ export const FileTreeItemContent = ({
             )}
           </div>
         ))}
-
-        <LoadMoreButton
-          hasMore={dropdownHasMore}
-          isLoading={isLoadingMore || isLoadMoreLoading}
-          onLoadMore={dropdownLoadMore}
-          loadingText={t('fileTree:loading')}
-          loadMoreText={t('fileTree:uploadMore')}
-          className={cn('ml-4')}
-        />
       </div>
     </DropdownContent>
   );

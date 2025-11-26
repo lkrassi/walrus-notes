@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 interface UseDropdownBaseOptions<T> {
   items: T[];
@@ -35,6 +35,9 @@ export const useDropdown = <T>(
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    // debug logs removed
+  }, [items, isOpen, enablePagination, currentPage]);
 
   const loadMore = useCallback(async () => {
     if (!enablePagination) return;
@@ -45,16 +48,16 @@ export const useDropdown = <T>(
       !paginationOptions.hasMore ||
       isLoadingMore ||
       !paginationOptions.onLoadMore
-    )
+    ) {
       return;
+    }
 
     setIsLoadingMore(true);
     try {
       const nextPage = currentPage + 1;
       await paginationOptions.onLoadMore(nextPage);
       setCurrentPage(nextPage);
-    }
-     finally {
+    } finally {
       setIsLoadingMore(false);
     }
   }, [currentPage, enablePagination, isLoadingMore, options]);

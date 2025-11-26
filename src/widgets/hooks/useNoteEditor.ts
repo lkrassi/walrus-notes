@@ -29,18 +29,12 @@ export const useNoteEditor = (
       ? localStorage.getItem('userId') || ''
       : '';
 
-  const {
-    commitDraft,
-    isSaving,
-    isPending,
-    isSynced,
-    lastSavedAt,
-    sendUpdateDraft,
-  } = useDraftSync({
-    noteId: note.id,
-    userId,
-    draft: payload,
-  });
+  const { isSaving, isPending, isSynced, lastSavedAt, sendUpdateDraft } =
+    useDraftSync({
+      noteId: note.id,
+      userId,
+      draft: payload,
+    });
 
   const originalPayloadRef = useRef<string>(note.payload ?? '');
 

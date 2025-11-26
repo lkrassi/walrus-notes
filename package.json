@@ -43,6 +43,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.3",
     "react-syntax-highlighter": "^15.6.6",
+    "react-window": "^2.2.3",
     "reactflow": "^11.11.4",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
