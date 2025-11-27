@@ -196,6 +196,7 @@ const createTempNote = (title: string = 'Новая заметка'): Note => ({
   id: `temp-${Date.now()}`,
   title,
   payload: '',
+  isMain: false,
   ownerId: '',
   haveAccess: [],
   linkedWith: [],

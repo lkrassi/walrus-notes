@@ -5,6 +5,7 @@ import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContext } from 'widgets/ui';
 import { MarkdownHelp } from './MarkdownHelp';
+import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -81,43 +82,9 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
                   onCancel();
                   return;
                 }
-                const ModalContent: React.FC<{ onConfirm?: () => void }> = ({
-                  onConfirm,
-                }) => {
-                  const { openModal } = useModalContext();
-                  return (
-                    <div className={cn('p-6')}>
-                      <p className={cn('text-secondary', 'mb-6')}>
-                        {t('notes:unsavedConfirmDescription')}
-                      </p>
-                      <div className={cn('flex', 'justify-center', 'gap-3')}>
-                        <Button
-                          onClick={() => {
-                            openModal(null);
-                          }}
-                          className={cn('px-6', 'py-3')}
-                        >
-                          {t('layout:cancel')}
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            try {
-                              onConfirm?.();
-                            } catch (_e) {}
-                            openModal(null);
-                          }}
-                          className={cn('px-6', 'py-3')}
-                          variant='escape'
-                        >
-                          {t('notes:unsavedConfirmButton')}
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                };
 
                 const open = openModalFromTrigger(
-                  <ModalContent onConfirm={onDiscardConfirm} />,
+                  <ConfirmationLeaveForm onConfirm={onDiscardConfirm} />,
                   {
                     title: t('notes:unsavedConfirmTitle'),
                     size: 'sm',

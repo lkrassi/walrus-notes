@@ -49,10 +49,12 @@ export const fileTreeReducer = (
         type: 'layout' as const,
         title: layout.title,
         children: [],
+        isMain: (layout as any).isMain === true,
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
         isNotesLoaded: false,
       }));
+      // treeItems constructed
       return {
         ...state,
         fileTree: treeItems,
@@ -80,6 +82,7 @@ export const fileTreeReducer = (
                         type: 'note' as const,
                         title: note.title,
                         parentId: layoutId,
+                        isMain: false,
                         createdAt: note.createdAt,
                         updatedAt: note.updatedAt,
                         note: note,
@@ -90,6 +93,7 @@ export const fileTreeReducer = (
                       type: 'note' as const,
                       title: note.title,
                       parentId: layoutId,
+                      isMain: false,
                       createdAt: note.createdAt,
                       updatedAt: note.updatedAt,
                       note: note,
@@ -121,6 +125,7 @@ export const fileTreeReducer = (
         type: 'note',
         title: note.title,
         parentId: layoutId,
+        isMain: false,
         createdAt: note.createdAt,
         updatedAt: note.updatedAt,
         note: note,
@@ -175,6 +180,7 @@ export const fileTreeReducer = (
         type: 'layout',
         title: action.payload.title,
         children: [],
+        isMain: (action.payload as any).isMain === true,
         createdAt: action.payload.createdAt,
         updatedAt: action.payload.updatedAt,
       };

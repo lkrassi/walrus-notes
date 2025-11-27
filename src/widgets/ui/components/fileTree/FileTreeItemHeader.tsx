@@ -44,6 +44,9 @@ export const FileTreeItemHeader = ({
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
 
+  const showDeleteLayout = item.type === 'layout' && item.isMain !== true;
+  const showDeleteNote = item.type === 'note' && item.isMain !== true;
+
   useEffect(() => {
     return () => {
       if (hoverTimeoutRef.current) {
@@ -229,52 +232,56 @@ export const FileTreeItemHeader = ({
       <div className={cn('flex', 'items-center', 'gap-1')}>
         {item.type === 'layout' && (
           <>
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                handleCreateNote(e);
-              }}
-              className={cn(
-                'transition-opacity',
-                'duration-150',
-                isMobile || _isHovered || isSelected
-                  ? 'opacity-100'
-                  : 'opacity-0',
-                isMobile
-                  ? 'text-gray-600'
-                  : isSelected
-                    ? 'text-white hover:text-gray-200'
-                    : 'text-gray-400 hover:text-gray-600'
-              )}
-              title={t('fileTree:createNote')}
-            >
-              <Plus className={cn('h-4', 'w-4')} />
-            </button>
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                handleDeleteLayout(e);
-              }}
-              className={cn(
-                'transition-opacity',
-                'duration-150',
-                isMobile || _isHovered || isSelected
-                  ? 'opacity-100'
-                  : 'opacity-0',
-                isMobile
-                  ? 'text-gray-600'
-                  : isSelected
-                    ? 'text-white hover:text-gray-200'
-                    : 'text-gray-400 hover:text-gray-600'
-              )}
-              title={t('layout:deleteLayout')}
-            >
-              <Trash2 className={cn('h-4', 'w-4')} />
-            </button>
+            {item.isMain !== true && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleCreateNote(e);
+                }}
+                className={cn(
+                  'transition-opacity',
+                  'duration-150',
+                  isMobile || _isHovered || isSelected
+                    ? 'opacity-100'
+                    : 'opacity-0',
+                  isMobile
+                    ? 'text-gray-600'
+                    : isSelected
+                      ? 'text-white hover:text-gray-200'
+                      : 'text-gray-400 hover:text-gray-600'
+                )}
+                title={t('fileTree:createNote')}
+              >
+                <Plus className={cn('h-4', 'w-4')} />
+              </button>
+            )}
+            {item.isMain !== true && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteLayout(e);
+                }}
+                className={cn(
+                  'transition-opacity',
+                  'duration-150',
+                  isMobile || _isHovered || isSelected
+                    ? 'opacity-100'
+                    : 'opacity-0',
+                  isMobile
+                    ? 'text-gray-600'
+                    : isSelected
+                      ? 'text-white hover:text-gray-200'
+                      : 'text-gray-400 hover:text-gray-600'
+                )}
+                title={t('layout:deleteLayout')}
+              >
+                <Trash2 className={cn('h-4', 'w-4')} />
+              </button>
+            )}
           </>
         )}
 
-        {item.type === 'note' && (
+        {item.type === 'note' && item.isMain !== true && (
           <button
             onClick={e => {
               e.stopPropagation();

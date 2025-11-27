@@ -88,6 +88,7 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
                       id: selected.id,
                       type: 'note',
                       title: selected.title,
+                      isMain: false,
                       parentId: note.layoutId || selected.layoutId,
                       note: selected,
                     };

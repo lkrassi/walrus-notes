@@ -29,12 +29,18 @@ export const useNoteEditor = (
       ? localStorage.getItem('userId') || ''
       : '';
 
-  const { isSaving, isPending, isSynced, lastSavedAt, sendUpdateDraft } =
-    useDraftSync({
-      noteId: note.id,
-      userId,
-      draft: payload,
-    });
+  const {
+    commitDraft,
+    isSaving,
+    isPending,
+    isSynced,
+    lastSavedAt,
+    sendUpdateDraft,
+  } = useDraftSync({
+    noteId: note.id,
+    userId,
+    draft: payload,
+  });
 
   const originalPayloadRef = useRef<string>(note.payload ?? '');
 
@@ -98,6 +104,11 @@ export const useNoteEditor = (
 
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
+
+      try {
+        commitDraft();
+      } catch (_e) {}
+
       return true;
     } catch {
       showError('notes:noteUpdateError');

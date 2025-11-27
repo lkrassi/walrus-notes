@@ -50,6 +50,7 @@
   "unsavedConfirmTitle": "Вы уверены, что хотите уйти?",
   "unsavedConfirmDescription": "Заметка содержит несохранённые изменения. Если вы уйдёте сейчас, внесённые данные будут удалены.",
   "unsavedConfirmButton": "Уйти",
+  "unsavedCancelButton": "Остаться",
   "paragraphsAndBreaks": "Параграфы и разрывы строк",
   "paragraphsDescription": "Чтобы поделить текст на параграфы, между ними нужно оставить пустую строку.",
   "paragraphsExample": "Первый параграф\n\nВторой параграф\nПродолжение второго параграфа",

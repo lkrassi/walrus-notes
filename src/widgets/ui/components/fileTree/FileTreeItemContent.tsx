@@ -190,6 +190,7 @@ export const FileTreeItemContent = ({
                 id: note.id,
                 type: 'note' as const,
                 title: note.title,
+                isMain: note.isMain,
                 parentId: item.id,
                 createdAt: note.createdAt,
                 updatedAt: note.updatedAt,

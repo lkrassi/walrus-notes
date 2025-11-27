@@ -1,6 +1,7 @@
 export interface Note {
   id: string;
   title: string;
+  isMain: boolean;
   payload: string;
   ownerId: string;
   layoutId?: string;
