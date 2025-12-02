@@ -3,7 +3,7 @@ export type WSEventName =
   | 'COMMIT_DRAFT_REQUEST'
   | string;
 
-export interface WSEvent<T = any> {
+export interface WSEvent<T = unknown> {
   event: WSEventName;
   payload: T;
 }

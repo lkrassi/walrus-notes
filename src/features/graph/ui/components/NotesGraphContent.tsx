@@ -8,6 +8,8 @@ import {
   useNodesState,
   useReactFlow,
   type Node,
+  type Edge,
+  type NodeChange,
 } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
@@ -46,6 +48,13 @@ const NotesGraphContentComponent = ({
     getNodes: _getNodes,
   } = useReactFlow();
 
+  type NoteNodeData = { note?: Note; layoutColor?: string };
+  type NodeExt = Node<NoteNodeData> & {
+    selected?: boolean;
+    width?: number | null;
+    height?: number | null;
+  };
+
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
@@ -64,8 +73,8 @@ const NotesGraphContentComponent = ({
         if (!prev) return false;
         const px = prev.position?.x ?? 0;
         const py = prev.position?.y ?? 0;
-        const ix = (inNode.position as any)?.x ?? 0;
-        const iy = (inNode.position as any)?.y ?? 0;
+        const ix = (inNode.position as { x: number; y: number })?.x ?? 0;
+        const iy = (inNode.position as { x: number; y: number })?.y ?? 0;
         if (px !== ix || py !== iy) return false;
       }
       return true;
@@ -79,9 +88,9 @@ const NotesGraphContentComponent = ({
         if (!prev) return false;
         if (prev.source !== inEdge.source || prev.target !== inEdge.target)
           return false;
-        if ((prev as any).sourceHandle !== (inEdge as any).sourceHandle)
+        if ((prev as Edge).sourceHandle !== (inEdge as Edge).sourceHandle)
           return false;
-        if ((prev as any).targetHandle !== (inEdge as any).targetHandle)
+        if ((prev as Edge).targetHandle !== (inEdge as Edge).targetHandle)
           return false;
       }
       return true;
@@ -207,9 +216,12 @@ const NotesGraphContentComponent = ({
 
   const handleNoteOpen = useCallback(
     (noteId: string) => {
-      const node = nodes.find(n => n.id === noteId);
-      if (node?.data?.note) {
-        onNoteOpen?.({ noteId, note: node.data.note });
+      const node = nodes.find(n => n.id === noteId) as
+        | Node<NoteNodeData>
+        | undefined;
+      const note = node ? (node.data as NoteNodeData)?.note : undefined;
+      if (note) {
+        onNoteOpen?.({ noteId, note });
       }
     },
     [nodes, onNoteOpen]
@@ -280,7 +292,7 @@ const NotesGraphContentComponent = ({
       }
 
       try {
-        const selectedNodes = nodes.filter(n => (n as any).selected);
+        const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
         if (
           selectedNodes.length > 1 &&
           selectedNodes.some(n => n.id === node.id)
@@ -308,13 +320,20 @@ const NotesGraphContentComponent = ({
     [nodes, updatePositionCallback, onNodeDragStop]
   );
 
+  type LocalNodeChange = {
+    id?: string;
+    type?: 'position' | 'select' | string;
+    position?: { x: number; y: number } | null;
+    selected?: boolean;
+  };
+
   const handleNodesChangeMulti = useCallback(
-    (changes: any[]) => {
+    (changes: LocalNodeChange[]) => {
       const posChanges = changes.filter(
-        ch => ch.type === 'position' && (ch as any).position
+        ch => ch.type === 'position' && ch.position
       );
       if (posChanges.length === 0) {
-        handleNodesChange(changes);
+        handleNodesChange(changes as unknown as NodeChange[]);
         return;
       }
 
@@ -322,31 +341,31 @@ const NotesGraphContentComponent = ({
         const prevMap = new Map(prev.map(n => [n.id, n] as [string, typeof n]));
         const updated = prev.map(n => ({ ...n }));
 
-        const mainChange = posChanges[0] as any;
+        const mainChange = posChanges[0] as LocalNodeChange;
         const movedId = mainChange.id as string;
         const newPos = mainChange.position as { x: number; y: number };
         const movedPrev = prevMap.get(movedId);
         if (!movedPrev) {
           changes.forEach(ch => {
-            if ((ch as any).id) {
-              const idx = updated.findIndex(u => u.id === (ch as any).id);
+            if (ch.id) {
+              const idx = updated.findIndex(u => u.id === ch.id);
               if (idx !== -1) {
-                if (ch.type === 'position' && (ch as any).position) {
-                  updated[idx].position = (ch as any).position;
+                if (ch.type === 'position' && ch.position) {
+                  updated[idx].position = ch.position as {
+                    x: number;
+                    y: number;
+                  };
                 }
-                if (
-                  ch.type === 'select' &&
-                  typeof (ch as any).selected === 'boolean'
-                ) {
-                  const changingId = (ch as any).id as string;
-                  const requested = (ch as any).selected as boolean;
+                if (ch.type === 'select' && typeof ch.selected === 'boolean') {
+                  const changingId = ch.id as string;
+                  const requested = ch.selected as boolean;
                   if (
                     !requested &&
                     lastBoxSelectedIdsRef.current.has(changingId)
                   ) {
-                    (updated[idx] as any).selected = true;
+                    (updated[idx] as NodeExt).selected = true;
                   } else {
-                    (updated[idx] as any).selected = requested;
+                    (updated[idx] as NodeExt).selected = requested;
                   }
                 }
               }
@@ -360,7 +379,9 @@ const NotesGraphContentComponent = ({
         const dy = newPos.y - (movedPrev.position?.y ?? 0);
 
         const selectedIds = new Set(
-          prev.filter(n => (n as any).selected).map(n => n.id)
+          prev
+            .filter((n: Node & { selected?: boolean }) => n.selected)
+            .map(n => n.id)
         );
 
         if (selectedIds.size > 1 && selectedIds.has(movedId)) {
@@ -375,25 +396,22 @@ const NotesGraphContentComponent = ({
         }
 
         changes.forEach(ch => {
-          if ((ch as any).id) {
-            const idx = updated.findIndex(u => u.id === (ch as any).id);
+          if (ch.id) {
+            const idx = updated.findIndex(u => u.id === ch.id);
             if (idx !== -1) {
-              if (ch.type === 'position' && (ch as any).position) {
-                updated[idx].position = (ch as any).position;
+              if (ch.type === 'position' && ch.position) {
+                updated[idx].position = ch.position as { x: number; y: number };
               }
-              if (
-                ch.type === 'select' &&
-                typeof (ch as any).selected === 'boolean'
-              ) {
-                const changingId = (ch as any).id as string;
-                const requested = (ch as any).selected as boolean;
+              if (ch.type === 'select' && typeof ch.selected === 'boolean') {
+                const changingId = ch.id as string;
+                const requested = ch.selected as boolean;
                 if (
                   !requested &&
                   lastBoxSelectedIdsRef.current.has(changingId)
                 ) {
-                  (updated[idx] as any).selected = true;
+                  (updated[idx] as NodeExt).selected = true;
                 } else {
-                  (updated[idx] as any).selected = requested;
+                  (updated[idx] as NodeExt).selected = requested;
                 }
               }
             }

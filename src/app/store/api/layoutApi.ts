@@ -115,6 +115,42 @@ export const layoutApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    updateLayout: builder.mutation<
+      CreateLayoutResponse,
+      { layoutId: string; title?: string; color?: string }
+    >({
+      query: body => ({
+        url: '/layout/update',
+        method: 'POST',
+        body: {
+          layoutId: body.layoutId,
+          title: body.title,
+          color: body.color,
+        },
+      }),
+      // do not invalidate to avoid refetch; we will update cache optimistically
+      async onQueryStarted(
+        { layoutId, title, color },
+        { dispatch, queryFulfilled }
+      ) {
+        const patchResult = dispatch(
+          layoutApi.util.updateQueryData('getMyLayouts', undefined, draft => {
+            const idx = draft.data.findIndex(d => d.id === layoutId);
+            if (idx !== -1) {
+              if (typeof title === 'string') draft.data[idx].title = title;
+              if (typeof color === 'string') draft.data[idx].color = color;
+              draft.data[idx].updatedAt = new Date().toISOString();
+            }
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -122,4 +158,5 @@ export const {
   useGetMyLayoutsQuery,
   useCreateLayoutMutation,
   useDeleteLayoutMutation,
+  useUpdateLayoutMutation,
 } = layoutApi;

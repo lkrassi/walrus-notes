@@ -11,6 +11,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -41,12 +43,12 @@ export const Tabs = ({
     ? tabs.filter(tab => tab.item.type === 'note')
     : tabs;
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    setActiveId(active.id);
+    setActiveId(active.id as string);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const oldIndex = tabs.findIndex(tab => tab.id === active.id);

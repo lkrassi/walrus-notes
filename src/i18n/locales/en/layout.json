@@ -13,6 +13,8 @@
   "cancel": "Cancel",
   "creating": "Creating...",
   "createLayout": "Create layout",
+  "updateLayout":"Update layout data",
+  "chooseColor": "Choose color",
   "layoutsLoadedSuccess": "Layouts loaded successfully",
   "layoutsLoadError": "Error loading layouts",
   "noLayoutsFound": "Layouts not found",

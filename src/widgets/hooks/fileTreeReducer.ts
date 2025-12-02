@@ -49,10 +49,10 @@ export const fileTreeReducer = (
         type: 'layout' as const,
         title: layout.title,
         children: [],
-        isMain: (layout as any).isMain === true,
+        isMain: layout.isMain === true,
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
-        color: (layout as any).color,
+        color: layout.color,
         isNotesLoaded: false,
       }));
       // treeItems constructed
@@ -181,10 +181,10 @@ export const fileTreeReducer = (
         type: 'layout',
         title: action.payload.title,
         children: [],
-        isMain: (action.payload as any).isMain === true,
+        isMain: action.payload.isMain === true,
         createdAt: action.payload.createdAt,
         updatedAt: action.payload.updatedAt,
-        color: (action.payload as any).color,
+        color: action.payload.color,
       };
       return {
         ...state,
@@ -207,7 +207,7 @@ export const fileTreeReducer = (
                 ...layout,
                 title: updatedLayout.title || layout.title,
                 updatedAt: updatedLayout.updatedAt || layout.updatedAt,
-                color: (updatedLayout as any).color || layout.color,
+                color: updatedLayout.color || layout.color,
               }
             : layout
         ),

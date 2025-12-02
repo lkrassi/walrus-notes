@@ -13,6 +13,8 @@
   "cancel": "Отменить",
   "creating": "Создание...",
   "createLayout": "Создать папку",
+  "updateLayout": "Обновить данные папки",
+  "chooseColor": "Выберите цвет",
   "layoutsLoadedSuccess": "Папки успешно загружены",
   "layoutsLoadError": "Ошибка при загрузке папок",
   "noLayoutsFound": "Папки не найдены",

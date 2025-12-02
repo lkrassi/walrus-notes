@@ -1,6 +1,7 @@
 import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
+  useGetMyLayoutsQuery,
 } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
@@ -22,6 +23,17 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const posedNotes = posedNotesResponse?.data || [];
 
+  const { data: layoutsResponse } = useGetMyLayoutsQuery();
+  const layouts = layoutsResponse?.data || [];
+
+  const layoutsMap = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const l of layouts) {
+      if (l && l.id) m.set(l.id, l.color || '#6b7280');
+    }
+    return m;
+  }, [layouts]);
+
   const notesWithPositions = useMemo(
     () =>
       posedNotes.filter(
@@ -40,9 +52,9 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           x: note.position!.xPos,
           y: note.position!.yPos,
         },
-        data: { note },
+        data: { note, layoutColor: layoutsMap.get(note.layoutId || '') },
       })),
-    [notesWithPositions]
+    [notesWithPositions, layoutsMap]
   );
 
   const initialEdges: Edge[] = useMemo(() => {

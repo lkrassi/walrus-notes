@@ -30,7 +30,11 @@ export const Dropdown = ({
   const triggerRef = useRef<HTMLDivElement>(null);
   const [chosenPosition, setChosenPosition] = useState<
     'top' | 'bottom' | 'left' | 'right'
-  >(position === 'auto' ? 'bottom' : (position as any));
+  >(
+    position === 'auto'
+      ? 'bottom'
+      : (position as 'top' | 'bottom' | 'left' | 'right')
+  );
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;

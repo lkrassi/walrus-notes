@@ -1,5 +1,7 @@
 import { useGetMyLayoutsQuery } from 'app/store/api';
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { useAppSelector } from '../../../hooks/redux';
+import { notesApi } from '../../../model';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
@@ -101,6 +103,57 @@ export const FileTree = memo(
       }));
     }, [layoutsResponse?.data, searchQuery, searchResponse?.data]);
 
+    const apiState = useAppSelector(state => state.api);
+
+    const selectedParentId = useMemo(() => {
+      if (!selectedItemId) return undefined;
+
+      const findInChildren = (
+        children: FileTreeItemType[] | undefined
+      ): boolean => {
+        if (!children) return false;
+        for (const c of children) {
+          if (c.id === selectedItemId) return true;
+          if (c.children && findInChildren(c.children)) return true;
+        }
+        return false;
+      };
+
+      // If current fileTree contains a direct note item (search results), use its parentId
+      for (const it of fileTree) {
+        if (it.type === 'note' && it.id === selectedItemId) {
+          return (it as FileTreeItemType).parentId as string | undefined;
+        }
+      }
+
+      // Otherwise, try to find the selected note among children and return its parent id
+      for (const it of fileTree) {
+        if (it.type === 'layout') {
+          if (findInChildren(it.children)) return it.id;
+        }
+      }
+
+      // As a last resort, try to find the note in RTK Query cache across known layouts
+      if (layoutsResponse?.data && apiState) {
+        for (const layout of layoutsResponse.data) {
+          // Check a few pages from cache (page 1..3) for presence of this note
+          for (let page = 1; page <= 3; page++) {
+            const cached = notesApi.endpoints.getNotes.select({
+              layoutId: layout.id,
+              page,
+            })({ api: apiState });
+
+            const arr = cached?.data?.data;
+            if (Array.isArray(arr) && arr.some(n => n.id === selectedItemId)) {
+              return layout.id;
+            }
+          }
+        }
+      }
+
+      return undefined;
+    }, [fileTree, selectedItemId]);
+
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
         // If this is a special 'main' layout, open its graph instead of selecting/toggling expansion
@@ -121,8 +174,23 @@ export const FileTree = memo(
     const renderTreeItem = useCallback(
       (item: FileTreeItemType, level: number = 0) => {
         const isExpanded = expandedItems.has(item.id);
-        const isSelected = selectedItemId === item.id;
         const hasChildren = !!(item.children && item.children.length > 0);
+
+        // Determine selection separately for layouts and notes so both can be highlighted.
+        // Also support the case when layout's children are not loaded: if the selected
+        // item is a note present elsewhere in the tree, we compute `selectedParentId`
+        // and treat that layout as selected as well.
+        let isSelected = false;
+        if (item.type === 'note') {
+          isSelected = selectedItemId === item.id;
+        } else if (item.type === 'layout') {
+          // layout is selected if it's explicitly selected OR a child note is selected
+          // (either present in `item.children` or found elsewhere as the parent of the selected note)
+          isSelected =
+            selectedItemId === item.id ||
+            selectedParentId === item.id ||
+            !!item.children?.some(child => child.id === selectedItemId);
+        }
 
         return (
           <div key={item.id}>
@@ -140,7 +208,13 @@ export const FileTree = memo(
           </div>
         );
       },
-      [expandedItems, selectedItemId, handleItemClick, onOpenGraph]
+      [
+        expandedItems,
+        selectedItemId,
+        selectedParentId,
+        handleItemClick,
+        onOpenGraph,
+      ]
     );
 
     return (

@@ -31,14 +31,15 @@ export const FileTreeMainItem: React.FC<Props> = ({
         'gap-2',
         'rounded-lg',
         'py-2',
+        'text-text',
         isSelected
-          ? 'text-text dark:text-dark-text ring-primary ring-2'
+          ? 'text-text dark:text-dark-text'
           : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'
       )}
       style={{
         paddingLeft: `${paddingLeft}px`,
         paddingRight: '12px',
-        ...(isSelected && item.color
+        ...(isSelected && item.color && !item.isMain
           ? { boxShadow: `0 0 0 2px ${item.color}` }
           : {}),
         ...(hasSelection && !isSelected && item.type === 'layout'
@@ -50,15 +51,18 @@ export const FileTreeMainItem: React.FC<Props> = ({
       <div
         className={cn('h-4', 'w-4', 'flex', 'items-center', 'justify-center')}
       >
-        <Network
-          className={cn('h-4', 'w-4')}
-          style={item.color ? { color: item.color } : undefined}
-        />
+        <Network className={cn('h-4', 'w-4')} />
       </div>
 
       <span
-        className={cn('flex-1', 'truncate', 'text-sm', 'font-medium')}
-        style={item.color ? { color: item.color } : undefined}
+        className={cn(
+          'flex-1',
+          'truncate',
+          'text-sm',
+          'font-medium',
+          'text-text',
+          'dark:text-dark-text'
+        )}
       >
         {item.title}
       </span>

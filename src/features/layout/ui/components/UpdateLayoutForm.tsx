@@ -1,53 +1,56 @@
-import { useCreateLayoutMutation } from 'app/store/api';
 import React, { useState } from 'react';
-import { Button, Input } from 'shared';
+import { useUpdateLayoutMutation } from 'app/store/api';
+import { Button } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 import CircularColorPicker from './CircularColorPicker';
-import { Plus, Trash2 } from 'lucide-react';
+import { Input } from 'shared';
+import { Trash2, Plus } from 'lucide-react';
 import FolderIcon from 'shared/ui/icons/FolderIcon';
 
-interface CreateLayoutFormProps {
-  onLayoutCreated?: () => void;
+interface UpdateLayoutFormProps {
+  layoutId: string;
+  layoutTitle?: string;
+  layoutColor?: string;
+  onLayoutUpdated?: (
+    layoutId: string,
+    data?: { title?: string; color?: string }
+  ) => void;
 }
 
-export const CreateLayoutForm = ({
-  onLayoutCreated,
-}: CreateLayoutFormProps) => {
+export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
+  layoutId,
+  layoutTitle = '',
+  layoutColor = undefined,
+  onLayoutUpdated,
+}) => {
   const { t } = useLocalization();
-  const [title, setTitle] = useState('');
-  const [color, setColor] = useState<string | undefined>(undefined);
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
-  const [createLayout, { isLoading }] = useCreateLayoutMutation();
+  const [updateLayout, { isLoading }] = useUpdateLayoutMutation();
+
+  const [title, setTitle] = useState(layoutTitle);
+  const [color, setColor] = useState<string | undefined>(layoutColor);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!title.trim()) {
-      showError(t('layout:enterLayoutTitle'));
-      return;
-    }
-
     try {
-      await createLayout({
-        title: title.trim(),
+      await updateLayout({
+        layoutId,
+        title: title || undefined,
         color,
       }).unwrap();
-
-      setTitle('');
-      if (onLayoutCreated) {
-        onLayoutCreated();
-      }
+      if (onLayoutUpdated)
+        onLayoutUpdated(layoutId, { title: title || undefined, color });
       closeModal();
-    } catch {
-      showError(t('layout:layoutCreationError'));
+    } catch (_e) {
+      showError(t('layout:updateError') || 'Failed to update layout');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
+    <form onSubmit={handleSubmit} className={cn('space-y-4', 'p-6')}>
       <div>
         <label htmlFor='layout-title' className={cn('tw-label')}>
           {t('layout:layoutTitle')}
@@ -104,7 +107,10 @@ export const CreateLayoutForm = ({
                   'duration-200'
                 )}
               >
-                <FolderIcon className={cn('h-6', 'w-6')} fillColor={color} />
+                <FolderIcon
+                  className={cn('h-6', 'w-6')}
+                  fillColor={color}
+                />
               </div>
 
               <span
@@ -123,10 +129,14 @@ export const CreateLayoutForm = ({
 
             <div className={cn('flex', 'items-center', 'gap-2')}>
               <button type='button' aria-hidden className={cn('p-1')}>
-                <Plus className={cn('h-4', 'w-4')} />
+                <Plus
+                  className={cn('h-4', 'w-4')}
+                />
               </button>
               <button type='button' aria-hidden className={cn('p-1')}>
-                <Trash2 className={cn('h-4', 'w-4')} />
+                <Trash2
+                  className={cn('h-4', 'w-4')}
+                />
               </button>
             </div>
           </div>
@@ -155,3 +165,5 @@ export const CreateLayoutForm = ({
     </form>
   );
 };
+
+export default UpdateLayoutForm;

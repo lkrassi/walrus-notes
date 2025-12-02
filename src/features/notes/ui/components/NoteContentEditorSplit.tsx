@@ -15,7 +15,7 @@ interface Props {
   leftWidth?: number | null;
   min?: number;
   max?: number;
-  onDividerPointerDown?: (e: any) => void;
+  onDividerPointerDown?: React.PointerEventHandler<HTMLDivElement>;
   isDesktop: boolean;
   note?: Note;
   layoutId?: string;

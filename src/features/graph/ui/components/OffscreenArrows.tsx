@@ -48,7 +48,15 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
 }) => {
   const { getViewport } = useReactFlow();
   const rafRef = useRef<number | null>(null);
-  const stateRef = useRef<Array<any>>([]);
+  type Arrow = {
+    id: string;
+    x: number;
+    y: number;
+    angle: number;
+    dist: number;
+    color: string;
+  };
+  const stateRef = useRef<Array<Arrow>>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -70,7 +78,7 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
         const cx = width / 2;
         const cy = height / 2;
 
-        const arrows: Array<any> = [];
+        const arrows: Array<Arrow> = [];
         for (const n of nodes) {
           const nx = (n.position?.x ?? 0) * zoom + panX;
           const ny = (n.position?.y ?? 0) * zoom + panY;
@@ -86,8 +94,9 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
           if (!intersection) continue;
 
           const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-          // use neutral color for offscreen arrows
-          const color = '#6b7280';
+          // try to use node's layout color, fallback to neutral
+          const color =
+            (n.data as { layoutColor?: string })?.layoutColor || '#6b7280';
 
           arrows.push({
             id: n.id,

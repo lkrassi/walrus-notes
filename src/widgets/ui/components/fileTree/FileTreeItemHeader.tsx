@@ -1,19 +1,17 @@
 import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
+import UpdateLayoutForm from 'features/layout/ui/components/UpdateLayoutForm';
+import FolderIcon from 'shared/ui/icons/FolderIcon';
+import FolderOpenIcon from 'shared/ui/icons/FolderOpenIcon';
 import { CreateNoteForm } from 'features/notes';
-import {
-  ChevronDown,
-  FileText,
-  Folder,
-  FolderOpen,
-  Plus,
-  Trash2,
-} from 'lucide-react';
+import { ChevronDown, FileText, Plus, Trash2, Pencil } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import cn from 'shared/lib/cn';
+import { readableTextColor } from 'shared/lib/color';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import type { Note } from 'shared/model/types/layouts';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useIsMobile, useLocalization } from '../../../hooks';
+import { useTheme } from 'widgets/hooks';
 import { DeleteNoteForm } from './DeleteNoteForm';
 
 type FileTreeItemHeaderProps = {
@@ -45,6 +43,7 @@ export const FileTreeItemHeader = ({
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
+  const { theme } = useTheme();
 
   useEffect(() => {
     return () => {
@@ -118,13 +117,26 @@ export const FileTreeItemHeader = ({
     <DeleteLayoutForm
       layoutId={item.id}
       layoutTitle={item.title}
-      onLayoutDeleted={layoutId => {
+      onLayoutDeleted={(layoutId: string) => {
         onDeleteLayout?.(layoutId);
       }}
     />,
     {
       title: t('layout:deleteLayout'),
       size: 'md',
+    }
+  );
+
+  const handleUpdateLayout = openModalFromTrigger(
+    <UpdateLayoutForm
+      layoutId={item.id}
+      layoutTitle={item.title}
+      layoutColor={item.color}
+      onLayoutUpdated={() => {}}
+    />,
+    {
+      title: t('layout:updateLayout') || 'Edit layout',
+      size: 'lg',
     }
   );
 
@@ -139,20 +151,14 @@ export const FileTreeItemHeader = ({
         'gap-2',
         'rounded-lg',
         'py-2',
-        // apply ring only for selected layouts, keep hover for others
-        isSelected && item.type === 'layout'
-          ? 'text-text dark:text-dark-text ring-primary ring-2'
-          : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'
+        'transition-opacity',
+        'duration-150',
+        'text-text',
+        'dark:text-dark-text'
       )}
       style={{
         paddingLeft: `${paddingLeft}px`,
         paddingRight: '12px',
-        ...(item.color
-          ? { backgroundColor: item.color, color: '#ffffff' }
-          : {}),
-        ...(isSelected && item.color
-          ? { boxShadow: `0 0 0 2px ${item.color}` }
-          : {}),
         ...(hasSelection &&
         !isSelected &&
         (item.type === 'layout' || item.type === 'note')
@@ -185,9 +191,9 @@ export const FileTreeItemHeader = ({
               'transition-transform',
               'duration-200',
               isExpanded ? 'rotate-0' : '-rotate-90',
-              isSelected ? 'text-white' : 'text-text dark:text-dark-text'
+              'text-black',
+              'dark:text-white'
             )}
-            style={item.color ? { color: '#ffffff' } : undefined}
           />
         </div>
       )}
@@ -197,15 +203,53 @@ export const FileTreeItemHeader = ({
       <div>
         {item.type === 'layout' ? (
           isExpanded ? (
-            <FolderOpen
-              className={cn('h-4', 'w-4')}
-              style={item.color ? { color: '#ffffff' } : undefined}
-            />
+            <div
+              className={cn(
+                'h-6',
+                'w-6',
+                'flex',
+                'items-center',
+                'justify-center',
+                'rounded-full',
+                'transition-colors',
+                'duration-200',
+                isSelected && !item.color
+                  ? 'bg-primary dark:bg-primary-dark text-white'
+                  : ''
+              )}
+            >
+              <FolderOpenIcon
+                className={cn('h-6', 'w-6')}
+                fillColor={item.color}
+                strokeColor={
+                  item.color ? readableTextColor(item.color) : undefined
+                }
+              />
+            </div>
           ) : (
-            <Folder
-              className={cn('h-4', 'w-4')}
-              style={item.color ? { color: '#ffffff' } : undefined}
-            />
+            <div
+              className={cn(
+                'h-6',
+                'w-6',
+                'flex',
+                'items-center',
+                'justify-center',
+                'rounded-full',
+                'transition-colors',
+                'duration-200',
+                isSelected && !item.color
+                  ? 'bg-primary dark:bg-primary-dark text-white'
+                  : ''
+              )}
+            >
+              <FolderIcon
+                className={cn('h-6', 'w-6')}
+                fillColor={item.color}
+                strokeColor={
+                  item.color ? readableTextColor(item.color) : undefined
+                }
+              />
+            </div>
           )
         ) : (
           <FileText className={cn('h-4', 'w-4')} />
@@ -259,7 +303,7 @@ export const FileTreeItemHeader = ({
       <div className={cn('flex', 'items-center', 'gap-1')}>
         {item.type === 'layout' && (
           <>
-            {item.isMain !== true && (
+            {item.isMain !== true && isSelected && (
               <button
                 onClick={e => {
                   e.stopPropagation();
@@ -268,24 +312,55 @@ export const FileTreeItemHeader = ({
                 className={cn(
                   'transition-opacity',
                   'duration-150',
-                  isMobile || _isHovered || isSelected
-                    ? 'opacity-100'
-                    : 'opacity-0',
+                  'opacity-100',
                   isMobile
-                    ? 'text-gray-600'
+                    ? 'text-gray-600 dark:text-white'
                     : isSelected
                       ? 'text-white hover:text-gray-200'
-                      : 'text-gray-400 hover:text-gray-600'
+                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
                 )}
                 title={t('fileTree:createNote')}
               >
                 <Plus
                   className={cn('h-4', 'w-4')}
-                  style={item.color ? { color: '#ffffff' } : undefined}
+                  style={
+                    // only apply server color as icon color in light theme
+                    theme !== 'dark' && item.color
+                      ? { color: readableTextColor(item.color) }
+                      : undefined
+                  }
                 />
               </button>
             )}
-            {item.isMain !== true && (
+            {item.isMain !== true && isSelected && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  handleUpdateLayout(e);
+                }}
+                className={cn(
+                  'transition-opacity',
+                  'duration-150',
+                  'opacity-100',
+                  isMobile
+                    ? 'text-gray-600 dark:text-white'
+                    : isSelected
+                      ? 'text-white hover:text-gray-200'
+                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
+                )}
+                title={t('layout:edit') || 'Edit'}
+              >
+                <Pencil
+                  className={cn('h-4', 'w-4')}
+                  style={
+                    theme !== 'dark' && item.color
+                      ? { color: readableTextColor(item.color) }
+                      : undefined
+                  }
+                />
+              </button>
+            )}
+            {item.isMain !== true && isSelected && (
               <button
                 onClick={e => {
                   e.stopPropagation();
@@ -294,27 +369,29 @@ export const FileTreeItemHeader = ({
                 className={cn(
                   'transition-opacity',
                   'duration-150',
-                  isMobile || _isHovered || isSelected
-                    ? 'opacity-100'
-                    : 'opacity-0',
+                  'opacity-100',
                   isMobile
-                    ? 'text-gray-600'
+                    ? 'text-gray-600 dark:text-white'
                     : isSelected
                       ? 'text-white hover:text-gray-200'
-                      : 'text-gray-400 hover:text-gray-600'
+                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
                 )}
                 title={t('layout:deleteLayout')}
               >
                 <Trash2
                   className={cn('h-4', 'w-4')}
-                  style={item.color ? { color: '#ffffff' } : undefined}
+                  style={
+                    theme !== 'dark' && item.color
+                      ? { color: readableTextColor(item.color) }
+                      : undefined
+                  }
                 />
               </button>
             )}
           </>
         )}
 
-        {item.type === 'note' && item.isMain !== true && (
+        {item.type === 'note' && item.isMain !== true && isSelected && (
           <button
             onClick={e => {
               e.stopPropagation();
@@ -323,20 +400,22 @@ export const FileTreeItemHeader = ({
             className={cn(
               'transition-opacity',
               'duration-150',
-              isMobile || _isHovered || isSelected
-                ? 'opacity-100'
-                : 'opacity-0',
+              'opacity-100',
               isMobile
-                ? 'text-gray-600'
+                ? 'text-gray-600 dark:text-white'
                 : isSelected
                   ? 'text-white hover:text-gray-200'
-                  : 'text-gray-400 hover:text-gray-600'
+                  : 'text-gray-400 hover:text-gray-200 dark:text-white'
             )}
             title={t('notes:deleteNote')}
           >
             <Trash2
               className={cn('h-4', 'w-4')}
-              style={item.color ? { color: '#ffffff' } : undefined}
+              style={
+                theme !== 'dark' && item.color
+                  ? { color: readableTextColor(item.color) }
+                  : undefined
+              }
             />
           </button>
         )}

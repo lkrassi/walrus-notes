@@ -30,8 +30,8 @@ export const useDraftSync = ({
   const ctx = useWSContext();
   const ws = ctx ?? useWebSocket({ url: serverUrl, userId });
   const dispatch = useAppDispatch();
-  const storedDraft = useAppSelector((s: any) =>
-    noteId ? (s.drafts?.[noteId] ?? null) : null
+  const storedDraft = useAppSelector(state =>
+    noteId ? (state.drafts?.[noteId] ?? null) : null
   );
 
   const lastEditAtRef = useRef<number | null>(null);

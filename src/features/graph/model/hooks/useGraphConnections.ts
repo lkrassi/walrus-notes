@@ -71,8 +71,8 @@ export const useGraphConnections = ({
 
       const sh = normalizeSource(sourceHandle);
       const th = normalizeTarget(targetHandle);
-      if (sh) (edge as any).sourceHandle = sh;
-      if (th) (edge as any).targetHandle = th;
+      if (sh) edge.sourceHandle = sh;
+      if (th) edge.targetHandle = th;
 
       return edge;
     },

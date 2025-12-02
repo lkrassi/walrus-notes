@@ -8,7 +8,7 @@ interface CircularColorPickerProps {
   className?: string;
 }
 
-function hsvToRgb(h: number, s: number, v: number) {
+const hsvToRgb = (h: number, s: number, v: number) => {
   const c = v * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = v - c;
@@ -26,13 +26,13 @@ function hsvToRgb(h: number, s: number, v: number) {
     Math.round((g + m) * 255),
     Math.round((b + m) * 255),
   ];
-}
+};
 
-function rgbToHex(r: number, g: number, b: number) {
+const rgbToHex = (r: number, g: number, b: number) => {
   return (
     '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')
   ).toLowerCase();
-}
+};
 
 function hexToRgb(hex?: string) {
   if (!hex) return null;
@@ -54,7 +54,7 @@ function hexToRgb(hex?: string) {
   return null;
 }
 
-function rgbToHsv(r: number, g: number, b: number) {
+const rgbToHsv = (r: number, g: number, b: number) => {
   const rr = r / 255;
   const gg = g / 255;
   const bb = b / 255;
@@ -71,7 +71,7 @@ function rgbToHsv(r: number, g: number, b: number) {
   const s = max === 0 ? 0 : d / max;
   const v = max;
   return { h, s, v };
-}
+};
 
 const CircularColorPicker: React.FC<CircularColorPickerProps> = ({
   value,

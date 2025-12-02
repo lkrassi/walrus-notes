@@ -21,6 +21,7 @@ export interface Layout {
   title: string;
   ownerId: string;
   isMain: boolean;
+  color?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -50,6 +51,7 @@ declare module 'reactflow' {
     onNoteClick?: (noteId: string) => void;
     isSelected?: boolean;
     isHovered?: boolean;
+    layoutColor?: string;
   }
 
   interface EdgeData {

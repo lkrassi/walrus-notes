@@ -9,13 +9,14 @@ interface NoteNodeProps {
     note: Note;
     onNoteClick?: (noteId: string) => void;
     selected?: boolean;
+    layoutColor?: string;
     isRelatedToSelected?: boolean;
   };
   selected: boolean;
 }
 
-const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
-  const resolvedColor = '#6b7280';
+const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
+  const resolvedColor = data.layoutColor ?? '#6b7280';
 
   const [isDragging, setIsDragging] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -91,9 +92,18 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
         'cursor-pointer',
         'rounded-xl',
         'p-2',
-        'text-left'
+        'text-left',
+        // static background/text colors: light vs dark theme
+        'bg-white',
+        'text-black',
+        'dark:bg-gray-800',
+        'dark:text-white',
+        // show border that uses server color via inline style
+        'border-2'
       )}
-      style={{ backgroundColor: resolvedColor }}
+      style={{
+        borderColor: resolvedColor,
+      }}
       title='Клик по ЛКМ для открытия заметки'
       animate={{
         opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
@@ -152,7 +162,6 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
 
       <h3
         className={cn(
-          'text-dark-text',
           'm-3',
           'line-clamp-2',
           'overflow-hidden',
