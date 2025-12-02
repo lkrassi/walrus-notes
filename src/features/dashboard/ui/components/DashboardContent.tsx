@@ -12,6 +12,8 @@ import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
+import { createTabId } from 'widgets/model/utils/tabUtils';
+import type { TabType } from 'widgets/model/utils/tabUtils';
 import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -47,7 +49,8 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   };
 
   const handleItemSelect = (item: FileTreeItem) => {
-    const tabId = `${item.type}-${item.id}`;
+    // Use createTabId to ensure consistent tab id format
+    const tabId = createTabId(item.type as unknown as TabType, item.id);
     const existingTab = openTabs.find(tab => tab.id === tabId);
 
     if (existingTab) {
@@ -82,6 +85,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       title: noteData.note.title,
       parentId: noteData.note.layoutId,
       note: noteData.note,
+      isMain: false,
     };
 
     handleItemSelect(noteItem);
@@ -193,6 +197,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
           <NotesGraph
             layoutId={layoutId}
             onNoteOpen={handleNoteOpenFromGraph}
+            allowNodeDrag={activeTab.item.isMain !== true}
           />
         );
       }

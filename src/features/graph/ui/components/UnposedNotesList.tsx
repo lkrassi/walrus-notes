@@ -29,7 +29,8 @@ export const UnposedNotesList = ({
   });
 
   const handleNoteClick = (note: Note) => {
-    onNoteSelect?.(note);
+    const noteWithLayout = { ...note, layoutId } as Note;
+    onNoteSelect?.(noteWithLayout);
     setIsExpanded(false);
   };
 
@@ -90,9 +91,10 @@ export const UnposedNotesList = ({
               key={note.id}
               draggable
               onDragStart={e => {
+                const noteWithLayout = { ...note, layoutId } as Note;
                 e.dataTransfer.setData(
                   'application/reactflow',
-                  JSON.stringify(note)
+                  JSON.stringify(noteWithLayout)
                 );
                 e.dataTransfer.effectAllowed = 'move';
               }}

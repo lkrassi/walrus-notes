@@ -18,6 +18,7 @@ interface GetMyLayoutsResponse {
 
 interface CreateLayoutRequest {
   title: string;
+  color?: string;
 }
 
 interface CreateLayoutResponse {
@@ -59,7 +60,7 @@ export const layoutApi = apiSlice.injectEndpoints({
       query: body => ({
         url: '/layout/create',
         method: 'POST',
-        body: { title: body.title },
+        body: { title: body.title, color: body.color },
       }),
       invalidatesTags: ['Layouts'],
       onQueryStarted: async ({ title }, { dispatch, queryFulfilled }) => {
@@ -67,6 +68,8 @@ export const layoutApi = apiSlice.injectEndpoints({
         const tempLayout: Layout = {
           id: tempId,
           title,
+          ownerId: '',
+          isMain: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         } as Layout;

@@ -8,6 +8,7 @@ export type FileTreeItem = {
   type: 'layout' | 'note' | 'graph';
   title: string;
   isMain: boolean;
+  color?: string;
   children?: FileTreeItem[];
   parentId?: string;
   createdAt?: string;

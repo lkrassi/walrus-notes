@@ -4,8 +4,8 @@ import {
 } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
+import { MarkerType } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
-import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface UseNotesGraphProps {
   layoutId: string;
@@ -40,7 +40,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           x: note.position!.xPos,
           y: note.position!.yPos,
         },
-        data: { note, nodeColor: generateColorFromId(note.id) },
+        data: { note },
       })),
     [notesWithPositions]
   );
@@ -61,18 +61,51 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
             );
 
             if (!edgeExists) {
-              const sourceColor = generateColorFromId(sourceNote.id);
-              const targetColor = generateColorFromId(targetNoteId);
-
               const newEdge: Edge = {
                 id: `edge-${sourceNote.id}-${targetNoteId}`,
                 source: sourceNote.id,
                 target: targetNoteId,
+                // choose handle sides based on relative position (acts like magnet)
+                sourceHandle: (() => {
+                  try {
+                    const target = notesWithPositions.find(
+                      n => n.id === targetNoteId
+                    )!;
+                    const sx = sourceNote.position!.xPos;
+                    const sy = sourceNote.position!.yPos;
+                    const tx = target.position!.xPos;
+                    const ty = target.position!.yPos;
+                    const dx = tx - sx;
+                    const dy = ty - sy;
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                      return dx > 0 ? 'source-right' : 'source-left';
+                    }
+                    return dy > 0 ? 'source-bottom' : 'source-top';
+                  } catch (_e) {
+                    return undefined;
+                  }
+                })(),
+                targetHandle: (() => {
+                  try {
+                    const target = notesWithPositions.find(
+                      n => n.id === targetNoteId
+                    )!;
+                    const sx = sourceNote.position!.xPos;
+                    const sy = sourceNote.position!.yPos;
+                    const tx = target.position!.xPos;
+                    const ty = target.position!.yPos;
+                    const dx = tx - sx;
+                    const dy = ty - sy;
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                      return dx > 0 ? 'target-left' : 'target-right';
+                    }
+                    return dy > 0 ? 'target-top' : 'target-bottom';
+                  } catch (_e) {
+                    return undefined;
+                  }
+                })(),
                 type: 'multiColor' as const,
-                data: {
-                  sourceColor,
-                  targetColor,
-                },
+                data: {},
               };
 
               edges.push(newEdge);

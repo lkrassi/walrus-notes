@@ -73,13 +73,14 @@ const SidebarComponent = (
 
   const handleOpenGraph = (layoutId: string) => {
     const layout = fileTree.find(item => item.id === layoutId);
-    const graphTitle = layout ? `Граф: ${layout.title}` : 'Граф заметок';
+    const graphTitle = layout ? `${layout.title}` : 'Граф заметок';
 
     onItemSelect?.({
       id: `graph-${layoutId}`,
       type: 'graph',
       title: graphTitle,
       layoutId,
+      isMain: layout?.isMain === true,
     });
   };
 

@@ -55,7 +55,11 @@ export const useGraphEffects = ({
       setTempEdges(prev =>
         prev.filter(
           tempEdge =>
-            !initialEdges.some(cacheEdge => cacheEdge.id === tempEdge.id)
+            !initialEdges.some(
+              cacheEdge =>
+                cacheEdge.source === tempEdge.source &&
+                cacheEdge.target === tempEdge.target
+            )
         )
       );
     }

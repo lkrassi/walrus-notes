@@ -1,4 +1,4 @@
-import { FileText, Folder, X } from 'lucide-react';
+import { FileText, Folder, X, Network } from 'lucide-react';
 import { useTabMiddleClickClose } from '../../hooks/useTabMiddleClickClose';
 import cn from 'shared/lib/cn';
 import type { TabsProps } from '../../model/types/tabsProps';
@@ -64,6 +64,8 @@ export const SortableTab = ({
       >
         {tab.item.type === 'note' ? (
           <FileText className='mr-2 h-4 w-4' />
+        ) : tab.item.isMain === true ? (
+          <Network className='mr-2 h-4 w-4' />
         ) : (
           <Folder className='mr-2 h-4 w-4' />
         )}

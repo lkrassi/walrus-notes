@@ -1,7 +1,7 @@
 import { useCreateNoteLinkMutation } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
-import { generateColorFromId } from '../../model/utils/graphUtils';
+import { MarkerType } from 'reactflow';
 
 interface UseGraphConnectionsProps {
   layoutId: string;
@@ -41,24 +41,40 @@ export const useGraphConnections = ({
   }, [edges, tempEdges]);
 
   const createEdge = useCallback(
-    (source: string, target: string): Edge => {
-      const sourceNode = nodes.find(n => n.id === source);
-      const targetNode = nodes.find(n => n.id === target);
-      const sourceColor =
-        (sourceNode?.data as any)?.nodeColor || generateColorFromId(source);
-      const targetColor =
-        (targetNode?.data as any)?.nodeColor || generateColorFromId(target);
-
-      return {
+    (
+      source: string,
+      target: string,
+      sourceHandle?: string | null,
+      targetHandle?: string | null
+    ): Edge => {
+      const edge: Edge = {
         id: `temp-${source}-${target}-${Date.now()}`,
         source,
         target,
         type: 'multiColor' as const,
-        data: {
-          sourceColor,
-          targetColor,
-        },
+        data: {},
       };
+
+      const normalizeSource = (h?: string | null) => {
+        if (!h) return undefined;
+        if (h.startsWith('target-'))
+          return `source-${h.slice('target-'.length)}`;
+        return h;
+      };
+
+      const normalizeTarget = (h?: string | null) => {
+        if (!h) return undefined;
+        if (h.startsWith('source-'))
+          return `target-${h.slice('source-'.length)}`;
+        return h;
+      };
+
+      const sh = normalizeSource(sourceHandle);
+      const th = normalizeTarget(targetHandle);
+      if (sh) (edge as any).sourceHandle = sh;
+      if (th) (edge as any).targetHandle = th;
+
+      return edge;
     },
     [nodes]
   );
@@ -91,11 +107,13 @@ export const useGraphConnections = ({
 
       let targetNodeId: string | null = null;
 
+      let dropPosition = null as { x: number; y: number } | null;
       if (event instanceof MouseEvent) {
         const flowPosition = screenToFlowPosition({
           x: event.clientX,
           y: event.clientY,
         });
+        dropPosition = flowPosition;
 
         const targetNode = nodes.find(node => {
           const nodeX = node.position.x as number;
@@ -112,44 +130,98 @@ export const useGraphConnections = ({
         });
 
         targetNodeId = targetNode?.id || null;
-      }
+        if (targetNode && dropPosition) {
+          // determine nearest handle on target based on drop position relative to node center
+          const nodeX = targetNode.position.x as number;
+          const nodeY = targetNode.position.y as number;
+          const nodeWidth = (targetNode.width as number) || 100;
+          const nodeHeight = (targetNode.height as number) || 100;
+          const cx = nodeX + nodeWidth / 2;
+          const cy = nodeY + nodeHeight / 2;
+          const dx = dropPosition.x - cx;
+          const dy = dropPosition.y - cy;
+          const targetHandleId =
+            Math.abs(dx) > Math.abs(dy)
+              ? dx > 0
+                ? 'target-right'
+                : 'target-left'
+              : dy > 0
+                ? 'target-bottom'
+                : 'target-top';
 
+          // determine sourceHandle if not provided
+          let resolvedSourceHandle = tempEdge?.sourceHandle ?? null;
+          if (!resolvedSourceHandle) {
+            const sourceNode = nodes.find(n => n.id === tempEdge?.source);
+            if (sourceNode && targetNode) {
+              const sx =
+                (sourceNode.position.x as number) +
+                ((sourceNode.width as number) || 100) / 2;
+              const sy =
+                (sourceNode.position.y as number) +
+                ((sourceNode.height as number) || 100) / 2;
+              const tx = (targetNode.position.x as number) + nodeWidth / 2;
+              const ty = (targetNode.position.y as number) + nodeHeight / 2;
+              const ddx = tx - sx;
+              const ddy = ty - sy;
+              resolvedSourceHandle =
+                Math.abs(ddx) > Math.abs(ddy)
+                  ? ddx > 0
+                    ? 'source-right'
+                    : 'source-left'
+                  : ddy > 0
+                    ? 'source-bottom'
+                    : 'source-top';
+            }
+          }
+
+          // use handles when creating edge
+          if (isValidNoteId(targetNodeId) && tempEdge?.source) {
+            const edgeExists = allEdges.some(
+              edge =>
+                edge.source === tempEdge.source && edge.target === targetNodeId
+            );
+
+            if (edgeExists) {
+              setTempEdge(null);
+              return;
+            }
+
+            try {
+              const newEdge = createEdge(
+                tempEdge.source,
+                targetNodeId,
+                resolvedSourceHandle,
+                targetHandleId
+              );
+              setTempEdges(prev => [...prev, newEdge]);
+
+              await createNoteLink({
+                layoutId,
+                firstNoteId: tempEdge.source,
+                secondNoteId: targetNodeId,
+              }).unwrap();
+
+              setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
+              try {
+                onEdgeCreated?.(newEdge);
+              } catch (_e) {}
+            } catch (_error) {
+              setTempEdges(prev =>
+                prev.filter(
+                  edge => edge.id !== `temp-${tempEdge.source}-${targetNodeId}`
+                )
+              );
+            } finally {
+              setTempEdge(null);
+            }
+          }
+          return;
+        }
+      }
       if (!isValidNoteId(targetNodeId) || tempEdge.source === targetNodeId) {
         setTempEdge(null);
         return;
-      }
-
-      const edgeExists = allEdges.some(
-        edge => edge.source === tempEdge.source && edge.target === targetNodeId
-      );
-
-      if (edgeExists) {
-        setTempEdge(null);
-        return;
-      }
-
-      try {
-        const newEdge = createEdge(tempEdge.source, targetNodeId);
-        setTempEdges(prev => [...prev, newEdge]);
-
-        await createNoteLink({
-          layoutId,
-          firstNoteId: tempEdge.source,
-          secondNoteId: targetNodeId,
-        }).unwrap();
-
-        setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
-        try {
-          onEdgeCreated?.(newEdge);
-        } catch (_e) {}
-      } catch (_error) {
-        setTempEdges(prev =>
-          prev.filter(
-            edge => edge.id !== `temp-${tempEdge.source}-${targetNodeId}`
-          )
-        );
-      } finally {
-        setTempEdge(null);
       }
     },
     [
@@ -184,7 +256,12 @@ export const useGraphConnections = ({
       if (edgeExists) return;
 
       try {
-        const newEdge = createEdge(source, target);
+        const newEdge = createEdge(
+          source,
+          target,
+          connection.sourceHandle ?? null,
+          connection.targetHandle ?? null
+        );
         setTempEdges(prev => [...prev, newEdge]);
 
         await createNoteLink({

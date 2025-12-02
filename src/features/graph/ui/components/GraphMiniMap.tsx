@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
 import { MiniMap, type Node } from 'reactflow';
-import { generateColorFromId } from '../../model/utils/graphUtils';
 
 const GraphMiniMapInner = () => {
-  const nodeColor = useCallback((node: Node) => {
-    const maybeData = node.data as { nodeColor?: string } | undefined;
-    return maybeData?.nodeColor || generateColorFromId(node.id);
+  const nodeColor = useCallback((_node: Node) => {
+    // fixed neutral color for nodes in minimap
+    return '#6b7280';
   }, []);
 
   return (

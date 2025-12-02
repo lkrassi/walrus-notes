@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
-import { generateColorFromId } from '../../model/utils/graphUtils';
 
 interface NoteNodeProps {
   data: {
@@ -11,14 +10,13 @@ interface NoteNodeProps {
     onNoteClick?: (noteId: string) => void;
     selected?: boolean;
     isRelatedToSelected?: boolean;
-    nodeColor?: string;
   };
   selected: boolean;
 }
 
 const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
-  const resolvedColor = data.nodeColor || generateColorFromId(data.note.id);
-  const [hover, setHover] = useState(false);
+  const resolvedColor = '#6b7280';
+
   const [isDragging, setIsDragging] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -86,8 +84,6 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
         window.addEventListener('pointerup', upHandler);
       }}
       ref={btnRef}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       className={cn(
         'relative',
         'max-w-40',
@@ -99,14 +95,8 @@ const NoteNodeInner = ({ data, selected }: NoteNodeProps) => {
       )}
       style={{ backgroundColor: resolvedColor }}
       title='Клик по ЛКМ для открытия заметки'
-      whileHover={{ scale: 1.03 }}
       animate={{
         opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
-        boxShadow: selected
-          ? '0 20px 40px rgba(59,130,246,0.35)'
-          : hover
-            ? '0 10px 25px rgba(0,0,0,0.12)'
-            : '0 4px 8px rgba(0,0,0,0.08)',
       }}
       transition={{ duration: 0.18 }}
     >
@@ -181,7 +171,6 @@ export const NoteNodeComponent = React.memo(
   NoteNodeInner,
   (prev: NoteNodeProps, next: NoteNodeProps) => {
     if (prev.selected !== next.selected) return false;
-    if (prev.data.nodeColor !== next.data.nodeColor) return false;
     if (prev.data.note?.id !== next.data.note?.id) return false;
     if (prev.data.isRelatedToSelected !== next.data.isRelatedToSelected)
       return false;

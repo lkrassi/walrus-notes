@@ -20,11 +20,13 @@ import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 interface NotesGraphContentProps {
   layoutId: string;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  allowNodeDrag?: boolean;
 }
 
 const NotesGraphContentComponent = ({
   layoutId,
   onNoteOpen,
+  allowNodeDrag,
 }: NotesGraphContentProps) => {
   const {
     initialNodes,
@@ -54,15 +56,48 @@ const NotesGraphContentComponent = ({
   const prevLayoutIdRef = useRef(layoutId);
 
   useEffect(() => {
+    const nodesAreEqual = (() => {
+      if (nodes.length !== initialNodes.length) return false;
+      const map = new Map(nodes.map(n => [n.id, n]));
+      for (const inNode of initialNodes) {
+        const prev = map.get(inNode.id as string);
+        if (!prev) return false;
+        const px = prev.position?.x ?? 0;
+        const py = prev.position?.y ?? 0;
+        const ix = (inNode.position as any)?.x ?? 0;
+        const iy = (inNode.position as any)?.y ?? 0;
+        if (px !== ix || py !== iy) return false;
+      }
+      return true;
+    })();
+
+    const edgesAreEqual = (() => {
+      if (edges.length !== initialEdges.length) return false;
+      const map = new Map(edges.map(e => [e.id, e]));
+      for (const inEdge of initialEdges) {
+        const prev = map.get(inEdge.id as string);
+        if (!prev) return false;
+        if (prev.source !== inEdge.source || prev.target !== inEdge.target)
+          return false;
+        if ((prev as any).sourceHandle !== (inEdge as any).sourceHandle)
+          return false;
+        if ((prev as any).targetHandle !== (inEdge as any).targetHandle)
+          return false;
+      }
+      return true;
+    })();
+
     if (prevLayoutIdRef.current !== layoutId) {
       setNodes(initialNodes);
       setEdgesState(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      setNodes(initialNodes);
-      setEdgesState(initialEdges);
+      if (!nodesAreEqual) setNodes(initialNodes);
+      if (!edgesAreEqual) setEdgesState(initialEdges);
     }
   }, [initialNodes, initialEdges, layoutId, setNodes, setEdgesState]);
+
+  // debug logging removed
 
   const {
     tempEdges,
@@ -142,14 +177,8 @@ const NotesGraphContentComponent = ({
               source,
               target: newTarget,
               type: 'multiColor' as const,
-              data: {
-                sourceColor:
-                  eds.find(e => e.source === source)?.data?.sourceColor ||
-                  '#6b7280',
-                targetColor:
-                  eds.find(e => e.target === newTarget)?.data?.targetColor ||
-                  '#6b7280',
-              },
+              // color information is handled on the server now — keep edge data minimal
+              data: {},
             };
 
             return [...edgesWithoutNewTarget, newEdge];
@@ -536,6 +565,7 @@ const NotesGraphContentComponent = ({
   return (
     <NotesGraphView
       layoutId={layoutId}
+      allowNodeDrag={allowNodeDrag}
       nodes={nodes}
       edges={edges}
       nodesWithSelection={nodesWithSelection}

@@ -5,6 +5,7 @@ import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
+import { FileTreeMainItem } from './FileTreeMainItem';
 import { SearchInput } from './SearchInput';
 import { useLazySearchNotesQuery } from 'app/store/api';
 
@@ -92,21 +93,29 @@ export const FileTree = memo(
         type: 'layout' as const,
         title: layout.title,
         children: [],
-        isMain: (layout as any).isMain === true,
+        isMain: layout.isMain === true,
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
         isNotesLoaded: false,
+        color: (layout as unknown as { color?: string }).color,
       }));
     }, [layoutsResponse?.data, searchQuery, searchResponse?.data]);
 
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
+        // If this is a special 'main' layout, open its graph instead of selecting/toggling expansion
+        if (item.type === 'layout' && item.isMain === true) {
+          onOpenGraph?.(item.id);
+          return;
+        }
+
         onItemSelect?.(item);
+
         if (item.type === 'layout') {
           toggleExpanded(item.id);
         }
       },
-      [onItemSelect, toggleExpanded]
+      [onItemSelect, toggleExpanded, onOpenGraph]
     );
 
     const renderTreeItem = useCallback(
@@ -122,6 +131,7 @@ export const FileTree = memo(
               level={level}
               isExpanded={isExpanded}
               isSelected={isSelected}
+              hasSelection={!!selectedItemId}
               hasChildren={hasChildren}
               onItemClick={handleItemClick}
               onOpenGraph={onOpenGraph}
@@ -144,7 +154,46 @@ export const FileTree = memo(
             <FileTreeEmpty />
           ) : (
             <div className={cn('space-y-1')}>
-              {fileTree.map(item => renderTreeItem(item))}
+              {/* Render regular layouts first, then separator, then main (aggregator) layouts */}
+              {/* Main (aggregator) layouts first */}
+              {fileTree
+                .filter(i => i.type === 'layout' && i.isMain === true)
+                .map(item => {
+                  const isSelectedMain =
+                    selectedItemId === item.id ||
+                    selectedItemId === `graph-${item.id}`;
+                  return (
+                    <div key={item.id}>
+                      <FileTreeMainItem
+                        item={item}
+                        level={0}
+                        isSelected={isSelectedMain}
+                        hasSelection={!!selectedItemId}
+                        onItemClick={handleItemClick}
+                      />
+                    </div>
+                  );
+                })}
+
+              {/* separator if both main and regular layouts exist */}
+              {fileTree.some(i => i.type === 'layout' && i.isMain === true) &&
+                fileTree.some(
+                  i => i.type === 'layout' && i.isMain !== true
+                ) && (
+                  <div
+                    className={cn(
+                      'my-2',
+                      'border-t',
+                      'border-gray-200',
+                      'dark:border-gray-700'
+                    )}
+                  />
+                )}
+
+              {/* Regular layouts after */}
+              {fileTree
+                .filter(i => i.type === 'layout' && i.isMain !== true)
+                .map(item => renderTreeItem(item))}
             </div>
           )}
         </div>

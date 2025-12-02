@@ -41,7 +41,7 @@ export const FileTreeItemContent = ({
     }
   );
 
-  const [triggerGetNotes, { isLoading: isLoadMoreLoading }] =
+  const [triggerGetNotes, { isLoading: _isLoadMoreLoading }] =
     useLazyGetNotesQuery();
 
   useEffect(() => {
@@ -138,7 +138,7 @@ export const FileTreeItemContent = ({
 
   const {
     visibleItems,
-    isLoadingMore,
+    isLoadingMore: _isLoadingMore,
     hasMore: dropdownHasMore,
     loadMore: dropdownLoadMore,
   } = useDropdown({
@@ -184,7 +184,10 @@ export const FileTreeItemContent = ({
     >
       <div>
         {visibleItems.map(note => (
-          <div key={`${note.id}-${note.updatedAt || note.createdAt}`}>
+          <div
+            key={`${note.id}-${note.updatedAt || note.createdAt}`}
+            className={cn('mt-1')}
+          >
             {renderChild?.(
               {
                 id: note.id,

@@ -61,8 +61,7 @@ export const useDraftSync = ({
         pendingRef.current = storedDraft;
       }
     } catch (_e) {}
-    return () => {
-    };
+    return () => {};
   }, [noteId]);
 
   const send = useCallback(
@@ -145,8 +144,7 @@ export const useDraftSync = ({
           const data = payload as UpdateDraftPayload;
           if (!data || data.noteId !== noteId) return;
           const nd = data.newDraft ?? '';
-                    if (pendingRef.current != null || awaitingAckRef.current != null) {
-            
+          if (pendingRef.current != null || awaitingAckRef.current != null) {
             return;
           }
           prevSentRef.current = nd;
@@ -157,8 +155,7 @@ export const useDraftSync = ({
           } catch (_e) {}
           if (onRemoteDraft) onRemoteDraft(nd);
           setLastSavedAt(new Date().toISOString());
-        } catch (_e) {
-        }
+        } catch (_e) {}
       }) ?? (() => {});
 
     const unsubUpdateResp =
@@ -182,8 +179,7 @@ export const useDraftSync = ({
           } else {
             setIsSaving(false);
           }
-        } catch (_e) {
-        }
+        } catch (_e) {}
       }) ?? (() => {});
 
     const unsubCommit =
@@ -195,8 +191,7 @@ export const useDraftSync = ({
             dispatch(removeDraft({ noteId }));
           } catch (_e) {}
           if (onRemoteCommit) onRemoteCommit();
-        } catch (_e) {
-        }
+        } catch (_e) {}
       }) ?? (() => {});
 
     const unsubCommitResp =
@@ -223,8 +218,7 @@ export const useDraftSync = ({
             awaitingCommitRef.current = false;
             setIsSaving(false);
           }
-        } catch (_e) {
-        }
+        } catch (_e) {}
       }) ?? (() => {});
 
     return () => {
@@ -244,7 +238,7 @@ export const useDraftSync = ({
   }, [ws, noteId, onRemoteDraft, onRemoteCommit]);
   useEffect(() => {
     if (!noteId) return;
-   
+
     if (skipInitialSendRef.current) {
       skipInitialSendRef.current = false;
       return;
@@ -267,7 +261,6 @@ export const useDraftSync = ({
   const commitDraft = useCallback(() => {
     if (!noteId || !ws) return false;
     try {
-
       awaitingCommitRef.current = true;
       ws.send(makeCommitDraft(noteId));
       return true;

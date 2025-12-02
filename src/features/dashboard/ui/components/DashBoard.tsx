@@ -50,6 +50,7 @@ export const DashBoard = () => {
       title: noteData.note.title,
       parentId: noteData.note.layoutId,
       note: noteData.note,
+      isMain: false,
     };
 
     handleItemSelect(noteItem);

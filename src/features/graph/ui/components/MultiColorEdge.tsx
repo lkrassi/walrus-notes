@@ -1,5 +1,11 @@
 import { useDeleteNoteLinkMutation } from 'app/store/api';
-import React, { useCallback, useRef, useState, useMemo } from 'react';
+import React, {
+  useCallback,
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+} from 'react';
 import {
   BaseEdge,
   type EdgeProps,
@@ -9,8 +15,6 @@ import {
 import cn from 'shared/lib/cn';
 
 interface MultiColorStepEdgeData {
-  sourceColor: string;
-  targetColor: string;
   isRelatedToSelected?: boolean;
   isSelected?: boolean;
 }
@@ -22,30 +26,27 @@ interface EdgeDeleteEventDetail {
   newTarget?: string | null;
 }
 
-const MultiColorEdgeInner = ({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  source,
-  target,
-  style = {},
-  data,
-  markerEnd,
-}: EdgeProps<MultiColorStepEdgeData>) => {
-  const edgePath = useMemo(
-    () => getBezierPath({ sourceX, sourceY, targetX, targetY })[0],
-    [sourceX, sourceY, targetX, targetY]
-  );
-
+const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
+  const {
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    source,
+    target,
+    style = {},
+  } = props;
   const { setEdges, screenToFlowPosition, getNodes, getEdges } = useReactFlow();
+
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
+
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
+
   const [currentTargetNode, setCurrentTargetNode] = useState<string | null>(
     null
   );
@@ -55,8 +56,9 @@ const MultiColorEdgeInner = ({
     target,
   });
 
-  const gradientId = `gradient-${id}`;
-  const { sourceColor, targetColor } = data || {};
+  const strokeColor = '#6b7280';
+  const validColor = '#10b981';
+  const invalidColor = '#ef4444';
 
   const findNodeUnderCursor = useCallback(
     (clientX: number, clientY: number) => {
@@ -168,74 +170,282 @@ const MultiColorEdgeInner = ({
     [handleDeleteEdge]
   );
 
-  const getDragEdgePath = () => {
-    if (!dragPosition) return '';
-
-    const flowPosition = screenToFlowPosition({
-      x: dragPosition.x,
-      y: dragPosition.y,
-    });
-
-    if (currentTargetNode) {
-      const targetNode = getNodes().find(node => node.id === currentTargetNode);
-      if (targetNode) {
-        const targetNodeCenterX =
-          targetNode.position.x + (targetNode.width || 160) / 2;
-        const targetNodeCenterY =
-          targetNode.position.y + (targetNode.height || 80) / 2;
-        return `M ${sourceX} ${sourceY} L ${targetNodeCenterX} ${targetNodeCenterY}`;
-      }
-    }
-
-    return `M ${sourceX} ${sourceY} L ${flowPosition.x} ${flowPosition.y}`;
-  };
-
   const isConnectionExists = useCallback(() => {
     if (!currentTargetNode) return false;
-
     const edges = getEdges();
     return edges.some(
       edge => edge.source === source && edge.target === currentTargetNode
     );
   }, [currentTargetNode, source, getEdges]);
 
+  const getNodeFlowInfo = (
+    nodeId: string | null,
+    fallbackX: number,
+    fallbackY: number
+  ) => {
+    const fallbackCenter = { x: fallbackX, y: fallbackY };
+    if (!nodeId)
+      return {
+        center: fallbackCenter,
+        anchors: {
+          top: fallbackCenter,
+          right: fallbackCenter,
+          bottom: fallbackCenter,
+          left: fallbackCenter,
+        },
+      };
+
+    try {
+      const nodeEl = document.querySelector<HTMLElement>(
+        `.react-flow__node[data-id="${nodeId}"]`
+      );
+      if (nodeEl) {
+        const rect = nodeEl.getBoundingClientRect();
+        const top = screenToFlowPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.top,
+        });
+        const bottom = screenToFlowPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height,
+        });
+        const left = screenToFlowPosition({
+          x: rect.left,
+          y: rect.top + rect.height / 2,
+        });
+        const right = screenToFlowPosition({
+          x: rect.left + rect.width,
+          y: rect.top + rect.height / 2,
+        });
+        const center = screenToFlowPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        });
+        return { center, anchors: { top, right, bottom, left } };
+      }
+    } catch (_e) {
+      // ignore and fallback
+    }
+
+    const node = getNodes().find(n => n.id === nodeId);
+    if (node) {
+      const cx = node.position.x + (node.width || 160) / 2;
+      const cy = node.position.y + (node.height || 80) / 2;
+      const w = node.width || 160;
+      const h = node.height || 80;
+      return {
+        center: { x: cx, y: cy },
+        anchors: {
+          top: { x: cx, y: node.position.y },
+          right: { x: node.position.x + w, y: cy },
+          bottom: { x: cx, y: node.position.y + h },
+          left: { x: node.position.x, y: cy },
+        },
+      };
+    }
+
+    return {
+      center: fallbackCenter,
+      anchors: {
+        top: fallbackCenter,
+        right: fallbackCenter,
+        bottom: fallbackCenter,
+        left: fallbackCenter,
+      },
+    };
+  };
+
+  const chooseClosestAnchor = (
+    anchors: {
+      top: { x: number; y: number };
+      right: { x: number; y: number };
+      bottom: { x: number; y: number };
+      left: { x: number; y: number };
+    },
+    point: { x: number; y: number }
+  ) => {
+    const list = [anchors.top, anchors.right, anchors.bottom, anchors.left];
+    let min = Infinity;
+    let pick = list[0];
+    for (const a of list) {
+      const dx = a.x - point.x;
+      const dy = a.y - point.y;
+      const d = dx * dx + dy * dy;
+      if (d < min) {
+        min = d;
+        pick = a;
+      }
+    }
+    return pick;
+  };
+
+  const [viewportTick, setViewportTick] = useState(0);
+
+  const edgePath = useMemo(() => {
+    const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
+    const targetInfo = getNodeFlowInfo(target, targetX, targetY);
+
+    const sourceAnchor = chooseClosestAnchor(
+      sourceInfo.anchors,
+      targetInfo.center
+    );
+    const targetAnchor = chooseClosestAnchor(
+      targetInfo.anchors,
+      sourceInfo.center
+    );
+
+    // anchors computed; no debug logs
+
+    return getBezierPath({
+      sourceX: sourceAnchor.x,
+      sourceY: sourceAnchor.y,
+      targetX: targetAnchor.x,
+      targetY: targetAnchor.y,
+    })[0];
+  }, [
+    source,
+    target,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    screenToFlowPosition,
+    getNodes,
+    viewportTick,
+  ]);
+
+  // Force re-computation when viewport transform or node DOM changes.
+  // Some layouts apply viewport transform after nodes mount, causing edges
+  // to compute using fallback positions. We observe the viewport/style and
+  // node list and bump a tick to trigger recompute.
+  useEffect(() => {
+    let mounted = true;
+    const tryBump = () => {
+      if (!mounted) return;
+      setViewportTick(t => t + 1);
+    };
+
+    const viewportSelector = '.react-flow__viewport';
+    const nodesSelector = '.react-flow__nodes';
+
+    const observers: MutationObserver[] = [];
+
+    const observeEl = (el: Element | null, opts: MutationObserverInit) => {
+      if (!el) return;
+      const mo = new MutationObserver(() => {
+        tryBump();
+      });
+      mo.observe(el, opts);
+      observers.push(mo);
+    };
+
+    const viewportEl = document.querySelector(viewportSelector);
+    const nodesEl = document.querySelector(nodesSelector);
+
+    // observe viewport style changes (transform)
+    observeEl(viewportEl, { attributes: true, attributeFilter: ['style'] });
+
+    // observe nodes being added/removed
+    observeEl(nodesEl, { childList: true, subtree: true });
+
+    // if nodes container not yet present, observe body to detect its creation
+    if (!nodesEl) {
+      const bodyMo = new MutationObserver(() => {
+        if (document.querySelector(nodesSelector)) {
+          tryBump();
+        }
+      });
+      bodyMo.observe(document.body, { childList: true, subtree: true });
+      observers.push(bodyMo);
+    }
+
+    // also bump once on mount to ensure initial compute after observer setup
+    tryBump();
+
+    return () => {
+      mounted = false;
+      observers.forEach(o => o.disconnect());
+    };
+    // NOTE: we intentionally run this once on mount — the observer will
+    // trigger updates. Keep deps empty to avoid re-creating observers often.
+  }, []);
+
+  const getDragEdgePath = () => {
+    const usePos = dragPosition;
+    if (!usePos) return '';
+
+    const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
+
+    // drag flow position computed
+
+    const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
+
+    if (currentTargetNode) {
+      const targetInfo = getNodeFlowInfo(currentTargetNode, targetX, targetY);
+      const sourceAnchor = chooseClosestAnchor(
+        sourceInfo.anchors,
+        flowPosition
+      );
+      const targetAnchor = chooseClosestAnchor(
+        targetInfo.anchors,
+        sourceInfo.center
+      );
+      return `M ${sourceAnchor.x} ${sourceAnchor.y} L ${targetAnchor.x} ${targetAnchor.y}`;
+    }
+
+    const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
+    return `M ${sourceAnchor.x} ${sourceAnchor.y} L ${flowPosition.x} ${flowPosition.y}`;
+  };
+
+  const sourceNode = getNodes().find(n => n.id === source);
+  const targetNode = getNodes().find(n => n.id === target);
+  const sourceLinkedWith = sourceNode
+    ? (sourceNode.data as { linkedWith?: string[] })?.linkedWith
+    : undefined;
+  const targetLinkedWith = targetNode
+    ? (targetNode.data as { linkedWith?: string[] })?.linkedWith
+    : undefined;
+  const arrowToTarget =
+    Array.isArray(sourceLinkedWith) && sourceLinkedWith.includes(target);
+  const arrowToSource =
+    Array.isArray(targetLinkedWith) && targetLinkedWith.includes(source);
+  const markerEnd = arrowToTarget ? `url(#edge-arrow-to-${id})` : undefined;
+  const markerStart = arrowToSource ? `url(#edge-arrow-from-${id})` : undefined;
   return (
     <>
       <defs>
-        <linearGradient id={gradientId} x1='0%' y1='0%' x2='100%' y2='0%'>
-          <stop offset='0%' stopColor={sourceColor || '#6b7280'} />
-          <stop offset='100%' stopColor={targetColor || '#6b7280'} />
-        </linearGradient>
-
-        <linearGradient
-          id={`${gradientId}-valid`}
-          x1='0%'
-          y1='0%'
-          x2='100%'
-          y2='0%'
+        <marker
+          id={`edge-arrow-to-${id}`}
+          markerWidth='8'
+          markerHeight='8'
+          refX='6'
+          refY='4'
+          orient='auto'
+          markerUnits='strokeWidth'
         >
-          <stop offset='0%' stopColor='#10b981' />
-          <stop offset='100%' stopColor='#10b981' />
-        </linearGradient>
+          <path d='M 0 0 L 8 4 L 0 8 z' fill={strokeColor} />
+        </marker>
 
-        <linearGradient
-          id={`${gradientId}-invalid`}
-          x1='0%'
-          y1='0%'
-          x2='100%'
-          y2='0%'
+        <marker
+          id={`edge-arrow-from-${id}`}
+          markerWidth='8'
+          markerHeight='8'
+          refX='2'
+          refY='4'
+          orient='auto'
+          markerUnits='strokeWidth'
         >
-          <stop offset='0%' stopColor='#ef4444' />
-          <stop offset='100%' stopColor='#ef4444' />
-        </linearGradient>
+          <path d='M 8 0 L 0 4 L 8 8 z' fill={strokeColor} />
+        </marker>
       </defs>
 
       {!isDragging && (
         <BaseEdge
           path={edgePath}
+          markerStart={markerStart}
           markerEnd={markerEnd}
           style={{
-            stroke: `url(#${gradientId})`,
+            stroke: strokeColor,
             fill: 'none',
             transition:
               'stroke-width 180ms ease, opacity 180ms ease, stroke-dasharray 180ms ease',
@@ -247,17 +457,18 @@ const MultiColorEdgeInner = ({
       {isDragging && dragPosition && (
         <path
           d={getDragEdgePath()}
+          markerStart={markerStart}
+          markerEnd={markerEnd}
           fill='none'
           stroke={
             currentTargetNode
               ? isConnectionExists()
-                ? `url(#${gradientId}-invalid)`
-                : `url(#${gradientId}-valid)`
-              : `url(#${gradientId})`
+                ? invalidColor
+                : validColor
+              : strokeColor
           }
           strokeWidth='3'
           strokeDasharray='5,5'
-          markerEnd={markerEnd}
           className={cn('animate-pulse')}
         />
       )}
@@ -270,6 +481,8 @@ const MultiColorEdgeInner = ({
         className={cn('react-flow__edge-interaction cursor-crosshair')}
         onMouseDown={handleMouseDown}
       />
+
+      {/* arrow rendered as marker on the path via markerEnd */}
 
       {!isDragging && (
         <g

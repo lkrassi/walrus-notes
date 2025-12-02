@@ -7,13 +7,22 @@ interface NotesGraphProps {
     noteId: string;
     note: import('shared/model/types/layouts').Note;
   }) => void;
+  allowNodeDrag?: boolean;
 }
 
-export const NotesGraph = ({ layoutId, onNoteOpen }: NotesGraphProps) => {
+export const NotesGraph = ({
+  layoutId,
+  onNoteOpen,
+  allowNodeDrag,
+}: NotesGraphProps) => {
   return (
     <>
       <ReactFlowProvider>
-        <NotesGraphContent layoutId={layoutId} onNoteOpen={onNoteOpen} />
+        <NotesGraphContent
+          layoutId={layoutId}
+          onNoteOpen={onNoteOpen}
+          allowNodeDrag={allowNodeDrag}
+        />
       </ReactFlowProvider>
     </>
   );

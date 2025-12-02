@@ -21,6 +21,7 @@ type FileTreeItemHeaderProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  hasSelection?: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
@@ -32,6 +33,7 @@ export const FileTreeItemHeader = ({
   level,
   isExpanded,
   isSelected,
+  hasSelection,
   onItemClick,
   onDeleteNote,
   onDeleteLayout,
@@ -43,9 +45,6 @@ export const FileTreeItemHeader = ({
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
-
-  const showDeleteLayout = item.type === 'layout' && item.isMain !== true;
-  const showDeleteNote = item.type === 'note' && item.isMain !== true;
 
   useEffect(() => {
     return () => {
@@ -140,13 +139,25 @@ export const FileTreeItemHeader = ({
         'gap-2',
         'rounded-lg',
         'py-2',
-        isSelected
-          ? 'bg-primary dark:bg-dark-primary text-white'
+        // apply ring only for selected layouts, keep hover for others
+        isSelected && item.type === 'layout'
+          ? 'text-text dark:text-dark-text ring-primary ring-2'
           : 'text-text dark:text-dark-text hover:bg-gray-100 dark:hover:bg-gray-800'
       )}
       style={{
         paddingLeft: `${paddingLeft}px`,
         paddingRight: '12px',
+        ...(item.color
+          ? { backgroundColor: item.color, color: '#ffffff' }
+          : {}),
+        ...(isSelected && item.color
+          ? { boxShadow: `0 0 0 2px ${item.color}` }
+          : {}),
+        ...(hasSelection &&
+        !isSelected &&
+        (item.type === 'layout' || item.type === 'note')
+          ? { opacity: 0.5 }
+          : {}),
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -154,7 +165,7 @@ export const FileTreeItemHeader = ({
       onBlur={handleMouseLeave}
       onClick={handleItemClick}
     >
-      {item.type === 'layout' && (
+      {item.type === 'layout' && item.isMain !== true && (
         <div
           className={cn(
             'flex',
@@ -176,6 +187,7 @@ export const FileTreeItemHeader = ({
               isExpanded ? 'rotate-0' : '-rotate-90',
               isSelected ? 'text-white' : 'text-text dark:text-dark-text'
             )}
+            style={item.color ? { color: '#ffffff' } : undefined}
           />
         </div>
       )}
@@ -185,16 +197,31 @@ export const FileTreeItemHeader = ({
       <div>
         {item.type === 'layout' ? (
           isExpanded ? (
-            <FolderOpen className={cn('h-4', 'w-4')} />
+            <FolderOpen
+              className={cn('h-4', 'w-4')}
+              style={item.color ? { color: '#ffffff' } : undefined}
+            />
           ) : (
-            <Folder className={cn('h-4', 'w-4')} />
+            <Folder
+              className={cn('h-4', 'w-4')}
+              style={item.color ? { color: '#ffffff' } : undefined}
+            />
           )
         ) : (
           <FileText className={cn('h-4', 'w-4')} />
         )}
       </div>
 
-      <span className={cn('flex-1', 'truncate', 'text-sm', 'font-medium')}>
+      <span
+        title={item.title}
+        className={cn(
+          'flex-1',
+          'min-w-0',
+          'truncate',
+          'text-sm',
+          'font-medium'
+        )}
+      >
         {item.title}
         {item.type === 'note' &&
           (() => {
@@ -252,7 +279,10 @@ export const FileTreeItemHeader = ({
                 )}
                 title={t('fileTree:createNote')}
               >
-                <Plus className={cn('h-4', 'w-4')} />
+                <Plus
+                  className={cn('h-4', 'w-4')}
+                  style={item.color ? { color: '#ffffff' } : undefined}
+                />
               </button>
             )}
             {item.isMain !== true && (
@@ -275,7 +305,10 @@ export const FileTreeItemHeader = ({
                 )}
                 title={t('layout:deleteLayout')}
               >
-                <Trash2 className={cn('h-4', 'w-4')} />
+                <Trash2
+                  className={cn('h-4', 'w-4')}
+                  style={item.color ? { color: '#ffffff' } : undefined}
+                />
               </button>
             )}
           </>
@@ -301,7 +334,10 @@ export const FileTreeItemHeader = ({
             )}
             title={t('notes:deleteNote')}
           >
-            <Trash2 className={cn('h-4', 'w-4')} />
+            <Trash2
+              className={cn('h-4', 'w-4')}
+              style={item.color ? { color: '#ffffff' } : undefined}
+            />
           </button>
         )}
       </div>

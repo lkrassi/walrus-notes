@@ -52,6 +52,7 @@ export const fileTreeReducer = (
         isMain: (layout as any).isMain === true,
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
+        color: (layout as any).color,
         isNotesLoaded: false,
       }));
       // treeItems constructed
@@ -183,6 +184,7 @@ export const fileTreeReducer = (
         isMain: (action.payload as any).isMain === true,
         createdAt: action.payload.createdAt,
         updatedAt: action.payload.updatedAt,
+        color: (action.payload as any).color,
       };
       return {
         ...state,
@@ -205,6 +207,7 @@ export const fileTreeReducer = (
                 ...layout,
                 title: updatedLayout.title || layout.title,
                 updatedAt: updatedLayout.updatedAt || layout.updatedAt,
+                color: (updatedLayout as any).color || layout.color,
               }
             : layout
         ),

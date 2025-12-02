@@ -8,6 +8,7 @@ type FileTreeItemProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  hasSelection?: boolean;
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
@@ -22,6 +23,7 @@ export const FileTreeItem = ({
   level,
   isExpanded,
   isSelected,
+  hasSelection,
   onItemClick,
   onOpenGraph,
   onDeleteNote,
@@ -35,6 +37,7 @@ export const FileTreeItem = ({
         level={level}
         isExpanded={isExpanded}
         isSelected={isSelected}
+        hasSelection={hasSelection}
         onItemClick={onItemClick}
         onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}

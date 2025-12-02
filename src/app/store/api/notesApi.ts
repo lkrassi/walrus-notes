@@ -1,5 +1,5 @@
 import type { RootState } from 'app/store';
-import type { Note } from 'shared/model/types/layouts';
+import type { Note, Layout } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
 import { layoutApi } from './layoutApi';
@@ -237,6 +237,18 @@ export const notesApi = apiSlice.injectEndpoints({
           )
         );
 
+        // also optimistically add to unposed notes cache so lists update immediately
+        const unposedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getUnposedNotes',
+            { layoutId },
+            draft => {
+              const tempNote = createTempNote(arg.title ?? 'Новая заметка');
+              draft.data.unshift(tempNote);
+            }
+          )
+        );
+
         try {
           const { data: createdNote } = await queryFulfilled;
 
@@ -270,8 +282,29 @@ export const notesApi = apiSlice.injectEndpoints({
               }
             )
           );
+
+          // update unposed cache as well
+          try {
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getUnposedNotes',
+                { layoutId },
+                draft => {
+                  const tempIndex = draft.data.findIndex(note =>
+                    note.id.startsWith('temp-')
+                  );
+                  if (tempIndex !== -1) {
+                    draft.data[tempIndex] = finalNote;
+                  } else {
+                    draft.data.unshift(finalNote);
+                  }
+                }
+              )
+            );
+          } catch (_e) {}
         } catch (_e) {
           patchResult.undo();
+          unposedPatch.undo();
         }
       },
     }),
@@ -351,7 +384,73 @@ export const notesApi = apiSlice.injectEndpoints({
         } catch (_e) {}
 
         try {
-          await queryFulfilled;
+          const { data: resp } = await queryFulfilled;
+          const finalNote: Note | undefined = resp?.data;
+
+          // ensure tabs and caches reflect server's final note data
+          if (finalNote) {
+            try {
+              // update tabs
+              dispatch(
+                updateTabNote({
+                  noteId,
+                  updates: {
+                    title: finalNote.title,
+                    payload: finalNote.payload,
+                    updatedAt: finalNote.updatedAt,
+                  },
+                })
+              );
+            } catch (_e) {}
+
+            try {
+              // Ensure all relevant query caches contain finalNote
+              const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
+                getState() as RootState
+              );
+              const layouts = layoutsCache.data?.data || [];
+              for (const l of layouts) {
+                try {
+                  dispatch(
+                    notesApi.util.updateQueryData(
+                      'getNotes',
+                      { layoutId: l.id, page: 1 },
+                      draft => {
+                        const idx = draft.data.findIndex(n => n.id === noteId);
+                        if (idx !== -1) draft.data[idx] = finalNote as Note;
+                      }
+                    )
+                  );
+                } catch (_e) {}
+
+                try {
+                  dispatch(
+                    notesApi.util.updateQueryData(
+                      'getPosedNotes',
+                      { layoutId: l.id },
+                      draft => {
+                        const idx = draft.data.findIndex(n => n.id === noteId);
+                        if (idx !== -1) draft.data[idx] = finalNote as Note;
+                      }
+                    )
+                  );
+                } catch (_e) {}
+
+                try {
+                  dispatch(
+                    notesApi.util.updateQueryData(
+                      'getUnposedNotes',
+                      { layoutId: l.id },
+                      draft => {
+                        const idx = draft.data.findIndex(n => n.id === noteId);
+                        if (idx !== -1) draft.data[idx] = finalNote as Note;
+                      }
+                    )
+                  );
+                } catch (_e) {}
+              }
+            } catch (_e) {}
+          }
         } catch (_e) {
           patchResults.forEach(p => p.undo && p.undo());
         }
@@ -493,51 +592,70 @@ export const notesApi = apiSlice.injectEndpoints({
           } catch (_e) {}
         }
 
-        const patchResult = dispatch(
-          notesApi.util.updateQueryData(
-            'getPosedNotes',
-            { layoutId: arg.layoutId },
-            draft => {
-              const noteIndex = draft.data.findIndex(
-                note => note.id === arg.noteId
-              );
+        const patchResults: Array<{ undo?: () => void }> = [];
 
-              if (noteIndex !== -1) {
-                draft.data[noteIndex].position = {
-                  xPos: arg.xPos,
-                  yPos: arg.yPos,
-                };
-              } else {
-                const newNote: Note = realNoteData
-                  ? {
-                      ...realNoteData,
-                      position: {
+        try {
+          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
+          const layouts: Layout[] = layoutsCache.data?.data || [];
+
+          for (const l of layouts) {
+            try {
+              const pr = dispatch(
+                notesApi.util.updateQueryData(
+                  'getPosedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    const noteIndex = draft.data.findIndex(
+                      note => note.id === arg.noteId
+                    );
+
+                    if (noteIndex !== -1) {
+                      draft.data[noteIndex].position = {
                         xPos: arg.xPos,
                         yPos: arg.yPos,
-                      },
+                      };
+                    } else {
+                      // If this is the target layout or a main aggregator, add the note
+                      if (l.id === arg.layoutId || l.isMain === true) {
+                        const newNote: Note = realNoteData
+                          ? {
+                              ...realNoteData,
+                              position: {
+                                xPos: arg.xPos,
+                                yPos: arg.yPos,
+                              },
+                            }
+                          : createTempNote();
+                        draft.data.push(newNote);
+                      }
                     }
-                  : createTempNote();
-                draft.data.push(newNote);
-              }
-            }
-          )
-        );
+                  }
+                )
+              );
+              patchResults.push(pr);
+            } catch (_e) {}
 
-        const unposedPatchResult = dispatch(
-          notesApi.util.updateQueryData(
-            'getUnposedNotes',
-            { layoutId: arg.layoutId },
-            draft => {
-              draft.data = draft.data.filter(note => note.id !== arg.noteId);
-            }
-          )
-        );
+            try {
+              const pr2 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getUnposedNotes',
+                  { layoutId: l.id },
+                  draft => {
+                    draft.data = draft.data.filter(
+                      note => note.id !== arg.noteId
+                    );
+                  }
+                )
+              );
+              patchResults.push(pr2);
+            } catch (_e) {}
+          }
+        } catch (_e) {}
 
         try {
           await queryFulfilled;
         } catch (_e) {
-          patchResult.undo();
-          unposedPatchResult.undo();
+          patchResults.forEach(p => p.undo && p.undo());
         }
       },
     }),
