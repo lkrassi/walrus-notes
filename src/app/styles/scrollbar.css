@@ -71,11 +71,6 @@ html {
   scrollbar-color: var(--color-dark-primary) var(--scrollbar-track);
 }
 
-*::-webkit-scrollbar-thumb:active,
-*::-webkit-scrollbar-thumb:focus {
-  outline: 2px solid rgba(0, 0, 0, 0.06);
-}
-
 @media (hover: none) and (pointer: coarse) {
   *::-webkit-scrollbar {
     display: none;
