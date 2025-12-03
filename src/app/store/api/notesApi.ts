@@ -687,7 +687,9 @@ export const notesApi = apiSlice.injectEndpoints({
                   'getPosedNotes',
                   { layoutId: l.id },
                   draft => {
-                    const sourceNote = draft.data.find(n => n.id === arg.firstNoteId);
+                    const sourceNote = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
                     if (sourceNote) {
                       if (!sourceNote.linkedWith) sourceNote.linkedWith = [];
                       if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
@@ -707,7 +709,9 @@ export const notesApi = apiSlice.injectEndpoints({
                   { layoutId: l.id, page: 1 },
                   draft => {
                     if (!draft || !draft.data) return;
-                    const source = draft.data.find(n => n.id === arg.firstNoteId);
+                    const source = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
                     if (source) {
                       if (!source.linkedWith) source.linkedWith = [];
                       if (!source.linkedWith.includes(arg.secondNoteId)) {
@@ -729,8 +733,11 @@ export const notesApi = apiSlice.injectEndpoints({
               );
               if (tab && tab.item && tab.item.note) {
                 originalTabLinkedWith = tab.item.note.linkedWith;
-                const newLinked = Array.isArray(originalTabLinkedWith) ? [...originalTabLinkedWith] : [];
-                if (!newLinked.includes(arg.secondNoteId)) newLinked.push(arg.secondNoteId);
+                const newLinked = Array.isArray(originalTabLinkedWith)
+                  ? [...originalTabLinkedWith]
+                  : [];
+                if (!newLinked.includes(arg.secondNoteId))
+                  newLinked.push(arg.secondNoteId);
                 dispatch(
                   updateTabNote({
                     noteId: arg.firstNoteId,
@@ -808,7 +815,9 @@ export const notesApi = apiSlice.injectEndpoints({
                   { layoutId: l.id, page: 1 },
                   draft => {
                     if (!draft || !draft.data) return;
-                    const source = draft.data.find(n => n.id === arg.firstNoteId);
+                    const source = draft.data.find(
+                      n => n.id === arg.firstNoteId
+                    );
                     if (source && source.linkedWith) {
                       source.linkedWith = source.linkedWith.filter(
                         id => id !== arg.secondNoteId
