@@ -6,7 +6,6 @@ import { CreateNoteForm } from 'features/notes';
 import { ChevronDown, FileText, Plus, Trash2, Pencil } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import cn from 'shared/lib/cn';
-import { readableTextColor } from 'shared/lib/color';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import type { Note } from 'shared/model/types/layouts';
 import { useModalActions } from 'widgets/hooks/useModalActions';
@@ -135,7 +134,7 @@ export const FileTreeItemHeader = ({
       onLayoutUpdated={() => {}}
     />,
     {
-      title: t('layout:updateLayout') || 'Edit layout',
+      title: t('layout:updateLayoutData') || 'Edit layout',
       size: 'lg',
     }
   );
@@ -211,8 +210,6 @@ export const FileTreeItemHeader = ({
                 'items-center',
                 'justify-center',
                 'rounded-full',
-                'transition-colors',
-                'duration-200',
                 isSelected && !item.color
                   ? 'bg-primary dark:bg-primary-dark text-white'
                   : ''
@@ -221,9 +218,6 @@ export const FileTreeItemHeader = ({
               <FolderOpenIcon
                 className={cn('h-6', 'w-6')}
                 fillColor={item.color}
-                strokeColor={
-                  item.color ? readableTextColor(item.color) : undefined
-                }
               />
             </div>
           ) : (
@@ -235,20 +229,12 @@ export const FileTreeItemHeader = ({
                 'items-center',
                 'justify-center',
                 'rounded-full',
-                'transition-colors',
-                'duration-200',
                 isSelected && !item.color
                   ? 'bg-primary dark:bg-primary-dark text-white'
                   : ''
               )}
             >
-              <FolderIcon
-                className={cn('h-6', 'w-6')}
-                fillColor={item.color}
-                strokeColor={
-                  item.color ? readableTextColor(item.color) : undefined
-                }
-              />
+              <FolderIcon className={cn('h-6', 'w-6')} fillColor={item.color} />
             </div>
           )
         ) : (
@@ -314,22 +300,14 @@ export const FileTreeItemHeader = ({
                   'duration-150',
                   'opacity-100',
                   isMobile
-                    ? 'text-gray-600 dark:text-white'
+                    ? 'text-text dark:text-dark-text'
                     : isSelected
-                      ? 'text-white hover:text-gray-200'
-                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
+                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                 )}
                 title={t('fileTree:createNote')}
               >
-                <Plus
-                  className={cn('h-4', 'w-4')}
-                  style={
-                    // only apply server color as icon color in light theme
-                    theme !== 'dark' && item.color
-                      ? { color: readableTextColor(item.color) }
-                      : undefined
-                  }
-                />
+                <Plus className={cn('h-4', 'w-4')} />
               </button>
             )}
             {item.isMain !== true && isSelected && (
@@ -345,19 +323,12 @@ export const FileTreeItemHeader = ({
                   isMobile
                     ? 'text-gray-600 dark:text-white'
                     : isSelected
-                      ? 'text-white hover:text-gray-200'
-                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
+                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
                 )}
                 title={t('layout:edit') || 'Edit'}
               >
-                <Pencil
-                  className={cn('h-4', 'w-4')}
-                  style={
-                    theme !== 'dark' && item.color
-                      ? { color: readableTextColor(item.color) }
-                      : undefined
-                  }
-                />
+                <Pencil className={cn('h-4', 'w-4')} />
               </button>
             )}
             {item.isMain !== true && isSelected && (
@@ -373,19 +344,12 @@ export const FileTreeItemHeader = ({
                   isMobile
                     ? 'text-gray-600 dark:text-white'
                     : isSelected
-                      ? 'text-white hover:text-gray-200'
-                      : 'text-gray-400 hover:text-gray-200 dark:text-white'
+                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
                 )}
                 title={t('layout:deleteLayout')}
               >
-                <Trash2
-                  className={cn('h-4', 'w-4')}
-                  style={
-                    theme !== 'dark' && item.color
-                      ? { color: readableTextColor(item.color) }
-                      : undefined
-                  }
-                />
+                <Trash2 className={cn('h-4', 'w-4')} />
               </button>
             )}
           </>
@@ -404,19 +368,12 @@ export const FileTreeItemHeader = ({
               isMobile
                 ? 'text-gray-600 dark:text-white'
                 : isSelected
-                  ? 'text-white hover:text-gray-200'
-                  : 'text-gray-400 hover:text-gray-200 dark:text-white'
+                  ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                  : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
             )}
             title={t('notes:deleteNote')}
           >
-            <Trash2
-              className={cn('h-4', 'w-4')}
-              style={
-                theme !== 'dark' && item.color
-                  ? { color: readableTextColor(item.color) }
-                  : undefined
-              }
-            />
+            <Trash2 className={cn('h-4', 'w-4')} />
           </button>
         )}
       </div>

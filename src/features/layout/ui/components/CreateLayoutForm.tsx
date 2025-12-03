@@ -4,9 +4,7 @@ import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
-import CircularColorPicker from './CircularColorPicker';
-import { Plus, Trash2 } from 'lucide-react';
-import FolderIcon from 'shared/ui/icons/FolderIcon';
+import ColorSelector from './ColorSelector';
 
 interface CreateLayoutFormProps {
   onLayoutCreated?: () => void;
@@ -67,73 +65,11 @@ export const CreateLayoutForm = ({
       <div>
         <label className={cn('tw-label')}>{t('layout:chooseColor')}</label>
         <div className={cn('mt-2', 'text-center')}>
-          <CircularColorPicker value={color} onChange={setColor} size={200} />
-        </div>
-        <div className={cn('mt-3')}>
-          <div
-            className={cn(
-              'flex',
-              'items-center',
-              'justify-between',
-              'gap-2',
-              'rounded-lg',
-              'py-2',
-              'px-3',
-              'w-full'
-            )}
-            aria-hidden
-          >
-            <div
-              className={cn(
-                'flex',
-                'items-center',
-                'gap-2',
-                'w-full',
-                'overflow-hidden'
-              )}
-            >
-              <div
-                className={cn(
-                  'h-6',
-                  'w-6',
-                  'flex',
-                  'items-center',
-                  'justify-center',
-                  'rounded-full',
-                  'transition-colors',
-                  'duration-200'
-                )}
-              >
-                <FolderIcon className={cn('h-6', 'w-6')} fillColor={color} />
-              </div>
-
-              <span
-                title={title || t('layout:layoutTitlePlaceholder')}
-                className={cn(
-                  'flex-1',
-                  'min-w-0',
-                  'truncate',
-                  'text-sm',
-                  'font-medium'
-                )}
-              >
-                {title || t('layout:layoutTitlePlaceholder')}
-              </span>
-            </div>
-
-            <div className={cn('flex', 'items-center', 'gap-2')}>
-              <button type='button' aria-hidden className={cn('p-1')}>
-                <Plus className={cn('h-4', 'w-4')} />
-              </button>
-              <button type='button' aria-hidden className={cn('p-1')}>
-                <Trash2 className={cn('h-4', 'w-4')} />
-              </button>
-            </div>
-          </div>
+          <ColorSelector value={color} onChange={setColor} />
         </div>
       </div>
 
-      <div className={cn('flex', 'justify-end', 'gap-3')}>
+      <div className={cn('flex', 'justify-center', 'gap-3')}>
         <Button
           type='button'
           onClick={closeModal}

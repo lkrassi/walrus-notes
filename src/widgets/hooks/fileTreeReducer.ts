@@ -55,7 +55,6 @@ export const fileTreeReducer = (
         color: layout.color,
         isNotesLoaded: false,
       }));
-      // treeItems constructed
       return {
         ...state,
         fileTree: treeItems,

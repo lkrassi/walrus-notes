@@ -49,7 +49,6 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   };
 
   const handleItemSelect = (item: FileTreeItem) => {
-    // Use createTabId to ensure consistent tab id format
     const tabId = createTabId(item.type as unknown as TabType, item.id);
     const existingTab = openTabs.find(tab => tab.id === tabId);
 

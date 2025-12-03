@@ -77,7 +77,6 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
                 id: `edge-${sourceNote.id}-${targetNoteId}`,
                 source: sourceNote.id,
                 target: targetNoteId,
-                // choose handle sides based on relative position (acts like magnet)
                 sourceHandle: (() => {
                   try {
                     const target = notesWithPositions.find(

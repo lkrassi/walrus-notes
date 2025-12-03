@@ -36,7 +36,6 @@ export const useDropdown = <T>(
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   useEffect(() => {
-    // debug logs removed
   }, [items, isOpen, enablePagination, currentPage]);
 
   const loadMore = useCallback(async () => {

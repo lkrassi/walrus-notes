@@ -80,9 +80,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   onAddNoteToGraph,
   onBoxSelect,
 }: NotesGraphViewProps) => {
-  // React Flow hooks used inside nested components where needed
 
-  // no debug logs
   const [overlayCoords, setOverlayCoords] = useState<{
     x: number;
     y: number;

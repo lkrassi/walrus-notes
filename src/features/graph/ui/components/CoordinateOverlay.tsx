@@ -13,16 +13,10 @@ export const CoordinateOverlay: React.FC<CoordinateOverlayProps> = ({
 }) => {
   return (
     <div
-      style={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        zIndex: 70,
-        pointerEvents: 'none',
-      }}
+      className='pointer-events-none absolute top-2 right-2'
       aria-hidden
     >
-      <div className='bg-bg dark:bg-dark-bg text-text dark:text-dark-text rounded text-xl shadow m-2 p-2'>
+      <div className='bg-bg dark:bg-dark-bg text-text dark:text-dark-text m-2 rounded p-2 text-xl shadow'>
         {centerCoords ? (
           <div className='text-xs'>
             {Math.round(centerCoords.x)}, y: {Math.round(centerCoords.y)}

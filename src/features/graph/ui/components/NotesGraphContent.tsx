@@ -76,6 +76,15 @@ const NotesGraphContentComponent = ({
         const ix = (inNode.position as { x: number; y: number })?.x ?? 0;
         const iy = (inNode.position as { x: number; y: number })?.y ?? 0;
         if (px !== ix || py !== iy) return false;
+        try {
+          const prevColor =
+            (prev.data as { layoutColor?: string } | undefined)?.layoutColor ??
+            null;
+          const newColor =
+            (inNode.data as { layoutColor?: string } | undefined)
+              ?.layoutColor ?? null;
+          if (prevColor !== newColor) return false;
+        } catch (_e) {}
       }
       return true;
     })();
@@ -101,12 +110,14 @@ const NotesGraphContentComponent = ({
       setEdgesState(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      if (!nodesAreEqual) setNodes(initialNodes);
-      if (!edgesAreEqual) setEdgesState(initialEdges);
+      if (!nodesAreEqual) {
+        setNodes(initialNodes);
+      }
+      if (!edgesAreEqual) {
+        setEdgesState(initialEdges);
+      }
     }
   }, [initialNodes, initialEdges, layoutId, setNodes, setEdgesState]);
-
-  // debug logging removed
 
   const {
     tempEdges,
@@ -186,7 +197,6 @@ const NotesGraphContentComponent = ({
               source,
               target: newTarget,
               type: 'multiColor' as const,
-              // color information is handled on the server now — keep edge data minimal
               data: {},
             };
 

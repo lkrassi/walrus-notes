@@ -224,7 +224,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
         return { center, anchors: { top, right, bottom, left } };
       }
     } catch (_e) {
-      // ignore and fallback
     }
 
     const node = getNodes().find(n => n.id === nodeId);
@@ -294,7 +293,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
       sourceInfo.center
     );
 
-    // anchors computed; no debug logs
 
     return getBezierPath({
       sourceX: sourceAnchor.x,
@@ -314,10 +312,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     viewportTick,
   ]);
 
-  // Force re-computation when viewport transform or node DOM changes.
-  // Some layouts apply viewport transform after nodes mount, causing edges
-  // to compute using fallback positions. We observe the viewport/style and
-  // node list and bump a tick to trigger recompute.
   useEffect(() => {
     let mounted = true;
     const tryBump = () => {
@@ -342,13 +336,10 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     const viewportEl = document.querySelector(viewportSelector);
     const nodesEl = document.querySelector(nodesSelector);
 
-    // observe viewport style changes (transform)
     observeEl(viewportEl, { attributes: true, attributeFilter: ['style'] });
 
-    // observe nodes being added/removed
     observeEl(nodesEl, { childList: true, subtree: true });
 
-    // if nodes container not yet present, observe body to detect its creation
     if (!nodesEl) {
       const bodyMo = new MutationObserver(() => {
         if (document.querySelector(nodesSelector)) {
@@ -359,15 +350,12 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
       observers.push(bodyMo);
     }
 
-    // also bump once on mount to ensure initial compute after observer setup
     tryBump();
 
     return () => {
       mounted = false;
       observers.forEach(o => o.disconnect());
     };
-    // NOTE: we intentionally run this once on mount — the observer will
-    // trigger updates. Keep deps empty to avoid re-creating observers often.
   }, []);
 
   const getDragEdgePath = () => {
@@ -375,8 +363,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     if (!usePos) return '';
 
     const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
-
-    // drag flow position computed
 
     const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
 
@@ -481,8 +467,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
         className={cn('react-flow__edge-interaction cursor-crosshair')}
         onMouseDown={handleMouseDown}
       />
-
-      {/* arrow rendered as marker on the path via markerEnd */}
 
       {!isDragging && (
         <g

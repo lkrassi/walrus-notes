@@ -128,7 +128,6 @@ export const layoutApi = apiSlice.injectEndpoints({
           color: body.color,
         },
       }),
-      // do not invalidate to avoid refetch; we will update cache optimistically
       async onQueryStarted(
         { layoutId, title, color },
         { dispatch, queryFulfilled }
@@ -143,6 +142,7 @@ export const layoutApi = apiSlice.injectEndpoints({
             }
           })
         );
+
 
         try {
           await queryFulfilled;

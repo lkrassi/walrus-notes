@@ -28,20 +28,12 @@ export const useFileTree = () => {
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 
   useEffect(() => {
-    if (layoutsResponse) {
-      // layoutsResponse received
-    }
-
     if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layoutsResponse.data });
     } else if (layoutsResponse) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: [] });
     }
   }, [layoutsResponse]);
-
-  useEffect(() => {
-    // fileTree updated
-  }, [fileTree]);
 
   const toggleExpanded = useCallback((itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });

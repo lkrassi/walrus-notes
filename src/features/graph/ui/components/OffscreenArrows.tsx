@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useReactFlow } from 'reactflow';
 import type { Node } from 'reactflow';
-// color generation removed; prefer server-provided layout color
 
 interface OffscreenArrowsProps {
   nodes: Node[];
@@ -94,7 +93,6 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
           if (!intersection) continue;
 
           const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-          // try to use node's layout color, fallback to neutral
           const color =
             (n.data as { layoutColor?: string })?.layoutColor || '#6b7280';
 

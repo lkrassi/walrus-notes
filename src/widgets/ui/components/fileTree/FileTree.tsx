@@ -119,24 +119,20 @@ export const FileTree = memo(
         return false;
       };
 
-      // If current fileTree contains a direct note item (search results), use its parentId
       for (const it of fileTree) {
         if (it.type === 'note' && it.id === selectedItemId) {
           return (it as FileTreeItemType).parentId as string | undefined;
         }
       }
 
-      // Otherwise, try to find the selected note among children and return its parent id
       for (const it of fileTree) {
         if (it.type === 'layout') {
           if (findInChildren(it.children)) return it.id;
         }
       }
 
-      // As a last resort, try to find the note in RTK Query cache across known layouts
       if (layoutsResponse?.data && apiState) {
         for (const layout of layoutsResponse.data) {
-          // Check a few pages from cache (page 1..3) for presence of this note
           for (let page = 1; page <= 3; page++) {
             const cached = notesApi.endpoints.getNotes.select({
               layoutId: layout.id,
@@ -156,7 +152,6 @@ export const FileTree = memo(
 
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
-        // If this is a special 'main' layout, open its graph instead of selecting/toggling expansion
         if (item.type === 'layout' && item.isMain === true) {
           onOpenGraph?.(item.id);
           return;
@@ -176,16 +171,10 @@ export const FileTree = memo(
         const isExpanded = expandedItems.has(item.id);
         const hasChildren = !!(item.children && item.children.length > 0);
 
-        // Determine selection separately for layouts and notes so both can be highlighted.
-        // Also support the case when layout's children are not loaded: if the selected
-        // item is a note present elsewhere in the tree, we compute `selectedParentId`
-        // and treat that layout as selected as well.
         let isSelected = false;
         if (item.type === 'note') {
           isSelected = selectedItemId === item.id;
         } else if (item.type === 'layout') {
-          // layout is selected if it's explicitly selected OR a child note is selected
-          // (either present in `item.children` or found elsewhere as the parent of the selected note)
           isSelected =
             selectedItemId === item.id ||
             selectedParentId === item.id ||
@@ -228,8 +217,6 @@ export const FileTree = memo(
             <FileTreeEmpty />
           ) : (
             <div className={cn('space-y-1')}>
-              {/* Render regular layouts first, then separator, then main (aggregator) layouts */}
-              {/* Main (aggregator) layouts first */}
               {fileTree
                 .filter(i => i.type === 'layout' && i.isMain === true)
                 .map(item => {
@@ -249,7 +236,6 @@ export const FileTree = memo(
                   );
                 })}
 
-              {/* separator if both main and regular layouts exist */}
               {fileTree.some(i => i.type === 'layout' && i.isMain === true) &&
                 fileTree.some(
                   i => i.type === 'layout' && i.isMain !== true
@@ -264,7 +250,6 @@ export const FileTree = memo(
                   />
                 )}
 
-              {/* Regular layouts after */}
               {fileTree
                 .filter(i => i.type === 'layout' && i.isMain !== true)
                 .map(item => renderTreeItem(item))}

@@ -237,7 +237,6 @@ export const notesApi = apiSlice.injectEndpoints({
           )
         );
 
-        // also optimistically add to unposed notes cache so lists update immediately
         const unposedPatch = dispatch(
           notesApi.util.updateQueryData(
             'getUnposedNotes',
@@ -283,7 +282,6 @@ export const notesApi = apiSlice.injectEndpoints({
             )
           );
 
-          // update unposed cache as well
           try {
             dispatch(
               notesApi.util.updateQueryData(
@@ -387,10 +385,8 @@ export const notesApi = apiSlice.injectEndpoints({
           const { data: resp } = await queryFulfilled;
           const finalNote: Note | undefined = resp?.data;
 
-          // ensure tabs and caches reflect server's final note data
           if (finalNote) {
             try {
-              // update tabs
               dispatch(
                 updateTabNote({
                   noteId,
@@ -404,7 +400,6 @@ export const notesApi = apiSlice.injectEndpoints({
             } catch (_e) {}
 
             try {
-              // Ensure all relevant query caches contain finalNote
               const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
                 getState() as RootState
               );
@@ -615,17 +610,22 @@ export const notesApi = apiSlice.injectEndpoints({
                         yPos: arg.yPos,
                       };
                     } else {
-                      // If this is the target layout or a main aggregator, add the note
                       if (l.id === arg.layoutId || l.isMain === true) {
+                        // ensure optimistic new note includes layoutId so UI can resolve layout color immediately
                         const newNote: Note = realNoteData
                           ? {
                               ...realNoteData,
+                              layoutId: realNoteData.layoutId ?? arg.layoutId,
                               position: {
                                 xPos: arg.xPos,
                                 yPos: arg.yPos,
                               },
                             }
-                          : createTempNote();
+                          : ({
+                              ...createTempNote(),
+                              layoutId: arg.layoutId,
+                              position: { xPos: arg.xPos, yPos: arg.yPos },
+                            } as Note);
                         draft.data.push(newNote);
                       }
                     }
@@ -675,24 +675,21 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWith: string[] | undefined;
 
         try {
-          try {
-            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-              layoutId: arg.layoutId,
-            })(getState() as RootState);
+          // Propagate new link across all layouts (including main) so it appears everywhere immediately
+          const state = getState() as RootState;
+          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
+          const layouts: Layout[] = layoutsCache.data?.data || [];
 
-            if (posedNotesCache.data?.data) {
-              const patchResult = dispatch(
+          for (const l of layouts) {
+            try {
+              const pr = dispatch(
                 notesApi.util.updateQueryData(
                   'getPosedNotes',
-                  { layoutId: arg.layoutId },
+                  { layoutId: l.id },
                   draft => {
-                    const sourceNote = draft.data.find(
-                      n => n.id === arg.firstNoteId
-                    );
+                    const sourceNote = draft.data.find(n => n.id === arg.firstNoteId);
                     if (sourceNote) {
-                      if (!sourceNote.linkedWith) {
-                        sourceNote.linkedWith = [];
-                      }
+                      if (!sourceNote.linkedWith) sourceNote.linkedWith = [];
                       if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
                         sourceNote.linkedWith.push(arg.secondNoteId);
                       }
@@ -700,32 +697,31 @@ export const notesApi = apiSlice.injectEndpoints({
                   }
                 )
               );
-              patchResults.push(patchResult);
-            }
-          } catch (_e) {}
+              patchResults.push(pr);
+            } catch (_e) {}
 
-          try {
-            const getNotesPatch = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  if (!draft || !draft.data) return;
-                  const source = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (source) {
-                    if (!source.linkedWith) source.linkedWith = [];
-                    if (!source.linkedWith.includes(arg.secondNoteId)) {
-                      source.linkedWith.push(arg.secondNoteId);
+            try {
+              const pr2 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getNotes',
+                  { layoutId: l.id, page: 1 },
+                  draft => {
+                    if (!draft || !draft.data) return;
+                    const source = draft.data.find(n => n.id === arg.firstNoteId);
+                    if (source) {
+                      if (!source.linkedWith) source.linkedWith = [];
+                      if (!source.linkedWith.includes(arg.secondNoteId)) {
+                        source.linkedWith.push(arg.secondNoteId);
+                      }
                     }
                   }
-                }
-              )
-            );
-            patchResults.push(getNotesPatch);
-          } catch (_e) {}
+                )
+              );
+              patchResults.push(pr2);
+            } catch (_e) {}
+          }
 
           try {
-            const state = getState() as RootState;
             const tabsState = state.tabs;
             if (tabsState?.openTabs) {
               const tab = tabsState.openTabs.find(
@@ -733,11 +729,8 @@ export const notesApi = apiSlice.injectEndpoints({
               );
               if (tab && tab.item && tab.item.note) {
                 originalTabLinkedWith = tab.item.note.linkedWith;
-                const newLinked = Array.isArray(originalTabLinkedWith)
-                  ? [...originalTabLinkedWith]
-                  : [];
-                if (!newLinked.includes(arg.secondNoteId))
-                  newLinked.push(arg.secondNoteId);
+                const newLinked = Array.isArray(originalTabLinkedWith) ? [...originalTabLinkedWith] : [];
+                if (!newLinked.includes(arg.secondNoteId)) newLinked.push(arg.secondNoteId);
                 dispatch(
                   updateTabNote({
                     noteId: arg.firstNoteId,
@@ -782,16 +775,17 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWithDel: string[] | undefined;
 
         try {
-          try {
-            const posedNotesCache = notesApi.endpoints.getPosedNotes.select({
-              layoutId: arg.layoutId,
-            })(getState() as RootState);
+          // Update all relevant caches across layouts (including main) so removed link disappears everywhere
+          const state = getState() as RootState;
+          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
+          const layouts: Layout[] = layoutsCache.data?.data || [];
 
-            if (posedNotesCache.data?.data) {
-              const patchResult = dispatch(
+          for (const l of layouts) {
+            try {
+              const pr = dispatch(
                 notesApi.util.updateQueryData(
                   'getPosedNotes',
-                  { layoutId: arg.layoutId },
+                  { layoutId: l.id },
                   draft => {
                     const sourceNote = draft.data.find(
                       n => n.id === arg.firstNoteId
@@ -804,31 +798,30 @@ export const notesApi = apiSlice.injectEndpoints({
                   }
                 )
               );
-              patchResults.push(patchResult);
-            }
-          } catch (_e) {}
+              patchResults.push(pr);
+            } catch (_e) {}
 
-          try {
-            const getNotesPatch = dispatch(
-              notesApi.util.updateQueryData(
-                'getNotes',
-                { layoutId: arg.layoutId, page: 1 },
-                draft => {
-                  if (!draft || !draft.data) return;
-                  const source = draft.data.find(n => n.id === arg.firstNoteId);
-                  if (source && source.linkedWith) {
-                    source.linkedWith = source.linkedWith.filter(
-                      id => id !== arg.secondNoteId
-                    );
+            try {
+              const pr2 = dispatch(
+                notesApi.util.updateQueryData(
+                  'getNotes',
+                  { layoutId: l.id, page: 1 },
+                  draft => {
+                    if (!draft || !draft.data) return;
+                    const source = draft.data.find(n => n.id === arg.firstNoteId);
+                    if (source && source.linkedWith) {
+                      source.linkedWith = source.linkedWith.filter(
+                        id => id !== arg.secondNoteId
+                      );
+                    }
                   }
-                }
-              )
-            );
-            patchResults.push(getNotesPatch);
-          } catch (_e) {}
+                )
+              );
+              patchResults.push(pr2);
+            } catch (_e) {}
+          }
 
           try {
-            const state = getState() as RootState;
             const tabsState = state.tabs;
             if (tabsState?.openTabs) {
               const tab = tabsState.openTabs.find(

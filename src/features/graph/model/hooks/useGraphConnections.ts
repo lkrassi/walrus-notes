@@ -131,7 +131,6 @@ export const useGraphConnections = ({
 
         targetNodeId = targetNode?.id || null;
         if (targetNode && dropPosition) {
-          // determine nearest handle on target based on drop position relative to node center
           const nodeX = targetNode.position.x as number;
           const nodeY = targetNode.position.y as number;
           const nodeWidth = (targetNode.width as number) || 100;
@@ -149,7 +148,6 @@ export const useGraphConnections = ({
                 ? 'target-bottom'
                 : 'target-top';
 
-          // determine sourceHandle if not provided
           let resolvedSourceHandle = tempEdge?.sourceHandle ?? null;
           if (!resolvedSourceHandle) {
             const sourceNode = nodes.find(n => n.id === tempEdge?.source);
@@ -175,7 +173,6 @@ export const useGraphConnections = ({
             }
           }
 
-          // use handles when creating edge
           if (isValidNoteId(targetNodeId) && tempEdge?.source) {
             const edgeExists = allEdges.some(
               edge =>

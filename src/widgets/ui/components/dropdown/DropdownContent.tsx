@@ -14,8 +14,8 @@ interface DropdownContentProps {
   animationDuration?: number;
   maxHeight?: string;
   onReachEnd?: () => void;
-  reachMargin?: string; // rootMargin for IntersectionObserver
-  reachDebounceMs?: number; // debounce/throttle interval for onReachEnd
+  reachMargin?: string; 
+  reachDebounceMs?: number;
 }
 
 export const DropdownContent: React.FC<DropdownContentProps> = ({
@@ -49,9 +49,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
         return false;
       }
 
-      // mounted
-
-      // prefer the nearest scrollable ancestor as the observer root; fallback to viewport
       const findScrollParent = (el: Element | null): Element | null => {
         let node: Element | null = el?.parentElement ?? null;
         while (node) {
@@ -70,14 +67,12 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
         return null;
       };
 
-      const rootForObserver = findScrollParent(container) ?? null; // null -> viewport
-      // observer root chosen
+      const rootForObserver = findScrollParent(container) ?? null; 
 
       io = new IntersectionObserver(
         entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              // sentinel intersecting
 
               if (isThrottledRef.current) {
                 return;
@@ -86,7 +81,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
               isThrottledRef.current = true;
               onReachEnd();
 
-              // clear throttle after debounce interval
               window.setTimeout(() => {
                 isThrottledRef.current = false;
               }, reachDebounceMs);
@@ -100,7 +94,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
       return true;
     };
 
-    // try immediate setup; if refs missing (often due to framer-motion animation), retry once after a short delay
     const ok = setupObserver();
     if (!ok) {
       retryTimer = window.setTimeout(() => {
@@ -119,7 +112,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   }, [onReachEnd, reachMargin, isOpen, state, reachDebounceMs]);
 
   React.useEffect(() => {
-    // refs status debug removed
   }, [isOpen, state]);
 
   const renderContent = () => {
@@ -140,7 +132,6 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
         return (
           <div className={cn('overflow-y-auto', maxHeight)} ref={containerRef}>
             {children}
-            {/* sentinel element observed to trigger onReachEnd when user scrolls near bottom */}
             {onReachEnd && (
               <div ref={sentinelRef} style={{ width: '100%', height: 1 }} />
             )}

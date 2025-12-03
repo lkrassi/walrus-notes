@@ -54,7 +54,6 @@ export const FileTreeItemContent = ({
   useEffect(() => {
     if (!isExpanded || item.type !== 'layout' || !notesResponse) return;
 
-    // notesResponse arrived (debug logs removed)
 
     const notes = Array.isArray(notesResponse.data) ? notesResponse.data : [];
     const pagination = notesResponse.pagination;
@@ -101,7 +100,6 @@ export const FileTreeItemContent = ({
 
   const loadMoreNotes = useCallback(
     async (page: number) => {
-      // loadMoreNotes invoked
 
       if (!hasMore || page <= 1) {
         return;
@@ -114,8 +112,6 @@ export const FileTreeItemContent = ({
         }).unwrap();
 
         if (result.data) {
-          // loadMoreNotes result
-
           setLoadedPages(prev => new Set([...prev, page]));
 
           const more = page < totalPages;
@@ -149,10 +145,6 @@ export const FileTreeItemContent = ({
     onLoadMore: loadMoreNotes,
   });
 
-  useEffect(() => {
-    // visibleItems/loadedPages changed (debug logs removed)
-  }, [visibleItems, loadedPages, hasMore, totalPages]);
-
   let contentState: 'loading' | 'content' | 'empty' = 'empty';
 
   if (!isExpanded || item.type !== 'layout') {
@@ -176,7 +168,6 @@ export const FileTreeItemContent = ({
       }
       className={cn('overflow-hidden')}
       onReachEnd={() => {
-        // trigger loading next page when user scrolls near end
         if (dropdownHasMore) {
           dropdownLoadMore();
         }

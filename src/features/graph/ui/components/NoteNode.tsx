@@ -93,12 +93,10 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
         'rounded-xl',
         'p-2',
         'text-left',
-        // static background/text colors: light vs dark theme
         'bg-white',
         'text-black',
         'dark:bg-gray-800',
         'dark:text-white',
-        // show border that uses server color via inline style
         'border-2'
       )}
       style={{
@@ -183,6 +181,9 @@ export const NoteNodeComponent = React.memo(
     if (prev.data.note?.id !== next.data.note?.id) return false;
     if (prev.data.isRelatedToSelected !== next.data.isRelatedToSelected)
       return false;
+    const prevColor = prev.data.layoutColor ?? null;
+    const nextColor = next.data.layoutColor ?? null;
+    if (prevColor !== nextColor) return false;
     return true;
   }
 );
