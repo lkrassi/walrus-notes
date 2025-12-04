@@ -1,7 +1,6 @@
 import { useCreateNoteLinkMutation } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
-import { MarkerType } from 'reactflow';
 
 interface UseGraphConnectionsProps {
   layoutId: string;

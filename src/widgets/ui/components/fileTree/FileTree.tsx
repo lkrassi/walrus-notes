@@ -158,12 +158,8 @@ export const FileTree = memo(
         }
 
         onItemSelect?.(item);
-
-        if (item.type === 'layout') {
-          toggleExpanded(item.id);
-        }
       },
-      [onItemSelect, toggleExpanded, onOpenGraph]
+      [onItemSelect, onOpenGraph]
     );
 
     const renderTreeItem = useCallback(
@@ -192,7 +188,12 @@ export const FileTree = memo(
               hasChildren={hasChildren}
               onItemClick={handleItemClick}
               onOpenGraph={onOpenGraph}
+              onDeleteNote={undefined}
+              onDeleteLayout={undefined}
               renderChild={renderTreeItem}
+              onNotesLoaded={undefined}
+              // pass toggle so header can toggle expand on chevron click
+              toggleExpanded={toggleExpanded}
             />
           </div>
         );

@@ -5,7 +5,6 @@ import {
 } from 'app/store/api';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
-import { MarkerType } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 
 interface UseNotesGraphProps {

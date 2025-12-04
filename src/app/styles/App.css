@@ -91,3 +91,17 @@ h6 {
 .dark .bg-gradient {
   background: linear-gradient(135deg, #052925 0%, #0d3d38 50%, #134e4a 100%);
 }
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid black;
+}
+
+.dark a:focus-visible,
+.dark button:focus-visible {
+  outline: 2px solid white;
+}
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}

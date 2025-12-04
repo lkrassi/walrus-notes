@@ -10,7 +10,6 @@ import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree
 import type { Note } from 'shared/model/types/layouts';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useIsMobile, useLocalization } from '../../../hooks';
-import { useTheme } from 'widgets/hooks';
 import { DeleteNoteForm } from './DeleteNoteForm';
 
 type FileTreeItemHeaderProps = {
@@ -23,6 +22,7 @@ type FileTreeItemHeaderProps = {
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
+  toggleExpanded?: (itemId: string) => void;
 };
 
 export const FileTreeItemHeader = ({
@@ -34,6 +34,7 @@ export const FileTreeItemHeader = ({
   onItemClick,
   onDeleteNote,
   onDeleteLayout,
+  toggleExpanded,
 }: FileTreeItemHeaderProps) => {
   const [_isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
@@ -42,7 +43,6 @@ export const FileTreeItemHeader = ({
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
-  const { theme } = useTheme();
 
   useEffect(() => {
     return () => {
@@ -170,8 +170,13 @@ export const FileTreeItemHeader = ({
       onBlur={handleMouseLeave}
       onClick={handleItemClick}
     >
-      {item.type === 'layout' && item.isMain !== true && (
-        <div
+      {item.type === 'layout' && item.isMain !== true && ( 
+        <button
+          type='button'
+          onClick={e => {
+            e.stopPropagation();
+            toggleExpanded?.(item.id);
+          }}
           className={cn(
             'flex',
             'h-4',
@@ -194,7 +199,7 @@ export const FileTreeItemHeader = ({
               'dark:text-white'
             )}
           />
-        </div>
+        </button>
       )}
 
       {item.type === 'note' && <div className={cn('h-4', 'w-4')} />}
@@ -323,8 +328,8 @@ export const FileTreeItemHeader = ({
                   isMobile
                     ? 'text-gray-600 dark:text-white'
                     : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                 )}
                 title={t('layout:edit') || 'Edit'}
               >
@@ -344,8 +349,8 @@ export const FileTreeItemHeader = ({
                   isMobile
                     ? 'text-gray-600 dark:text-white'
                     : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                 )}
                 title={t('layout:deleteLayout')}
               >
@@ -368,8 +373,8 @@ export const FileTreeItemHeader = ({
               isMobile
                 ? 'text-gray-600 dark:text-white'
                 : isSelected
-                  ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
-                  : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text '
+                  ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                  : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
             )}
             title={t('notes:deleteNote')}
           >

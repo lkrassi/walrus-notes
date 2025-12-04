@@ -123,7 +123,7 @@ export const useDraftSync = ({
         setIsSaving(false);
         sendingRef.current = false;
         return false;
-      } catch (err) {
+      } catch (_e) {
         try {
           dispatch(setDraft({ noteId, text: value }));
         } catch (_e) {}

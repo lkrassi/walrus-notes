@@ -1,4 +1,4 @@
-import { FileText, Folder } from 'lucide-react';
+import { FileText, Folder, Network } from 'lucide-react';
 import { useState } from 'react';
 import { useIsMobile } from 'widgets/hooks';
 import cn from 'shared/lib/cn';
@@ -100,6 +100,8 @@ export const Tabs = ({
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>
                 {activeTab.item.type === 'note' ? (
                   <FileText className='mr-2 h-4 w-4' />
+                ) : activeTab.item.isMain === true ? (
+                  <Network className='mr-2 h-4 w-4' />
                 ) : (
                   <Folder className='mr-2 h-4 w-4' />
                 )}

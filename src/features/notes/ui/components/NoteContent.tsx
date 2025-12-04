@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useLayoutEffect } from 'react';
 import useResizableSplit from 'widgets/hooks/useResizableSplit';
-import {} from /* AnimatePresence */ 'framer-motion';
 import { syncScroll } from '../../lib/syncScroll';
 import { useIsDesktop } from 'widgets/hooks';
-import { useGetNotesQuery } from 'app/store/api';
 
 import type { Note } from 'shared/model/types/layouts';
 

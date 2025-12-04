@@ -14,6 +14,7 @@ type FileTreeItemProps = {
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
+  toggleExpanded?: (itemId: string) => void;
   renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
   onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
@@ -29,6 +30,7 @@ export const FileTreeItem = ({
   onDeleteNote,
   renderChild,
   onNotesLoaded,
+  toggleExpanded,
 }: FileTreeItemProps) => {
   return (
     <div>
@@ -41,6 +43,7 @@ export const FileTreeItem = ({
         onItemClick={onItemClick}
         onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}
+        toggleExpanded={toggleExpanded}
       />
       <FileTreeItemContent
         item={item}

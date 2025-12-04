@@ -3,7 +3,6 @@ import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useModalContext } from 'widgets/ui';
 import { MarkdownHelp } from './MarkdownHelp';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 
@@ -38,7 +37,6 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
 }) => {
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
-  const { openModal } = useModalContext();
 
   const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
     title: t('notes:markdownGuide'),
