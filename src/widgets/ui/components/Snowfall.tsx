@@ -83,6 +83,7 @@ const Snowfall: React.FC<SnowfallProps> = ({
       vy: number;
       r: number;
       windFactor: number;
+      delay: number;
     };
 
     const flakes: Flake[] = [];
@@ -91,22 +92,28 @@ const Snowfall: React.FC<SnowfallProps> = ({
     const rand = (a: number, b?: number) =>
       b == null ? Math.random() * a : a + Math.random() * (b - a);
 
-    const spawnFlake = () => {
+    const spawnFlake = (withDelay: boolean = true) => {
       const r = Math.max(1, Math.random() * maxSize);
+      const startY = -r - Math.random() * 100;
+      
       flakes.push({
         x: Math.random() * width,
-        y: -r - Math.random() * 50,
+        y: startY,
         vx: rand(-0.3, 0.3) + wind * rand(0.5, 1.5),
         vy: rand(0.5, 1.6) * (1 + r / 6),
         r,
         windFactor: Math.random() * 0.6 + 0.7,
+        delay: withDelay ? Math.random() * 100 : 0
       });
     };
 
-    for (let i = 0; i < targetFlakes; i++) spawnFlake();
+    for (let i = 0; i < targetFlakes; i++) {
+      spawnFlake(true);
+    }
 
     let last = performance.now();
     let fullTriggered = false;
+    let spawnTimer = 0;
 
     const step = (now: number) => {
       const dt = Math.min(40, now - last) / 16.6667;
@@ -114,34 +121,63 @@ const Snowfall: React.FC<SnowfallProps> = ({
 
       ctx.clearRect(0, 0, width, height);
 
-      while (flakes.length < targetFlakes) spawnFlake();
+      spawnTimer += dt;
+      if (flakes.length < targetFlakes) {
+        spawnFlake(false);
+      }
+
+      if (spawnTimer > 2) {
+        spawnTimer = 0;
+        if (Math.random() < 0.3) {
+          spawnFlake(false);
+        }
+      }
 
       for (let i = flakes.length - 1; i >= 0; i--) {
         const f = flakes[i];
+        
+        if (f.delay > 0) {
+          f.delay -= dt;
+          continue;
+        }
+        
         f.vx += wind * 0.04 * f.windFactor;
         f.x += f.vx * dt * 1.5;
         f.y += f.vy * dt;
 
-        if (f.x < -50) f.x = width + 50;
-        if (f.x > width + 50) f.x = -50;
+        const isBelowBottom = f.y > height + 50;
+        const isBelowAccum = () => {
+          const col = Math.min(columnCount - 1, Math.floor(f.x / columnWidth));
+          const groundY = height - accum[col];
+          return f.y + f.r >= groundY;
+        };
 
-        const col = Math.min(columnCount - 1, Math.floor(f.x / columnWidth));
-        const groundY = height - accum[col];
-
-        if (f.y + f.r >= groundY) {
-          accum[col] += f.r * accumulationSpeed;
-          if (col > 0) accum[col - 1] += f.r * 0.12 * accumulationSpeed;
-          if (col < columnCount - 1)
-            accum[col + 1] += f.r * 0.12 * accumulationSpeed;
-
-          flakes.splice(i, 1);
+        if (isBelowBottom || isBelowAccum()) {
+          if (isBelowAccum()) {
+            const col = Math.min(columnCount - 1, Math.floor(f.x / columnWidth));
+            accum[col] += f.r * accumulationSpeed;
+            if (col > 0) accum[col - 1] += f.r * 0.12 * accumulationSpeed;
+            if (col < columnCount - 1)
+              accum[col + 1] += f.r * 0.12 * accumulationSpeed;
+          }
+          
+          flakes[i].y = -f.r - Math.random() * 100;
+          flakes[i].x = Math.random() * width;
+          flakes[i].vx = rand(-0.3, 0.3) + wind * rand(0.5, 1.5);
+          flakes[i].vy = rand(0.5, 1.6) * (1 + f.r / 6);
+          flakes[i].delay = Math.random() * 20; 
           continue;
         }
 
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fill();
+        if (f.x < -50) f.x = width + 50;
+        if (f.x > width + 50) f.x = -50;
+
+        if (f.delay <= 0) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,255,255,${0.7 + Math.sin(f.y * 0.01) * 0.2})`;
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       for (let k = 0; k < 2; k++) {
@@ -196,6 +232,11 @@ const Snowfall: React.FC<SnowfallProps> = ({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
+      }
+      
+      for (let i = 0; i < flakes.length; i++) {
+        flakes[i].y = -flakes[i].r - Math.random() * 100;
+        flakes[i].delay = Math.random() * 30;
       }
     };
 
