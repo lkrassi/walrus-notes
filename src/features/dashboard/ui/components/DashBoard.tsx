@@ -3,7 +3,7 @@ import { useDashboardNavigation } from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
-import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
+import { useAppDispatch, useTabs, useAppSelector } from 'widgets/hooks/redux';
 import { Sidebar } from 'widgets/ui';
 import WebSocketProvider from 'widgets/providers/WebSocketProvider';
 import { DashboardContent } from './DashboardContent';
@@ -31,13 +31,44 @@ export const DashBoard = () => {
   const handleItemSelect = (item: FileTreeItem) => {
     const tabId = `${item.type}::${item.id}`;
     const existingTab = openTabs.find(tab => tab.id === tabId);
-
-    if (existingTab) {
-      dispatch(switchTab(tabId));
-    } else {
-      dispatch(openTab(item));
-      dispatch(switchTab(tabId));
+    const activeTab = openTabs.find(tab => tab.isActive) ?? null;
+    let hasUnsaved = false;
+    if (activeTab && activeTab.item.type === 'note' && activeTab.item.note) {
+      const note = activeTab.item.note;
+      const noteId = note.id;
+      const storeDraft = drafts[noteId];
+      const hasUnsavedLocal =
+        typeof storeDraft === 'string' &&
+        storeDraft.length > 0 &&
+        storeDraft !== (note.payload ?? '');
+      const hasServerDraft = !!(
+        note.draft &&
+        note.draft.length &&
+        note.draft !== note.payload
+      );
+      hasUnsaved = hasUnsavedLocal || hasServerDraft;
     }
+
+    if (!hasUnsaved) {
+      if (existingTab) {
+        dispatch(switchTab(tabId));
+      } else {
+        dispatch(openTab({ ...item, openedFromSidebar: true }));
+        dispatch(switchTab(tabId));
+      }
+      return;
+    }
+
+    const deferredAction = () => {
+      if (existingTab) {
+        dispatch(switchTab(tabId));
+      } else {
+        dispatch(openTab({ ...item, openedFromSidebar: false }));
+        dispatch(switchTab(tabId));
+      }
+    };
+
+    confirmIfUnsaved(deferredAction);
   };
 
   const handleNoteOpenFromGraph = (noteData: {
@@ -56,6 +87,30 @@ export const DashBoard = () => {
     handleItemSelect(noteItem);
   };
 
+  const drafts = useAppSelector(s => s.drafts ?? {});
+
+  const confirmIfUnsaved = (action: () => void) => {
+    const activeTab = openTabs.find(tab => tab.isActive) ?? null;
+    if (!activeTab) {
+      action();
+      return;
+    }
+
+    if (activeTab.item.type !== 'note') {
+      action();
+      return;
+    }
+
+    const note = activeTab.item.note;
+    if (!note) {
+      action();
+      return;
+    }
+
+    action();
+    return;
+  };
+
   return (
     <WebSocketProvider>
       <div className={cn('flex', 'h-screen', 'flex-col')}>
@@ -71,6 +126,7 @@ export const DashBoard = () => {
             onItemSelect={handleItemSelect}
           />
         </div>
+        {/* debug overlay removed - cleaned up debug logs */}
       </div>
     </WebSocketProvider>
   );

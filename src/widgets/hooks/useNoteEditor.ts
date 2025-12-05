@@ -5,7 +5,7 @@ import { useNotifications } from 'widgets';
 import useDraftSync from 'features/notes/model/useDraftSync';
 import { useAppSelector } from './redux';
 import { useAppDispatch } from './redux';
-import { removeDraft } from 'app/store/slices/draftsSlice';
+import { removeDraft, setDraft } from 'app/store/slices/draftsSlice';
 
 export const useNoteEditor = (
   note: Note,
@@ -21,7 +21,7 @@ export const useNoteEditor = (
     initialPayload = note.draft;
   }
 
-  const [payload, setPayload] = useState<string>(initialPayload);
+  const [payload, setPayloadState] = useState<string>(initialPayload);
   const { showError } = useNotifications();
   const [updateNote, { isLoading }] = useUpdateNoteMutation();
   const userId =
@@ -43,13 +43,46 @@ export const useNoteEditor = (
   });
 
   const originalPayloadRef = useRef<string>(note.payload ?? '');
+  const dispatch = useAppDispatch();
+
+  const setPayload = (value: string) => {
+    try {
+      setPayloadState(value);
+      const lsKey = `wn.draft.${note.id}`;
+      if (value != null && value !== originalPayloadRef.current) {
+        dispatch(setDraft({ noteId: note.id, text: value }));
+        try {
+          localStorage.setItem(lsKey, value);
+        } catch (_e) {}
+      } else {
+        dispatch(removeDraft({ noteId: note.id }));
+        try {
+          localStorage.removeItem(lsKey);
+        } catch (_e) {}
+      }
+    } catch (_e) {}
+  };
 
   useEffect(() => {
     setTitle(note.title ?? '');
     const incoming =
       note.draft && note.draft.length ? note.draft : note.payload;
-    setPayload(prev => {
+    const lsKey = `wn.draft.${note.id}`;
+    let lsDraft: string | null = null;
+    try {
+      lsDraft = localStorage.getItem(lsKey);
+    } catch (_e) {
+      lsDraft = null;
+    }
+
+    setPayloadState(prev => {
       const incomingSafe = incoming ?? '';
+      if (storeDraft && storeDraft.length) {
+        return storeDraft;
+      }
+      if (lsDraft && lsDraft.length) {
+        return lsDraft;
+      }
       if (prev === originalPayloadRef.current) return incomingSafe;
       return prev;
     });
@@ -91,8 +124,11 @@ export const useNoteEditor = (
       }).unwrap();
 
       try {
-        setPayload(newPayload);
+        setPayloadState(newPayload);
         originalPayloadRef.current = newPayload;
+        try {
+          dispatch(removeDraft({ noteId: note.id }));
+        } catch (_e) {}
       } catch (_e) {}
 
       const updatedNote: Note = {
@@ -116,8 +152,6 @@ export const useNoteEditor = (
     }
   };
 
-  const dispatch = useAppDispatch();
-
   const handleDiscard = async () => {
     try {
       setPayload(originalPayloadRef.current);
@@ -127,6 +161,12 @@ export const useNoteEditor = (
       try {
         dispatch(removeDraft({ noteId: note.id }));
       } catch (_e) {}
+      try {
+        localStorage.removeItem(`wn.draft.${note.id}`);
+      } catch (_e) {}
+    } catch (_e) {}
+    try {
+      localStorage.removeItem(`wn.draft.${note.id}`);
     } catch (_e) {}
     setIsEditing(false);
     return true;

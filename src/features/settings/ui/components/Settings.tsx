@@ -3,6 +3,22 @@ import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
+import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
+import { Button } from 'shared/ui/components/Button';
+
+const HolidayToggle: React.FC = () => {
+  const { enabled, setEnabled } = useHolidaySettings();
+  const { t } = useLocalization();
+  return (
+    <Button
+      variant='default'
+      className={cn('h-10', 'w-30')}
+      onClick={() => setEnabled(!enabled)}
+    >
+      {enabled ? t('settings:holiday.on') : t('settings:holiday.off')}
+    </Button>
+  );
+};
 
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
@@ -100,6 +116,75 @@ export const Settings: React.FC = () => {
                 </div>
               </div>
             ))}
+            <div
+              className={cn(
+                'card',
+                'p-6',
+                'transition-shadow duration-200 hover:shadow-md',
+                'max-sm:rounded-lg',
+                'max-sm:p-4'
+              )}
+            >
+              <div
+                className={cn(
+                  'flex',
+                  'items-center',
+                  'justify-between',
+                  'max-sm:flex-col',
+                  'max-sm:items-start',
+                  'max-sm:gap-3'
+                )}
+              >
+                <div className={cn('flex', 'flex-1', 'items-center', 'gap-4')}>
+                  <div>
+                    <div
+                      className={cn(
+                        'bg-primary/10',
+                        'dark:bg-dark-primary/10',
+                        'text-primary',
+                        'dark:text-dark-primary',
+                        'rounded-lg',
+                        'p-2',
+                        'max-sm:rounded-md',
+                        'max-sm:p-1.5'
+                      )}
+                    >
+                      <svg
+                        width='16'
+                        height='16'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d='M12 2L13.545 8.455L20 10.001L13.545 11.546L12 18L10.455 11.546L4 10.001L10.455 8.455L12 2Z'
+                          fill='currentColor'
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className={cn('flex-1', 'max-sm:flex-initial')}>
+                    <h3 className={cn('section-title')}>
+                      {t('settings:holiday.title')}
+                    </h3>
+                    <p
+                      className={cn('muted-text', 'text-sm', 'max-sm:text-xs')}
+                    >
+                      {t('settings:holiday.description')}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={cn(
+                    'max-sm:flex',
+                    'max-sm:w-full',
+                    'max-sm:justify-end'
+                  )}
+                >
+                  <HolidayToggle />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className={cn('card', 'mt-8', 'p-6')}>

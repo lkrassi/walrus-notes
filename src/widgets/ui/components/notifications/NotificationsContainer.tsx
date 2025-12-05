@@ -34,7 +34,7 @@ export const NotificationsContainer: React.FC = () => {
         'fixed',
         'right-4',
         'bottom-4',
-        'z-51',
+        'z-2',
         'flex',
         'flex-col',
         'gap-3'

@@ -38,5 +38,11 @@
     "manage": "Manage",
     "protect": "Protect",
     "goTo": "Go to"
+  },
+  "holiday": {
+    "title": "Holiday decorations",
+    "description": "Enable snow and garland decorations in the UI",
+    "on": "On",
+    "off": "Off"
   }
 }

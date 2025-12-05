@@ -611,7 +611,6 @@ export const notesApi = apiSlice.injectEndpoints({
                       };
                     } else {
                       if (l.id === arg.layoutId || l.isMain === true) {
-                        // ensure optimistic new note includes layoutId so UI can resolve layout color immediately
                         const newNote: Note = realNoteData
                           ? {
                               ...realNoteData,
@@ -675,7 +674,6 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWith: string[] | undefined;
 
         try {
-          // Propagate new link across all layouts (including main) so it appears everywhere immediately
           const state = getState() as RootState;
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
           const layouts: Layout[] = layoutsCache.data?.data || [];
@@ -782,7 +780,6 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWithDel: string[] | undefined;
 
         try {
-          // Update all relevant caches across layouts (including main) so removed link disappears everywhere
           const state = getState() as RootState;
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
           const layouts: Layout[] = layoutsCache.data?.data || [];

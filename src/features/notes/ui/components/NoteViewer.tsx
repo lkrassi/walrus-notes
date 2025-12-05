@@ -1,3 +1,4 @@
+import React from 'react';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
@@ -9,12 +10,14 @@ interface NoteViewerProps {
   layoutId?: string;
   onNoteUpdated?: (note: Note) => void;
   onNoteDeleted?: (noteId: string) => void;
+  openedFromSidebar?: boolean;
 }
 
 export const NoteViewer = ({
   note,
   layoutId,
   onNoteUpdated,
+  openedFromSidebar: _openedFromSidebar,
 }: NoteViewerProps) => {
   const {
     isEditing,
@@ -32,6 +35,15 @@ export const NoteViewer = ({
     isPending,
     handleDiscard,
   } = useNoteEditor(note, onNoteUpdated);
+
+  const autoOpenedRef = React.useRef(false);
+  React.useEffect(() => {
+    if (autoOpenedRef.current) return;
+    if (hasLocalChanges || hasServerDraft) {
+      handleEdit();
+      autoOpenedRef.current = true;
+    }
+  }, [hasLocalChanges, hasServerDraft, handleEdit]);
 
   return (
     <div

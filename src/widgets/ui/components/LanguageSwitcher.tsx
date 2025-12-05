@@ -116,7 +116,7 @@ export const LanguageSwitcher: React.FC = () => {
           'absolute',
           'top-full',
           'right-0',
-          'z-60',
+          'z-2',
           'mt-2',
           'transition-all',
           'duration-300',

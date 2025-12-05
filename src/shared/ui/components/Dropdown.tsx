@@ -120,7 +120,6 @@ export const Dropdown = ({
   );
   const contentClassNameFull = cn(
     'absolute',
-    'z-50',
     'rounded-lg',
     'shadow-lg',
     'backdrop-blur-sm',

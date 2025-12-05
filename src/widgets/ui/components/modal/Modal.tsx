@@ -117,7 +117,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         'fixed',
         'inset-0',
         'overflow-hidden',
-        'z-50',
+        'z-10',
         'flex',
         'items-center',
         'justify-center',

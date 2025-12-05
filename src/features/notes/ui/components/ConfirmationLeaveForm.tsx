@@ -2,14 +2,12 @@ import { DoorOpen } from 'lucide-react';
 import { Button } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
-import { useModalContext } from 'widgets/ui';
 import { useModalContentContext } from 'widgets/ui';
 
 export const ConfirmationLeaveForm: React.FC<{ onConfirm?: () => void }> = ({
   onConfirm,
 }) => {
   const { t } = useLocalization();
-  const { openModal } = useModalContext();
   const { closeModal } = useModalContentContext();
 
   return (

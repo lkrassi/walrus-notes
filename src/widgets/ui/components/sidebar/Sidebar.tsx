@@ -98,7 +98,6 @@ const SidebarComponent = (
             'fixed',
             'top-4',
             'left-4',
-            'z-50',
             'rounded-lg',
             'p-2',
             'transition-colors',
@@ -118,7 +117,6 @@ const SidebarComponent = (
           className={cn(
             'fixed',
             'inset-0',
-            'z-40',
             'bg-black/20',
             'backdrop-blur-sm',
             'md:hidden'
@@ -135,7 +133,6 @@ const SidebarComponent = (
           'top-0',
           'bottom-0',
           'left-0',
-          'z-50',
           'flex',
           'w-80',
           'flex-col',
@@ -236,7 +233,6 @@ const SidebarComponent = (
               'h-full',
               'w-2',
               'cursor-col-resize',
-              'z-50',
               'hover:bg-gray-100',
               'dark:hover:bg-gray-800'
             )}

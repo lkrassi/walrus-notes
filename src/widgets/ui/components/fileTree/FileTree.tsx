@@ -192,7 +192,6 @@ export const FileTree = memo(
               onDeleteLayout={undefined}
               renderChild={renderTreeItem}
               onNotesLoaded={undefined}
-              // pass toggle so header can toggle expand on chevron click
               toggleExpanded={toggleExpanded}
             />
           </div>

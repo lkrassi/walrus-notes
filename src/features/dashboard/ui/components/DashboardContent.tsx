@@ -33,11 +33,11 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const activeTab = openTabs.find(tab => tab.isActive);
 
   const handleTabClick = (tabId: string) => {
-    dispatch(switchTab(tabId));
+    confirmIfUnsaved(() => dispatch(switchTab(tabId)));
   };
 
   const handleTabClose = (tabId: string) => {
-    dispatch(closeTab(tabId));
+    confirmIfUnsaved(() => dispatch(closeTab(tabId)));
   };
 
   const handleTabReorder = (tabs: DashboardTab[]) => {
@@ -53,11 +53,35 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
     const existingTab = openTabs.find(tab => tab.id === tabId);
 
     if (existingTab) {
-      dispatch(switchTab(tabId));
-    } else {
-      dispatch(openTab(item));
-      dispatch(switchTab(tabId));
+      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+      return;
     }
+
+    confirmIfUnsaved(() => {
+      dispatch(openTab({ ...item, openedFromSidebar: false }));
+      dispatch(switchTab(tabId));
+    });
+  };
+
+  const confirmIfUnsaved = (action: () => void) => {
+    if (!activeTab) {
+      action();
+      return;
+    }
+
+    if (activeTab.item.type !== 'note') {
+      action();
+      return;
+    }
+
+    const note = activeTab.item.note;
+    if (!note) {
+      action();
+      return;
+    }
+
+    action();
+    return;
   };
 
   const handleNoteOpenFromGraph = (noteData: {
@@ -156,8 +180,10 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
       return (
         <NoteViewer
+          key={note.id}
           note={note}
           layoutId={activeTab.item.parentId || note.layoutId || ''}
+          openedFromSidebar={!!activeTab.item.openedFromSidebar}
           onNoteUpdated={updatedNote =>
             handleNoteUpdated(updatedNote.id, {
               title: updatedNote.title,
@@ -200,6 +226,52 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
           />
         );
       }
+    }
+
+    if (isMobile) {
+      return (
+        <div
+          className={cn(
+            'bg-bg',
+            'dark:bg-dark-bg',
+            'flex',
+            'h-full',
+            'items-center',
+            'justify-center'
+          )}
+        >
+          <div className={cn('text-center')}>
+            <div
+              className={cn(
+                'text-secondary',
+                'dark:text-dark-secondary',
+                'mx-auto',
+                'mb-4',
+                'h-12',
+                'w-12'
+              )}
+            >
+              <svg viewBox='0 0 24 24' fill='currentColor'>
+                <path d='M12 2a2 2 0 00-2 2v6H6a2 2 0 000 4h4v6a2 2 0 004 0v-6h4a2 2 0 000-4h-4V4a2 2 0 00-2-2z' />
+              </svg>
+            </div>
+            <h3
+              className={cn(
+                'text-text',
+                'dark:text-dark-text',
+                'mb-2',
+                'text-lg',
+                'font-semibold'
+              )}
+            >
+              Выберите заметку
+            </h3>
+            <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
+              Выберите заметку во вкладках или в сайдбаре
+            </p>
+          </div>
+        </div>
+      );
     }
 
     return (

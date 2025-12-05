@@ -57,7 +57,9 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
           />
         ) : (
           <div className={cn('flex', 'items-center', 'gap-3')}>
-            <p className={cn('note-title')}>{title}</p>
+            <p className={cn('note-title', 'flex', 'items-center', 'gap-2')}>
+              {title}
+            </p>
           </div>
         )}
       </div>

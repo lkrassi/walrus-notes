@@ -4,15 +4,19 @@ import { Link, useLocation } from 'react-router-dom';
 import cn from 'shared/lib/cn';
 import { BackButton } from 'shared/ui/components/BackButton';
 import { useLocalization } from 'widgets/hooks';
+import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { LogoutButton } from '../logout/LogoutButton';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
+import Garland from '../Garland';
+import { useHolidaySettings } from '../../../hooks/useHolidaySettings';
 
 const PrivateHeaderComponent = () => {
   const { t } = useLocalization();
   const location = useLocation();
   const isSettingsPage = location.pathname === '/settings';
+  const { enabled } = useHolidaySettings();
 
   return (
     <header
@@ -28,6 +32,8 @@ const PrivateHeaderComponent = () => {
         'md:px-5'
       )}
     >
+      <Garland active={enabled} />
+
       <div
         className={cn(
           'flex',
@@ -54,7 +60,7 @@ const PrivateHeaderComponent = () => {
           aria-label={t('common:header.goToHomepage')}
         >
           <img
-            src={logo}
+            src={enabled ? logo2 : logo}
             alt={t('common:header.logoAlt')}
             className={cn('h-25', 'w-25')}
             loading='lazy'
@@ -124,7 +130,7 @@ const PrivateHeaderComponent = () => {
           aria-label={t('common:header.goToHomepage')}
         >
           <img
-            src={logo}
+            src={enabled ? logo2 : logo}
             alt={t('common:header.logoAlt')}
             className={cn('h-15', 'w-15')}
             loading='lazy'
