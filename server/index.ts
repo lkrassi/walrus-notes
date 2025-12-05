@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
-app.get('/api/health', (_req: Request, res: Response) => {
+app.head('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
