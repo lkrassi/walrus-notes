@@ -2,21 +2,15 @@ import { appRoutesConfig } from 'app/router/config';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { SidebarProvider, store } from 'widgets';
-import HolidaySnow from 'widgets/ui/components/HolidaySnow';
-
 import cn from 'shared/lib/cn';
 import { ModalProvider, NotificationsContainer } from 'widgets/ui';
+import Snowfall from 'widgets/ui/components/Snowfall';
 
 export const App = () => {
   return (
     <>
-      <div
-        className={cn('pointer-events-none', 'fixed', 'inset-0')}
-        style={{ zIndex: 2147483647 }}
-      >
-        <HolidaySnow count={100} />
-      </div>
-      <div className={cn('bg-gradient', 'min-h-screen')}>
+      <div className={cn('bg-gradient', 'min-h-screen', 'relative')}>
+        <Snowfall density={0.07} />
         <Provider store={store}>
           <SidebarProvider>
             <ModalProvider>
