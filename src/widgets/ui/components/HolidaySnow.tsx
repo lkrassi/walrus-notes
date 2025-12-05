@@ -23,22 +23,38 @@ type Particle = {
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
-const gradientCache = new Map<number, CanvasGradient>();
+// Cache for pre-rendered snowflake sprites (offscreen canvas) keyed by size
+const spriteCache = new Map<number, HTMLCanvasElement>();
 
-const getSnowflakeGradient = (
-  ctx: CanvasRenderingContext2D,
-  size: number
-): CanvasGradient => {
-  const cached = gradientCache.get(size);
+const createSnowflakeSprite = (size: number): HTMLCanvasElement => {
+  const c = document.createElement('canvas');
+  const dpr = window.devicePixelRatio || 1;
+  const s = Math.ceil(size * 2 * dpr);
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  ctx.scale(dpr, dpr);
+
+  const g = ctx.createRadialGradient(size, size, 0, size, size, size);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.6, 'rgba(255,255,255,0.95)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(size, size, size, 0, Math.PI * 2);
+  ctx.fill();
+
+  return c;
+};
+
+const getSnowflakeSprite = (size: number): HTMLCanvasElement => {
+  const key = Math.round(size * 10) / 10; // group sizes to reduce cache
+  const cached = spriteCache.get(key);
   if (cached) return cached;
-
-  const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
-  gradient.addColorStop(0, 'rgba(255,255,255,1)');
-  gradient.addColorStop(0.6, 'rgba(255,255,255,0.95)');
-  gradient.addColorStop(1, 'rgba(255,255,255,0)');
-
-  gradientCache.set(size, gradient);
-  return gradient;
+  const sprite = createSnowflakeSprite(size);
+  spriteCache.set(key, sprite);
+  return sprite;
 };
 
 const debounce = (fn: any, ms: number) => {
@@ -96,7 +112,7 @@ export const HolidaySnow: React.FC<{ count?: number }> = ({ count = 220 }) => {
           y: Math.random() * -h,
           r,
           vy: 20 + depth * 80 + Math.random() * 40,
-          vx: (Math.random() - 0.5) * 10,
+          vx: 0,
           swayPhase: Math.random() * Math.PI * 2,
           rot: Math.random() * Math.PI * 2,
           rotSpeed: (Math.random() - 0.5) * 0.02,
@@ -242,11 +258,13 @@ export const HolidaySnow: React.FC<{ count?: number }> = ({ count = 220 }) => {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
+        // Mostly straight fall with a small horizontal drift
         const sway =
           Math.sin((now / 1000) * (0.5 + p.depth) + p.swayPhase) *
-          (1.2 + p.depth * 2);
-        p.vx += windRef.current * (0.2 + p.depth * 0.8) * (dt / 16);
-        p.x += (p.vx + sway) * (dt / 16);
+          (0.2 + p.depth * 0.2);
+        const baseH = isMobile ? 6 : 10; // px/sec
+        const hSpeed = baseH * (0.5 + p.depth * 0.5) * (1 + windRef.current);
+        p.x += (hSpeed + sway) * (dt / 1000);
         p.y += p.vy * (dt / 1000);
         p.rot += p.rotSpeed * (dt / 16);
 
@@ -274,11 +292,10 @@ export const HolidaySnow: React.FC<{ count?: number }> = ({ count = 220 }) => {
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
 
-        const gradient = getSnowflakeGradient(ctx, p.r);
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-        ctx.fill();
+        // draw from cached sprite for this size
+        const sprite = getSnowflakeSprite(Math.max(1, Math.round(p.r)));
+        const s = sprite.width / (window.devicePixelRatio || 1) / 2;
+        ctx.drawImage(sprite, -s, -s, s * 2, s * 2);
         ctx.restore();
       }
 
@@ -298,7 +315,7 @@ export const HolidaySnow: React.FC<{ count?: number }> = ({ count = 220 }) => {
 
       rafRef.current = requestAnimationFrame(t => step(t, canvas, ctx));
     },
-    [addSnowAt, drawPile]
+    [addSnowAt, drawPile, isMobile]
   );
 
   useEffect(() => {
@@ -366,7 +383,7 @@ export const HolidaySnow: React.FC<{ count?: number }> = ({ count = 220 }) => {
         rafRef.current = null;
       }
 
-      gradientCache.clear();
+      spriteCache.clear();
     };
   }, [enabled, resize, initParticles, step]);
 
