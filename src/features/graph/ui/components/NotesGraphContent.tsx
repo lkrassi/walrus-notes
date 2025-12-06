@@ -23,12 +23,14 @@ interface NotesGraphContentProps {
   layoutId: string;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
   allowNodeDrag?: boolean;
+  isMain?: boolean;
 }
 
 const NotesGraphContentComponent = ({
   layoutId,
   onNoteOpen,
   allowNodeDrag,
+  isMain,
 }: NotesGraphContentProps) => {
   const {
     initialNodes,
@@ -615,6 +617,7 @@ const NotesGraphContentComponent = ({
       onDrop={handleNoteDrop}
       onBoxSelect={handleBoxSelect}
       onAddNoteToGraph={handleAddNoteToGraph}
+      isMain={isMain}
     />
   );
 };

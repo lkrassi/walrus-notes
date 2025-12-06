@@ -3,7 +3,7 @@ import {
   useUpdateNotePositionMutation,
   useGetMyLayoutsQuery,
 } from 'app/store/api';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import type { Edge, Node } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 
@@ -12,18 +12,29 @@ interface UseNotesGraphProps {
 }
 
 export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
-  const { data: posedNotesResponse, isLoading } = useGetPosedNotesQuery({
-    layoutId,
-  });
+  const {
+    data: posedNotesResponse,
+    isLoading,
+    refetch,
+  } = useGetPosedNotesQuery({ layoutId });
+
+  // Получаем layouts чтобы определить isMain
+  const { data: layoutsResponse } = useGetMyLayoutsQuery();
+  const layouts = layoutsResponse?.data || [];
+  const isMain = layouts.find(l => l.id === layoutId)?.isMain === true;
+
+  // Для главного графа делаем refetch при каждом заходе
+  useEffect(() => {
+    if (isMain) {
+      refetch();
+    }
+  }, [isMain, layoutId, refetch]);
 
   const [updatePosition] = useUpdateNotePositionMutation();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   const posedNotes = posedNotesResponse?.data || [];
-
-  const { data: layoutsResponse } = useGetMyLayoutsQuery();
-  const layouts = layoutsResponse?.data || [];
 
   const layoutsMap = useMemo(() => {
     const m = new Map<string, string>();

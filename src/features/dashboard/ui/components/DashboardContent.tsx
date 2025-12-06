@@ -223,6 +223,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
             layoutId={layoutId}
             onNoteOpen={handleNoteOpenFromGraph}
             allowNodeDrag={activeTab.item.isMain !== true}
+            isMain={activeTab.item.isMain === true}
           />
         );
       }

@@ -590,65 +590,51 @@ export const notesApi = apiSlice.injectEndpoints({
         const patchResults: Array<{ undo?: () => void }> = [];
 
         try {
-          const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
-          const layouts: Layout[] = layoutsCache.data?.data || [];
-
-          for (const l of layouts) {
-            try {
-              const pr = dispatch(
-                notesApi.util.updateQueryData(
-                  'getPosedNotes',
-                  { layoutId: l.id },
-                  draft => {
-                    const noteIndex = draft.data.findIndex(
-                      note => note.id === arg.noteId
-                    );
-
-                    if (noteIndex !== -1) {
-                      draft.data[noteIndex].position = {
-                        xPos: arg.xPos,
-                        yPos: arg.yPos,
-                      };
-                    } else {
-                      if (l.id === arg.layoutId || l.isMain === true) {
-                        const newNote: Note = realNoteData
-                          ? {
-                              ...realNoteData,
-                              layoutId: realNoteData.layoutId ?? arg.layoutId,
-                              position: {
-                                xPos: arg.xPos,
-                                yPos: arg.yPos,
-                              },
-                            }
-                          : ({
-                              ...createTempNote(),
-                              layoutId: arg.layoutId,
-                              position: { xPos: arg.xPos, yPos: arg.yPos },
-                            } as Note);
-                        draft.data.push(newNote);
+          const pr = dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                const noteIndex = draft.data.findIndex(
+                  note => note.id === arg.noteId
+                );
+                if (noteIndex !== -1) {
+                  draft.data[noteIndex].position = {
+                    xPos: arg.xPos,
+                    yPos: arg.yPos,
+                  };
+                } else {
+                  const newNote: Note = realNoteData
+                    ? {
+                        ...realNoteData,
+                        layoutId: arg.layoutId,
+                        position: {
+                          xPos: arg.xPos,
+                          yPos: arg.yPos,
+                        },
                       }
-                    }
-                  }
-                )
-              );
-              patchResults.push(pr);
-            } catch (_e) {}
+                    : ({
+                        ...createTempNote(),
+                        layoutId: arg.layoutId,
+                        position: { xPos: arg.xPos, yPos: arg.yPos },
+                      } as Note);
+                  draft.data.push(newNote);
+                }
+              }
+            )
+          );
+          patchResults.push(pr);
 
-            try {
-              const pr2 = dispatch(
-                notesApi.util.updateQueryData(
-                  'getUnposedNotes',
-                  { layoutId: l.id },
-                  draft => {
-                    draft.data = draft.data.filter(
-                      note => note.id !== arg.noteId
-                    );
-                  }
-                )
-              );
-              patchResults.push(pr2);
-            } catch (_e) {}
-          }
+          const pr2 = dispatch(
+            notesApi.util.updateQueryData(
+              'getUnposedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                draft.data = draft.data.filter(note => note.id !== arg.noteId);
+              }
+            )
+          );
+          patchResults.push(pr2);
         } catch (_e) {}
 
         try {

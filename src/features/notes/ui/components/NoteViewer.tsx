@@ -1,4 +1,4 @@
-import React from 'react';
+import {useRef, useEffect} from 'react'
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
@@ -36,8 +36,8 @@ export const NoteViewer = ({
     handleDiscard,
   } = useNoteEditor(note, onNoteUpdated);
 
-  const autoOpenedRef = React.useRef(false);
-  React.useEffect(() => {
+  const autoOpenedRef = useRef(false);
+  useEffect(() => {
     if (autoOpenedRef.current) return;
     if (hasLocalChanges || hasServerDraft) {
       handleEdit();

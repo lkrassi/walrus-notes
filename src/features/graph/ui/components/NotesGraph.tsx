@@ -8,12 +8,14 @@ interface NotesGraphProps {
     note: import('shared/model/types/layouts').Note;
   }) => void;
   allowNodeDrag?: boolean;
+  isMain?: boolean;
 }
 
 export const NotesGraph = ({
   layoutId,
   onNoteOpen,
   allowNodeDrag,
+  isMain,
 }: NotesGraphProps) => {
   return (
     <>
@@ -22,6 +24,7 @@ export const NotesGraph = ({
           layoutId={layoutId}
           onNoteOpen={onNoteOpen}
           allowNodeDrag={allowNodeDrag}
+          isMain={isMain}
         />
       </ReactFlowProvider>
     </>

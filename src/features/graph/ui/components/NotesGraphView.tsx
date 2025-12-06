@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow, { useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -55,6 +55,7 @@ interface NotesGraphViewProps {
   }) => void;
   disableZoomDuringDrag?: boolean;
   allowNodeDrag?: boolean;
+  isMain?: boolean;
 }
 
 export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
@@ -79,8 +80,8 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   onDrop,
   onAddNoteToGraph,
   onBoxSelect,
+  isMain,
 }: NotesGraphViewProps) => {
-
   const [overlayCoords, setOverlayCoords] = useState<{
     x: number;
     y: number;
@@ -107,7 +108,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   }> = ({ onViewportChange }) => {
     const { getViewport } = useReactFlow();
 
-    React.useEffect(() => {
+    useEffect(() => {
       let mounted = true;
 
       const tick = () => {
@@ -189,7 +190,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
               onNoteSelect={onAddNoteToGraph}
             />
 
-            <OffscreenArrows nodes={nodesWithSelection} />
+            <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
             <ViewportTracker onViewportChange={v => setCenterCoords(v)} />
           </ReactFlow>
           <CoordinateOverlay

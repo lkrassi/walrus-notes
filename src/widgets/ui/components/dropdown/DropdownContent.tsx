@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import cn from '../../../../shared/lib/cn';
+import {useRef, useEffect} from 'react'
 
 export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
 
@@ -31,11 +32,11 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   reachMargin = '200px',
   reachDebounceMs = 800,
 }) => {
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
-  const isThrottledRef = React.useRef(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const isThrottledRef = useRef(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!onReachEnd) return;
 
     let io: IntersectionObserver | null = null;
@@ -111,7 +112,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
     };
   }, [onReachEnd, reachMargin, isOpen, state, reachDebounceMs]);
 
-  React.useEffect(() => {
+  useEffect(() => {
   }, [isOpen, state]);
 
   const renderContent = () => {

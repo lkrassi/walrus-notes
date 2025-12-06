@@ -223,8 +223,7 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
         });
         return { center, anchors: { top, right, bottom, left } };
       }
-    } catch (_e) {
-    }
+    } catch (_e) {}
 
     const node = getNodes().find(n => n.id === nodeId);
     if (node) {
@@ -292,7 +291,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
       targetInfo.anchors,
       sourceInfo.center
     );
-
 
     return getBezierPath({
       sourceX: sourceAnchor.x,
