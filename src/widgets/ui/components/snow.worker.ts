@@ -22,7 +22,7 @@ let flakes: Flake[] = [];
 let targetFlakes = 0;
 let last = 0;
 let timerId: number | null = null;
-let settings: any = {};
+let settings: Record<string, unknown> = {};
 let fullPosted = false;
 
 const rand = (a: number, b?: number) =>
@@ -85,11 +85,14 @@ async function getSprite(r: number) {
 }
 
 async function spawnFlake(withDelay = true) {
-  const r = Math.max(1, Math.round(Math.random() * (settings.maxSize || 4)));
+  const r = Math.max(
+    1,
+    Math.round(Math.random() * ((settings.maxSize as number) || 4))
+  );
   flakes.push({
     x: Math.random() * width,
-    y: -r - Math.random() * 100,
-    vx: rand(-0.3, 0.3) + (settings.wind || 0.02) * rand(0.5, 1.5),
+    y: -r - Math.random() * height,
+    vx: rand(-0.3, 0.3) + ((settings.wind as number) || 0.02) * rand(0.5, 1.5),
     vy: rand(0.5, 1.6) * (1 + r / 6),
     r,
     windFactor: Math.random() * 0.6 + 0.7,
@@ -102,9 +105,8 @@ async function step(now: number) {
   const dt = Math.min(40, now - last) / 16.6667;
   last = now;
 
-  const density = settings.density ?? 0.6;
-  const accumulationSpeed = settings.accumulationSpeed ?? 0.9;
-  const wind = settings.wind ?? 0.02;
+  const accumulationSpeed = (settings.accumulationSpeed as number) ?? 0.9;
+  const wind = (settings.wind as number) ?? 0.02;
 
   ctx.clearRect(0, 0, width, height);
 
@@ -229,7 +231,9 @@ self.onmessage = async (ev: MessageEvent) => {
       settings = data.settings || {};
       targetFlakes = Math.max(
         40,
-        Math.floor((width / 1000) * (settings.density || 0.6) * 1000)
+        Math.floor(
+          ((width / 1000) * ((settings.density as number) || 0.6) * 1000) / 3
+        )
       );
       flakes = [];
       for (let i = 0; i < targetFlakes; i++) await spawnFlake(true);
@@ -241,7 +245,9 @@ self.onmessage = async (ev: MessageEvent) => {
       setSize(data.width, data.height, data.DPR || 1);
       targetFlakes = Math.max(
         40,
-        Math.floor((width / 1000) * (settings.density || 0.6) * 1000)
+        Math.floor(
+          ((width / 1000) * ((settings.density as number) || 0.6) * 1000) / 3
+        )
       );
       if (flakes.length > targetFlakes) {
         flakes.splice(0, flakes.length - targetFlakes);
@@ -252,7 +258,9 @@ self.onmessage = async (ev: MessageEvent) => {
       settings = { ...(settings || {}), ...(data.settings || {}) };
       targetFlakes = Math.max(
         40,
-        Math.floor((width / 1000) * (settings.density || 0.6) * 1000)
+        Math.floor(
+          ((width / 1000) * ((settings.density as number) || 0.6) * 1000) / 3
+        )
       );
       if (flakes.length > targetFlakes) {
         flakes.splice(0, flakes.length - targetFlakes);
@@ -277,10 +285,28 @@ self.onmessage = async (ev: MessageEvent) => {
       stopLoop();
       break;
     }
+    case 'start': {
+      startLoop();
+      break;
+    }
     case 'terminate': {
       stopLoop();
       spriteCache.forEach(b => b.close());
       spriteCache.clear();
+      break;
+    }
+    case 'reset': {
+      // reset flakes to fall from top again
+      flakes.length = 0;
+      accum.fill(0);
+      fullPosted = false;
+      targetFlakes = Math.max(
+        40,
+        Math.floor(
+          ((width / 1000) * ((settings.density as number) || 0.6) * 1000) / 3
+        )
+      );
+      for (let i = 0; i < targetFlakes; i++) await spawnFlake(true);
       break;
     }
   }

@@ -24,6 +24,10 @@
     "help": {
       "title": "Help",
       "description": "Documentation and support"
+    },
+    "holiday": {
+      "title": "Holiday decorations",
+      "description": "Enable snow and garland decorations in the UI"
     }
   },
   "about": {

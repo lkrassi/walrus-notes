@@ -1,7 +1,6 @@
-import { Bell, HelpCircle, Palette, Shield, User } from 'lucide-react';
-import cn from 'shared/lib/cn';
-import { Button } from 'shared/ui/components/Button';
+import { User } from 'lucide-react';
 import { ProfileButton } from '../../profile';
+import { HolidayToggle } from '../ui/components/HolidayToggle';
 
 export const settingsSections = [
   {
@@ -12,47 +11,24 @@ export const settingsSections = [
     action: <ProfileButton />,
   },
   {
-    id: 'appearance',
-    title: 'Внешний вид',
-    icon: Palette,
-    description: 'Тема, шрифты и настройки отображения',
-    action: (
-      <Button variant='default' className={cn('h-10', 'w-30')}>
-        Настроить
-      </Button>
+    id: 'holiday',
+    title: 'Новогодние украшения',
+    icon: () => (
+      <svg
+        width='16'
+        height='16'
+        viewBox='0 0 24 24'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <path
+          d='M12 2L13.545 8.455L20 10.001L13.545 11.546L12 18L10.455 11.546L4 10.001L10.455 8.455L12 2Z'
+          fill='currentColor'
+        />
+      </svg>
     ),
-  },
-  {
-    id: 'notifications',
-    title: 'Уведомления',
-    icon: Bell,
-    description: 'Настройки оповещений и email-рассылок',
-    action: (
-      <Button variant='default' className={cn('h-10', 'w-30')}>
-        Управлять
-      </Button>
-    ),
-  },
-  {
-    id: 'security',
-    title: 'Безопасность',
-    icon: Shield,
-    description: 'Пароль, двухфакторная аутентификация',
-    action: (
-      <Button variant='default' className={cn('h-10', 'w-30')}>
-        Защитить
-      </Button>
-    ),
-  },
-  {
-    id: 'help',
-    title: 'Помощь',
-    icon: HelpCircle,
-    description: 'Документация и поддержка',
-    action: (
-      <Button variant='default' className={cn('h-10', 'w-30')}>
-        Перейти
-      </Button>
-    ),
+    description: 'Включить снег и гирлянду в интерфейсе',
+    action: <HolidayToggle />,
+    isHoliday: true,
   },
 ];

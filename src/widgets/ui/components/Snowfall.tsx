@@ -57,6 +57,10 @@ const Snowfall: React.FC<SnowfallProps> = ({
           } catch {}
         } else {
           try {
+            // reset flakes in worker when re-enabling
+            workerRef.current.postMessage({ type: 'reset' });
+          } catch {}
+          try {
             workerRef.current.postMessage({ type: 'start' });
           } catch {}
         }
@@ -80,6 +84,10 @@ const Snowfall: React.FC<SnowfallProps> = ({
         } else {
           if (f) (f.style as CSSStyleDeclaration).display = '';
           if (d) (d.style as CSSStyleDeclaration).display = '';
+          // dispatch reset event for main-thread flakes
+          try {
+            window.dispatchEvent(new CustomEvent('wn.snow.reset'));
+          } catch {}
         }
       } catch {}
     }
@@ -313,7 +321,10 @@ const Snowfall: React.FC<SnowfallProps> = ({
 
     const flakes: Flake[] = [];
     const getTargetFlakes = () =>
-      Math.max(40, Math.floor((width / 1000) * densityRef.current * 1000));
+      Math.max(
+        40,
+        Math.floor(((width / 1000) * densityRef.current * 1000) / 3)
+      );
 
     const rand = (a: number, b?: number) =>
       b == null ? Math.random() * a : a + Math.random() * (b - a);
@@ -353,7 +364,7 @@ const Snowfall: React.FC<SnowfallProps> = ({
 
       flakes.push({
         x: Math.random() * width,
-        y: -r - Math.random() * 100,
+        y: -r - Math.random() * height,
         vx: rand(-0.3, 0.3) + wind * rand(0.5, 1.5),
         vy: rand(0.5, 1.6) * (1 + r / 6),
         r,
@@ -517,6 +528,19 @@ const Snowfall: React.FC<SnowfallProps> = ({
       }
     };
 
+    const onReset = () => {
+      flakes.length = 0;
+      accum.fill(0);
+      fullTriggered = false;
+      setFullReached(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      const initTarget = getTargetFlakes();
+      for (let i = 0; i < initTarget; i++) spawnFlake(true);
+    };
+
     window.addEventListener('wn.snow.clear', onClear as EventListener);
 
     const resizeColumns = () => {
@@ -539,12 +563,14 @@ const Snowfall: React.FC<SnowfallProps> = ({
     };
 
     window.addEventListener('resize', resizeColumns);
+    window.addEventListener('wn.snow.reset', onReset as EventListener);
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
       window.removeEventListener('resize', resizeColumns);
       window.removeEventListener('wn.snow.clear', onClear as EventListener);
+      window.removeEventListener('wn.snow.reset', onReset as EventListener);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
