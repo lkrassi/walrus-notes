@@ -269,7 +269,6 @@ const Snowfall: React.FC<SnowfallProps> = ({
       }
     }
 
-
     const ctx = flakesCanvas.getContext('2d')!;
     const driftCtx = driftCanvas.getContext('2d')!;
 
