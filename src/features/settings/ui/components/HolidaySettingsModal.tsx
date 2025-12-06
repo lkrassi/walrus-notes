@@ -18,21 +18,21 @@ export const HolidaySettingsModal: React.FC = () => {
   };
 
   return (
-      <div className={cn('grid', 'grid-cols-2', 'gap-3')}>
-        <Button onClick={toggleGarland} className={cn('btn')}>
-          {t('settings:holiday.garland')}:{' '}
-          {settings.garland
-            ? t('settings:holiday.on') || 'On'
-            : t('settings:holiday.off') || 'Off'}
-        </Button>
+    <div className={cn('grid', 'grid-cols-2', 'gap-3')}>
+      <Button onClick={toggleGarland} className={cn('btn')}>
+        {t('settings:holiday.garland')}:{' '}
+        {settings.garland
+          ? t('settings:holiday.on') || 'On'
+          : t('settings:holiday.off') || 'Off'}
+      </Button>
 
-        <Button onClick={toggleSnow} className={cn('btn')}>
-          {t('settings:holiday.snow')}:{' '}
-          {settings.snow
-            ? t('settings:holiday.on') || 'On'
-            : t('settings:holiday.off') || 'Off'}
-        </Button>
-      </div>
+      <Button onClick={toggleSnow} className={cn('btn')}>
+        {t('settings:holiday.snow')}:{' '}
+        {settings.snow
+          ? t('settings:holiday.on') || 'On'
+          : t('settings:holiday.off') || 'Off'}
+      </Button>
+    </div>
   );
 };
 

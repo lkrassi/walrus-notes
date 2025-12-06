@@ -3,17 +3,20 @@ import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { SidebarProvider, store } from 'widgets';
 import cn from 'shared/lib/cn';
-import { ModalProvider, NotificationsContainer } from 'widgets/ui';
-import Snowfall from 'widgets/ui/components/Snowfall';
+import {
+  ModalProvider,
+  NotificationsContainer,
+  SnowfallOverlay,
+} from 'widgets/ui';
 
 export const App = () => {
   return (
     <>
       <div className={cn('bg-gradient', 'min-h-screen', 'relative')}>
-        <Snowfall density={0.07} />
         <Provider store={store}>
           <SidebarProvider>
             <ModalProvider>
+              <SnowfallOverlay />
               <Routes>
                 {appRoutesConfig.map(route => (
                   <Route
