@@ -16,7 +16,7 @@ const PrivateHeaderComponent = () => {
   const { t } = useLocalization();
   const location = useLocation();
   const isSettingsPage = location.pathname === '/settings';
-  const { enabled } = useHolidaySettings();
+  const { enabled, settings } = useHolidaySettings();
 
   return (
     <header
@@ -32,7 +32,7 @@ const PrivateHeaderComponent = () => {
         'md:px-5'
       )}
     >
-      <Garland active={enabled} />
+      <Garland active={!!settings?.garland && enabled} />
 
       <div
         className={cn(

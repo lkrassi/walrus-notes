@@ -126,7 +126,6 @@ export const DashBoard = () => {
             onItemSelect={handleItemSelect}
           />
         </div>
-        {/* debug overlay removed - cleaned up debug logs */}
       </div>
     </WebSocketProvider>
   );

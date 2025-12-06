@@ -5,17 +5,26 @@ import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
 import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
 import { Button } from 'shared/ui/components/Button';
+import { useModalActions } from 'widgets/hooks/useModalActions';
+import { HolidaySettingsModal } from './HolidaySettingsModal';
 
 const HolidayToggle: React.FC = () => {
-  const { enabled, setEnabled } = useHolidaySettings();
   const { t } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
+
+  const handleOpen = openModalFromTrigger(<HolidaySettingsModal />, {
+    title: t('settings:holiday.title') || 'Новогодние украшения',
+    size: 'md',
+    closeOnOverlayClick: true,
+  });
+
   return (
     <Button
       variant='default'
       className={cn('h-10', 'w-30')}
-      onClick={() => setEnabled(!enabled)}
+      onClick={handleOpen}
     >
-      {enabled ? t('settings:holiday.on') : t('settings:holiday.off')}
+      {t('settings:holiday.settingsButton')}
     </Button>
   );
 };

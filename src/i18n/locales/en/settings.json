@@ -42,7 +42,15 @@
   "holiday": {
     "title": "Holiday decorations",
     "description": "Enable snow and garland decorations in the UI",
+    "garland": "Garland",
+    "garlandLabel": "Show garland decorations in the UI",
+    "snow": "Snow",
+    "snowLabel": "Show snow decorations in the UI",
     "on": "On",
-    "off": "Off"
+    "off": "Off",
+    "clearSnow": "Clear snow",
+    "settingsButton": "Settings",
+    "save": "Save",
+    "cancel": "Cancel"
   }
 }

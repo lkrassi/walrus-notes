@@ -13,7 +13,7 @@ import { useHolidaySettings } from '../../../hooks/useHolidaySettings';
 
 const PublicHeaderComponent = () => {
   const { t } = useLocalization();
-  const { enabled } = useHolidaySettings();
+  const { enabled, settings } = useHolidaySettings();
 
   return (
     <header
@@ -33,7 +33,7 @@ const PublicHeaderComponent = () => {
         'md:px-5'
       )}
     >
-      <Garland active={enabled} />
+      <Garland active={!!settings?.garland && enabled} />
 
       <Link
         to='/'
