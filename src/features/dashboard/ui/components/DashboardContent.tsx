@@ -17,6 +17,7 @@ import type { TabType } from 'widgets/model/utils/tabUtils';
 import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { FileText } from 'lucide-react';
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
@@ -138,9 +139,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
                 'w-16'
               )}
             >
-              <svg viewBox='0 0 24 24' fill='currentColor'>
-                <path d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' />
-              </svg>
+              <FileText className='h-15 w-15' />{' '}
             </div>
             <h3
               className={cn(
@@ -252,9 +251,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
                 'w-12'
               )}
             >
-              <svg viewBox='0 0 24 24' fill='currentColor'>
-                <path d='M12 2a2 2 0 00-2 2v6H6a2 2 0 000 4h4v6a2 2 0 004 0v-6h4a2 2 0 000-4h-4V4a2 2 0 00-2-2z' />
-              </svg>
+              <FileText className='h-15 w-15' />
             </div>
             <h3
               className={cn(

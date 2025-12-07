@@ -18,12 +18,10 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
     refetch,
   } = useGetPosedNotesQuery({ layoutId });
 
-  // Получаем layouts чтобы определить isMain
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
   const layouts = layoutsResponse?.data || [];
   const isMain = layouts.find(l => l.id === layoutId)?.isMain === true;
 
-  // Для главного графа делаем refetch при каждом заходе
   useEffect(() => {
     if (isMain) {
       refetch();

@@ -170,7 +170,7 @@ export const FileTreeItemHeader = ({
       onBlur={handleMouseLeave}
       onClick={handleItemClick}
     >
-      {item.type === 'layout' && item.isMain !== true && ( 
+      {item.type === 'layout' && item.isMain !== true && (
         <button
           type='button'
           onClick={e => {
@@ -305,7 +305,7 @@ export const FileTreeItemHeader = ({
                   'duration-150',
                   'opacity-100',
                   isMobile
-                    ? 'text-text dark:text-dark-text'
+                    ? 'text-gray-600 dark:text-white'
                     : isSelected
                       ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                       : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'

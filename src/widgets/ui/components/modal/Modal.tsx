@@ -124,7 +124,8 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         'bg-black/50',
         'backdrop-blur-sm',
         'transition-opacity',
-        'duration-300'
+        'duration-300',
+        ''
       )}
       style={{
         opacity: animationState === 'entering' ? 0 : 1,

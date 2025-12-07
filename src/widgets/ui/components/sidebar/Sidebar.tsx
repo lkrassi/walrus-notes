@@ -147,7 +147,8 @@ const SidebarComponent = (
           'dark:text-dark-text',
           'md:relative',
           'md:flex',
-          'md:translate-x-0'
+          'md:translate-x-0',
+          'z-11'
         )}
         style={width ? { width } : undefined}
       >
