@@ -88,7 +88,7 @@ const SidebarComponent = (
       layoutId,
       isMain: layout?.isMain === true,
     });
-    
+
     // Закрыть сайдбар на мобильных при открытии графа
     setIsMobileOpen(false);
   };
