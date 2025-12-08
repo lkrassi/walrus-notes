@@ -72,9 +72,9 @@ const SidebarComponent = (
 
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
-    if (item.type !== 'layout') {
-      setIsMobileOpen(false);
-    }
+    // Закрывать сайдбар при клике на любой элемент (note, graph, layout)
+    // layout открывает граф, поэтому сайдбар нужно закрыть
+    setIsMobileOpen(false);
   };
 
   const handleOpenGraph = (layoutId: string) => {
@@ -88,6 +88,9 @@ const SidebarComponent = (
       layoutId,
       isMain: layout?.isMain === true,
     });
+    
+    // Закрыть сайдбар на мобильных при открытии графа
+    setIsMobileOpen(false);
   };
 
   return (

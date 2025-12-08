@@ -1,6 +1,5 @@
 import { FileText, Folder, Network } from 'lucide-react';
 import { useState } from 'react';
-import { useIsMobile } from 'widgets/hooks';
 import cn from 'shared/lib/cn';
 import type { TabsProps } from '../../model/types/tabsProps';
 import {
@@ -24,14 +23,11 @@ export const Tabs = ({
   onTabClose,
   onTabReorder,
 }: TabsProps) => {
-  const isMobile = useIsMobile();
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useDndSensors();
 
-  const visibleTabs = isMobile
-    ? tabs.filter(tab => tab.item.type === 'note')
-    : tabs;
+  const visibleTabs = tabs;
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
