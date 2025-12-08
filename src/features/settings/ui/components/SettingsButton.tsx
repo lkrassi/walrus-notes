@@ -11,7 +11,7 @@ export const SettingsButton: React.FC = () => {
   const { t } = useLocalization();
 
   const handleOpenSettings = () => {
-    navigate('/settings');
+    navigate('/profile');
   };
 
   return (

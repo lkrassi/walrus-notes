@@ -7,10 +7,6 @@ import {
   DndContext,
   DragOverlay,
   closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
   type DragStartEvent,
   type DragEndEvent,
 } from '@dnd-kit/core';
@@ -20,6 +16,7 @@ import {
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableTab } from './SortableTab';
+import { useDndSensors } from 'shared/lib/useDndSensors';
 
 export const Tabs = ({
   tabs,
@@ -30,14 +27,7 @@ export const Tabs = ({
   const isMobile = useIsMobile();
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor)
-  );
+  const sensors = useDndSensors();
 
   const visibleTabs = isMobile
     ? tabs.filter(tab => tab.item.type === 'note')

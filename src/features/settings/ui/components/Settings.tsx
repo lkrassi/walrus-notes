@@ -1,11 +1,35 @@
 import React from 'react';
+import { Camera } from 'lucide-react';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
+import { useAppSelector } from 'widgets/hooks/redux';
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
+import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
+import { ChangeProfilePictureForm } from '../../../profile/ui/components/ChangeProfilePictureForm';
 
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
+  const { profile } = useAppSelector(state => state.user);
+  const { openModalFromTrigger } = useModalActions();
+
+  const handleOpenImage = openModalFromTrigger(
+    <ImageViewerModal
+      imageUrl={`https://${profile?.imgUrl}`}
+      alt={profile?.username || 'Аватар'}
+    />,
+    {
+      title: ' ',
+      size: 'lg',
+      closeOnOverlayClick: true,
+    }
+  );
+
+  const handleChangePhoto = openModalFromTrigger(<ChangeProfilePictureForm />, {
+    title: t('profile:changePhoto') || 'Изменить фото',
+    size: 'md',
+  });
 
   return (
     <div className={cn('bg-bg', 'dark:bg-dark-bg', 'min-h-screen')}>
@@ -13,19 +37,114 @@ export const Settings: React.FC = () => {
 
       <main className={cn('container', 'mx-auto', 'px-4', 'py-8')}>
         <div className={cn('mx-auto', 'max-w-4xl')}>
-          <div className={cn('card', 'mb-8', 'rounded-2xl', 'p-6')}>
+          <div
+            className={cn(
+              'card',
+              'p-6',
+              'mb-6',
+              'max-sm:rounded-lg',
+              'max-sm:p-4'
+            )}
+          >
             <div className={cn('flex', 'items-center', 'gap-4')}>
-              <div>
-                <h2 className={cn('section-title')}>
-                  {t('settings:welcome.title')}
+              <div className={cn('relative')}>
+                <div
+                  className={cn(
+                    'flex',
+                    'h-16',
+                    'w-16',
+                    'items-center',
+                    'justify-center',
+                    'overflow-hidden',
+                    'rounded-full',
+                    'max-sm:h-12',
+                    'max-sm:w-12',
+                    'cursor-pointer',
+                    'hover:opacity-80',
+                    'transition-opacity'
+                  )}
+                  onClick={profile?.imgUrl ? handleOpenImage : undefined}
+                  role={profile?.imgUrl ? 'button' : undefined}
+                  tabIndex={profile?.imgUrl ? 0 : undefined}
+                >
+                  {profile?.imgUrl ? (
+                    <img
+                      src={`https://${profile.imgUrl}`}
+                      alt='Аватар'
+                      className={cn('h-full', 'w-full', 'object-cover')}
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        'flex',
+                        'h-full',
+                        'w-full',
+                        'items-center',
+                        'justify-center',
+                        'bg-gray-300',
+                        'text-2xl',
+                        'font-semibold',
+                        'text-gray-600',
+                        'dark:bg-gray-600',
+                        'dark:text-gray-300',
+                        'max-sm:text-xl'
+                      )}
+                    >
+                      {profile?.username?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleChangePhoto}
+                  className={cn(
+                    'absolute',
+                    'bottom-0',
+                    'right-0',
+                    'h-6',
+                    'w-6',
+                    'rounded-full',
+                    'bg-primary',
+                    'dark:bg-dark-primary',
+                    'flex',
+                    'items-center',
+                    'justify-center',
+                    'text-white',
+                    'hover:opacity-90',
+                    'transition-opacity'
+                  )}
+                  title={t('profile:changePhoto')}
+                >
+                  <Camera className={cn('h-3.5', 'w-3.5')} />
+                </button>
+              </div>
+              <div className={cn('flex-1')}>
+                <h2
+                  className={cn(
+                    'text-xl',
+                    'font-bold',
+                    'text-text',
+                    'dark:text-dark-text',
+                    'max-sm:text-lg'
+                  )}
+                >
+                  {profile?.username || t('profile:noUsername')}
                 </h2>
-                <p className={cn('muted-text')}>
-                  {t('settings:welcome.subtitle')}
+                <p
+                  className={cn(
+                    'text-sm',
+                    'text-secondary',
+                    'dark:text-dark-secondary',
+                    'max-sm:text-xs'
+                  )}
+                >
+                  {profile?.email || t('profile:noEmail')}
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Настройки */}
           <div className={cn('space-y-4', 'max-sm:space-y-3')}>
             {settingsSections.map(section => (
               <div

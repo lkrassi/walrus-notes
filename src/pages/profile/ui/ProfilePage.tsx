@@ -1,5 +1,5 @@
 import { Settings } from 'features/settings';
 
-export const SettingsPage = () => {
+export const ProfilePage = () => {
   return <Settings />;
 };

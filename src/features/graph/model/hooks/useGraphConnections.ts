@@ -46,12 +46,19 @@ export const useGraphConnections = ({
       sourceHandle?: string | null,
       targetHandle?: string | null
     ): Edge => {
+      const sourceNode = nodes.find(n => n.id === source);
+      const edgeColor =
+        (sourceNode?.data as { layoutColor?: string })?.layoutColor ||
+        '#6b7280';
+
       const edge: Edge = {
         id: `temp-${source}-${target}-${Date.now()}`,
         source,
         target,
         type: 'multiColor' as const,
-        data: {},
+        data: {
+          edgeColor,
+        },
       };
 
       const normalizeSource = (h?: string | null) => {
@@ -99,7 +106,10 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: unknown) => {
+      console.log('[useGraphConnections] onConnectEnd вызван, event:', event);
+
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
+        console.log('[useGraphConnections] Нет tempEdge или невалидный source');
         setTempEdge(null);
         return;
       }
@@ -107,10 +117,33 @@ export const useGraphConnections = ({
       let targetNodeId: string | null = null;
 
       let dropPosition = null as { x: number; y: number } | null;
+
+      // Поддержка и мыши (MouseEvent) и тач (TouchEvent)
+      let clientX: number | undefined;
+      let clientY: number | undefined;
+
       if (event instanceof MouseEvent) {
+        console.log('[useGraphConnections] MouseEvent обнаружен');
+        clientX = event.clientX;
+        clientY = event.clientY;
+      } else if (
+        event instanceof TouchEvent &&
+        event.changedTouches.length > 0
+      ) {
+        console.log('[useGraphConnections] TouchEvent обнаружен');
+        clientX = event.changedTouches[0].clientX;
+        clientY = event.changedTouches[0].clientY;
+      } else {
+        console.log(
+          '[useGraphConnections] Неизвестный тип события:',
+          typeof event
+        );
+      }
+
+      if (clientX !== undefined && clientY !== undefined) {
         const flowPosition = screenToFlowPosition({
-          x: event.clientX,
-          y: event.clientY,
+          x: clientX,
+          y: clientY,
         });
         dropPosition = flowPosition;
 
@@ -233,25 +266,38 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
+      console.log('[useGraphConnections] onConnect вызван:', connection);
+
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
       ) {
+        console.log('[useGraphConnections] Невалидные source или target');
         return;
       }
 
       const source = connection.source;
       const target = connection.target;
 
-      if (source === target) return;
+      if (source === target) {
+        console.log('[useGraphConnections] Source === target, отмена');
+        return;
+      }
 
       const edgeExists = allEdges.some(
         edge => edge.source === source && edge.target === target
       );
 
-      if (edgeExists) return;
+      if (edgeExists) {
+        console.log('[useGraphConnections] Связь уже существует');
+        return;
+      }
 
       try {
+        console.log('[useGraphConnections] Создание связи:', {
+          source,
+          target,
+        });
         const newEdge = createEdge(
           source,
           target,
@@ -266,11 +312,13 @@ export const useGraphConnections = ({
           secondNoteId: target,
         }).unwrap();
 
+        console.log('[useGraphConnections] Связь создана успешно');
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
         try {
           onEdgeCreated?.(newEdge);
         } catch (_error) {}
-      } catch (_error) {
+      } catch (error) {
+        console.error('[useGraphConnections] Ошибка создания связи:', error);
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );

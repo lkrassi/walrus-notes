@@ -14,7 +14,7 @@ export const ThemeSwitcher = () => {
       className={cn(
         'flex',
         'h-10',
-        'w-5',
+        'w-30',
         'items-center',
         'justify-center',
         'px-7',

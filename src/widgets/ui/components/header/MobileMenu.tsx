@@ -3,7 +3,12 @@ import { useLocalization, useSidebar } from 'widgets/hooks';
 
 import cn from 'shared/lib/cn';
 
-export const MobileMenu = () => {
+type MobileMenuProps = {
+  className?: string;
+  iconClassName?: string;
+};
+
+export const MobileMenu = ({ className, iconClassName }: MobileMenuProps) => {
   const { t } = useLocalization();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
 
@@ -29,14 +34,15 @@ export const MobileMenu = () => {
         'focus:ring-2',
         'focus:outline-none',
         'md:hidden',
-        'dark:hover:bg-gray-800'
+        'dark:hover:bg-gray-800',
+        className
       )}
       aria-label={isMobileOpen ? t('common:menu.close') : t('common:menu.open')}
     >
       {isMobileOpen ? (
-        <X className={cn('h-6', 'w-6')} />
+        <X className={cn('h-6', 'w-6', iconClassName)} />
       ) : (
-        <Menu className={cn('h-6', 'w-6')} />
+        <Menu className={cn('h-6', 'w-6', iconClassName)} />
       )}
     </button>
   );

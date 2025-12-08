@@ -1,15 +1,10 @@
-import { User } from 'lucide-react';
-import { ProfileButton } from '../../profile';
+import { Moon, Languages, LogOut } from 'lucide-react';
 import { HolidayToggle } from '../ui/components/HolidayToggle';
+import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
+import { LanguageSwitcher } from 'widgets/ui/components/LanguageSwitcher';
+import { LogoutButton } from 'widgets/ui/components/logout/LogoutButton';
 
 export const settingsSections = [
-  {
-    id: 'profile',
-    title: 'Профиль',
-    icon: User,
-    description: 'Управление личными данными и аватаром',
-    action: <ProfileButton />,
-  },
   {
     id: 'holiday',
     title: 'Новогодние украшения',
@@ -30,5 +25,26 @@ export const settingsSections = [
     description: 'Включить снег и гирлянду в интерфейсе',
     action: <HolidayToggle />,
     isHoliday: true,
+  },
+  {
+    id: 'theme',
+    title: 'Тема',
+    icon: Moon,
+    description: 'Переключение между светлой и тёмной темой',
+    action: <ThemeSwitcher />,
+  },
+  {
+    id: 'language',
+    title: 'Язык',
+    icon: Languages,
+    description: 'Выберите язык интерфейса',
+    action: <LanguageSwitcher />,
+  },
+  {
+    id: 'logout',
+    title: 'Выход',
+    icon: LogOut,
+    description: 'Выйти из аккаунта',
+    action: <LogoutButton />,
   },
 ];

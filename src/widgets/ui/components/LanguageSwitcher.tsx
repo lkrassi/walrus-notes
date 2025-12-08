@@ -75,7 +75,7 @@ export const LanguageSwitcher: React.FC = () => {
         className={cn(
           'flex',
           'h-10',
-          'w-5',
+          'w-30',
           'items-center',
           'justify-center',
           'px-7',
@@ -140,7 +140,7 @@ export const LanguageSwitcher: React.FC = () => {
                   : 'translate-y-2 opacity-0',
                 'flex',
                 'h-10',
-                'w-5',
+                'w-30',
                 'items-center',
                 'justify-center',
                 'px-7',

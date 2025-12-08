@@ -1,20 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useAppSelector } from 'widgets/hooks/redux';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { UserProfileModal } from './UserProfileModal';
 
 export const ProfileButton: React.FC = () => {
   const { profile } = useAppSelector(state => state.user);
   const { t } = useLocalization();
-  const { openModalFromTrigger } = useModalActions();
+  const navigate = useNavigate();
 
-  const handleOpenProfile = openModalFromTrigger(<UserProfileModal />, {
-    title: t('profile:title') || 'Профиль',
-    size: 'md',
-    closeOnOverlayClick: true,
-  });
+  const handleOpenProfile = () => {
+    navigate('/profile');
+  };
 
   return (
     <button

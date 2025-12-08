@@ -17,6 +17,7 @@ import cn from 'shared/lib/cn';
 interface MultiColorStepEdgeData {
   isRelatedToSelected?: boolean;
   isSelected?: boolean;
+  edgeColor?: string;
 }
 
 interface EdgeDeleteEventDetail {
@@ -36,6 +37,7 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     source,
     target,
     style = {},
+    data,
   } = props;
   const { setEdges, screenToFlowPosition, getNodes, getEdges } = useReactFlow();
 
@@ -56,7 +58,7 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     target,
   });
 
-  const strokeColor = '#6b7280';
+  const strokeColor = data?.edgeColor || '#6b7280';
   const validColor = '#10b981';
   const invalidColor = '#ef4444';
 

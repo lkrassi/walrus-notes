@@ -1,7 +1,8 @@
 import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
-import { Menu, Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
+import { Link } from 'react-router-dom';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import {
@@ -10,12 +11,16 @@ import {
   useSidebar,
   useIsMobile,
 } from 'widgets/hooks';
+import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
 import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { parseTabId } from 'widgets/model/utils/tabUtils';
 import { FileTree } from '../fileTree';
+import { MobileMenu } from '../header/MobileMenu';
+import logo2 from '../../../../assets/logo2.png';
+import logo from '../../../../assets/logo.png';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;
@@ -30,6 +35,7 @@ const SidebarComponent = (
 ) => {
   const { t } = useLocalization();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { enabled } = useHolidaySettings();
   const isMobile = useIsMobile();
   const { width, onPointerDown } = useResizableSidebar();
   const dispatch = useAppDispatch();
@@ -86,32 +92,6 @@ const SidebarComponent = (
 
   return (
     <>
-      {!isMobileOpen && (
-        <button
-          onClick={() => setIsMobileOpen(true)}
-          className={cn(
-            'mobile-menu-button',
-            'text-secondary',
-            'hover:text-text',
-            'dark:text-dark-secondary',
-            'dark:hover:text-dark-text',
-            'fixed',
-            'top-4',
-            'left-4',
-            'rounded-lg',
-            'p-2',
-            'transition-colors',
-            'hover:bg-gray-100',
-            'md:hidden',
-            'dark:hover:bg-gray-800'
-          )}
-          title={t('common:menu.open')}
-          aria-label={t('common:menu.open')}
-        >
-          <Menu className={cn('h-6 w-6')} />
-        </button>
-      )}
-
       {isMobileOpen && (
         <div
           className={cn(
@@ -153,40 +133,77 @@ const SidebarComponent = (
         style={width ? { width } : undefined}
       >
         <div
-          className={cn('border-border dark:border-dark-border border-b p-4')}
+          className={cn(
+            'border-border',
+            'dark:border-dark-border',
+            'border-b',
+            'pt-5',
+            'pb-4',
+            'px-4',
+            'flex',
+            'flex-col',
+            'gap-3'
+          )}
         >
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
+          <div
             className={cn(
-              'text-secondary',
-              'hover:text-text',
-              'dark:text-dark-secondary',
-              'dark:hover:text-dark-text',
-              'mb-2',
-              'self-start',
-              'rounded-lg',
-              'p-2',
-              'transition-colors',
-              'hover:bg-gray-100',
-              'md:hidden',
-              'dark:hover:bg-gray-800'
+              'flex',
+              'items-center',
+              'gap-2',
+              'md:gap-3',
+              'md:hidden'
             )}
-            title={
-              isMobileOpen ? t('common:menu.close') : t('common:menu.open')
-            }
-            aria-label={
-              isMobileOpen ? t('common:menu.close') : t('common:menu.open')
-            }
           >
-            {isMobileOpen ? (
-              <X className={cn('h-5 w-5')} />
-            ) : (
-              <Menu className={cn('h-5 w-5')} />
-            )}
-          </button>
+            <MobileMenu iconClassName={cn('h-6', 'w-6')} />
 
-          <div className={cn('flex items-center justify-between')}>
-            <h2 className={cn('text-lg font-semibold')}>
+            <Link
+              to='/dashboard'
+              className={cn('flex', 'items-center', 'gap-2', 'md:gap-3')}
+              aria-label={t('common:header.goToHomepage')}
+            >
+              <img
+                src={enabled ? logo2 : logo}
+                alt={t('common:header.logoAlt')}
+                className={cn('h-15', 'w-15', 'md:h-25', 'md:w-25')}
+                loading='lazy'
+              />
+              <div
+                className={cn(
+                  'flex',
+                  'items-baseline',
+                  'gap-1',
+                  'max-md:hidden'
+                )}
+              >
+                <h1
+                  className={cn(
+                    'text-text',
+                    'dark:text-dark-text',
+                    'text-base',
+                    'font-bold',
+                    'sm:text-xl',
+                    'md:text-2xl'
+                  )}
+                >
+                  Walrus
+                </h1>
+                <h1
+                  className={cn(
+                    'text-primary',
+                    'text-base',
+                    'font-bold',
+                    'sm:text-xl',
+                    'md:text-2xl'
+                  )}
+                >
+                  Notes
+                </h1>
+              </div>
+            </Link>
+          </div>
+
+          <div className={cn('flex', 'items-center', 'justify-between')}>
+            <h2 className={cn('text-lg', 'font-semibold')}>
               {t('fileTree:fileStructure')}
             </h2>
             <button
@@ -202,7 +219,7 @@ const SidebarComponent = (
                 'p-1'
               )}
             >
-              <Plus className={cn('h-5 w-5')} />
+              <Plus className={cn('h-5', 'w-5')} />
             </button>
           </div>
         </div>

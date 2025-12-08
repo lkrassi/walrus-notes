@@ -81,6 +81,8 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
             );
 
             if (!edgeExists) {
+              const sourceColor =
+                layoutsMap.get(sourceNote.layoutId || '') || '#6b7280';
               const newEdge: Edge = {
                 id: `edge-${sourceNote.id}-${targetNoteId}`,
                 source: sourceNote.id,
@@ -124,7 +126,9 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
                   }
                 })(),
                 type: 'multiColor' as const,
-                data: {},
+                data: {
+                  edgeColor: sourceColor,
+                },
               };
 
               edges.push(newEdge);
@@ -135,7 +139,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
     });
 
     return edges;
-  }, [notesWithPositions]);
+  }, [notesWithPositions, layoutsMap]);
 
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {

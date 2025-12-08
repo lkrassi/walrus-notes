@@ -1,5 +1,5 @@
 import { AuthPage, DashBoardPage, MainPage, NotFoundPage } from 'pages';
-import { SettingsPage } from 'pages/settings/ui/SettingsPage';
+import { ProfilePage } from 'pages/profile/ui/ProfilePage';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -7,7 +7,7 @@ export const AppRoutes = {
   MAIN: '/',
   AUTH: '/auth',
   DASHBOARD: '/dashboard/:layoutId?/:noteId?',
-  SETTINGS: '/settings',
+  PROFILE: '/profile',
   NOT_FOUND: '*',
 };
 
@@ -33,10 +33,10 @@ export const appRoutesConfig = [
     ),
   },
   {
-    path: AppRoutes.SETTINGS,
+    path: AppRoutes.PROFILE,
     element: (
       <ProtectedRoute>
-        <SettingsPage />
+        <ProfilePage />
       </ProtectedRoute>
     ),
   },

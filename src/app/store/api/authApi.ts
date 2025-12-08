@@ -38,6 +38,55 @@ interface RefreshResponse {
   };
 }
 
+interface SendConfirmCodeRequest {
+  email: string;
+  password: string;
+}
+
+interface SendConfirmCodeResponse {
+  data: {
+    nextCodeDelay: number;
+  };
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+}
+
+interface ConfirmCodeRequest {
+  email: string;
+  code: string;
+  newPassword?: string;
+}
+
+interface ConfirmCodeResponse {
+  data: string;
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+}
+
+interface ForgotPasswordRequest {
+  email: string;
+}
+
+interface ForgotPasswordResponse {
+  data: {
+    nextCodeDelay: number;
+  };
+  meta: {
+    code: string;
+    message: string;
+    error: string;
+    requestId: string;
+  };
+}
+
 export const authApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     login: builder.mutation<AuthResponse, LoginRequest>({
@@ -52,6 +101,42 @@ export const authApi = apiSlice.injectEndpoints({
         url: '/auth/register',
         method: 'POST',
         body: userData,
+      }),
+    }),
+    sendConfirmCode: builder.mutation<
+      SendConfirmCodeResponse,
+      SendConfirmCodeRequest
+    >({
+      query: data => ({
+        url: '/auth/code',
+        method: 'POST',
+        body: data,
+        headers: {
+          'X-Request-Id': crypto.randomUUID(),
+        },
+      }),
+    }),
+    confirmCode: builder.mutation<ConfirmCodeResponse, ConfirmCodeRequest>({
+      query: data => ({
+        url: '/auth/confirm',
+        method: 'POST',
+        body: data,
+        headers: {
+          'X-Request-Id': crypto.randomUUID(),
+        },
+      }),
+    }),
+    forgotPassword: builder.mutation<
+      ForgotPasswordResponse,
+      ForgotPasswordRequest
+    >({
+      query: data => ({
+        url: '/auth/forgot',
+        method: 'POST',
+        body: data,
+        headers: {
+          'X-Request-Id': crypto.randomUUID(),
+        },
       }),
     }),
     refresh: builder.mutation<RefreshResponse, void>({
@@ -70,5 +155,11 @@ export const authApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useRefreshMutation } =
-  authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useSendConfirmCodeMutation,
+  useConfirmCodeMutation,
+  useForgotPasswordMutation,
+  useRefreshMutation,
+} = authApi;

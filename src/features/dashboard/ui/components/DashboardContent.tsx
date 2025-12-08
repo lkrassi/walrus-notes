@@ -196,39 +196,37 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       );
     }
 
-    if (!isMobile) {
-      if (activeTab.item.type === 'layout' || activeTab.item.type === 'graph') {
-        const layoutId =
-          activeTab.item.type === 'layout'
-            ? activeTab.item.id
-            : activeTab.item.layoutId;
+    if (activeTab.item.type === 'layout' || activeTab.item.type === 'graph') {
+      const layoutId =
+        activeTab.item.type === 'layout'
+          ? activeTab.item.id
+          : activeTab.item.layoutId;
 
-        if (!layoutId) {
-          return (
-            <div
-              className={cn('flex', 'h-full', 'items-center', 'justify-center')}
-            >
-              <div className={cn('text-center')}>
-                <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
-                  Ошибка: не указан layoutId
-                </p>
-              </div>
-            </div>
-          );
-        }
-
+      if (!layoutId) {
         return (
-          <NotesGraph
-            layoutId={layoutId}
-            onNoteOpen={handleNoteOpenFromGraph}
-            allowNodeDrag={activeTab.item.isMain !== true}
-            isMain={activeTab.item.isMain === true}
-          />
+          <div
+            className={cn('flex', 'h-full', 'items-center', 'justify-center')}
+          >
+            <div className={cn('text-center')}>
+              <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
+                Ошибка: не указан layoutId
+              </p>
+            </div>
+          </div>
         );
       }
+
+      return (
+        <NotesGraph
+          layoutId={layoutId}
+          onNoteOpen={handleNoteOpenFromGraph}
+          allowNodeDrag={activeTab.item.isMain !== true}
+          isMain={activeTab.item.isMain === true}
+        />
+      );
     }
 
-    if (isMobile) {
+    if (isMobile && activeTab.item.type === 'note') {
       return (
         <div
           className={cn(

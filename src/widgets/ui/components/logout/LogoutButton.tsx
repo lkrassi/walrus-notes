@@ -21,13 +21,12 @@ export const LogoutButton = () => {
       className={cn(
         'flex',
         'h-10',
-        'w-5',
+        'w-30',
         'items-center',
         'justify-center',
         'px-7',
         'py-2'
       )}
-      
       aria-label='Выйти'
       variant='default'
       title={t('auth:common.logout')}

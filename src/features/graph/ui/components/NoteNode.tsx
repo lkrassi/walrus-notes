@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
+import { useIsMobile } from 'widgets/hooks';
 
 interface NoteNodeProps {
   data: {
@@ -17,6 +18,7 @@ interface NoteNodeProps {
 
 const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
   const resolvedColor = data.layoutColor ?? '#6b7280';
+  const isMobile = useIsMobile();
 
   const [isDragging, setIsDragging] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -26,11 +28,15 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
   );
   const pointerUpHandlerRef = useRef<((e: PointerEvent) => void) | null>(null);
 
+  // На мобильных handle'ы больше для удобства тач-взаимодействия (44x44 минимум для accessibility)
+  const handleSize = isMobile ? 20 : 15;
   const handleStyle = {
     background: resolvedColor,
     border: '2px solid white',
-    width: 15,
-    height: 15,
+    width: handleSize,
+    height: handleSize,
+    cursor: 'crosshair',
+    zIndex: 10,
   };
 
   return (

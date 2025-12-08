@@ -11,5 +11,7 @@
   "profileNotFound": "Profile not found",
   "uploadSuccess": "Profile photo changed successfully",
   "uploadError": "Error uploading photo",
-  "unauthorized": "User not authorized"
+  "unauthorized": "User not authorized",
+  "noUsername": "Username not specified",
+  "noEmail": "Email not specified"
 }

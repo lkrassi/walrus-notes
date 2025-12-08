@@ -1,13 +1,15 @@
 import { Form, Formik } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'shared';
 import cn from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 
-import { useRegisterMutation } from 'app/store/api';
+import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
+import { ConfirmCodeModal } from 'features/auth/ui/components/ConfirmCodeModal';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
 import { ValidatedField } from 'features/form/ui/ValidatedField';
@@ -20,8 +22,11 @@ type RegisterProps = {
 export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const { showSuccess, showError } = useNotifications();
   const [register, { isLoading: isSubmitting }] = useRegisterMutation();
+  const [sendConfirmCode] = useSendConfirmCodeMutation();
   const passwordVisibility = usePasswordVisibility();
   const { t } = useLocalization();
+  const { openModal, closeModal } = useModalContext();
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
 
   const { formRef } = useMobileForm();
 
@@ -36,10 +41,35 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const handleSubmit = async (values: typeof initialValues) => {
     try {
       await register(values).unwrap();
-      showSuccess(t('auth:register.success'));
+      setRegisteredEmail(values.email);
 
-      if (onSwitchToLogin) {
-        onSwitchToLogin();
+      try {
+        await sendConfirmCode({
+          email: values.email,
+          password: values.password,
+        }).unwrap();
+
+        const handleConfirmSuccess = () => {
+          closeModal();
+          showSuccess(t('auth:register.success'));
+          if (onSwitchToLogin) {
+            onSwitchToLogin();
+          }
+        };
+
+        openModal(
+          <ConfirmCodeModal
+            email={values.email}
+            onSuccess={handleConfirmSuccess}
+          />,
+          {
+            title: t('auth:confirmCode.title') || 'Подтверждение почты',
+            size: 'md',
+            closeOnOverlayClick: false,
+          }
+        );
+      } catch {
+        showError(t('auth:register.error'));
       }
     } catch {
       showError(t('auth:register.error'));

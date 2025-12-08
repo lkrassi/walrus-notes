@@ -194,12 +194,19 @@ const NotesGraphContentComponent = ({
               edge => !(edge.source === source && edge.target === newTarget)
             );
 
+            const sourceNode = nodes.find(n => n.id === source);
+            const edgeColor =
+              (sourceNode?.data as { layoutColor?: string })?.layoutColor ||
+              '#6b7280';
+
             const newEdge = {
               id: `edge-${source}-${newTarget}`,
               source,
               target: newTarget,
               type: 'multiColor' as const,
-              data: {},
+              data: {
+                edgeColor,
+              },
             };
 
             return [...edgesWithoutNewTarget, newEdge];

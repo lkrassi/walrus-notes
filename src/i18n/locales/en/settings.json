@@ -28,6 +28,18 @@
     "holiday": {
       "title": "Holiday decorations",
       "description": "Enable snow and garland decorations in the UI"
+    },
+    "theme": {
+      "title": "Theme",
+      "description": "Switch between light and dark theme"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Select interface language"
+    },
+    "logout": {
+      "title": "Logout",
+      "description": "Sign out from your account"
     }
   },
   "about": {
