@@ -14,10 +14,6 @@
   box-sizing: border-box;
 }
 
-.lightrope.off {
-  /* when off, bulbs are dim and animations stopped */
-}
-
 .lightrope li {
   position: relative;
   -webkit-animation-fill-mode: both;

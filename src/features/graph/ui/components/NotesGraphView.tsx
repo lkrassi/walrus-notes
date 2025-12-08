@@ -2,8 +2,15 @@ import React, { useCallback, useState, useEffect } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow, { useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+  DragOverlay,
+} from '@dnd-kit/core';
 import type { Note } from 'shared/model/types/layouts';
 import { useIsMobile } from 'widgets/hooks';
+import { useDndSensors } from 'shared/lib/useDndSensors';
 import { GraphBackground } from './GraphBackground';
 import { GraphContainer } from './GraphContainer';
 import { GraphControls } from './GraphControls';
@@ -92,6 +99,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
     x: number;
     y: number;
   } | null>(null);
+  const [activeDragNote, setActiveDragNote] = useState<Note | null>(null);
 
   const isMobile = useIsMobile();
 
@@ -158,69 +166,110 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
     [nodesWithSelection, onNodeDragStop]
   );
 
+  const handleDndDragStart = useCallback((event: DragStartEvent) => {
+    const note = event.active.data.current as Note | undefined;
+    if (note) {
+      setActiveDragNote(note);
+    }
+  }, []);
+
+  const handleDndDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      const id = active.id.toString();
+
+      if (id.startsWith('unposed-') && over?.id === 'graph-drop-zone') {
+        const note = active.data.current as Note | undefined;
+        if (note) {
+          const dropPosition = centerCoords || { x: 0, y: 0 };
+          onAddNoteToGraph(note, dropPosition);
+        }
+      }
+
+      setActiveDragNote(null);
+    },
+    [onAddNoteToGraph, centerCoords]
+  );
+
   return (
     <GraphContainer>
-      <GraphDropZone
-        onDrop={onDrop}
-        isDraggingEdge={isDraggingEdge}
-        onBoxSelect={onBoxSelect}
+      <DndContext
+        sensors={useDndSensors({
+          mouseDistance: 5,
+          touchDelay: 100,
+          touchTolerance: 5,
+        })}
+        onDragStart={handleDndDragStart}
+        onDragEnd={handleDndDragEnd}
       >
-        <TouchEnabledGraph
-          nodes={nodesWithSelection}
-          onNodePositionChange={handleTouchNodePositionChange}
-          disabled={!isMobile}
+        <GraphDropZone
+          onDrop={onDrop}
+          isDraggingEdge={isDraggingEdge}
+          onBoxSelect={onBoxSelect}
         >
-          <div className='relative h-full w-full'>
-            <ReactFlow
-              nodes={nodesWithSelection}
-              edges={edgesWithSelection}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onConnectStart={onConnectStart}
-              onConnectEnd={onConnectEnd}
-              onNodeDragStart={onNodeDragStart}
-              onNodeDragStop={handleNodeDragStop}
-              onNodeDrag={handleNodeDrag}
-              onNodeClick={onNodeClick}
-              onNodeMouseEnter={onNodeMouseEnter}
-              onNodeMouseLeave={onNodeMouseLeave}
-              onPaneClick={onPaneClick}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              fitView
-              attributionPosition='bottom-left'
-              nodesDraggable={allowNodeDrag !== false}
-              nodesConnectable={true}
-              elementsSelectable={true}
-              selectNodesOnDrag={false}
-              minZoom={0.1}
-              maxZoom={2}
-              proOptions={{ hideAttribution: true }}
-              onNodeDoubleClick={onNodeDoubleClick}
-              zoomOnScroll={!disableZoomDuringDrag}
-              zoomOnPinch={!disableZoomDuringDrag}
-              connectionRadius={isMobile ? 30 : 20}
-              key={layoutId}
-            >
-              <GraphBackground />
-              <GraphControls />
-              <GraphMiniMap />
-              <UnposedNotesList
-                layoutId={layoutId}
-                onNoteSelect={onAddNoteToGraph}
-              />
+          <TouchEnabledGraph
+            nodes={nodesWithSelection}
+            onNodePositionChange={handleTouchNodePositionChange}
+            disabled={!isMobile}
+          >
+            <div className='relative h-full w-full'>
+              <ReactFlow
+                nodes={nodesWithSelection}
+                edges={edgesWithSelection}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onConnectStart={onConnectStart}
+                onConnectEnd={onConnectEnd}
+                onNodeDragStart={onNodeDragStart}
+                onNodeDragStop={handleNodeDragStop}
+                onNodeDrag={handleNodeDrag}
+                onNodeClick={onNodeClick}
+                onNodeMouseEnter={onNodeMouseEnter}
+                onNodeMouseLeave={onNodeMouseLeave}
+                onPaneClick={onPaneClick}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                fitView
+                attributionPosition='bottom-left'
+                nodesDraggable={allowNodeDrag !== false}
+                nodesConnectable={true}
+                elementsSelectable={true}
+                selectNodesOnDrag={false}
+                minZoom={0.1}
+                maxZoom={2}
+                proOptions={{ hideAttribution: true }}
+                onNodeDoubleClick={onNodeDoubleClick}
+                zoomOnScroll={!disableZoomDuringDrag}
+                zoomOnPinch={!disableZoomDuringDrag}
+                connectionRadius={isMobile ? 30 : 20}
+                key={layoutId}
+              >
+                <GraphBackground />
+                <GraphControls />
+                <GraphMiniMap />
 
-              <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
-              <ViewportTracker onViewportChange={v => setCenterCoords(v)} />
-            </ReactFlow>
-            <CoordinateOverlay
-              coords={overlayCoords}
-              centerCoords={centerCoords}
-            />
-          </div>
-        </TouchEnabledGraph>
-      </GraphDropZone>
+                <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
+                <ViewportTracker onViewportChange={v => setCenterCoords(v)} />
+              </ReactFlow>
+              <CoordinateOverlay
+                coords={overlayCoords}
+                centerCoords={centerCoords}
+              />
+            </div>
+          </TouchEnabledGraph>
+        </GraphDropZone>
+        <UnposedNotesList layoutId={layoutId} onNoteSelect={onAddNoteToGraph} />
+        <DragOverlay>
+          {activeDragNote && (
+            <div className='dark:bg-dark-bg border-primary dark:border-primary-dark max-w-xs rounded-lg border bg-white p-3 shadow-lg'>
+              <h4 className='text-text dark:text-dark-text truncate text-sm font-medium'>
+                {activeDragNote.title}
+              </h4>
+            </div>
+          )}
+        </DragOverlay>
+      </DndContext>
     </GraphContainer>
   );
 };

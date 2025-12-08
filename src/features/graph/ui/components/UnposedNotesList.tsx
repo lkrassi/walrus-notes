@@ -1,5 +1,6 @@
 import { useGetUnposedNotesQuery } from 'app/store/api';
 import { useState } from 'react';
+import { useDraggable } from '@dnd-kit/core';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
@@ -87,46 +88,73 @@ export const UnposedNotesList = ({
           )}
         >
           {visibleItems.map(note => (
-            <button
+            <DraggableNoteItem
               key={note.id}
-              draggable
-              onDragStart={e => {
-                const noteWithLayout = { ...note, layoutId } as Note;
-                e.dataTransfer.setData(
-                  'application/reactflow',
-                  JSON.stringify(noteWithLayout)
-                );
-                e.dataTransfer.effectAllowed = 'move';
-              }}
-              onClick={() => handleNoteClick(note)}
-              className={cn(
-                'dark:bg-dark-bg',
-                'hover:bg-primary/30',
-                'dark:hover:bg-primary-dark',
-                'flex',
-                'w-full',
-                'items-center',
-                'gap-3',
-                'rounded-md',
-                'px-4',
-                'py-3',
-                'transition',
-                'duration-200'
-              )}
-            >
-              <div className={cn('min-w-0 flex-1 text-left')}>
-                <h4
-                  className={cn(
-                    'text-text dark:text-dark-text truncate text-sm font-medium'
-                  )}
-                >
-                  {note.title}
-                </h4>
-              </div>
-            </button>
+              note={note}
+              onClick={handleNoteClick}
+            />
           ))}
         </DropdownContent>
       </Dropdown>
     </div>
+  );
+};
+
+/**
+ * Элемент заметки без позиции, использует useDraggable для простого drag
+ */
+const DraggableNoteItem = ({
+  note,
+  onClick,
+}: {
+  note: Note;
+  onClick: (note: Note) => void;
+  isDragging?: boolean;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    isDragging: isItemDragging,
+  } = useDraggable({
+    id: `unposed-${note.id}`,
+    data: note,
+  });
+
+  return (
+    <button
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      onClick={() => onClick(note)}
+      className={cn(
+        'dark:bg-dark-bg',
+        'hover:bg-primary/30',
+        'dark:hover:bg-primary-dark',
+        'flex',
+        'w-full',
+        'items-center',
+        'gap-3',
+        'rounded-md',
+        'px-4',
+        'py-3',
+        'transition',
+        'duration-200',
+        'cursor-grab',
+        'active:cursor-grabbing',
+        isItemDragging ? 'opacity-50' : ''
+      )}
+      title={`Перетаскиваемая заметка: ${note.title}`}
+    >
+      <div className={cn('min-w-0 flex-1 text-left')}>
+        <h4
+          className={cn(
+            'text-text dark:text-dark-text truncate text-sm font-medium'
+          )}
+        >
+          {note.title}
+        </h4>
+      </div>
+    </button>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { useDroppable } from '@dnd-kit/core';
 
 interface GraphDropZoneProps {
   onDrop: (event: React.DragEvent) => void;
@@ -18,6 +19,9 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
   isDraggingEdge = false,
   onBoxSelect,
 }) => {
+  const { setNodeRef } = useDroppable({
+    id: 'graph-drop-zone',
+  });
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const [start, setStart] = useState<{ x: number; y: number } | null>(null);
@@ -82,14 +86,27 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
 
   return (
     <div
-      ref={containerRef}
+      ref={node => {
+        setNodeRef(node);
+        containerRef.current = node;
+      }}
       className={`relative flex-1 ${
         isDraggingEdge
           ? 'cursor-no-drop bg-blue-50 ring-2 ring-blue-400 dark:bg-blue-900/20'
           : ''
       } transition-all duration-200`}
-      onDrop={onDrop}
-      onDragOver={e => e.preventDefault()}
+      onDrop={e => {
+        onDrop(e);
+      }}
+      onDragOver={e => {
+        e.preventDefault();
+      }}
+      onDragEnter={_e => {
+        // Handle drag enter if needed
+      }}
+      onDragLeave={_e => {
+        // Handle drag leave if needed
+      }}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={finish}
