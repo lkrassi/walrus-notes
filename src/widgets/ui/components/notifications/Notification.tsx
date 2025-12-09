@@ -26,12 +26,7 @@ export const Notification: React.FC<NotificationProps> = ({ notification }) => {
 
   return (
     <div className={cn(baseStyles, NOTIFICATION_STYLES[type])}>
-      <div className={cn('')}>
-        {notification.title && (
-          <h3 className={cn('mb-1', 'text-sm', 'font-semibold')}>
-            {notification.title}
-          </h3>
-        )}
+      <div>
         <p className={cn('text-sm', 'leading-relaxed')}>
           {notification.message}
         </p>

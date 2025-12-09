@@ -4,6 +4,7 @@ import type { InputProps } from 'shared/model/inputProps';
 export const Input: React.FC<InputProps> = ({
   value,
   onChange,
+  onBlur,
   placeholder,
   type = 'text',
   disabled = false,
@@ -74,6 +75,7 @@ export const Input: React.FC<InputProps> = ({
       type={type}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       placeholder={placeholder}
       disabled={disabled}
       className={cn(variantClasses, className)}

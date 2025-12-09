@@ -5,6 +5,9 @@ import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { PrivateHeader } from 'widgets/ui';
+import Breadcrumbs from 'shared/ui/components/Breadcrumbs';
+import { findBreadcrumbLabel } from 'shared/config/breadcrumbs';
+import { useLocation } from 'react-router-dom';
 import { settingsSections } from '../../models/variants';
 import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
 import ImageUploadModal from 'shared/ui/components/ImageUploader';
@@ -17,9 +20,14 @@ import { checkAuth } from 'shared/api/checkAuth';
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
   const { profile } = useAppSelector(state => state.user);
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const { openModalFromTrigger } = useModalActions();
-  const [avatarVersion, setAvatarVersion] = useState<number>(Date.now());
+  // don't force a unique query param on every mount — initialize undefined
+  // and only set when the user actually updates their avatar
+  const [avatarVersion, setAvatarVersion] = useState<number | undefined>(
+    undefined
+  );
 
   const handleOpenImage = openModalFromTrigger(
     <ImageViewerModal
@@ -74,6 +82,43 @@ export const Settings: React.FC = () => {
 
       <main className={cn('container', 'mx-auto', 'px-4', 'py-8')}>
         <div className={cn('mx-auto', 'max-w-4xl')}>
+          {(() => {
+            // try to infer where user came from: prefer router state, then document.referrer
+            const state = location.state as
+              | { from?: string | { pathname?: string } }
+              | undefined;
+            const stateFrom =
+              typeof state?.from === 'string'
+                ? state.from
+                : state?.from?.pathname;
+            let refPath: string | undefined;
+            try {
+              if (typeof document !== 'undefined' && document.referrer) {
+                refPath = new URL(document.referrer).pathname;
+              }
+            } catch (_e) {
+              refPath = undefined;
+            }
+
+            const inferred = stateFrom || refPath;
+            const current = location.pathname;
+
+            const items =
+              inferred && inferred !== current
+                ? [
+                    { label: findBreadcrumbLabel(inferred, t), to: inferred },
+                    { label: findBreadcrumbLabel('/profile', t) },
+                  ]
+                : [
+                    {
+                      label: findBreadcrumbLabel('/dashboard', t),
+                      to: '/dashboard',
+                    },
+                    { label: findBreadcrumbLabel('/profile', t) },
+                  ];
+
+            return <Breadcrumbs items={items} />;
+          })()}
           <div
             className={cn(
               'card',
@@ -106,7 +151,7 @@ export const Settings: React.FC = () => {
                 >
                   {profile?.imgUrl ? (
                     <img
-                      src={`https://${profile.imgUrl}?v=${avatarVersion}`}
+                      src={`https://${profile.imgUrl}${avatarVersion ? `?v=${avatarVersion}` : ''}`}
                       alt='Аватар'
                       className={cn('h-full', 'w-full', 'object-cover')}
                     />
@@ -263,3 +308,5 @@ export const Settings: React.FC = () => {
     </div>
   );
 };
+
+export default Settings;

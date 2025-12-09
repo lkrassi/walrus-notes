@@ -47,6 +47,7 @@ export const Button = memo(
           text-base
           font-semibold
           cursor-pointer
+          disabled:cursor-not-allowed
           transition-all
           duration-200
           transform

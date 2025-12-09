@@ -117,7 +117,6 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         'fixed',
         'inset-0',
         'overflow-hidden',
-        'z-100',
         'flex',
         'items-center',
         'justify-center',
@@ -129,6 +128,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
       )}
       style={{
         opacity: animationState === 'entering' ? 0 : 1,
+        zIndex: 90000,
       }}
       onClick={handleOverlayClick}
     >

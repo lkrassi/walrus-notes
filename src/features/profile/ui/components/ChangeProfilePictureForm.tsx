@@ -107,13 +107,11 @@ export const ChangeProfilePictureForm: React.FC = () => {
           onClick={handleUpload}
           className={cn('btn')}
           variant={selectedFile ? 'default' : 'disabled'}
+          disabled={!selectedFile}
         >
           {t('profile:upload')}
         </Button>
-
       </div>
-
-
     </div>
   );
 };

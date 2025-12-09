@@ -4,6 +4,9 @@ import { useConfirmCodeMutation } from 'app/store/api';
 import { useLocalization } from 'widgets/hooks';
 import { Button } from 'shared';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
+import { ValidatedField } from 'features/form/ui/ValidatedField';
 
 interface ResetPasswordModalProps {
   email: string;
@@ -17,7 +20,6 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
   const { t } = useLocalization();
   const [confirmCode] = useConfirmCodeMutation();
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
-  const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,27 +69,12 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: { newPassword: string }) => {
     const codeString = code.join('');
 
     if (codeString.length !== 6) {
       setError(
         t('auth:resetPassword.error.incomplete') || 'Введите полный код'
-      );
-      return;
-    }
-
-    if (!newPassword) {
-      setError(
-        t('auth:resetPassword.error.passwordRequired') || 'Введите новый пароль'
-      );
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError(
-        t('auth:resetPassword.error.passwordTooShort') ||
-          'Пароль должен быть не менее 6 символов'
       );
       return;
     }
@@ -99,7 +86,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
       await confirmCode({
         email,
         code: codeString,
-        newPassword,
+        newPassword: values.newPassword,
       }).unwrap();
 
       onSuccess();
@@ -209,61 +196,82 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
         ))}
       </div>
 
-      <div className={cn('relative')}>
-        <input
-          type={showPassword ? 'text' : 'password'}
-          value={newPassword}
-          onChange={e => {
-            setNewPassword(e.target.value);
-            setError(null);
-          }}
-          placeholder={
-            t('auth:login.passwordPlaceholder') || 'Введите новый пароль'
-          }
-          className={cn(
-            'w-full',
-            'px-4',
-            'py-2',
-            'border-2',
-            'rounded-lg',
-            'bg-white',
-            'dark:bg-dark-bg',
-            'text-text',
-            'dark:text-dark-text',
-            'border-border',
-            'dark:border-dark-border',
-            'focus:outline-none',
-            'focus:border-primary',
-            'dark:focus:border-primary',
-            'transition-colors',
-            error && 'border-red-500',
-            'pr-12'
-          )}
-          disabled={isLoading}
-        />
-        <div
-          className={cn('absolute', 'top-1/2', 'right-3', '-translate-y-1/2')}
-        >
-          <PasswordVisibilityToggle
-            isVisible={showPassword}
-            onToggle={() => setShowPassword(!showPassword)}
-          />
-        </div>
-      </div>
-
-      {error && (
-        <p className={cn('text-sm', 'text-red-500', 'text-center')}>{error}</p>
-      )}
-
-      <Button
-        onClick={handleSubmit}
-        disabled={isLoading || code.join('').length !== 6}
-        className={cn('w-full', 'px-8', 'py-3')}
+      <Formik
+        initialValues={{ newPassword: '' }}
+        validationSchema={Yup.object({
+          newPassword: Yup.string()
+            .required(
+              t('auth:resetPassword.error.passwordRequired') ||
+                'Введите новый пароль'
+            )
+            .min(
+              6,
+              t('auth:resetPassword.error.passwordTooShort') ||
+                'Пароль должен быть не менее 6 символов'
+            ),
+        })}
+        onSubmit={handleSubmit}
+        validateOnMount
+        validateOnChange={false}
+        validateOnBlur={true}
       >
-        {isLoading
-          ? t('auth:confirmCode.loading')
-          : t('auth:confirmCode.submit')}
-      </Button>
+        {formik => (
+          <Form className={cn('w-full')}>
+            <div className={cn('relative')}>
+              <ValidatedField
+                name='newPassword'
+                label={
+                  t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
+                }
+                type={showPassword ? 'text' : 'password'}
+                placeholder={
+                  t('auth:login.passwordPlaceholder') || 'Введите новый пароль'
+                }
+                required
+              >
+                <div
+                  className={cn(
+                    'absolute',
+                    'top-1/2',
+                    'right-3',
+                    '-translate-y-1/2'
+                  )}
+                >
+                  <PasswordVisibilityToggle
+                    isVisible={showPassword}
+                    onToggle={() => setShowPassword(!showPassword)}
+                  />
+                </div>
+              </ValidatedField>
+            </div>
+
+            {error && (
+              <p className={cn('text-sm', 'text-red-500', 'text-center')}>
+                {error}
+              </p>
+            )}
+
+            <div className={cn('flex', 'justify-center')}>
+              <Button
+                type='submit'
+                variant={
+                  isLoading || code.join('').length !== 6 || !formik.isValid
+                    ? 'disabled'
+                    : 'submit'
+                }
+                disabled={
+                  isLoading || code.join('').length !== 6 || !formik.isValid
+                }
+                className={cn('w-full', 'px-8', 'py-3')}
+              >
+                {isLoading
+                  ? t('auth:confirmCode.loading')
+                  : t('auth:confirmCode.submit')}
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };

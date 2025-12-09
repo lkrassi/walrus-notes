@@ -1,5 +1,10 @@
 import { Settings } from 'features/settings';
 
 export const ProfilePage = () => {
-  return <Settings />;
+  return (
+  <>
+  <Settings />
+    <a href="/ewq">ewq</a>
+    </>
+  );
 };

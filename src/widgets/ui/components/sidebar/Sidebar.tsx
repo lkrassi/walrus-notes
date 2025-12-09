@@ -99,10 +99,10 @@ const SidebarComponent = (
             'inset-0',
             'bg-black/20',
             'backdrop-blur-sm',
-            'md:hidden',
-            'z-50'
+            'md:hidden'
           )}
           onClick={() => setIsMobileOpen(false)}
+          style={{ zIndex: 70000 }}
         />
       )}
 
@@ -128,10 +128,9 @@ const SidebarComponent = (
           'dark:text-dark-text',
           'md:relative',
           'md:flex',
-          'md:translate-x-0',
-          'z-51'
+          'md:translate-x-0'
         )}
-        style={width ? { width } : undefined}
+        style={width ? { width, zIndex: 70000 } : { zIndex: 70000 }}
       >
         <div
           className={cn(

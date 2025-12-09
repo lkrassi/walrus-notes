@@ -52,10 +52,10 @@ export const ForgotPasswordEmailModal: React.FC<
         initialValues={{ email: '' }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-        validateOnChange={true}
+        validateOnChange={false}
         validateOnBlur={true}
       >
-        {() => (
+        {formik => (
           <Form className={cn('flex', 'flex-col', 'gap-4')}>
             <ValidatedField
               name='email'
@@ -78,7 +78,16 @@ export const ForgotPasswordEmailModal: React.FC<
               >
                 {t('common:buttons.cancel') || 'Отмена'}
               </Button>
-              <Button type='submit' disabled={isSubmitting} className='btn'>
+              <Button
+                type='submit'
+                variant={
+                  isSubmitting || !formik.values.email.trim()
+                    ? 'disabled'
+                    : 'submit'
+                }
+                disabled={isSubmitting || !formik.values.email.trim()}
+                className='btn'
+              >
                 {isSubmitting ? (
                   <div className={cn('flex', 'items-center', 'gap-2')}>
                     <div

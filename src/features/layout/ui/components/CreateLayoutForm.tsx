@@ -15,7 +15,9 @@ export const CreateLayoutForm = ({
 }: CreateLayoutFormProps) => {
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
-  const [color, setColor] = useState<string | undefined>(undefined);
+  // default color matches ColorSelector default
+  const DEFAULT_COLOR = '#3b82f6';
+  const [color, setColor] = useState<string | undefined>(DEFAULT_COLOR);
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [createLayout, { isLoading }] = useCreateLayoutMutation();
@@ -31,7 +33,7 @@ export const CreateLayoutForm = ({
     try {
       await createLayout({
         title: title.trim(),
-        color,
+        color: color || DEFAULT_COLOR,
       }).unwrap();
 
       setTitle('');
@@ -43,6 +45,8 @@ export const CreateLayoutForm = ({
       showError(t('layout:layoutCreationError'));
     }
   };
+
+  const isSubmitDisabled = isLoading || !title.trim() || !color;
 
   return (
     <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
@@ -81,9 +85,9 @@ export const CreateLayoutForm = ({
         </Button>
         <Button
           type='submit'
-          variant='submit'
+          variant={isSubmitDisabled ? 'disabled' : 'submit'}
           className={cn('btn')}
-          disabled={isLoading}
+          disabled={isSubmitDisabled}
         >
           {isLoading ? t('layout:creating') : t('layout:createLayout')}
         </Button>

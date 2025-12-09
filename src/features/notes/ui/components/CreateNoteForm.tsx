@@ -96,9 +96,9 @@ export const CreateNoteForm = ({
         </Button>
         <Button
           type='submit'
-          variant='submit'
+          variant={!title.trim() || isLoading ? 'disabled' : 'submit'}
           className={cn('btn')}
-          disabled={isLoading}
+          disabled={!title.trim() || isLoading}
         >
           {isLoading ? t('notes:creating') : t('notes:createNote')}
         </Button>

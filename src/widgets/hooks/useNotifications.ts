@@ -14,22 +14,49 @@ export const useNotifications = () => {
 
   const lastMessagesRef = useRef<Set<string>>(new Set());
 
+  const normalizeMessage = (msg: string) =>
+    msg
+      .replace(/\s+/g, ' ')
+      .replace(/request error[:\s-]*/i, '')
+      .trim()
+      .toLowerCase();
+
   const showNotification = useCallback(
     (notification: Omit<Notification, 'id'>) => {
-      const messageKey = `${notification.type}:${notification.message}`;
+      const normalized = normalizeMessage(notification.message);
+
+      const messageKey = `${notification.type}:${normalized}`;
 
       if (lastMessagesRef.current.has(messageKey)) {
+        console.debug(
+          '[useNotifications] skipping recent duplicate',
+          messageKey,
+          notification
+        );
         return;
       }
 
+      // Avoid showing near-duplicates that are already visible
+      const alreadyShown = notifications.some(n => {
+        const existing = normalizeMessage(n.message);
+        return (
+          existing === normalized ||
+          existing.includes(normalized) ||
+          normalized.includes(existing)
+        );
+      });
+
+      if (alreadyShown) return;
+
       lastMessagesRef.current.add(messageKey);
 
-      if (lastMessagesRef.current.size > 20) {
+      if (lastMessagesRef.current.size > 100) {
         const firstKey = Array.from(lastMessagesRef.current)[0];
         lastMessagesRef.current.delete(firstKey);
       }
 
-      dispatch(addNotification(notification));
+      // Attach origin metadata so reducer logs and dedup logic can reason about source
+      dispatch(addNotification({ ...(notification as any), origin: 'ui' }));
 
       if (notification.duration) {
         setTimeout(() => {
@@ -37,7 +64,7 @@ export const useNotifications = () => {
         }, notification.duration + 1000);
       }
     },
-    [dispatch]
+    [dispatch, notifications]
   );
 
   const hideNotification = useCallback(
@@ -55,7 +82,6 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'success',
-        title: title || 'УСПЕХ',
         message,
         duration: 5000,
       });
@@ -67,7 +93,6 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'error',
-        title: title || 'НЕУДАЧА',
         message,
         duration: 7000,
       });
@@ -79,7 +104,6 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'warning',
-        title: title || 'Внимание',
         message,
         duration: 5000,
       });
@@ -91,7 +115,6 @@ export const useNotifications = () => {
     (message: string, title?: string) => {
       showNotification({
         type: 'info',
-        title: title || 'Информация',
         message,
         duration: 4000,
       });

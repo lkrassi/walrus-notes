@@ -4,7 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export type Notification = {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
+  title?: string;
+  origin?: string;
   message: string;
   duration?: number;
 };
@@ -25,10 +26,67 @@ export const notificationsSlice = createSlice({
       state,
       action: PayloadAction<Omit<Notification, 'id'>>
     ) => {
+      const payload = action.payload;
+
+      const normalize = (s: string) =>
+        s
+          .replace(/\s+/g, ' ')
+          .replace(/request error[:\s-]*/i, '')
+          .trim()
+          .toLowerCase();
+
+      const newMessage = normalize(String(payload.message || ''));
+
+      const duplicate = state.notifications.some(n => {
+        const existing = normalize(String(n.message || ''));
+        return (
+          existing === newMessage ||
+          existing.includes(newMessage) ||
+          newMessage.includes(existing)
+        );
+      });
+
+      // Prepare simple logging for debugging duplicates
+      try {
+        (window as any).__NOTIFICATION_LOG__ =
+          (window as any).__NOTIFICATION_LOG__ || [];
+      } catch {}
+
+      if (duplicate) {
+        try {
+          (window as any).__NOTIFICATION_LOG__.push({
+            action: 'duplicate_prevented',
+            origin: payload.origin || 'unknown',
+            message: String(payload.message || ''),
+            existing: state.notifications.map(n => n.message),
+            time: Date.now(),
+          });
+        } catch {}
+
+        console.debug('[notifications] duplicate prevented', {
+          origin: payload.origin,
+          message: payload.message,
+        });
+
+        return;
+      }
+
       const id = crypto.randomUUID();
-      state.notifications.push({
-        id,
-        ...action.payload,
+      state.notifications.push({ id, ...payload });
+
+      try {
+        (window as any).__NOTIFICATION_LOG__.push({
+          action: 'added',
+          origin: payload.origin || 'unknown',
+          message: String(payload.message || ''),
+          id,
+          time: Date.now(),
+        });
+      } catch {}
+
+      console.debug('[notifications] added', {
+        origin: payload.origin,
+        message: payload.message,
       });
     },
     removeNotification: (state, action: PayloadAction<string>) => {

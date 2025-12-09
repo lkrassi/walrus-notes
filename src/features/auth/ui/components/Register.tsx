@@ -71,8 +71,75 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       } catch {
         showError(t('auth:register.error'));
       }
-    } catch {
-      showError(t('auth:register.error'));
+    } catch (err) {
+      // Try to extract useful info from the RTK Query error shape
+      const e: unknown = err;
+      console.debug('[register] caught error', e);
+
+      const getStringAt = (
+        root: unknown,
+        path: string[]
+      ): string | undefined => {
+        let cur: unknown = root;
+        for (const p of path) {
+          if (!cur || typeof cur !== 'object') return undefined;
+          cur = (cur as Record<string, unknown>)[p];
+        }
+        return typeof cur === 'string' ? cur : undefined;
+      };
+
+      const errorCode =
+        getStringAt(e, ['data', 'meta', 'code']) ||
+        getStringAt(e, ['data', 'code']);
+      const serverMessage =
+        getStringAt(e, ['data', 'meta', 'message']) ||
+        getStringAt(e, ['data', 'message']) ||
+        getStringAt(e, ['error']);
+      const status = (
+        e && typeof e === 'object'
+          ? (e as Record<string, unknown>)['status']
+          : undefined
+      ) as number | undefined;
+
+      const conflictCodes = [
+        'user_exists',
+        'user_already_exists',
+        'email_exists',
+        'email_already_exists',
+        'username_exists',
+        'username_already_exists',
+      ];
+
+      const serverMessageLower = serverMessage
+        ? String(serverMessage).toLowerCase()
+        : '';
+      const conflictSubstrings = [
+        'not unique',
+        'already exists',
+        'duplicate',
+        'email already',
+        'username already',
+      ];
+
+      const serverIndicatesConflict = conflictSubstrings.some(s =>
+        serverMessageLower.includes(s)
+      );
+
+      if (
+        status === 409 ||
+        (errorCode && conflictCodes.includes(errorCode)) ||
+        serverIndicatesConflict
+      ) {
+        showError(
+          t('auth:register.errorTaken') ||
+            'Пользователь с таким email или именем уже существует'
+        );
+      } else if (serverMessage) {
+        // show server-provided message if available
+        showError(String(serverMessage));
+      } else {
+        showError(t('auth:register.error'));
+      }
     }
   };
 

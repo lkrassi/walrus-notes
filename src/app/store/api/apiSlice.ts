@@ -4,7 +4,6 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { addNotification } from 'app/store/slices/notificationsSlice';
 import i18n from '../../../i18n';
 
 const baseQuery = fetchBaseQuery({
@@ -110,16 +109,14 @@ const baseQueryWithReauth: BaseQueryFn<
 
       const title = i18n.t('errors.requestTitle') || 'Request error';
       const fallback = i18n.t('errors.requestFallback') || 'Request failed';
-      api.dispatch(
-        addNotification({
-          type: 'error',
-          title,
-          message: String(maybeMsg || fallback),
-          duration: 5000,
-        })
-      );
-    } catch {
-    }
+
+      // Do NOT dispatch UI notifications from apiSlice.
+      // Components should show notifications explicitly via `useNotifications`.
+      console.debug('[apiSlice] error (no ui notification dispatched)', {
+        message: String(maybeMsg || fallback),
+        title,
+      });
+    } catch {}
   }
 
   return result;

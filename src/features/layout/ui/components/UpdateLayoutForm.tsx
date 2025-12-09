@@ -95,9 +95,9 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
         </Button>
         <Button
           type='submit'
-          variant='submit'
+          variant={!title.trim() || isLoading ? 'disabled' : 'submit'}
           className={cn('btn')}
-          disabled={isLoading}
+          disabled={!title.trim() || isLoading}
         >
           {isLoading ? t('layout:updating') : t('layout:updateLayout')}
         </Button>

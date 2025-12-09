@@ -90,6 +90,9 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   required={required}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     field.onChange(e);
+                  }}
+                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                    field.onBlur(e);
                     form.validateField(name);
                   }}
                 />
@@ -101,10 +104,16 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
       </div>
       <Field name={name}>
         {({ form }: FieldProps) => {
+          const showError = Boolean(
+            (form.touched && (form.touched as any)[name]) ||
+              form.submitCount > 0
+          );
+
           const errorMessage =
-            typeof form.errors[name] === 'string'
+            showError && typeof form.errors[name] === 'string'
               ? (form.errors[name] as string)
               : undefined;
+
           return <FieldError error={errorMessage} />;
         }}
       </Field>
