@@ -1,4 +1,4 @@
-import {useRef, useEffect} from 'react'
+import { useRef, useEffect } from 'react';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
@@ -74,6 +74,15 @@ export const NoteViewer = ({
         }}
         onDiscardConfirm={async () => {
           await handleDiscard();
+        }}
+        onInsertImage={url => {
+          const alt = 'image';
+          const snippet = `![${alt}](${url})`;
+          const next =
+            payload && payload.trim().length > 0
+              ? `${payload}\n\n${snippet}`
+              : snippet;
+          setPayload(next);
         }}
       />
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Camera } from 'lucide-react';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
@@ -7,12 +7,19 @@ import { useModalActions } from 'widgets/hooks/useModalActions';
 import { PrivateHeader } from 'widgets/ui';
 import { settingsSections } from '../../models/variants';
 import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
-import { ChangeProfilePictureForm } from '../../../profile/ui/components/ChangeProfilePictureForm';
+import ImageUploadModal from 'shared/ui/components/ImageUploader';
+import { useChangeProfilePictureMutation } from 'app/store/api';
+import { useGetUserProfileQuery } from 'app/store/api';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import { setUserProfile } from 'app/store/slices/userSlice';
+import { checkAuth } from 'shared/api/checkAuth';
 
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
   const { profile } = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
   const { openModalFromTrigger } = useModalActions();
+  const [avatarVersion, setAvatarVersion] = useState<number>(Date.now());
 
   const handleOpenImage = openModalFromTrigger(
     <ImageViewerModal
@@ -26,10 +33,40 @@ export const Settings: React.FC = () => {
     }
   );
 
-  const handleChangePhoto = openModalFromTrigger(<ChangeProfilePictureForm />, {
-    title: t('profile:changePhoto') || 'Изменить фото',
-    size: 'md',
-  });
+  const [changeProfilePicture] = useChangeProfilePictureMutation();
+  const userId =
+    profile?.id || (checkAuth() ? localStorage.getItem('userId') || '' : '');
+  const { data: userProfileResponse, refetch: refetchProfile } =
+    useGetUserProfileQuery(userId, {
+      skip: !userId,
+    });
+
+  useEffect(() => {
+    if (userProfileResponse?.data) {
+      dispatch(setUserProfile(userProfileResponse.data));
+    }
+  }, [userProfileResponse, dispatch]);
+
+  const handleChangePhoto = openModalFromTrigger(
+    <ImageUploadModal
+      uploadFn={async (file: File) => {
+        const res = await changeProfilePicture({ file, userId }).unwrap();
+        const newUrl = res?.data?.newImgUrl ?? '';
+        return newUrl;
+      }}
+      onUploaded={(_url: string) => {
+        // wait for server to process file, then refetch profile
+        setTimeout(() => {
+          refetchProfile();
+          setAvatarVersion(Date.now());
+        }, 2000);
+      }}
+    />,
+    {
+      title: t('profile:changePhoto') || 'Изменить фото',
+      size: 'md',
+    }
+  );
 
   return (
     <div className={cn('bg-bg', 'dark:bg-dark-bg', 'min-h-screen')}>
@@ -69,7 +106,7 @@ export const Settings: React.FC = () => {
                 >
                   {profile?.imgUrl ? (
                     <img
-                      src={`https://${profile.imgUrl}`}
+                      src={`https://${profile.imgUrl}?v=${avatarVersion}`}
                       alt='Аватар'
                       className={cn('h-full', 'w-full', 'object-cover')}
                     />
@@ -144,7 +181,6 @@ export const Settings: React.FC = () => {
             </div>
           </div>
 
-          {/* Настройки */}
           <div className={cn('space-y-4', 'max-sm:space-y-3')}>
             {settingsSections.map(section => (
               <div

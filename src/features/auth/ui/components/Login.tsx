@@ -69,7 +69,6 @@ export const Login: React.FC<LoginProps> = () => {
             );
           };
 
-          // Открываем вторую модалку из центра экрана (без анимации из триггера)
           openModal(
             <ResetPasswordModal email={email} onSuccess={handleResetSuccess} />,
             {

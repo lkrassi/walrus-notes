@@ -101,12 +101,6 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
       onDragOver={e => {
         e.preventDefault();
       }}
-      onDragEnter={_e => {
-        // Handle drag enter if needed
-      }}
-      onDragLeave={_e => {
-        // Handle drag leave if needed
-      }}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       onMouseUp={finish}

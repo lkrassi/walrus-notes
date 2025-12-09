@@ -118,7 +118,6 @@ export const useGraphConnections = ({
 
       let dropPosition = null as { x: number; y: number } | null;
 
-      // Поддержка и мыши (MouseEvent) и тач (TouchEvent)
       let clientX: number | undefined;
       let clientY: number | undefined;
 

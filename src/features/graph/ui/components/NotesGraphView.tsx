@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow, { useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -56,6 +56,10 @@ interface NotesGraphViewProps {
   isDraggingEdge: boolean;
   onDrop: (event: React.DragEvent) => void;
   onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;
+  screenToFlowPosition?: (position: { x: number; y: number }) => {
+    x: number;
+    y: number;
+  };
   onBoxSelect?: (rect: {
     x1: number;
     y1: number;
@@ -69,6 +73,7 @@ interface NotesGraphViewProps {
 
 export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   layoutId,
+  screenToFlowPosition,
   nodesWithSelection,
   edgesWithSelection,
   onNodesChange,
@@ -91,6 +96,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   onBoxSelect,
   isMain,
 }: NotesGraphViewProps) => {
+  const cleanupRef = useRef<(() => void) | null>(null);
   const [overlayCoords, setOverlayCoords] = useState<{
     x: number;
     y: number;
@@ -100,6 +106,10 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
     y: number;
   } | null>(null);
   const [activeDragNote, setActiveDragNote] = useState<Note | null>(null);
+  const [lastClientCoords, setLastClientCoords] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const isMobile = useIsMobile();
 
@@ -171,6 +181,19 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
     if (note) {
       setActiveDragNote(note);
     }
+    const handlePointer = (e: PointerEvent) => {
+      setLastClientCoords({ x: e.clientX, y: e.clientY });
+    };
+    const handleTouch = (e: TouchEvent) => {
+      const t = e.touches && e.touches[0];
+      if (t) setLastClientCoords({ x: t.clientX, y: t.clientY });
+    };
+    window.addEventListener('pointermove', handlePointer);
+    window.addEventListener('touchmove', handleTouch);
+    cleanupRef.current = () => {
+      window.removeEventListener('pointermove', handlePointer);
+      window.removeEventListener('touchmove', handleTouch);
+    };
   }, []);
 
   const handleDndDragEnd = useCallback(
@@ -181,14 +204,27 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
       if (id.startsWith('unposed-') && over?.id === 'graph-drop-zone') {
         const note = active.data.current as Note | undefined;
         if (note) {
-          const dropPosition = centerCoords || { x: 0, y: 0 };
+          let dropPosition = centerCoords || { x: 0, y: 0 };
+          const client = lastClientCoords;
+          if (client && typeof screenToFlowPosition === 'function') {
+            try {
+              dropPosition = screenToFlowPosition(client);
+            } catch (_e) {}
+          }
           onAddNoteToGraph(note, dropPosition);
         }
       }
 
       setActiveDragNote(null);
+      try {
+        if (cleanupRef.current) {
+          cleanupRef.current();
+          cleanupRef.current = null;
+        }
+      } catch (_e) {}
+      setLastClientCoords(null);
     },
-    [onAddNoteToGraph, centerCoords]
+    [onAddNoteToGraph, centerCoords, lastClientCoords, screenToFlowPosition]
   );
 
   return (

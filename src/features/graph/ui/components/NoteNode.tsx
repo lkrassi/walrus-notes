@@ -28,7 +28,6 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
   );
   const pointerUpHandlerRef = useRef<((e: PointerEvent) => void) | null>(null);
 
-  // На мобильных handle'ы больше для удобства тач-взаимодействия (44x44 минимум для accessibility)
   const handleSize = isMobile ? 20 : 15;
   const handleStyle = {
     background: resolvedColor,

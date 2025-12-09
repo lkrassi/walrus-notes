@@ -71,5 +71,6 @@
   "quotesAndDividersExample": "> This is a quote\n> Second line of quote\n\n---\n***",
   "escaping": "Escaping",
   "escapingDescription": "To display special characters, use a backslash:",
-  "escapingExample": "\\*Asterisk without formatting\\*\n\\# Not a heading\n\\\\ Backslash"
+  "escapingExample": "\\*Asterisk without formatting\\*\n\\# Not a heading\n\\\\ Backslash",
+  "uploadImage": "Upload image"
 }

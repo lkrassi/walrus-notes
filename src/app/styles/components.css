@@ -87,7 +87,7 @@
   padding: 1rem;
   border-bottom: 1px solid var(--color-border);
 
-  @apply max-sm:text-center max-sm:flex-col max-sm:gap-y-2;
+  @apply max-sm:flex-col max-sm:gap-y-2 max-sm:text-center;
 }
 
 .dark .panel-header {

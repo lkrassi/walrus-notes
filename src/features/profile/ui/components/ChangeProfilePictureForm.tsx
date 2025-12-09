@@ -100,21 +100,20 @@ export const ChangeProfilePictureForm: React.FC = () => {
       </div>
 
       <div className={cn('flex', 'gap-3')}>
-        <Button
-          onClick={handleCancel}
-          variant='escape'
-          className={cn('btn', 'flex-1')}
-        >
+        <Button onClick={handleCancel} variant='escape' className={cn('btn')}>
           {t('profile:cancel')}
         </Button>
         <Button
           onClick={handleUpload}
-          className={cn('btn', 'flex-1')}
-          variant={selectedFile ? 'submit' : 'disabled'}
+          className={cn('btn')}
+          variant={selectedFile ? 'default' : 'disabled'}
         >
           {t('profile:upload')}
         </Button>
+
       </div>
+
+
     </div>
   );
 };

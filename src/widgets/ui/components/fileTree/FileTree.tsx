@@ -44,6 +44,8 @@ export const FileTree = memo(
       triggerSearch({ search: searchQuery });
     }, [searchQuery, triggerSearch]);
 
+    const isSearchMode = searchQuery.trim().length > 0;
+
     const fileTree = useMemo(() => {
       if (searchQuery && searchResponse?.data) {
         const q = searchQuery.trim().toLowerCase();
@@ -215,6 +217,31 @@ export const FileTree = memo(
         <div className={cn('flex-1', 'overflow-y-auto', 'p-2')}>
           {fileTree.length === 0 ? (
             <FileTreeEmpty />
+          ) : isSearchMode ? (
+            <div className={cn('space-y-1')}>
+              {fileTree.map(item => {
+                const isSelected = selectedItemId === item.id;
+                return (
+                  <div key={item.id}>
+                    <FileTreeItem
+                      item={item}
+                      level={0}
+                      isExpanded={false}
+                      isSelected={isSelected}
+                      hasSelection={!!selectedItemId}
+                      hasChildren={false}
+                      onItemClick={handleItemClick}
+                      onOpenGraph={onOpenGraph}
+                      onDeleteNote={undefined}
+                      onDeleteLayout={undefined}
+                      renderChild={undefined}
+                      onNotesLoaded={undefined}
+                      toggleExpanded={undefined}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className={cn('space-y-1')}>
               {fileTree

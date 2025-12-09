@@ -1,10 +1,18 @@
-import { Edit3, Save, X, CircleQuestionMark } from 'lucide-react';
+import {
+  Edit3,
+  Save,
+  X,
+  CircleQuestionMark,
+  Image as ImageIcon,
+} from 'lucide-react';
 import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { MarkdownHelp } from './MarkdownHelp';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
+import ImageUploadModal from 'shared/ui/components/ImageUploader';
+import { useUploadFileMutation } from 'app/store/api';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -19,6 +27,7 @@ interface NoteHeaderProps {
   onSave: () => void;
   onCancel: () => void;
   onDiscardConfirm?: () => void;
+  onInsertImage?: (url: string) => void;
 }
 
 export const NoteHeader: React.FC<NoteHeaderProps> = ({
@@ -34,14 +43,35 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   onSave,
   onCancel,
   onDiscardConfirm,
+  onInsertImage,
 }) => {
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
+  const [uploadFile] = useUploadFileMutation();
 
   const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
     title: t('notes:markdownGuide'),
     size: 'lg',
   });
+
+  const handleOpenImageUpload = openModalFromTrigger(
+    <ImageUploadModal
+      uploadFn={async (file: File) => {
+        const res = await uploadFile({ file }).unwrap();
+        return res?.data?.imgUrl ?? '';
+      }}
+      onUploaded={url => {
+        if (url && onInsertImage) {
+          const normalized = url.startsWith('http') ? url : `https://${url}`;
+          onInsertImage(normalized);
+        }
+      }}
+    />,
+    {
+      title: t('notes:uploadImage') || 'Загрузить изображение',
+      size: 'md',
+    }
+  );
 
   return (
     <div className={cn('panel-header')}>
@@ -75,6 +105,15 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
               variant='submit'
             >
               <Save className={cn('h-4', 'w-4')} />
+            </Button>
+            <Button
+              onClick={handleOpenImageUpload}
+              className={cn('px-4', 'py-2')}
+              disabled={isLoading}
+              title={t('notes:uploadImage') || 'Upload image'}
+              variant='default'
+            >
+              <ImageIcon className={cn('h-4', 'w-4')} />
             </Button>
             <Button
               onClick={e => {

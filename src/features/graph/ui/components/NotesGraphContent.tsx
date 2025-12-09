@@ -624,6 +624,7 @@ const NotesGraphContentComponent = ({
       onDrop={handleNoteDrop}
       onBoxSelect={handleBoxSelect}
       onAddNoteToGraph={handleAddNoteToGraph}
+      screenToFlowPosition={screenToFlowPosition}
       isMain={isMain}
     />
   );
