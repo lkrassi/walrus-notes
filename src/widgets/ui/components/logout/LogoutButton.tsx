@@ -4,13 +4,15 @@ import { Button } from 'shared';
 import { logout } from 'shared/api/logout';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
+import { useAppDispatch } from 'widgets/hooks/redux';
 
 export const LogoutButton = () => {
   const { t } = useLocalization();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    logout();
+    logout(dispatch);
     navigate('/auth');
   };
 
