@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
@@ -75,7 +76,10 @@ export const Settings: React.FC = () => {
 
       <main className={cn('container', 'mx-auto', 'px-4', 'py-8')}>
         <div className={cn('mx-auto', 'max-w-4xl')}>
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28 }}
             className={cn(
               'card',
               'p-6',
@@ -180,12 +184,15 @@ export const Settings: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           <div className={cn('space-y-4', 'max-sm:space-y-3')}>
-            {settingsSections.map(section => (
-              <div
+            {settingsSections.map((section, idx) => (
+              <motion.div
                 key={section.title}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.26, delay: idx * 0.04 }}
                 className={cn(
                   'card',
                   'p-6',
@@ -256,7 +263,7 @@ export const Settings: React.FC = () => {
                     {section.action}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
