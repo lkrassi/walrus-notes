@@ -46,7 +46,6 @@ export const notificationsSlice = createSlice({
         );
       });
 
-      // Prepare simple logging for debugging duplicates
       try {
         (window as any).__NOTIFICATION_LOG__ =
           (window as any).__NOTIFICATION_LOG__ || [];

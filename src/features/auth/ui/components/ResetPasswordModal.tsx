@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import cn from 'shared/lib/cn';
 import { useConfirmCodeMutation } from 'app/store/api';
-import { useLocalization } from 'widgets/hooks';
+import { useLocalization, useNotifications } from 'widgets/hooks';
 import { Button } from 'shared';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import 'features/auth/model/validationSchemas';
 import { ValidatedField } from 'features/form/ui/ValidatedField';
 
 interface ResetPasswordModalProps {
@@ -18,6 +19,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
   onSuccess,
 }) => {
   const { t } = useLocalization();
+  const { showError } = useNotifications();
   const [confirmCode] = useConfirmCodeMutation();
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
   const [showPassword, setShowPassword] = useState(false);
@@ -100,9 +102,11 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
         errorMessage =
           t('auth:resetPassword.error.incorrectCode') ||
           'Неверный код подтверждения';
+        showError(errorMessage);
       } else if (errorCode === 'confirm_code_not_exist') {
         errorMessage =
           t('auth:resetPassword.error.codeNotExist') || 'Код не существует';
+        showError(errorMessage);
       } else if (errorCode === 'user_not_found') {
         errorMessage =
           t('auth:resetPassword.error.userNotFound') ||
@@ -200,23 +204,26 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
         initialValues={{ newPassword: '' }}
         validationSchema={Yup.object({
           newPassword: Yup.string()
+            .passwordStrength(
+              t('auth:validation.passwordStrength') ||
+                'Пароль должен содержать минимум 8 символов, включая заглавные и строчные буквы, цифры и специальные символы'
+            )
+            .noCommonPasswords(
+              t('auth:validation.passwordCommon') ||
+                'Этот пароль слишком простой и часто используется. Выберите более надежный пароль'
+            )
             .required(
               t('auth:resetPassword.error.passwordRequired') ||
                 'Введите новый пароль'
-            )
-            .min(
-              6,
-              t('auth:resetPassword.error.passwordTooShort') ||
-                'Пароль должен быть не менее 6 символов'
             ),
         })}
         onSubmit={handleSubmit}
         validateOnMount
-        validateOnChange={false}
+        validateOnChange={true}
         validateOnBlur={true}
       >
         {formik => (
-          <Form className={cn('w-full')}>
+          <Form className={cn('w-full', 'flex', 'flex-col', 'gap-y-5')}>
             <div className={cn('relative')}>
               <ValidatedField
                 name='newPassword'
@@ -244,12 +251,6 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
                 </div>
               </ValidatedField>
             </div>
-
-            {error && (
-              <p className={cn('text-sm', 'text-red-500', 'text-center')}>
-                {error}
-              </p>
-            )}
 
             <div className={cn('flex', 'justify-center')}>
               <Button

@@ -15,7 +15,6 @@ export const CreateLayoutForm = ({
 }: CreateLayoutFormProps) => {
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
-  // default color matches ColorSelector default
   const DEFAULT_COLOR = '#3b82f6';
   const [color, setColor] = useState<string | undefined>(DEFAULT_COLOR);
   const { showError } = useNotifications();

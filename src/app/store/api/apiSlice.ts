@@ -74,51 +74,6 @@ const baseQueryWithReauth: BaseQueryFn<
     }
   }
 
-  if (result.error) {
-    try {
-      const err = result.error as unknown;
-      let maybeMsg = '';
-
-      const getStringAt = (
-        root: unknown,
-        path: string[]
-      ): string | undefined => {
-        let cur: unknown = root;
-        for (const p of path) {
-          if (!cur || typeof cur !== 'object') return undefined;
-          cur = (cur as Record<string, unknown>)[p];
-        }
-        return typeof cur === 'string' ? cur : undefined;
-      };
-
-      if (err && typeof err === 'object') {
-        maybeMsg =
-          getStringAt(err, ['data', 'meta', 'message']) ||
-          getStringAt(err, ['data', 'message']) ||
-          getStringAt(err, ['error']) ||
-          '';
-      } else if (typeof err === 'string') {
-        maybeMsg = err;
-      } else {
-        try {
-          maybeMsg = JSON.stringify(err);
-        } catch {
-          maybeMsg = '';
-        }
-      }
-
-      const title = i18n.t('errors.requestTitle') || 'Request error';
-      const fallback = i18n.t('errors.requestFallback') || 'Request failed';
-
-      // Do NOT dispatch UI notifications from apiSlice.
-      // Components should show notifications explicitly via `useNotifications`.
-      console.debug('[apiSlice] error (no ui notification dispatched)', {
-        message: String(maybeMsg || fallback),
-        title,
-      });
-    } catch {}
-  }
-
   return result;
 };
 

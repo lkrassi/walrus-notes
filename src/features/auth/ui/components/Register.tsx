@@ -66,13 +66,14 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             title: t('auth:confirmCode.title') || 'Подтверждение почты',
             size: 'md',
             closeOnOverlayClick: false,
+            closeOnEscape: false,
+            showCloseButton: false,
           }
         );
       } catch {
         showError(t('auth:register.error'));
       }
     } catch (err) {
-      // Try to extract useful info from the RTK Query error shape
       const e: unknown = err;
       console.debug('[register] caught error', e);
 
@@ -135,7 +136,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             'Пользователь с таким email или именем уже существует'
         );
       } else if (serverMessage) {
-        // show server-provided message if available
         showError(String(serverMessage));
       } else {
         showError(t('auth:register.error'));

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import cn from 'shared/lib/cn';
 import { useConfirmCodeMutation } from 'app/store/api';
 import { useLocalization } from 'widgets/hooks';
+import { useNotifications } from 'widgets/hooks';
 import { Button } from 'shared';
 
 interface ConfirmCodeModalProps {
@@ -14,10 +15,11 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
   onSuccess,
 }) => {
   const { t } = useLocalization();
+  const { showError } = useNotifications();
   const [confirmCode] = useConfirmCodeMutation();
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);  
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleInputChange = (index: number, value: string) => {
     if (!/^\d?$/.test(value)) return;
@@ -78,6 +80,8 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
 
       onSuccess();
     } catch (_e) {
+      // show localized error for invalid confirmation code
+      showError(t('auth:confirmCode.error.invalid') || 'Неверный код');
     } finally {
       setIsLoading(false);
     }
@@ -160,9 +164,14 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
       <Button
         onClick={handleSubmit}
         disabled={isLoading || code.join('').length !== 6}
+        variant={
+          isLoading || code.join('').length !== 6 ? 'disabled' : 'submit'
+        }
         className={cn('w-full', 'px-8', 'py-3')}
       >
-        {isLoading ? t('auth:confirmCode.loading') : t('auth:confirmCode.submit')}
+        {isLoading
+          ? t('auth:confirmCode.loading')
+          : t('auth:confirmCode.submit')}
       </Button>
     </div>
   );

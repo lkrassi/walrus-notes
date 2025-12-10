@@ -36,7 +36,6 @@ export const useNotifications = () => {
         return;
       }
 
-      // Avoid showing near-duplicates that are already visible
       const alreadyShown = notifications.some(n => {
         const existing = normalizeMessage(n.message);
         return (
@@ -55,7 +54,6 @@ export const useNotifications = () => {
         lastMessagesRef.current.delete(firstKey);
       }
 
-      // Attach origin metadata so reducer logs and dedup logic can reason about source
       dispatch(addNotification({ ...(notification as any), origin: 'ui' }));
 
       if (notification.duration) {
