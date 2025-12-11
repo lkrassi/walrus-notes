@@ -102,7 +102,6 @@ const SidebarComponent = (
             'md:hidden'
           )}
           onClick={() => setIsMobileOpen(false)}
-          style={{ zIndex: 70000 }}
         />
       )}
 
@@ -130,7 +129,6 @@ const SidebarComponent = (
           'md:flex',
           'md:translate-x-0'
         )}
-        style={width ? { width, zIndex: 70000 } : { zIndex: 70000 }}
       >
         <div
           className={cn(

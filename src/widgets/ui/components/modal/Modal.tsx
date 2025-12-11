@@ -128,7 +128,6 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
       )}
       style={{
         opacity: animationState === 'entering' ? 0 : 1,
-        zIndex: 90000,
       }}
       onClick={handleOverlayClick}
     >

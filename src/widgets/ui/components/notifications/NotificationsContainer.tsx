@@ -57,9 +57,9 @@ export const NotificationsContainer: React.FC = () => {
         'bottom-4',
         'flex',
         'flex-col',
-        'gap-3'
+        'gap-3',
+        'z-101'
       )}
-      style={{ zIndex: 100000 }}
     >
       <AnimatePresence>
         {notifications.map((notification, idx) => (
