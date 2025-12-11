@@ -24,10 +24,7 @@ export const useNoteEditor = (
   const [payload, setPayloadState] = useState<string>(initialPayload);
   const { showError } = useNotifications();
   const [updateNote, { isLoading }] = useUpdateNoteMutation();
-  const userId =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('userId') || ''
-      : '';
+  const userId = useAppSelector(s => s.user.profile?.id ?? '');
 
   const {
     commitDraft,
@@ -48,17 +45,10 @@ export const useNoteEditor = (
   const setPayload = (value: string) => {
     try {
       setPayloadState(value);
-      const lsKey = `wn.draft.${note.id}`;
       if (value != null && value !== originalPayloadRef.current) {
         dispatch(setDraft({ noteId: note.id, text: value }));
-        try {
-          localStorage.setItem(lsKey, value);
-        } catch (_e) {}
       } else {
         dispatch(removeDraft({ noteId: note.id }));
-        try {
-          localStorage.removeItem(lsKey);
-        } catch (_e) {}
       }
     } catch (_e) {}
   };
@@ -67,21 +57,10 @@ export const useNoteEditor = (
     setTitle(note.title ?? '');
     const incoming =
       note.draft && note.draft.length ? note.draft : note.payload;
-    const lsKey = `wn.draft.${note.id}`;
-    let lsDraft: string | null = null;
-    try {
-      lsDraft = localStorage.getItem(lsKey);
-    } catch (_e) {
-      lsDraft = null;
-    }
-
     setPayloadState(prev => {
       const incomingSafe = incoming ?? '';
       if (storeDraft && storeDraft.length) {
         return storeDraft;
-      }
-      if (lsDraft && lsDraft.length) {
-        return lsDraft;
       }
       if (prev === originalPayloadRef.current) return incomingSafe;
       return prev;
@@ -161,12 +140,6 @@ export const useNoteEditor = (
       try {
         dispatch(removeDraft({ noteId: note.id }));
       } catch (_e) {}
-      try {
-        localStorage.removeItem(`wn.draft.${note.id}`);
-      } catch (_e) {}
-    } catch (_e) {}
-    try {
-      localStorage.removeItem(`wn.draft.${note.id}`);
     } catch (_e) {}
     setIsEditing(false);
     return true;

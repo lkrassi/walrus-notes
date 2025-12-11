@@ -6,6 +6,10 @@ import { makeUpdateDraft, makeCommitDraft } from 'shared/model/ws';
 import type { UpdateDraftPayload, CommitDraftPayload } from 'shared/model/ws';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { setDraft, removeDraft } from 'app/store/slices/draftsSlice';
+import { notesApi } from 'app/store/api/notesApi';
+import { layoutApi } from 'app/store/api/layoutApi';
+import { store } from 'app/store';
+import { updateTabNote } from 'app/store/slices/tabsSlice';
 
 interface UseDraftSyncOpts {
   noteId: string | null | undefined;
@@ -171,9 +175,7 @@ export const useDraftSync = ({
             }
             awaitingAckRef.current = null;
             pendingRef.current = null;
-            try {
-              dispatch(removeDraft({ noteId }));
-            } catch (_e) {}
+            // on update ack we keep draft in cache until commit
             setIsSaving(false);
             setLastSavedAt(new Date().toISOString());
           } else {
@@ -206,6 +208,77 @@ export const useDraftSync = ({
             if (confirmed != null) prevSentRef.current = confirmed;
             awaitingAckRef.current = null;
             pendingRef.current = null;
+            // update RTK Query caches: write confirmed into payload for note across caches
+            try {
+              if (confirmed != null) {
+                const state = store.getState();
+                const layoutsCache =
+                  layoutApi.endpoints.getMyLayouts.select()(state);
+                const layouts = layoutsCache.data?.data || [];
+                for (const l of layouts) {
+                  try {
+                    dispatch(
+                      notesApi.util.updateQueryData(
+                        'getNotes',
+                        { layoutId: l.id, page: 1 },
+                        draft => {
+                          const idx = draft.data.findIndex(
+                            n => n.id === noteId
+                          );
+                          if (idx !== -1)
+                            draft.data[idx].payload = confirmed as string;
+                        }
+                      )
+                    );
+                  } catch (_e) {}
+
+                  try {
+                    dispatch(
+                      notesApi.util.updateQueryData(
+                        'getPosedNotes',
+                        { layoutId: l.id },
+                        draft => {
+                          const idx = draft.data.findIndex(
+                            n => n.id === noteId
+                          );
+                          if (idx !== -1)
+                            draft.data[idx].payload = confirmed as string;
+                        }
+                      )
+                    );
+                  } catch (_e) {}
+
+                  try {
+                    dispatch(
+                      notesApi.util.updateQueryData(
+                        'getUnposedNotes',
+                        { layoutId: l.id },
+                        draft => {
+                          const idx = draft.data.findIndex(
+                            n => n.id === noteId
+                          );
+                          if (idx !== -1)
+                            draft.data[idx].payload = confirmed as string;
+                        }
+                      )
+                    );
+                  } catch (_e) {}
+                }
+              }
+            } catch (_e) {}
+
+            try {
+              dispatch(
+                updateTabNote({
+                  noteId,
+                  updates: {
+                    payload: confirmed as string,
+                    updatedAt: new Date().toISOString(),
+                  },
+                })
+              );
+            } catch (_e) {}
+
             try {
               dispatch(removeDraft({ noteId }));
             } catch (_e) {}
@@ -261,7 +334,15 @@ export const useDraftSync = ({
   const commitDraft = useCallback(() => {
     if (!noteId || !ws) return false;
     try {
+      // mark that we're about to commit — skip automatic sends for a short time
       awaitingCommitRef.current = true;
+      try {
+        lastManualSendAtRef.current = Date.now();
+      } catch (_e) {}
+      // mark prevSent to current draft so debounced effect won't resend older content
+      try {
+        if (draftRef.current != null) prevSentRef.current = draftRef.current;
+      } catch (_e) {}
       ws.send(makeCommitDraft(noteId));
       return true;
     } catch (_) {

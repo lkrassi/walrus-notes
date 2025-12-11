@@ -18,24 +18,3 @@ createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </StrictMode>
 );
-
-try {
-  if (typeof localStorage !== 'undefined') {
-    try {
-      localStorage.removeItem('wn.note.split');
-    } catch (_e) {}
-    try {
-      localStorage.removeItem('wn.sidebar.width');
-    } catch (_e) {}
-    try {
-      const keys = Object.keys(localStorage);
-      for (const k of keys) {
-        if (k && k.startsWith('wn:noteDraft:')) {
-          try {
-            localStorage.removeItem(k);
-          } catch (_e) {}
-        }
-      }
-    } catch (_e) {}
-  }
-} catch (_e) {}

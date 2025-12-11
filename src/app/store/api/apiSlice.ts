@@ -4,7 +4,6 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import i18n from '../../../i18n';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
