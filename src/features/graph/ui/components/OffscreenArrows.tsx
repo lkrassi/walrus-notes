@@ -188,15 +188,7 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
   const arrows = stateRef.current;
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 65,
-      }}
-      aria-hidden
-    >
+    <div className={'absolute inset-0 pointer-events-none z-60'} aria-hidden>
       {arrows.map(a => (
         <div
           key={a.id}

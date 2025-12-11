@@ -1,5 +1,5 @@
-import { type CSSProperties } from 'react';
 import Snowfall from 'react-snowfall';
+import cn from 'shared/lib/cn';
 import { useHolidaySettings } from '../../hooks/useHolidaySettings';
 
 export const SnowfallOverlay = () => {
@@ -11,21 +11,10 @@ export const SnowfallOverlay = () => {
   const snowflakeCount = Math.max(20, Math.round(400 * density));
   const maxRadius = Math.max(settings.maxSize ?? 4, 2);
 
-  const style: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    width: '100vw',
-    height: '100vh',
-    pointerEvents: 'none',
-    zIndex: 9999,
-  };
-
   return (
-    <Snowfall
-      snowflakeCount={snowflakeCount}
-      radius={[1, maxRadius]}
-      style={style}
-    />
+    <div className={cn('fixed', 'inset-0', 'w-screen', 'h-screen', 'pointer-events-none', 'z-200')}>
+      <Snowfall snowflakeCount={snowflakeCount} radius={[1, maxRadius]} />
+    </div>
   );
 };
 

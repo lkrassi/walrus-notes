@@ -35,7 +35,6 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
     width: handleSize,
     height: handleSize,
     cursor: 'crosshair',
-    zIndex: 10,
   };
 
   return (
@@ -118,24 +117,28 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
         position={Position.Right}
         id='source-right'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='source'
         position={Position.Left}
         id='source-left'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='source'
         position={Position.Top}
         id='source-top'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='source'
         position={Position.Bottom}
         id='source-bottom'
         style={handleStyle}
+        className={cn('z-10')}
       />
 
       <Handle
@@ -143,24 +146,28 @@ const NoteNodeInner = ({ data, selected: _selected }: NoteNodeProps) => {
         position={Position.Right}
         id='target-right'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='target'
         position={Position.Left}
         id='target-left'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='target'
         position={Position.Top}
         id='target-top'
         style={handleStyle}
+        className={cn('z-10')}
       />
       <Handle
         type='target'
         position={Position.Bottom}
         id='target-bottom'
         style={handleStyle}
+        className={cn('z-10')}
       />
 
       <h3

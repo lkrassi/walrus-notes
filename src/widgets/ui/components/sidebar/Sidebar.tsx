@@ -37,7 +37,7 @@ const SidebarComponent = (
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const { enabled } = useHolidaySettings();
   const isMobile = useIsMobile();
-  const { width, onPointerDown } = useResizableSidebar();
+  const { width: _width, onPointerDown } = useResizableSidebar();
   const dispatch = useAppDispatch();
   const {
     fileTree,
@@ -99,7 +99,8 @@ const SidebarComponent = (
             'inset-0',
             'bg-black/20',
             'backdrop-blur-sm',
-            'md:hidden'
+            'md:hidden',
+            'z-90'
           )}
           onClick={() => setIsMobileOpen(false)}
         />
@@ -127,7 +128,8 @@ const SidebarComponent = (
           'dark:text-dark-text',
           'md:relative',
           'md:flex',
-          'md:translate-x-0'
+          'md:translate-x-0',
+          'z-100'
         )}
       >
         <div

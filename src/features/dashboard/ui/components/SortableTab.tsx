@@ -31,7 +31,6 @@ export const SortableTab = ({
     boxShadow: isDragging
       ? '0 10px 25px rgba(0, 0, 0, 0.15)'
       : '0 1px 3px rgba(0, 0, 0, 0.1)',
-    zIndex: isDragging ? 50 : 10,
     flexShrink: 0,
     position: 'relative' as const,
   };

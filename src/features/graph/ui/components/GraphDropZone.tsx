@@ -116,7 +116,6 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
             pointerEvents: 'none',
             border: '1px solid rgba(13,148,136,0.6)',
             background: 'rgba(13,148,136,0.08)',
-            zIndex: 9999,
             left: rectStyle.left,
             top: rectStyle.top,
             width: rectStyle.width,

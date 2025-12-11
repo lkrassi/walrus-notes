@@ -58,7 +58,7 @@ export const NotificationsContainer: React.FC = () => {
         'flex',
         'flex-col',
         'gap-3',
-        'z-101'
+        'z-150'
       )}
     >
       <AnimatePresence>
