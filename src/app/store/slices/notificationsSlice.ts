@@ -62,11 +62,6 @@ export const notificationsSlice = createSlice({
           });
         } catch {}
 
-        console.debug('[notifications] duplicate prevented', {
-          origin: payload.origin,
-          message: payload.message,
-        });
-
         return;
       }
 
@@ -82,11 +77,6 @@ export const notificationsSlice = createSlice({
           time: Date.now(),
         });
       } catch {}
-
-      console.debug('[notifications] added', {
-        origin: payload.origin,
-        message: payload.message,
-      });
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(

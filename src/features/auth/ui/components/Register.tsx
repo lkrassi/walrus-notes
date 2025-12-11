@@ -75,8 +75,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       }
     } catch (err) {
       const e: unknown = err;
-      console.debug('[register] caught error', e);
-
       const getStringAt = (
         root: unknown,
         path: string[]

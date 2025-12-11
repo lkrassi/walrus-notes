@@ -106,10 +106,8 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: unknown) => {
-      console.log('[useGraphConnections] onConnectEnd вызван, event:', event);
 
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
-        console.log('[useGraphConnections] Нет tempEdge или невалидный source');
         setTempEdge(null);
         return;
       }
@@ -122,22 +120,15 @@ export const useGraphConnections = ({
       let clientY: number | undefined;
 
       if (event instanceof MouseEvent) {
-        console.log('[useGraphConnections] MouseEvent обнаружен');
         clientX = event.clientX;
         clientY = event.clientY;
       } else if (
         event instanceof TouchEvent &&
         event.changedTouches.length > 0
       ) {
-        console.log('[useGraphConnections] TouchEvent обнаружен');
         clientX = event.changedTouches[0].clientX;
         clientY = event.changedTouches[0].clientY;
-      } else {
-        console.log(
-          '[useGraphConnections] Неизвестный тип события:',
-          typeof event
-        );
-      }
+      } 
 
       if (clientX !== undefined && clientY !== undefined) {
         const flowPosition = screenToFlowPosition({
@@ -265,13 +256,10 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
-      console.log('[useGraphConnections] onConnect вызван:', connection);
-
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
       ) {
-        console.log('[useGraphConnections] Невалидные source или target');
         return;
       }
 
@@ -279,7 +267,6 @@ export const useGraphConnections = ({
       const target = connection.target;
 
       if (source === target) {
-        console.log('[useGraphConnections] Source === target, отмена');
         return;
       }
 
@@ -288,15 +275,10 @@ export const useGraphConnections = ({
       );
 
       if (edgeExists) {
-        console.log('[useGraphConnections] Связь уже существует');
         return;
       }
 
       try {
-        console.log('[useGraphConnections] Создание связи:', {
-          source,
-          target,
-        });
         const newEdge = createEdge(
           source,
           target,
@@ -311,13 +293,11 @@ export const useGraphConnections = ({
           secondNoteId: target,
         }).unwrap();
 
-        console.log('[useGraphConnections] Связь создана успешно');
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
         try {
           onEdgeCreated?.(newEdge);
         } catch (_error) {}
-      } catch (error) {
-        console.error('[useGraphConnections] Ошибка создания связи:', error);
+      } catch (_e) {
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );

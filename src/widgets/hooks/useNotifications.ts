@@ -28,11 +28,6 @@ export const useNotifications = () => {
       const messageKey = `${notification.type}:${normalized}`;
 
       if (lastMessagesRef.current.has(messageKey)) {
-        console.debug(
-          '[useNotifications] skipping recent duplicate',
-          messageKey,
-          notification
-        );
         return;
       }
 

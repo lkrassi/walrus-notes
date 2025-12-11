@@ -40,10 +40,12 @@ export const useNoteEditor = (
   });
 
   const originalPayloadRef = useRef<string>(note.payload ?? '');
+  const lastLocalCommitRef = useRef<number | null>(null);
   const dispatch = useAppDispatch();
 
   const setPayload = (value: string) => {
     try {
+      // debug removed
       setPayloadState(value);
       if (value != null && value !== originalPayloadRef.current) {
         dispatch(setDraft({ noteId: note.id, text: value }));
@@ -57,16 +59,36 @@ export const useNoteEditor = (
     setTitle(note.title ?? '');
     const incoming =
       note.draft && note.draft.length ? note.draft : note.payload;
+    // debug removed
     setPayloadState(prev => {
       const incomingSafe = incoming ?? '';
       if (storeDraft && storeDraft.length) {
         return storeDraft;
       }
+      try {
+        // if we recently did a local commit, avoid accepting an incoming older payload
+        if (
+          lastLocalCommitRef.current != null &&
+          Date.now() - lastLocalCommitRef.current < 5000 &&
+          incomingSafe !== originalPayloadRef.current
+        ) {
+          return prev;
+        }
+      } catch (_e) {}
       if (prev === originalPayloadRef.current) return incomingSafe;
       return prev;
     });
     originalPayloadRef.current = note.payload ?? '';
   }, [note.title, note.payload, note.draft]);
+
+  // If there is a draft stored in the Redux slice, always prefer it when it changes
+  useEffect(() => {
+    try {
+      if (storeDraft && storeDraft.length) {
+        setPayloadState(storeDraft);
+      }
+    } catch (_e) {}
+  }, [storeDraft, note.id]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -79,6 +101,7 @@ export const useNoteEditor = (
   };
 
   const handleSave = async () => {
+    // debug removed
     const safeTitle = title ?? '';
     const safePayload = payload ?? '';
 
@@ -102,6 +125,13 @@ export const useNoteEditor = (
         title: newTitle,
       }).unwrap();
 
+      // call commitDraft to notify server about final payload
+      try {
+        const res = commitDraft(newPayload);
+        try {
+          if (res) lastLocalCommitRef.current = Date.now();
+        } catch (_e) {}
+      } catch (_e) {}
       try {
         setPayloadState(newPayload);
         originalPayloadRef.current = newPayload;
@@ -120,9 +150,7 @@ export const useNoteEditor = (
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
 
-      try {
-        commitDraft();
-      } catch (_e) {}
+      // debug removed
 
       return true;
     } catch {
