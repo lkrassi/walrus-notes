@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
@@ -45,6 +45,12 @@ export const NoteViewer = ({
     }
   }, [hasLocalChanges, hasServerDraft, handleEdit]);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(prev => !prev);
+  };
+
   return (
     <div
       className={cn(
@@ -53,9 +59,10 @@ export const NoteViewer = ({
         'h-full',
         'w-full',
         'flex-col',
-        'bg-gradient'
+        isFullscreen ? 'bg-gradient fixed inset-0 z-100' : 'bg-gradient'
       )}
     >
+      {' '}
       <NoteHeader
         isEditing={isEditing}
         title={title}
@@ -84,8 +91,9 @@ export const NoteViewer = ({
               : snippet;
           setPayload(next);
         }}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={toggleFullscreen}
       />
-
       <div className={cn('flex-1', 'overflow-hidden')}>
         <NoteContent
           isEditing={isEditing}

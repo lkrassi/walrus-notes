@@ -66,6 +66,7 @@ export const ForgotPasswordEmailModal: React.FC<
               autoComplete='email'
               enterKeyHint='done'
               required
+              autoFocus={true}
             />
 
             <div className={cn('flex', 'gap-3', 'justify-center')}>

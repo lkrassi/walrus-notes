@@ -14,6 +14,7 @@ interface ValidatedFieldProps {
   inputClassName?: string;
   required?: boolean;
   autoComplete?: string;
+  autoFocus?: boolean;
   inputMode?:
     | 'text'
     | 'email'
@@ -45,6 +46,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
   inputMode,
   enterKeyHint,
   children,
+  autoFocus
 }) => {
   return (
     <div className={cn('flex', 'flex-col', 'gap-3', className)}>
@@ -88,6 +90,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   autoComplete={autoComplete}
                   enterKeyHint={enterKeyHint}
                   required={required}
+                  autoFocus={autoFocus}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     field.onChange(e);
                   }}

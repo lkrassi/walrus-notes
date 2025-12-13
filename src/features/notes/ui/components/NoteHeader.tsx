@@ -4,6 +4,8 @@ import {
   X,
   CircleQuestionMark,
   Image as ImageIcon,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
@@ -22,12 +24,14 @@ interface NoteHeaderProps {
   hasServerDraft?: boolean;
   isSaving?: boolean;
   isPending?: boolean;
+  isFullscreen?: boolean;
   onTitleChange: (title: string) => void;
   onEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
   onDiscardConfirm?: () => void;
   onInsertImage?: (url: string) => void;
+  onToggleFullscreen?: () => void; // <--
 }
 
 export const NoteHeader: React.FC<NoteHeaderProps> = ({
@@ -38,21 +42,18 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   hasServerDraft: _hasServerDraft,
   isSaving: _isSaving,
   isPending: _isPending,
+  isFullscreen,
   onTitleChange,
   onEdit,
   onSave,
   onCancel,
   onDiscardConfirm,
   onInsertImage,
+  onToggleFullscreen,
 }) => {
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const [uploadFile] = useUploadFileMutation();
-
-  const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
-    title: t('notes:markdownGuide'),
-    size: 'lg',
-  });
 
   const handleOpenImageUpload = openModalFromTrigger(
     <ImageUploadModal
@@ -72,6 +73,11 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
       size: 'md',
     }
   );
+
+  const handleOpenMarkdownHelp = openModalFromTrigger(<MarkdownHelp />, {
+    title: t('notes:markdownGuide'),
+    size: 'lg',
+  });
 
   return (
     <div className={cn('panel-header')}>
@@ -149,6 +155,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
             <Edit3 className={cn('h-4', 'w-4')} />
           </Button>
         )}
+
         <Button
           onClick={handleOpenMarkdownHelp}
           className={cn('px-4', 'py-2')}
@@ -157,6 +164,23 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         >
           <CircleQuestionMark className={cn('h-4', 'w-4')} />
         </Button>
+
+        {onToggleFullscreen && (
+          <Button
+            onClick={onToggleFullscreen}
+            className={cn('px-4', 'py-2')}
+            title={
+              isFullscreen ? t('notes:exitFullscreen') : t('notes:fullscreen')
+            }
+            variant='default'
+          >
+            {isFullscreen ? (
+              <Minimize2 className={cn('h-4', 'w-4')} />
+            ) : (
+              <Maximize2 className={cn('h-4', 'w-4')} />
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );
