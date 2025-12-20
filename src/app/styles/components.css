@@ -1,0 +1,119 @@
+.tw-label {
+  @apply text-text dark:text-dark-text mb-2 block text-sm font-medium;
+}
+
+.form-input {
+  @apply border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary w-full resize-none border bg-white p-4 transition-all duration-200 focus:border-transparent focus:ring-2 dark:bg-gray-800;
+}
+
+.no-border {
+  @apply border-0 bg-transparent shadow-none focus:ring-0 focus:outline-none;
+}
+
+.btn {
+  @apply inline-flex h-12 items-center justify-center rounded-md px-6;
+}
+
+.muted-text {
+  @apply text-secondary dark:text-dark-secondary;
+}
+
+.card {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  border: 1px solid var(--color-border);
+}
+
+.dark .card {
+  background: var(--color-dark-bg);
+  color: var(--color-dark-text);
+  border: 1px solid var(--color-dark-border);
+}
+
+.heading-lg {
+  @apply text-text dark:text-dark-text mt-4 text-lg font-semibold;
+}
+
+.heading-md {
+  @apply text-text dark:text-dark-text mt-2 text-base font-medium;
+}
+
+.field-box {
+  @apply text-text dark:text-dark-text rounded-md bg-gray-100 px-3 py-2 dark:bg-gray-800;
+}
+
+.form-card {
+  @apply border-border dark:border-dark-border rounded-2xl border p-8 shadow-sm backdrop-blur-sm;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg) 0%,
+    #f0fdf4 50%,
+    #ecfdf5 100%
+  );
+}
+
+.dark .form-card {
+  background: linear-gradient(
+    135deg,
+    var(--color-dark-bg) 0%,
+    #134e4a 50%,
+    #042f2e 100%
+  );
+}
+
+.hero-title {
+  @apply text-text dark:text-dark-text mb-8 text-center text-3xl font-light tracking-tight;
+}
+
+.hero-h1 {
+  @apply text-text dark:text-dark-text mb-6 text-4xl font-bold max-lg:w-full max-lg:text-center sm:text-5xl lg:text-6xl;
+}
+
+.feature-card {
+  @apply border-border dark:border-dark-border dark:bg-dark-bg/50 dark:hover:border-dark-primary/30 hover:border-primary/30 rounded-xl border bg-white/50 p-4 hover:shadow-lg;
+}
+
+.feature-title {
+  @apply text-text dark:text-dark-text mb-2 text-base font-semibold;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+
+  @apply max-sm:flex-col max-sm:gap-y-2 max-sm:text-center;
+}
+
+.dark .panel-header {
+  border-bottom-color: var(--color-dark-border);
+}
+
+.note-title {
+  @apply text-text dark:text-dark-text max-w-md truncate px-3 py-2;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dark .modal-header {
+  border-bottom-color: var(--color-dark-border);
+}
+
+.modal-title {
+  @apply text-text dark:text-dark-text text-xl font-bold;
+}
+
+.section-title {
+  @apply text-text dark:text-dark-text mb-1 text-lg font-semibold max-sm:text-base max-sm:font-medium;
+}

@@ -1,0 +1,15 @@
+{
+  "fileStructure": "Файловая структура",
+  "createNewLayout": "Создать новую папку",
+  "createNote": "Создать заметку",
+  "actions": "Действия",
+  "noLayouts": "Нет папок",
+  "createFirstLayout": "Создайте первую папку",
+  "createNewNote": "Создать новую заметку",
+  "noSearchResults": "Ничего не найдено",
+  "tryDifferentQuery": "Попробуйте другой запрос",
+  "folderEmpty": "Папка пуста",
+  "loading": "Загрузка",
+  "searchPlaceholder": "Поиск...",
+  "clearSearch": "Очистить поле поиска"
+}

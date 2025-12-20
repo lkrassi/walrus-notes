@@ -1,0 +1,107 @@
+@import '../../assets/fonts/fonts.css';
+@import 'tailwindcss';
+@import './components.css';
+@import './scrollbar.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+::selection {
+  @apply bg-primary/30 text-text;
+}
+
+input::selection,
+textarea::selection {
+  @apply bg-primary/30 text-text;
+}
+
+.dark ::selection {
+  @apply bg-primary/30 text-dark-text;
+}
+
+.dark input::selection,
+.dark textarea::selection {
+  @apply bg-primary/30 text-dark-text;
+}
+
+a,
+button,
+input,
+textarea {
+  @apply outline-0;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+h1 {
+  @apply text-2xl leading-tight font-bold max-sm:text-xl md:text-3xl lg:text-4xl;
+}
+
+h2 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h3 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h4 {
+  @apply text-xl leading-relaxed font-medium max-sm:text-base md:text-2xl lg:text-3xl;
+}
+
+h5 {
+  @apply text-lg leading-relaxed font-medium max-sm:text-base md:text-xl lg:text-2xl;
+}
+
+h6 {
+  @apply text-base leading-relaxed font-medium max-sm:text-sm md:text-lg lg:text-xl;
+}
+
+@theme {
+  --color-bg: #f0fdfc;
+  --color-text: #16433e;
+  --color-primary: #0d9488;
+  --color-primary-dark: #0f766e;
+  --color-primary-gradient: #2dd4bf;
+  --color-secondary: #5a7c78;
+  --color-border: #cce8e4;
+  --color-input-placeholder: #88b3ad;
+  --color-border-focus: #0d9488;
+  --color-btn: #0d9488;
+  --color-btn-cancel: #ef4444;
+  --color-btn-disabled: #b0d4d0;
+  --color-btn-submit: #10b981;
+
+  --color-dark-bg: #052925;
+  --color-dark-text: #d1f5f0;
+  --color-dark-primary: #2dd4bf;
+  --color-dark-primary-dark: #14b8a6;
+  --color-dark-primary-gradient: #5eead4;
+  --color-dark-secondary: #7aa29c;
+  --color-dark-border: #1a4d47;
+  --color-dark-input-placeholder: #5a7c78;
+  --color-dark-border-focus: #2dd4bf;
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, #f0fdfc 0%, #ecfdf5 50%, #f0fdfa 100%);
+}
+
+.dark .bg-gradient {
+  background: linear-gradient(135deg, #052925 0%, #0d3d38 50%, #134e4a 100%);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid black;
+}
+
+.dark a:focus-visible,
+.dark button:focus-visible {
+  outline: 2px solid white;
+}
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}

@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noUncheckedSideEffectImports": true,
+
+    "paths": {
+      "app": ["./src/app"],
+      "app/*": ["./src/app/*"],
+      "pages": ["./src/pages"],
+      "pages/*": ["./src/pages/*"],
+      "shared": ["./src/shared"],
+      "shared/*": ["./src/shared/*"],
+      "widgets": ["./src/widgets"],
+      "widgets/*": ["./src/widgets/*"],
+      "features": ["./src/features"],
+      "features/*": ["./src/features/*"],
+      "public": ["./public"],
+      "public/*": ["./public/*"]
+    }
+  },
+  "include": ["src", "public/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

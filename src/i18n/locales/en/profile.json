@@ -1,0 +1,22 @@
+{
+  "title": "Profile",
+  "username": "Username",
+  "email": "Email",
+  "role": "Role",
+  "changePhoto": "Change Photo",
+  "selectFile": "Select file",
+  "selectedFile": "Selected file",
+  "upload": "Upload",
+  "cancel": "Cancel",
+  "profileNotFound": "Profile not found",
+  "uploadSuccess": "Profile photo changed successfully",
+  "uploadError": "Error uploading photo",
+  "unauthorized": "User not authorized",
+  "noUsername": "Username not specified",
+  "noEmail": "Email not specified",
+  "pleaseSelectImage": "Please select an image",
+  "fileTooLarge": "File size should not exceed 5MB",
+  "dropOrClick": "Drop an image here or click to select",
+  "uploading": "Uploading...",
+  "uploadImage": "Upload image"
+}

@@ -1,0 +1,59 @@
+{
+  "welcome": "Welcome to our application!",
+  "description": "This is a sample application with internationalization",
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "modal": {
+    "close": "Close"
+  },
+  "menu": {
+    "open": "Open menu"
+  },
+  "password": {
+    "hide": "Hide password",
+    "show": "Show password"
+  },
+  "createLayout": "Create layout",
+  "header": {
+    "goToHomepage": "Go to homepage",
+    "logoAlt": "Walrus Notes logo",
+    "switchTheme": "Switch theme",
+    "changeLanguage": "Change language"
+  },
+  "search": {
+    "placeholder": "Search notes and layouts..."
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "role": "Role",
+    "changePhoto": "Change Photo",
+    "selectFile": "Select File",
+    "upload": "Upload",
+    "cancel": "Cancel"
+  },
+  "notFound": {
+    "title": "Page lost in the ocean",
+    "description": "It seems we can't find the page you're looking for. Perhaps it drifted away with the tide or never existed.",
+    "goHome": "Return home",
+    "goBack": "Go back",
+    "helpText": "If you believe this is an error, please contact support"
+  },
+  "errors": {
+    "requestTitle": "Request error",
+    "requestFallback": "An error occurred while performing the operation"
+  }
+}

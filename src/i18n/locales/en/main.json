@@ -1,0 +1,23 @@
+{
+    "title": {
+      "line1": "Dive into the depths",
+      "line2": "of your thoughts"
+    },
+    "subtitle": "Walrus Notes - your reliable companion in the ocean of ideas. Create notes, build connections between them, and discover new horizons of thinking with an intuitive knowledge graph.",
+    "cta": {
+      "primary": "Start Swimming"
+    },
+    "features": {
+      "visualThinking": "Visual Thinking",
+      "visualThinkingDesc": "Transform text notes into interactive visual maps",
+      "fastOrganization": "Fast Organization",
+      "fastOrganizationDesc": "Instantly structure ideas with drag and drop",
+      "smartConnections": "Smart Connections",
+      "smartConnectionsDesc": "Automatically find and create connections between notes",
+      "secureStorage": "Secure Storage",
+      "secureStorageDesc": "Your data is protected and synced across devices",
+      "collaboration": "Collaboration",
+      "collaborationDesc": "Work together on projects in real time"
+    }
+
+}

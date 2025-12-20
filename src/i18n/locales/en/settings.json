@@ -1,0 +1,103 @@
+{
+  "title": "Settings",
+  "welcome": {
+    "title": "Welcome to Settings",
+    "subtitle": "Customize Walrus Notes to fit your needs"
+  },
+  "sections": {
+    "profile": {
+      "title": "Profile",
+      "description": "Manage personal data and avatar"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Theme, fonts and display settings"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Alerts and email notifications settings"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Password, two-factor authentication"
+    },
+    "help": {
+      "title": "Help",
+      "description": "Documentation and support"
+    },
+    "holiday": {
+      "title": "Holiday decorations",
+      "description": "Enable snow and garland decorations in the UI"
+    },
+    "theme": {
+      "title": "Theme",
+      "description": "Switch between light and dark theme"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Select interface language"
+    },
+    "exportData": {
+      "title": "Export data",
+      "description": "Download layouts and notes as a backup file"
+    },
+    "importData": {
+      "title": "Import data",
+      "description": "Restore layouts and notes from a backup file"
+    },
+    "logout": {
+      "title": "Logout",
+      "description": "Sign out from your account"
+    }
+  },
+  "about": {
+    "title": "About",
+    "version": "Version",
+    "license": "License",
+    "support": "Support",
+    "supportEmail": "support@walrus-notes.com"
+  },
+  "buttons": {
+    "configure": "Configure",
+    "manage": "Manage",
+    "protect": "Protect",
+    "goTo": "Go to"
+  },
+  "backup": {
+    "common": {
+      "noUser": "User is not authenticated"
+    },
+    "export": {
+      "button": "Export data",
+      "loading": "Exporting...",
+      "success": "Backup saved",
+      "error": "Unable to export data"
+    },
+    "import": {
+      "button": "Import data",
+      "loading": "Importing...",
+      "success": "Backup imported",
+      "error": "Unable to import data",
+      "helper": "Choose the Walrus Notes backup JSON file",
+      "modalTitle": "Import backup",
+      "warningTitle": "Replace all data",
+      "warningText": "Current layouts, notes and links will be deleted and replaced with the backup file. This action cannot be undone.",
+      "confirm": "Yes, replace",
+      "cancel": "Cancel"
+    }
+  },
+  "holiday": {
+    "title": "Holiday decorations",
+    "description": "Enable snow and garland decorations in the UI",
+    "garland": "Garland",
+    "garlandLabel": "Show garland decorations in the UI",
+    "snow": "Snow",
+    "snowLabel": "Show snow decorations in the UI",
+    "on": "On",
+    "off": "Off",
+    "clearSnow": "Clear snow",
+    "settingsButton": "Settings",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
