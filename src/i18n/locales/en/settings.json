@@ -38,11 +38,11 @@
       "description": "Select interface language"
     },
     "exportData": {
-      "title": "Export data",
+      "title": "Export",
       "description": "Download layouts and notes as a backup file"
     },
     "importData": {
-      "title": "Import data",
+      "title": "Import",
       "description": "Restore layouts and notes from a backup file"
     },
     "logout": {
@@ -68,13 +68,13 @@
       "noUser": "User is not authenticated"
     },
     "export": {
-      "button": "Export data",
+      "button": "Export",
       "loading": "Exporting...",
       "success": "Backup saved",
       "error": "Unable to export data"
     },
     "import": {
-      "button": "Import data",
+      "button": "Import",
       "loading": "Importing...",
       "success": "Backup imported",
       "error": "Unable to import data",

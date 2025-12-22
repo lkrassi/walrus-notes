@@ -58,6 +58,10 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
   ({ content, className, note, layoutId, showRelated = true }, ref) => {
     const dispatch = useAppDispatch();
     const effectiveLayoutId = layoutId || note?.layoutId || '';
+    const linkedOutIds =
+      note?.linkedWithOut ??
+      ((note as unknown as { linkedWith?: string[] })?.linkedWith ?? []);
+    const linkedInIds = note?.linkedWithIn ?? [];
     return (
       <div
         ref={ref}
@@ -78,10 +82,11 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
               'max-sm:justify-center'
             )}
           >
-            <div className={cn('w-56')}>
+            <div className={cn('w-full', 'max-w-md')}>
               <LinkedNotesList
                 layoutId={effectiveLayoutId}
-                linkedIds={note.linkedWith || []}
+                linkedOutIds={linkedOutIds}
+                linkedInIds={linkedInIds}
                 onNoteSelect={(selected: Note) => {
                   try {
                     const item: FileTreeItem = {

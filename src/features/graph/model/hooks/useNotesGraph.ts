@@ -68,8 +68,13 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const initialEdges: Edge[] = useMemo(() => {
     const edges: Edge[] = [];
     notesWithPositions.forEach(sourceNote => {
-      if (sourceNote.linkedWith && Array.isArray(sourceNote.linkedWith)) {
-        sourceNote.linkedWith.forEach(targetNoteId => {
+      const outgoingLinks = Array.isArray(sourceNote.linkedWithOut)
+        ? sourceNote.linkedWithOut
+        : Array.isArray((sourceNote as unknown as { linkedWith?: string[] })?.linkedWith)
+          ? ((sourceNote as unknown as { linkedWith?: string[] }).linkedWith as string[])
+          : [];
+
+      outgoingLinks.forEach(targetNoteId => {
           const targetNoteExists = notesWithPositions.some(
             n => n.id === targetNoteId
           );
@@ -135,7 +140,6 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
             }
           }
         });
-      }
     });
 
     return edges;

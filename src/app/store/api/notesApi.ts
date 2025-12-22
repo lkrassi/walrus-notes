@@ -199,7 +199,8 @@ const createTempNote = (title: string = 'Новая заметка'): Note => ({
   isMain: false,
   ownerId: '',
   haveAccess: [],
-  linkedWith: [],
+  linkedWithIn: [],
+  linkedWithOut: [],
 });
 
 export const notesApi = apiSlice.injectEndpoints({
@@ -259,7 +260,8 @@ export const notesApi = apiSlice.injectEndpoints({
               payload: arg.payload ?? '',
               ownerId: finalNote.ownerId ?? '',
               haveAccess: finalNote.haveAccess ?? [],
-              linkedWith: finalNote.linkedWith ?? [],
+              linkedWithIn: finalNote.linkedWithIn ?? [],
+              linkedWithOut: finalNote.linkedWithOut ?? [],
               createdAt: finalNote.createdAt ?? new Date().toISOString(),
               updatedAt: finalNote.updatedAt ?? new Date().toISOString(),
             } as Note;
@@ -657,7 +659,8 @@ export const notesApi = apiSlice.injectEndpoints({
       invalidatesTags: [],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
-        let originalTabLinkedWith: string[] | undefined;
+        let originalTabLinkedWithOut: string[] | undefined;
+        let originalTabLinkedWithIn: string[] | undefined;
 
         try {
           const state = getState() as RootState;
@@ -674,10 +677,21 @@ export const notesApi = apiSlice.injectEndpoints({
                     const sourceNote = draft.data.find(
                       n => n.id === arg.firstNoteId
                     );
+                    const targetNote = draft.data.find(
+                      n => n.id === arg.secondNoteId
+                    );
                     if (sourceNote) {
-                      if (!sourceNote.linkedWith) sourceNote.linkedWith = [];
-                      if (!sourceNote.linkedWith.includes(arg.secondNoteId)) {
-                        sourceNote.linkedWith.push(arg.secondNoteId);
+                      if (!Array.isArray(sourceNote.linkedWithOut))
+                        sourceNote.linkedWithOut = [];
+                      if (!sourceNote.linkedWithOut.includes(arg.secondNoteId)) {
+                        sourceNote.linkedWithOut.push(arg.secondNoteId);
+                      }
+                    }
+                    if (targetNote) {
+                      if (!Array.isArray(targetNote.linkedWithIn))
+                        targetNote.linkedWithIn = [];
+                      if (!targetNote.linkedWithIn.includes(arg.firstNoteId)) {
+                        targetNote.linkedWithIn.push(arg.firstNoteId);
                       }
                     }
                   }
@@ -696,10 +710,21 @@ export const notesApi = apiSlice.injectEndpoints({
                     const source = draft.data.find(
                       n => n.id === arg.firstNoteId
                     );
+                    const target = draft.data.find(
+                      n => n.id === arg.secondNoteId
+                    );
                     if (source) {
-                      if (!source.linkedWith) source.linkedWith = [];
-                      if (!source.linkedWith.includes(arg.secondNoteId)) {
-                        source.linkedWith.push(arg.secondNoteId);
+                      if (!Array.isArray(source.linkedWithOut))
+                        source.linkedWithOut = [];
+                      if (!source.linkedWithOut.includes(arg.secondNoteId)) {
+                        source.linkedWithOut.push(arg.secondNoteId);
+                      }
+                    }
+                    if (target) {
+                      if (!Array.isArray(target.linkedWithIn))
+                        target.linkedWithIn = [];
+                      if (!target.linkedWithIn.includes(arg.firstNoteId)) {
+                        target.linkedWithIn.push(arg.firstNoteId);
                       }
                     }
                   }
@@ -712,20 +737,38 @@ export const notesApi = apiSlice.injectEndpoints({
           try {
             const tabsState = state.tabs;
             if (tabsState?.openTabs) {
-              const tab = tabsState.openTabs.find(
+              const sourceTab = tabsState.openTabs.find(
                 t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
               );
-              if (tab && tab.item && tab.item.note) {
-                originalTabLinkedWith = tab.item.note.linkedWith;
-                const newLinked = Array.isArray(originalTabLinkedWith)
-                  ? [...originalTabLinkedWith]
+              if (sourceTab && sourceTab.item && sourceTab.item.note) {
+                originalTabLinkedWithOut = sourceTab.item.note.linkedWithOut;
+                const newLinkedOut = Array.isArray(originalTabLinkedWithOut)
+                  ? [...originalTabLinkedWithOut]
                   : [];
-                if (!newLinked.includes(arg.secondNoteId))
-                  newLinked.push(arg.secondNoteId);
+                if (!newLinkedOut.includes(arg.secondNoteId))
+                  newLinkedOut.push(arg.secondNoteId);
                 dispatch(
                   updateTabNote({
                     noteId: arg.firstNoteId,
-                    updates: { linkedWith: newLinked },
+                    updates: { linkedWithOut: newLinkedOut },
+                  })
+                );
+              }
+
+              const targetTab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
+              );
+              if (targetTab && targetTab.item && targetTab.item.note) {
+                originalTabLinkedWithIn = targetTab.item.note.linkedWithIn;
+                const newLinkedIn = Array.isArray(originalTabLinkedWithIn)
+                  ? [...originalTabLinkedWithIn]
+                  : [];
+                if (!newLinkedIn.includes(arg.firstNoteId))
+                  newLinkedIn.push(arg.firstNoteId);
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.secondNoteId,
+                    updates: { linkedWithIn: newLinkedIn },
                   })
                 );
               }
@@ -738,11 +781,19 @@ export const notesApi = apiSlice.injectEndpoints({
         } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
           try {
-            if (originalTabLinkedWith !== undefined) {
+            if (originalTabLinkedWithOut !== undefined) {
               dispatch(
                 updateTabNote({
                   noteId: arg.firstNoteId,
-                  updates: { linkedWith: originalTabLinkedWith },
+                  updates: { linkedWithOut: originalTabLinkedWithOut },
+                })
+              );
+            }
+            if (originalTabLinkedWithIn !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.secondNoteId,
+                  updates: { linkedWithIn: originalTabLinkedWithIn },
                 })
               );
             }
@@ -763,7 +814,8 @@ export const notesApi = apiSlice.injectEndpoints({
       invalidatesTags: [],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
-        let originalTabLinkedWithDel: string[] | undefined;
+        let originalTabLinkedWithOutDel: string[] | undefined;
+        let originalTabLinkedWithInDel: string[] | undefined;
 
         try {
           const state = getState() as RootState;
@@ -780,9 +832,17 @@ export const notesApi = apiSlice.injectEndpoints({
                     const sourceNote = draft.data.find(
                       n => n.id === arg.firstNoteId
                     );
-                    if (sourceNote && sourceNote.linkedWith) {
-                      sourceNote.linkedWith = sourceNote.linkedWith.filter(
+                    const targetNote = draft.data.find(
+                      n => n.id === arg.secondNoteId
+                    );
+                    if (sourceNote && sourceNote.linkedWithOut) {
+                      sourceNote.linkedWithOut = sourceNote.linkedWithOut.filter(
                         id => id !== arg.secondNoteId
+                      );
+                    }
+                    if (targetNote && targetNote.linkedWithIn) {
+                      targetNote.linkedWithIn = targetNote.linkedWithIn.filter(
+                        id => id !== arg.firstNoteId
                       );
                     }
                   }
@@ -801,9 +861,17 @@ export const notesApi = apiSlice.injectEndpoints({
                     const source = draft.data.find(
                       n => n.id === arg.firstNoteId
                     );
-                    if (source && source.linkedWith) {
-                      source.linkedWith = source.linkedWith.filter(
+                    const target = draft.data.find(
+                      n => n.id === arg.secondNoteId
+                    );
+                    if (source && source.linkedWithOut) {
+                      source.linkedWithOut = source.linkedWithOut.filter(
                         id => id !== arg.secondNoteId
+                      );
+                    }
+                    if (target && target.linkedWithIn) {
+                      target.linkedWithIn = target.linkedWithIn.filter(
+                        id => id !== arg.firstNoteId
                       );
                     }
                   }
@@ -816,20 +884,38 @@ export const notesApi = apiSlice.injectEndpoints({
           try {
             const tabsState = state.tabs;
             if (tabsState?.openTabs) {
-              const tab = tabsState.openTabs.find(
+              const sourceTab = tabsState.openTabs.find(
                 t => t?.item?.type === 'note' && t?.item?.id === arg.firstNoteId
               );
-              if (tab && tab.item && tab.item.note) {
-                originalTabLinkedWithDel = tab.item.note.linkedWith;
-                const newLinked = Array.isArray(originalTabLinkedWithDel)
-                  ? originalTabLinkedWithDel.filter(
+              if (sourceTab && sourceTab.item && sourceTab.item.note) {
+                originalTabLinkedWithOutDel = sourceTab.item.note.linkedWithOut;
+                const newLinkedOut = Array.isArray(originalTabLinkedWithOutDel)
+                  ? originalTabLinkedWithOutDel.filter(
                       id => id !== arg.secondNoteId
                     )
                   : [];
                 dispatch(
                   updateTabNote({
                     noteId: arg.firstNoteId,
-                    updates: { linkedWith: newLinked },
+                    updates: { linkedWithOut: newLinkedOut },
+                  })
+                );
+              }
+
+              const targetTab = tabsState.openTabs.find(
+                t => t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
+              );
+              if (targetTab && targetTab.item && targetTab.item.note) {
+                originalTabLinkedWithInDel = targetTab.item.note.linkedWithIn;
+                const newLinkedIn = Array.isArray(originalTabLinkedWithInDel)
+                  ? originalTabLinkedWithInDel.filter(
+                      id => id !== arg.firstNoteId
+                    )
+                  : [];
+                dispatch(
+                  updateTabNote({
+                    noteId: arg.secondNoteId,
+                    updates: { linkedWithIn: newLinkedIn },
                   })
                 );
               }
@@ -842,11 +928,19 @@ export const notesApi = apiSlice.injectEndpoints({
         } catch (_e) {
           patchResults.forEach(patchResult => patchResult.undo?.());
           try {
-            if (originalTabLinkedWithDel !== undefined) {
+            if (originalTabLinkedWithOutDel !== undefined) {
               dispatch(
                 updateTabNote({
                   noteId: arg.firstNoteId,
-                  updates: { linkedWith: originalTabLinkedWithDel },
+                  updates: { linkedWithOut: originalTabLinkedWithOutDel },
+                })
+              );
+            }
+            if (originalTabLinkedWithInDel !== undefined) {
+              dispatch(
+                updateTabNote({
+                  noteId: arg.secondNoteId,
+                  updates: { linkedWithIn: originalTabLinkedWithInDel },
                 })
               );
             }

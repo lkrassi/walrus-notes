@@ -55,5 +55,9 @@
   "errors": {
     "requestTitle": "Request error",
     "requestFallback": "An error occurred while performing the operation"
+  },
+  "links": {
+    "incoming": "Incoming ({{count}})",
+    "outgoing": "Outgoing ({{count}})"
   }
 }

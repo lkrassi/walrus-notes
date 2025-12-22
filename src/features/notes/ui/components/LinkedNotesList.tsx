@@ -1,32 +1,40 @@
-import { useGetNotesQuery, notesApi } from 'app/store/api';
+import type { RootState } from 'app/store';
+import { notesApi, useGetNotesQuery } from 'app/store/api';
 import { useState } from 'react';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { useDropdown } from 'widgets/hooks/useDropdown';
 import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
-import { useAppSelector } from 'widgets/hooks/redux';
-import type { RootState } from 'app/store';
+import { useLocalization } from 'widgets/hooks/useLocalization';
 
 interface LinkedNotesListProps {
   layoutId?: string | null;
-  linkedIds: string[];
+  linkedInIds?: string[];
+  linkedOutIds?: string[];
   onNoteSelect?: (note: Note) => void;
 }
 
 export const LinkedNotesList = ({
   layoutId,
-  linkedIds,
+  linkedInIds = [],
+  linkedOutIds = [],
   onNoteSelect,
 }: LinkedNotesListProps) => {
-  const shouldSkip = !layoutId || !linkedIds || linkedIds.length === 0;
+  const { t } = useLocalization();
+  const shouldSkip =
+    !layoutId ||
+    ((!linkedInIds || linkedInIds.length === 0) &&
+      (!linkedOutIds || linkedOutIds.length === 0));
 
   const { data: notesResponse, isLoading } = useGetNotesQuery(
     { layoutId: layoutId || '', page: 1 },
     { skip: shouldSkip }
   );
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpandedIn, setIsExpandedIn] = useState(false);
+  const [isExpandedOut, setIsExpandedOut] = useState(false);
 
   const cachedNotes = useAppSelector(
     state =>
@@ -37,112 +45,219 @@ export const LinkedNotesList = ({
 
   const allNotes = notesResponse?.data || cachedNotes || [];
 
-  const linkedNotes = allNotes.filter(n => linkedIds.includes(n.id));
+  const linkedNotesIn = allNotes.filter(n => linkedInIds.includes(n.id));
+  const linkedNotesOut = allNotes.filter(n => linkedOutIds.includes(n.id));
 
-  const { visibleItems } = useDropdown({
-    items: linkedNotes,
-    isOpen: isExpanded,
+  const { visibleItems: visibleIn } = useDropdown({
+    items: linkedNotesIn,
+    isOpen: isExpandedIn,
+    enablePagination: false,
+  });
+
+  const { visibleItems: visibleOut } = useDropdown({
+    items: linkedNotesOut,
+    isOpen: isExpandedOut,
     enablePagination: false,
   });
 
   const handleNoteClick = (note: Note) => {
     const noteWithLayout = { ...note, layoutId } as Note;
     onNoteSelect?.(noteWithLayout);
-    setIsExpanded(false);
+    setIsExpandedIn(false);
+    setIsExpandedOut(false);
   };
 
-  const getContentState = () => {
+  const getContentState = (items: Note[]) => {
     if (isLoading) return 'loading';
-    if (visibleItems.length === 0) return 'empty';
+    if (items.length === 0) return 'empty';
     return 'content';
   };
 
-  const contentState = getContentState();
+  const contentStateIn = getContentState(visibleIn);
+  const contentStateOut = getContentState(visibleOut);
 
-  if (contentState === 'empty') return null;
+  if (contentStateIn === 'empty' && contentStateOut === 'empty') return null;
 
   return (
-    <div className={cn('relative', 'w-full')}>
-      <Dropdown
-        position={'auto'}
-        isOpen={isExpanded}
-        onOpenChange={setIsExpanded}
-        trigger={
-          <DropdownTrigger
-            isOpen={isExpanded}
-            className={cn(
-              'rounded-lg',
-              'border',
-              'border-border',
-              'dark:border-dark-border',
-              'bg-white',
-              'dark:bg-dark-bg',
-              'p-3',
-              'transition-all'
-            )}
-          >
-            <div className={cn('flex items-center gap-2')}>
-              <span
-                className={cn(
-                  'text-text dark:text-dark-text text-xs font-semibold'
-                )}
-              >
-                Связанные ({linkedNotes.length})
-              </span>
-            </div>
-          </DropdownTrigger>
-        }
-        contentClassName={cn('max-h-60 w-56 overflow-y-auto')}
-      >
-        <DropdownContent
-          isOpen={isExpanded}
-          state={contentState}
-          emptyContent={null}
-          className={cn(
-            'dark:bg-dark-bg border-border dark:border-dark-border rounded-lg border bg-white shadow-lg'
-          )}
-        >
-          {visibleItems.map(note => (
-            <button
-              key={note.id}
-              draggable
-              onDragStart={e => {
-                const noteWithLayout = { ...note, layoutId } as Note;
-                e.dataTransfer.setData(
-                  'application/reactflow',
-                  JSON.stringify(noteWithLayout)
-                );
-                e.dataTransfer.effectAllowed = 'move';
-              }}
-              onClick={() => handleNoteClick(note)}
+    <div
+      className={cn(
+        'relative',
+        'grid',
+        'w-full',
+        'max-w-full',
+        'grid-cols-1',
+        'sm:grid-cols-2',
+        'gap-2',
+        'items-start'
+      )}
+    >
+      {contentStateOut !== 'empty' && (
+        <Dropdown
+          position={'auto'}
+          isOpen={isExpandedOut}
+          onOpenChange={setIsExpandedOut}
+          trigger={
+            <DropdownTrigger
+              isOpen={isExpandedOut}
               className={cn(
-                'dark:bg-dark-bg',
-                'hover:bg-primary/30',
-                'dark:hover:bg-primary-dark',
-                'flex',
                 'w-full',
-                'items-center',
-                'gap-3',
-                'rounded-md',
-                'px-4',
-
-                'transition',
-                'duration-200'
+                'min-w-0',
+                'rounded-lg',
+                'border',
+                'border-border',
+                'dark:border-dark-border',
+                'bg-white',
+                'dark:bg-dark-bg',
+                'p-2',
+                'transition-all'
               )}
             >
-              <div className={cn('min-w-0 flex-1 text-left')}>
-                <h4
+              <div className={cn('flex items-center gap-2')}>
+                <span
                   className={cn(
-                    'text-text dark:text-dark-text truncate text-sm font-medium'
+                    'text-text dark:text-dark-text text-xs font-semibold'
                   )}
                 >
-                  {note.title}
-                </h4>
+                  {t('common:links.outgoing', {
+                    count: linkedNotesOut.length,
+                  })}
+                </span>
               </div>
-            </button>
-          ))}
-        </DropdownContent>
-      </Dropdown>
+            </DropdownTrigger>
+          }
+          contentClassName={cn('max-h-60 w-full overflow-y-auto')}
+        >
+          <DropdownContent
+            isOpen={isExpandedOut}
+            state={contentStateOut}
+            emptyContent={null}
+            className={cn(
+              'dark:bg-dark-bg border-border dark:border-dark-border rounded-lg border bg-white shadow-lg',
+              'w-full'
+            )}
+          >
+            {visibleOut.map(note => (
+              <button
+                key={note.id}
+                draggable
+                onDragStart={e => {
+                  const noteWithLayout = { ...note, layoutId } as Note;
+                  e.dataTransfer.setData(
+                    'application/reactflow',
+                    JSON.stringify(noteWithLayout)
+                  );
+                  e.dataTransfer.effectAllowed = 'move';
+                }}
+                onClick={() => handleNoteClick(note)}
+                className={cn(
+                  'dark:bg-dark-bg',
+                  'hover:bg-primary/30',
+                  'dark:hover:bg-primary-dark',
+                  'flex',
+                  'w-full',
+                  'items-center',
+                  'gap-3',
+                  'rounded-md',
+                  'px-4',
+                  'py-2',
+                  'transition',
+                  'duration-200'
+                )}
+              >
+                <div className={cn('min-w-0 flex-1 text-left')}>
+                  <p className={cn('text-text dark:text-dark-text truncate')}>
+                    {note.title}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </DropdownContent>
+        </Dropdown>
+      )}
+
+      {contentStateIn !== 'empty' && (
+        <Dropdown
+          position={'auto'}
+          isOpen={isExpandedIn}
+          onOpenChange={setIsExpandedIn}
+          trigger={
+            <DropdownTrigger
+              isOpen={isExpandedIn}
+              className={cn(
+                'w-full',
+                'min-w-0',
+                'rounded-lg',
+                'border',
+                'border-border',
+                'dark:border-dark-border',
+                'bg-white',
+                'dark:bg-dark-bg',
+                'p-2',
+                'transition-all'
+              )}
+            >
+              <div className={cn('flex items-center gap-2')}>
+                <span
+                  className={cn(
+                    'text-text dark:text-dark-text text-xs font-semibold'
+                  )}
+                >
+                  {t('common:links.incoming', {
+                    count: linkedNotesIn.length,
+                  })}
+                </span>
+              </div>
+            </DropdownTrigger>
+          }
+          contentClassName={cn('max-h-60 w-full overflow-y-auto')}
+        >
+          <DropdownContent
+            isOpen={isExpandedIn}
+            state={contentStateIn}
+            emptyContent={null}
+            className={cn(
+              'dark:bg-dark-bg border-border dark:border-dark-border rounded-lg border bg-white shadow-lg',
+              'w-full'
+            )}
+          >
+            {visibleIn.map(note => (
+              <button
+                key={note.id}
+                draggable
+                onDragStart={e => {
+                  const noteWithLayout = { ...note, layoutId } as Note;
+                  e.dataTransfer.setData(
+                    'application/reactflow',
+                    JSON.stringify(noteWithLayout)
+                  );
+                  e.dataTransfer.effectAllowed = 'move';
+                }}
+                onClick={() => handleNoteClick(note)}
+                className={cn(
+                  'dark:bg-dark-bg',
+                  'hover:bg-primary/30',
+                  'dark:hover:bg-primary-dark',
+                  'flex',
+                  'w-full',
+                  'items-center',
+                  'gap-3',
+                  'rounded-md',
+                  'px-4',
+                  'py-2',
+                  'transition',
+                  'duration-200'
+                )}
+              >
+                <div className={cn('min-w-0 flex-1 text-left')}>
+                  <p className={cn('text-text dark:text-dark-text truncate')}>
+                    {note.title}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </DropdownContent>
+        </Dropdown>
+      )}
     </div>
   );
 };

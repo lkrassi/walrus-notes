@@ -5,6 +5,7 @@ import { useLocalization } from 'widgets/hooks';
 import { useNotifications } from 'widgets/hooks/useNotifications';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import cn from 'shared/lib/cn';
 
 const ImportWarning: React.FC<{ onConfirm: () => void }> = ({ onConfirm }) => {
   const { t } = useLocalization();
@@ -96,7 +97,15 @@ export const ImportDataButton: React.FC = () => {
       <Button
         onClick={handleButtonClick}
         disabled={isLoading}
-        className='px-4 py-2 max-sm:w-full'
+        className={cn(
+          'flex',
+          'h-10',
+          'w-30',
+          'items-center',
+          'justify-center',
+          'px-7',
+          'py-2'
+        )}
         title={t('settings:backup.import.helper')}
       >
         {isLoading

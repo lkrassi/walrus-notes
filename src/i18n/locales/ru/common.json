@@ -55,5 +55,9 @@
   "errors": {
     "requestTitle": "Ошибка запроса",
     "requestFallback": "Произошла ошибка при выполнении операции"
+  },
+  "links": {
+    "incoming": "Входящие ({{count}})",
+    "outgoing": "Исходящие ({{count}})"
   }
 }

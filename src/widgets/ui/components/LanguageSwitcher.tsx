@@ -1,167 +1,133 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cn from 'shared/lib/cn';
 
-import { ChevronDown } from 'lucide-react';
 import { Button } from 'shared';
 
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useModalActions } from 'widgets/hooks/useModalActions';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 import { RussianFlagIcon } from 'public/RussianFlagIcon';
 import { UKFlagIcon } from 'public/UKFlagIcon';
 
+const LANGUAGES = [
+  {
+    code: 'en',
+    name: 'EN',
+    flag: <UKFlagIcon className={cn('h-20', 'w-20')} />,
+  },
+  {
+    code: 'ru',
+    name: 'RU',
+    flag: <RussianFlagIcon className={cn('h-20', 'w-20')} />,
+  },
+];
+
 export const LanguageSwitcher: React.FC = () => {
-  const { changeLanguage } = useLocalization();
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [effectiveLanguage, setEffectiveLanguage] = useState('ru');
-
-  const { t } = useLocalization();
-
-  const languages = [
-    {
-      code: 'en',
-      name: 'EN',
-      flag: <UKFlagIcon className={cn('h-20', 'w-20')} />,
-    },
-    {
-      code: 'ru',
-      name: 'RU',
-      flag: <RussianFlagIcon className={cn('h-20', 'w-20')} />,
-    },
-  ];
+  const { t, currentLanguage, changeLanguage } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
+  const [effectiveLanguage, setEffectiveLanguage] = useState(
+    currentLanguage || 'ru'
+  );
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('i18nextLng');
+    const defaultLanguage = 'ru';
 
-    if (savedLanguage && languages.find(lang => lang.code === savedLanguage)) {
+    if (savedLanguage && LANGUAGES.find(lang => lang.code === savedLanguage)) {
       setEffectiveLanguage(savedLanguage);
+      changeLanguage(savedLanguage);
     } else {
-      setEffectiveLanguage('ru');
-      if (!savedLanguage) {
-        changeLanguage('ru');
-      }
+      setEffectiveLanguage(defaultLanguage);
+      changeLanguage(defaultLanguage);
     }
-  }, []);
-
-  const currentLang =
-    languages.find(lang => lang.code === effectiveLanguage) || languages[0];
-
-  const handleLanguageSelect = (langCode: string) => {
-    changeLanguage(langCode);
-    setEffectiveLanguage(langCode);
-    setIsOpen(false);
-  };
+  }, [changeLanguage]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
+    if (currentLanguage) {
+      setEffectiveLanguage(currentLanguage);
+    }
+  }, [currentLanguage]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleLanguageSelect = (
+    langCode: string,
+    closeModal: () => void
+  ) => {
+    changeLanguage(langCode);
+    setEffectiveLanguage(langCode);
+    closeModal();
+  };
 
-  return (
-    <div className={cn('relative')} ref={dropdownRef}>
-      <Button
-        data-tour='language-switcher'
-        onClick={() => setIsOpen(!isOpen)}
-        variant='default'
-        className={cn(
-          'flex',
-          'h-10',
-          'w-30',
-          'items-center',
-          'justify-center',
-          'px-7',
-          'py-2'
-        )}
-        title={t('common:header.changeLanguage')}
-      >
-        <div
-          className={cn('flex', 'flex-col', 'items-center', 'justify-center')}
-        >
-          <div
+  const LanguageModal: React.FC = () => {
+    const { closeModal } = useModalContentContext();
+
+    return (
+      <div className={cn('flex', 'p-2', 'justify-center', 'gap-3')}>
+        {LANGUAGES.map(language => (
+          <Button
+            key={language.code}
+            onClick={() => handleLanguageSelect(language.code, closeModal)}
+            variant={
+              effectiveLanguage === language.code ? 'default' : 'disabled'
+            }
             className={cn(
               'flex',
-              'h-4',
-              'w-6',
               'items-center',
-              'justify-center'
+              'justify-between',
+              'px-4',
+              'py-2'
             )}
           >
-            {currentLang.name}
-          </div>
-          <div className={cn('relative')}>
-            <ChevronDown
-              className={cn(
-                'h-4',
-                'w-4',
-                'transition-all',
-                'duration-300',
-                isOpen ? 'translate-y-0.5 rotate-180' : ''
-              )}
-            />
-          </div>
-        </div>
-      </Button>
-
-      <div
-        className={cn(
-          'absolute',
-          'top-full',
-          'right-0',
-          'z-2',
-          'mt-2',
-          'transition-all',
-          'duration-300',
-          'ease-out',
-          isOpen
-            ? 'translate-y-0 scale-100 opacity-100'
-            : 'pointer-events-none -translate-y-4 scale-95 opacity-0'
-        )}
-      >
-        <div className={cn('flex', 'flex-col', 'gap-y-5', 'py-1')}>
-          {languages.map(language => (
-            <Button
-              key={language.code}
-              onClick={() => handleLanguageSelect(language.code)}
-              variant={
-                effectiveLanguage === language.code ? 'default' : 'disabled'
-              }
-              className={cn(
-                isOpen
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-2 opacity-0',
-                'flex',
-                'h-10',
-                'w-30',
-                'items-center',
-                'justify-center',
-                'px-7',
-                'py-2'
-              )}
-            >
-              <div
+            <div className={cn('flex', 'items-center', 'gap-3')}>
+              <span
                 className={cn(
                   'flex',
-                  'h-4',
-                  'w-6',
+                  'h-6',
+                  'w-8',
                   'items-center',
                   'justify-center'
                 )}
               >
                 {language.flag}
-              </div>
-            </Button>
-          ))}
-        </div>
+              </span>
+              <span className={cn('text-base', 'font-semibold')}>
+                {language.name}
+              </span>
+            </div>
+          </Button>
+        ))}
       </div>
-    </div>
+    );
+  };
+
+  const currentLang =
+    LANGUAGES.find(lang => lang.code === effectiveLanguage) || LANGUAGES[0];
+
+  const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
+    title: t('common:header.changeLanguage'),
+    size: 'sm',
+  });
+
+  return (
+    <Button
+      data-tour='language-switcher'
+      onClick={openLanguageModal}
+      variant='default'
+      className={cn(
+        'flex',
+        'h-10',
+        'w-30',
+        'items-center',
+        'justify-center',
+        'gap-3',
+        'px-7',
+        'py-2'
+      )}
+      title={t('common:header.changeLanguage')}
+    >
+      <span className={cn('text-base', 'font-semibold')}>
+        {currentLang.name}
+      </span>
+    </Button>
   );
 };

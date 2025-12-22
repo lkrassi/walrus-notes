@@ -10,7 +10,8 @@ export interface Note {
     xPos: number;
     yPos: number;
   };
-  linkedWith?: string[];
+  linkedWithIn?: string[];
+  linkedWithOut?: string[];
   draft?: string;
   createdAt?: string;
   updatedAt?: string;

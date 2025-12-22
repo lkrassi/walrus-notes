@@ -383,48 +383,10 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
     return `M ${sourceAnchor.x} ${sourceAnchor.y} L ${flowPosition.x} ${flowPosition.y}`;
   };
 
-  const sourceNode = getNodes().find(n => n.id === source);
-  const targetNode = getNodes().find(n => n.id === target);
-  const sourceLinkedWith = sourceNode
-    ? (sourceNode.data as { linkedWith?: string[] })?.linkedWith
-    : undefined;
-  const targetLinkedWith = targetNode
-    ? (targetNode.data as { linkedWith?: string[] })?.linkedWith
-    : undefined;
-  const arrowToTarget =
-    Array.isArray(sourceLinkedWith) && sourceLinkedWith.includes(target);
-  const arrowToSource =
-    Array.isArray(targetLinkedWith) && targetLinkedWith.includes(source);
-  const markerEnd = arrowToTarget ? `url(#edge-arrow-to-${id})` : undefined;
-  const markerStart = arrowToSource ? `url(#edge-arrow-from-${id})` : undefined;
+  const markerEnd = undefined;
+  const markerStart = undefined;
   return (
     <>
-      <defs>
-        <marker
-          id={`edge-arrow-to-${id}`}
-          markerWidth='8'
-          markerHeight='8'
-          refX='6'
-          refY='4'
-          orient='auto'
-          markerUnits='strokeWidth'
-        >
-          <path d='M 0 0 L 8 4 L 0 8 z' fill={strokeColor} />
-        </marker>
-
-        <marker
-          id={`edge-arrow-from-${id}`}
-          markerWidth='8'
-          markerHeight='8'
-          refX='2'
-          refY='4'
-          orient='auto'
-          markerUnits='strokeWidth'
-        >
-          <path d='M 8 0 L 0 4 L 8 8 z' fill={strokeColor} />
-        </marker>
-      </defs>
-
       {!isDragging && (
         <BaseEdge
           path={edgePath}

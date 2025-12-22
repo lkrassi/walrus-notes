@@ -5,6 +5,7 @@ import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useNotifications } from 'widgets/hooks/useNotifications';
+import cn from 'shared/lib/cn';
 
 export const ExportDataButton: React.FC = () => {
   const { t } = useLocalization();
@@ -61,7 +62,15 @@ export const ExportDataButton: React.FC = () => {
     <Button
       onClick={handleExport}
       disabled={isLoading}
-      className='px-4 py-2 max-sm:w-full'
+        className={cn(
+          'flex',
+          'h-10',
+          'w-30',
+          'items-center',
+          'justify-center',
+          'px-7',
+          'py-2'
+        )}
       title={t('settings:backup.export.button')}
     >
       {isLoading
