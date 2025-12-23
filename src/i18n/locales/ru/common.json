@@ -58,6 +58,7 @@
   },
   "links": {
     "incoming": "Входящие ({{count}})",
-    "outgoing": "Исходящие ({{count}})"
+    "outgoing": "Исходящие ({{count}})",
+    "noConnections": "Нет связей"
   }
 }

@@ -65,6 +65,29 @@ export const MdImportModal: React.FC<Props> = ({
     <div className={cn('p-4', 'space-y-4')}>
       <div
         className={cn(
+          'rounded-lg',
+          'border',
+          'border-yellow-200',
+          'dark:border-yellow-900',
+          'bg-yellow-50',
+          'dark:bg-yellow-950',
+          'p-3'
+        )}
+      >
+        <p
+          className={cn(
+            'text-sm',
+            'text-yellow-800',
+            'dark:text-yellow-200',
+            'text-center'
+          )}
+        >
+          {t('notes:importWarning')}
+        </p>
+      </div>
+
+      <div
+        className={cn(
           'border-2',
           'border-dashed',
           'rounded-lg',
@@ -107,8 +130,7 @@ export const MdImportModal: React.FC<Props> = ({
         />
 
         <div className={cn('text-sm', 'text-gray-600', 'dark:text-gray-400')}>
-          {t('notes:importDropOrClick') ||
-            'Drop a markdown file here or click to select'}
+          {t('notes:importDropOrClick')}{' '}
         </div>
       </div>
 

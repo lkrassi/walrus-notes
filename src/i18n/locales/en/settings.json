@@ -82,6 +82,7 @@
       "modalTitle": "Import backup",
       "warningTitle": "Replace all data",
       "warningText": "Current layouts, notes and links will be deleted and replaced with the backup file. This action cannot be undone.",
+      "dropOrClick": "Drop a JSON file here or click to select",
       "confirm": "Yes, replace",
       "cancel": "Cancel"
     }

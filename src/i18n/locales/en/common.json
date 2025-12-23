@@ -58,6 +58,7 @@
   },
   "links": {
     "incoming": "Incoming ({{count}})",
-    "outgoing": "Outgoing ({{count}})"
+    "outgoing": "Outgoing ({{count}})",
+    "noConnections": "No connections"
   }
 }

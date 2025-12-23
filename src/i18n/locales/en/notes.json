@@ -83,6 +83,7 @@
   "import": "Import",
   "importDropOrClick": "Drop a markdown file here or click to select",
   "importSuccess": "File imported successfully",
+  "importWarning": "Note: Imported content will replace existing note data",
   "pleaseSelectMd": "Please select a markdown file",
   "fileTooLarge": "File size should not exceed 5MB",
   "untitled": "untitled"
