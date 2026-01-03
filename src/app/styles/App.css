@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  font-display: swap;
+}
+
+body {
+  font-display: swap;
+}
+
 ::selection {
   @apply bg-primary/30 text-text;
 }
