@@ -9,6 +9,7 @@ import {
   DragOverlay,
 } from '@dnd-kit/core';
 import type { Note } from 'shared/model/types/layouts';
+import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 import { useIsMobile } from 'widgets/hooks';
 import { useDndSensors } from 'shared/lib/useDndSensors';
 import { GraphBackground } from './GraphBackground';
@@ -69,6 +70,7 @@ interface NotesGraphViewProps {
   disableZoomDuringDrag?: boolean;
   allowNodeDrag?: boolean;
   isMain?: boolean;
+  graphHistory?: UseGraphHistoryReturn;
 }
 
 export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
@@ -95,6 +97,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
   onAddNoteToGraph,
   onBoxSelect,
   isMain,
+  graphHistory,
 }: NotesGraphViewProps) => {
   const cleanupRef = useRef<(() => void) | null>(null);
   const [overlayCoords, setOverlayCoords] = useState<{
@@ -282,7 +285,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
                 key={layoutId}
               >
                 <GraphBackground />
-                <GraphControls />
+                <GraphControls graphHistory={graphHistory} />
                 <GraphMiniMap />
 
                 <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />

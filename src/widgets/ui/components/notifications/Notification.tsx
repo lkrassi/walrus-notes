@@ -1,36 +1,30 @@
 import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
 import React from 'react';
-import cn from 'shared/lib/cn';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import type { AlertColor } from '@mui/material/Alert';
 
 interface NotificationProps {
   notification: NotificationType;
 }
 
-const NOTIFICATION_STYLES = {
-  success: 'bg-green-50 border-green-200 text-green-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
-  warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
-  default: 'bg-gray-50 border-gray-200 text-gray-800',
+const mapTypeToSeverity = (type: string): AlertColor => {
+  const severityMap: Record<string, AlertColor> = {
+    success: 'success',
+    error: 'error',
+    warning: 'warning',
+    info: 'info',
+  };
+  return severityMap[type] || 'info';
 };
 
 export const Notification: React.FC<NotificationProps> = ({ notification }) => {
-  const type = notification.type || 'default';
-
-  const baseStyles = `
-    flex items-start p-4 rounded-xl shadow-lg
-    border
-    w-full
-    max-w-full
-  `;
+  const severity = mapTypeToSeverity(notification.type);
 
   return (
-    <div className={cn(baseStyles, NOTIFICATION_STYLES[type])}>
-      <div>
-        <p className={cn('text-sm', 'leading-relaxed')}>
-          {notification.message}
-        </p>
-      </div>
-    </div>
+    <Alert severity={severity} sx={{ width: '100%', borderRadius: '8px' }}>
+      {notification.title && <AlertTitle>{notification.title}</AlertTitle>}
+      {notification.message}
+    </Alert>
   );
 };

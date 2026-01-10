@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera } from 'lucide-react';
+import { PhotoCamera } from '@mui/icons-material';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
@@ -157,7 +157,7 @@ export const Settings: React.FC = () => {
                   )}
                   title={t('profile:changePhoto')}
                 >
-                  <Camera className={cn('h-3.5', 'w-3.5')} />
+                  <PhotoCamera className={cn('h-3.5', 'w-3.5')} />
                 </button>
               </div>
               <div className={cn('flex-1')}>

@@ -67,37 +67,29 @@ h6 {
 }
 
 @theme {
-  --color-bg: #f0fdfc;
-  --color-text: #16433e;
-  --color-primary: #0d9488;
-  --color-primary-dark: #0f766e;
-  --color-primary-gradient: #2dd4bf;
-  --color-secondary: #5a7c78;
-  --color-border: #cce8e4;
-  --color-input-placeholder: #88b3ad;
-  --color-border-focus: #0d9488;
-  --color-btn: #0d9488;
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-gradient: #818cf8;
+  --color-secondary: #64748b;
+  --color-border: #e5e7eb;
+  --color-input-placeholder: #94a3b8;
+  --color-border-focus: #6366f1;
+  --color-btn: #6366f1;
   --color-btn-cancel: #ef4444;
-  --color-btn-disabled: #b0d4d0;
-  --color-btn-submit: #10b981;
+  --color-btn-disabled: #cbd5e1;
+  --color-btn-submit: #22c55e;
 
-  --color-dark-bg: #052925;
-  --color-dark-text: #d1f5f0;
-  --color-dark-primary: #2dd4bf;
-  --color-dark-primary-dark: #14b8a6;
-  --color-dark-primary-gradient: #5eead4;
-  --color-dark-secondary: #7aa29c;
-  --color-dark-border: #1a4d47;
-  --color-dark-input-placeholder: #5a7c78;
-  --color-dark-border-focus: #2dd4bf;
-}
-
-.bg-gradient {
-  background: linear-gradient(135deg, #f0fdfc 0%, #ecfdf5 50%, #f0fdfa 100%);
-}
-
-.dark .bg-gradient {
-  background: linear-gradient(135deg, #052925 0%, #0d3d38 50%, #134e4a 100%);
+  --color-dark-bg: #0f172a;
+  --color-dark-text: #e5e7eb;
+  --color-dark-primary: #818cf8;
+  --color-dark-primary-dark: #6366f1;
+  --color-dark-primary-gradient: #a5b4fc;
+  --color-dark-secondary: #94a3b8;
+  --color-dark-border: #1f2937;
+  --color-dark-input-placeholder: #64748b;
+  --color-dark-border-focus: #818cf8;
 }
 
 a:focus-visible,

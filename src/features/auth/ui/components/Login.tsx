@@ -1,8 +1,8 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, Field } from 'formik';
+import type { FieldProps } from 'formik';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 
 import { useLoginMutation, useForgotPasswordMutation } from 'app/store/api';
@@ -11,11 +11,11 @@ import { createAuthValidationSchemas } from 'features/auth/model/validationSchem
 import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { ResetPasswordModal } from 'features/auth/ui/components/ResetPasswordModal';
 import { ForgotPasswordEmailModal } from 'features/auth/ui/components/ForgotPasswordEmailModal';
-import { ValidatedField } from 'features/form/ui/ValidatedField';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { Box, TextField, Typography, CircularProgress } from '@mui/material';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
@@ -118,89 +118,140 @@ export const Login: React.FC<LoginProps> = () => {
       onSubmit={handleSubmit}
       validateOnChange={true}
       validateOnBlur={true}
+      validateOnMount={true}
     >
-      {({ isSubmitting: formikSubmitting }) => (
-        <Form ref={formRef} className={cn('form-card')}>
-          <h2 className={cn('hero-title')}>{t('auth:login.title')}</h2>
-
-          <div className={cn('space-y-6')}>
-            <ValidatedField
-              name='email'
-              label={t('auth:login.email')}
-              type='email'
-              placeholder={t('auth:login.emailPlaceholder')}
-              inputMode='email'
-              autoComplete='email'
-              enterKeyHint='next'
-              required
-            />
-
-            <ValidatedField
-              name='password'
-              label={t('auth:login.password')}
-              type={passwordVisibility.isVisible ? 'text' : 'password'}
-              placeholder={t('auth:login.passwordPlaceholder')}
-              autoComplete='current-password'
-              enterKeyHint='done'
-              required
-              inputClassName={cn('pr-12')}
+      {({ isSubmitting: formikSubmitting, isValid, dirty }) => (
+        <Form ref={formRef}>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: 448,
+              mx: 'auto',
+              p: 4,
+              borderRadius: 2,
+              bgcolor: theme =>
+                theme.palette.mode === 'dark'
+                  ? theme.palette.grey[900]
+                  : theme.palette.background.paper,
+              boxShadow: 3,
+            }}
+          >
+            <Typography
+              variant='h4'
+              component='h2'
+              sx={{
+                mb: 3,
+                fontWeight: 700,
+                textAlign: 'center',
+                color: theme =>
+                  theme.palette.mode === 'dark'
+                    ? theme.palette.grey[100]
+                    : theme.palette.text.primary,
+              }}
             >
-              <div
-                className={cn(
-                  'absolute',
-                  'top-1/2',
-                  'right-3',
-                  '-translate-y-2/3',
-                  'transform'
-                )}
-              >
-                <PasswordVisibilityToggle
-                  isVisible={passwordVisibility.isVisible}
-                  onToggle={passwordVisibility.toggleVisibility}
-                />
-              </div>
-            </ValidatedField>
+              {t('auth:login.title')}
+            </Typography>
 
-            <div className={cn('flex', 'flex-col', 'gap-5')}>
-              <Button
-                type='submit'
-                disabled={formikSubmitting || isSubmitting}
-                className={cn('flex-1', 'px-8', 'py-3')}
-              >
-                {formikSubmitting || isSubmitting ? (
-                  <div className={cn('flex', 'items-center', 'justify-center')}>
-                    <div
-                      className={cn(
-                        'mr-2',
-                        'h-5',
-                        'w-5',
-                        'animate-spin',
-                        'rounded-full',
-                        'border-2',
-                        'border-white',
-                        'border-t-transparent'
-                      )}
-                    ></div>
-                    {t('auth:login.submitting')}
-                  </div>
-                ) : (
-                  t('auth:login.submit')
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Field name='email'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <TextField
+                    {...field}
+                    label={t('auth:login.email')}
+                    type='email'
+                    placeholder={t('auth:login.emailPlaceholder')}
+                    inputMode='email'
+                    autoComplete='email'
+                    required
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    disabled={formikSubmitting || isSubmitting}
+                  />
                 )}
-              </Button>
-              <button
-                type='button'
-                onClick={handleForgotPassword}
-                className={cn(
-                  'text-text',
-                  'dark:text-dark-text',
-                  'hover:underline focus:underline'
+              </Field>
+
+              <Field name='password'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <Box sx={{ position: 'relative' }}>
+                    <TextField
+                      {...field}
+                      label={t('auth:login.password')}
+                      type={passwordVisibility.isVisible ? 'text' : 'password'}
+                      placeholder={t('auth:login.passwordPlaceholder')}
+                      autoComplete='current-password'
+                      required
+                      fullWidth
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                      disabled={formikSubmitting || isSubmitting}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: meta.touched && meta.error ? '28%' : '50%',
+                        right: 8,
+                        transform: 'translateY(-50%)',
+                        zIndex: 1,
+                      }}
+                    >
+                      <PasswordVisibilityToggle
+                        isVisible={passwordVisibility.isVisible}
+                        onToggle={passwordVisibility.toggleVisibility}
+                      />
+                    </Box>
+                  </Box>
                 )}
-                title={t('auth:login.forgotPassword') || 'Забыл пароль'}
-              >
-                {t('auth:login.forgotPassword')}
-              </button>
-            </div>
-          </div>
+              </Field>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                <Button
+                  type='submit'
+                  disabled={
+                    formikSubmitting || isSubmitting || !isValid || !dirty
+                  }
+                  style={{ flex: 1, padding: '12px 32px' }}
+                >
+                  {formikSubmitting || isSubmitting ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <CircularProgress
+                        size={20}
+                        sx={{ mr: 1, color: 'inherit' }}
+                      />
+                      {t('auth:login.submitting')}
+                    </Box>
+                  ) : (
+                    t('auth:login.submit')
+                  )}
+                </Button>
+                <Typography
+                  component='button'
+                  type='button'
+                  onClick={handleForgotPassword}
+                  sx={{
+                    border: 'none',
+                    background: 'none',
+                    cursor: 'pointer',
+                    color: theme =>
+                      theme.palette.mode === 'dark'
+                        ? theme.palette.grey[100]
+                        : theme.palette.text.primary,
+                    '&:hover': { textDecoration: 'underline' },
+                    '&:focus': { textDecoration: 'underline' },
+                  }}
+                  title={t('auth:login.forgotPassword') || 'Забыл пароль'}
+                >
+                  {t('auth:login.forgotPassword')}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
         </Form>
       )}
     </Formik>

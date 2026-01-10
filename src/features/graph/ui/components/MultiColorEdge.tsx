@@ -338,7 +338,13 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
 
     observeEl(viewportEl, { attributes: true, attributeFilter: ['style'] });
 
-    observeEl(nodesEl, { childList: true, subtree: true });
+    // Observe node subtree for style/transform changes to bump edge recomputation
+    observeEl(nodesEl, {
+      attributes: true,
+      attributeFilter: ['style', 'transform'],
+      childList: true,
+      subtree: true,
+    });
 
     if (!nodesEl) {
       const bodyMo = new MutationObserver(() => {

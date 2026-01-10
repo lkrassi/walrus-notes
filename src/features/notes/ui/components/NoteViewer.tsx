@@ -62,7 +62,9 @@ export const NoteViewer = ({
         'h-full',
         'w-full',
         'flex-col',
-        isFullscreen ? 'bg-gradient fixed inset-0 z-100' : 'bg-gradient'
+        'bg-[var(--color-bg)]',
+        'dark:bg-[var(--color-dark-bg)]',
+        isFullscreen && 'fixed inset-0 z-100'
       )}
     >
       {' '}

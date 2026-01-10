@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import cn from 'shared/lib/cn';
 import { useConfirmCodeMutation } from 'app/store/api';
 import { useLocalization } from 'widgets/hooks';
 import { useNotifications } from 'widgets/hooks';
 import { Button } from 'shared';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 interface ConfirmCodeModalProps {
   email: string;
@@ -92,74 +94,72 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
   }, []);
 
   return (
-    <div className={cn('flex', 'flex-col', 'gap-6', 'w-full')}>
-      <div className={cn('text-center')}>
-        <p
-          className={cn(
-            'text-sm',
-            'text-secondary',
-            'dark:text-dark-secondary'
-          )}
-        >
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
+    >
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography variant='body2' sx={{ color: 'text.secondary' }}>
           {t('auth:confirmCode.description') ||
             'Код подтверждения отправлен на'}
           <br />
-          <span
-            className={cn('font-semibold', 'text-text', 'dark:text-dark-text')}
+          <Typography
+            component='span'
+            sx={{ fontWeight: 600, color: 'text.primary' }}
           >
             {email}
-          </span>
-        </p>
-      </div>
+          </Typography>
+        </Typography>
+      </Box>
 
-      <div
-        className={cn(
-          'flex',
-          'gap-2',
-          'justify-center',
-          'mx-auto',
-          'w-full',
-          'max-w-xs'
-        )}
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1,
+          justifyContent: 'center',
+          mx: 'auto',
+          width: '100%',
+          maxWidth: '320px',
+        }}
       >
         {code.map((digit, index) => (
-          <input
+          <TextField
             key={index}
-            ref={el => {
+            inputRef={el => {
               inputRefs.current[index] = el;
             }}
             type='text'
-            inputMode='numeric'
-            maxLength={1}
+            inputProps={{
+              inputMode: 'numeric',
+              maxLength: 1,
+              style: {
+                textAlign: 'center',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                padding: '12px 0',
+              },
+            }}
             value={digit}
+            autoFocus={index === 0}
             onChange={e => handleInputChange(index, e.target.value)}
             onKeyDown={e => handleKeyDown(index, e)}
             onPaste={handlePaste}
-            className={cn(
-              'w-12',
-              'h-12',
-              'text-center',
-              'text-lg',
-              'font-semibold',
-              'border-2',
-              'rounded-lg',
-              'bg-white',
-              'dark:bg-dark-bg',
-              'text-text',
-              'dark:text-dark-text',
-              'border-border',
-              'dark:border-dark-border',
-              'focus:outline-none',
-              'focus:border-primary',
-              'dark:focus:border-primary',
-              'transition-colors',
-              digit && 'border-primary',
-              'dark:focus:border-primary'
-            )}
             disabled={isLoading}
+            sx={{
+              width: '48px',
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: 'primary.main',
+                  borderWidth: 2,
+                },
+                '& fieldset': {
+                  borderWidth: digit ? 2 : 1,
+                  borderColor: digit ? 'primary.main' : undefined,
+                },
+              },
+            }}
           />
         ))}
-      </div>
+      </Box>
 
       <Button
         onClick={handleSubmit}
@@ -167,12 +167,12 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
         variant={
           isLoading || code.join('').length !== 6 ? 'disabled' : 'submit'
         }
-        className={cn('w-full', 'px-8', 'py-3')}
+        sx={{ width: '100%', px: 4, py: 1.5 }}
       >
         {isLoading
           ? t('auth:confirmCode.loading')
           : t('auth:confirmCode.submit')}
       </Button>
-    </div>
+    </Box>
   );
 };

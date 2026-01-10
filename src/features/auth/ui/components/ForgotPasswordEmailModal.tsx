@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import cn from 'shared/lib/cn';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets/hooks';
-import { ValidatedField } from 'features/form/ui/ValidatedField';
-import { Formik, Form } from 'formik';
+import { Formik, Form, Field } from 'formik';
+import type { FieldProps } from 'formik';
 import * as Yup from 'yup';
 import { useModalContentContext } from 'widgets/ui';
+import { TextField, Box, Typography, CircularProgress } from '@mui/material';
 
 interface ForgotPasswordEmailModalProps {
   onSubmit: (email: string) => Promise<void>;
@@ -34,84 +34,81 @@ export const ForgotPasswordEmailModal: React.FC<
   };
 
   return (
-    <div className={cn('flex', 'flex-col', 'gap-6', 'w-full')}>
-      <div className={cn('text-center')}>
-        <p
-          className={cn(
-            'text-sm',
-            'text-secondary',
-            'dark:text-dark-secondary'
-          )}
-        >
-          {t('auth:forgotPasswordEmail.description') ||
-            'Введите адрес электронной почты для восстановления пароля'}
-        </p>
-      </div>
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
+    >
+      <Typography
+        variant='body2'
+        sx={{
+          textAlign: 'center',
+          color: 'text.secondary',
+        }}
+      >
+        {t('auth:forgotPasswordEmail.description') ||
+          'Введите адрес электронной почты для восстановления пароля'}
+      </Typography>
 
       <Formik
         initialValues={{ email: '' }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
-        validateOnChange={false}
+        validateOnChange={true}
         validateOnBlur={true}
+        validateOnMount={false}
       >
-        {formik => (
-          <Form className={cn('flex', 'flex-col', 'gap-4')}>
-            <ValidatedField
-              name='email'
-              label={t('auth:login.email')}
-              type='email'
-              placeholder={t('auth:login.emailPlaceholder')}
-              inputMode='email'
-              autoComplete='email'
-              enterKeyHint='done'
-              required
-              autoFocus={true}
-            />
+        {({ isValid, dirty }) => (
+          <Form
+            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+          >
+            <Field name='email'>
+              {({ field, meta }: FieldProps<string>) => (
+                <TextField
+                  {...field}
+                  label={t('auth:login.email')}
+                  type='email'
+                  placeholder={t('auth:login.emailPlaceholder')}
+                  required
+                  fullWidth
+                  error={meta.touched && Boolean(meta.error)}
+                  helperText={meta.touched && meta.error}
+                  disabled={isSubmitting}
+                  autoComplete='email'
+                  inputProps={{
+                    inputMode: 'email',
+                  }}
+                />
+              )}
+            </Field>
 
-            <div className={cn('flex', 'gap-3', 'justify-center')}>
+            <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
               <Button
                 type='button'
                 onClick={closeModal}
                 variant='escape'
                 disabled={isSubmitting}
-                className='btn'
               >
                 {t('common:buttons.cancel') || 'Отмена'}
               </Button>
               <Button
                 type='submit'
                 variant={
-                  isSubmitting || !formik.values.email.trim()
-                    ? 'disabled'
-                    : 'submit'
+                  isSubmitting || !isValid || !dirty ? 'disabled' : 'submit'
                 }
-                disabled={isSubmitting || !formik.values.email.trim()}
-                className='btn'
+                disabled={isSubmitting || !isValid || !dirty}
               >
                 {isSubmitting ? (
-                  <div className={cn('flex', 'items-center', 'gap-2')}>
-                    <div
-                      className={cn(
-                        'h-4',
-                        'w-4',
-                        'animate-spin',
-                        'rounded-full',
-                        'border-2',
-                        'border-white',
-                        'border-t-transparent'
-                      )}
-                    />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CircularProgress size={16} color='inherit' />
                     {t('auth:forgotPasswordEmail.sending') || 'Отправка...'}
-                  </div>
+                  </Box>
                 ) : (
                   t('auth:forgotPasswordEmail.submit') || 'Отправить код'
                 )}
               </Button>
-            </div>
+            </Box>
           </Form>
         )}
       </Formik>
-    </div>
+    </Box>
   );
 };

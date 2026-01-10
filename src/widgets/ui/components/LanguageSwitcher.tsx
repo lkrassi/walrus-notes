@@ -49,10 +49,7 @@ export const LanguageSwitcher: React.FC = () => {
     }
   }, [currentLanguage]);
 
-  const handleLanguageSelect = (
-    langCode: string,
-    closeModal: () => void
-  ) => {
+  const handleLanguageSelect = (langCode: string, closeModal: () => void) => {
     changeLanguage(langCode);
     setEffectiveLanguage(langCode);
     closeModal();

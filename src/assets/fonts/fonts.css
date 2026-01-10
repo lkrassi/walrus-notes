@@ -6,6 +6,7 @@
   font-display: swap;
 }
 
+html,
 body {
   font-family:
     'KWL',
@@ -17,5 +18,5 @@ body {
     Arial,
     'Noto Sans',
     'Liberation Sans',
-    sans-serif;
+    sans-serif !important;
 }

@@ -1,5 +1,11 @@
 import { type Variants } from 'framer-motion';
-import { Brain, Shield, Sparkles, Users, Zap } from 'lucide-react';
+import {
+  Psychology,
+  FlashOn,
+  AutoAwesome,
+  Security,
+  People,
+} from '@mui/icons-material';
 
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -39,22 +45,22 @@ export const featureVariants: Variants = {
 export const features = [
   {
     key: 'visualThinking',
-    icon: Brain,
+    icon: Psychology,
   },
   {
     key: 'fastOrganization',
-    icon: Zap,
+    icon: FlashOn,
   },
   {
     key: 'smartConnections',
-    icon: Sparkles,
+    icon: AutoAwesome,
   },
   {
     key: 'secureStorage',
-    icon: Shield,
+    icon: Security,
   },
   {
     key: 'collaboration',
-    icon: Users,
+    icon: People,
   },
 ];

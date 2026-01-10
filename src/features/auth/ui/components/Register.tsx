@@ -1,7 +1,7 @@
-import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import { Form, Formik, Field } from 'formik';
+import type { FieldProps } from 'formik';
+import React from 'react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 
 import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
@@ -12,8 +12,8 @@ import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
-import { ValidatedField } from 'features/form/ui/ValidatedField';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { Box, TextField, Typography, CircularProgress } from '@mui/material';
 
 type RegisterProps = {
   onSwitchToLogin?: () => void;
@@ -26,7 +26,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const passwordVisibility = usePasswordVisibility();
   const { t } = useLocalization();
   const { openModal, closeModal } = useModalContext();
-  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
 
   const { formRef } = useMobileForm();
 
@@ -41,7 +40,6 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const handleSubmit = async (values: typeof initialValues) => {
     try {
       await register(values).unwrap();
-      setRegisteredEmail(values.email);
 
       try {
         await sendConfirmCode({
@@ -148,84 +146,135 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       onSubmit={handleSubmit}
       validateOnChange={true}
       validateOnBlur={true}
+      validateOnMount={true}
     >
-      {({ isSubmitting: formikSubmitting }) => (
-        <Form ref={formRef} className={cn('form-card')}>
-          <h2 className={cn('hero-title')}>{t('auth:register.title')}</h2>
-
-          <div className={cn('space-y-6')}>
-            <ValidatedField
-              name='email'
-              label={t('auth:register.email')}
-              type='email'
-              placeholder={t('auth:login.emailPlaceholder')}
-              inputMode='email'
-              autoComplete='email'
-              enterKeyHint='next'
-              required
-            />
-
-            <ValidatedField
-              name='username'
-              label={t('auth:register.username')}
-              type='text'
-              placeholder={t('auth:register.usernamePlaceholder')}
-              autoComplete='username'
-              enterKeyHint='next'
-            />
-
-            <ValidatedField
-              name='password'
-              label={t('auth:register.password')}
-              type={passwordVisibility.isVisible ? 'text' : 'password'}
-              placeholder={t('auth:login.passwordPlaceholder')}
-              autoComplete='current-password'
-              enterKeyHint='done'
-              required
-              inputClassName={cn('pr-12')}
+      {({ isSubmitting: formikSubmitting, isValid, dirty }) => (
+        <Form ref={formRef}>
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: 448,
+              mx: 'auto',
+              p: 4,
+              borderRadius: 2,
+              bgcolor: theme =>
+                theme.palette.mode === 'dark'
+                  ? theme.palette.grey[900]
+                  : theme.palette.background.paper,
+              boxShadow: 3,
+            }}
+          >
+            <Typography
+              variant='h4'
+              component='h2'
+              sx={{
+                mb: 3,
+                fontWeight: 700,
+                textAlign: 'center',
+                color: theme =>
+                  theme.palette.mode === 'dark'
+                    ? theme.palette.grey[100]
+                    : theme.palette.text.primary,
+              }}
             >
-              <div
-                className={cn(
-                  'absolute',
-                  'top-1/2',
-                  'right-3',
-                  '-translate-y-2/3',
-                  'transform'
+              {t('auth:register.title')}
+            </Typography>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Field name='email'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <TextField
+                    {...field}
+                    label={t('auth:register.email')}
+                    type='email'
+                    placeholder={t('auth:login.emailPlaceholder')}
+                    inputMode='email'
+                    autoComplete='email'
+                    required
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    disabled={formikSubmitting || isSubmitting}
+                  />
                 )}
-              >
-                <PasswordVisibilityToggle
-                  isVisible={passwordVisibility.isVisible}
-                  onToggle={passwordVisibility.toggleVisibility}
-                />
-              </div>
-            </ValidatedField>
+              </Field>
 
-            <Button
-              type='submit'
-              disabled={formikSubmitting || isSubmitting}
-              className={cn('w-full', 'px-8', 'py-3')}
-            >
-              {formikSubmitting || isSubmitting ? (
-                <div className={cn('flex', 'items-center', 'justify-center')}>
-                  <div
-                    className={cn(
-                      'mr-2',
-                      'h-5',
-                      'w-5',
-                      'animate-spin',
-                      'rounded-full',
-                      'border-2',
-                      'border-white',
-                      'border-t-transparent'
-                    )}
-                  ></div>
-                  {t('auth:register.submitting')}
-                </div>
-              ) : (
-                t('auth:register.submit')
-              )}
-            </Button>
-          </div>
+              <Field name='username'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <TextField
+                    {...field}
+                    label={t('auth:register.username')}
+                    type='text'
+                    placeholder={t('auth:register.usernamePlaceholder')}
+                    autoComplete='username'
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    disabled={formikSubmitting || isSubmitting}
+                  />
+                )}
+              </Field>
+
+              <Field name='password'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <Box sx={{ position: 'relative' }}>
+                    <TextField
+                      {...field}
+                      label={t('auth:register.password')}
+                      type={passwordVisibility.isVisible ? 'text' : 'password'}
+                      placeholder={t('auth:login.passwordPlaceholder')}
+                      autoComplete='current-password'
+                      required
+                      fullWidth
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                      disabled={formikSubmitting || isSubmitting}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: meta.touched && meta.error ? '28%' : '50%',
+                        right: 8,
+                        transform: 'translateY(-50%)',
+                        zIndex: 1,
+                      }}
+                    >
+                      <PasswordVisibilityToggle
+                        isVisible={passwordVisibility.isVisible}
+                        onToggle={passwordVisibility.toggleVisibility}
+                      />
+                    </Box>
+                  </Box>
+                )}
+              </Field>
+
+              <Button
+                type='submit'
+                disabled={
+                  formikSubmitting || isSubmitting || !isValid || !dirty
+                }
+                style={{ width: '100%', padding: '12px 32px' }}
+              >
+                {formikSubmitting || isSubmitting ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <CircularProgress
+                      size={20}
+                      sx={{ mr: 1, color: 'inherit' }}
+                    />
+                    {t('auth:register.submitting')}
+                  </Box>
+                ) : (
+                  t('auth:register.submit')
+                )}
+              </Button>
+            </Box>
+          </Box>
         </Form>
       )}
     </Formik>

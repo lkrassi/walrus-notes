@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import cn from 'shared/lib/cn';
-import { Button } from './Button';
+import IconButton from '@mui/material/IconButton';
+import { alpha, styled } from '@mui/material/styles';
 
 export type BackButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -10,6 +10,30 @@ export type BackButtonProps = {
   title?: string;
   ariaLabel?: string;
 };
+
+const StyledIconButton = styled(IconButton)(({ theme }) => {
+  const baseColor = theme.palette.primary.main;
+  const opacity = theme.palette.mode === 'dark' ? 0.75 : 0.9;
+  const shadow = `0 8px 0 0 ${alpha(baseColor, opacity)}`;
+  return {
+    backgroundColor: baseColor,
+    color: theme.palette.primary.contrastText,
+    boxShadow: shadow,
+    transform: 'translateY(0)',
+    transition: 'all 0.2s',
+    borderRadius: '0.375rem',
+    padding: '8px 28px',
+    '&:hover': {
+      backgroundColor: baseColor,
+      boxShadow: shadow,
+      filter: 'brightness(1.05)',
+    },
+    '&:active': {
+      boxShadow: '0 0 0 0',
+      transform: 'translateY(6px)',
+    },
+  };
+});
 
 export const BackButton: React.FC<BackButtonProps> = ({
   onClick,
@@ -35,26 +59,14 @@ export const BackButton: React.FC<BackButtonProps> = ({
   };
 
   return (
-    <Button
+    <StyledIconButton
       onClick={handleClick}
-      variant='default'
       title={title}
-      className={cn(
-        'flex',
-        'h-10',
-        'w-5',
-        'items-center',
-        'justify-center',
-        'px-7',
-        'py-2',
-        className
-      )}
+      className={className}
       aria-label={ariaLabel || title || 'Back'}
     >
-      <span>
-        <ArrowLeft className={cn('h-4 w-4')} />
-      </span>
-    </Button>
+      <ArrowLeft size={16} />
+    </StyledIconButton>
   );
 };
 

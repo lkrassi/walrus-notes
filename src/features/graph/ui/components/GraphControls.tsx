@@ -1,6 +1,15 @@
-import { Controls, useReactFlow } from 'reactflow';
+import React from 'react';
+import { Controls, useReactFlow, Panel } from 'reactflow';
+import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
+import { GraphUndoRedoControls } from './GraphUndoRedoControls';
 
-export const GraphControls = () => {
+interface GraphControlsProps {
+  graphHistory?: UseGraphHistoryReturn;
+}
+
+export const GraphControls: React.FC<GraphControlsProps> = ({
+  graphHistory,
+}) => {
   const { fitView } = useReactFlow();
 
   const handleFitView = () => {
@@ -10,5 +19,14 @@ export const GraphControls = () => {
     });
   };
 
-  return <Controls onFitView={handleFitView} />;
+  return (
+    <>
+      <Controls onFitView={handleFitView} />
+      {graphHistory && (
+        <Panel position='top-left' style={{ marginTop: '50px' }}>
+          <GraphUndoRedoControls graphHistory={graphHistory} isHorizontal />
+        </Panel>
+      )}
+    </>
+  );
 };

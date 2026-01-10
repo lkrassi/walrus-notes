@@ -1,5 +1,6 @@
 import React, { forwardRef, memo } from 'react';
-import cn from 'shared/lib/cn';
+import MuiButton from '@mui/material/Button';
+import { alpha, styled } from '@mui/material/styles';
 
 export type ButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
 
@@ -12,7 +13,82 @@ export type ButtonProps = {
   className?: string;
   to?: string;
   title?: string;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
+
+const StyledButton = styled(MuiButton, {
+  shouldForwardProp: prop => prop !== 'buttonVariant',
+})<{ buttonVariant: ButtonVariant }>(({ theme, buttonVariant }) => {
+  const getVariantStyles = () => {
+    const mode = theme.palette.mode;
+    const opacity = mode === 'dark' ? 0.75 : 0.9;
+    const isDisabledVariant = buttonVariant === 'disabled';
+
+    const mutedBg =
+      mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200];
+    const mutedShadow = alpha(
+      mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[500],
+      mode === 'dark' ? 0.4 : 0.25
+    );
+
+    const baseColor = isDisabledVariant
+      ? mutedBg
+      : buttonVariant === 'default'
+        ? theme.palette.primary.main
+        : buttonVariant === 'escape'
+          ? theme.palette.error.main
+          : buttonVariant === 'submit'
+            ? theme.palette.success.main
+            : theme.palette.action.disabledBackground;
+
+    const shadowColor = isDisabledVariant
+      ? mutedShadow
+      : alpha(baseColor, opacity);
+    const disabledShadow = alpha(
+      theme.palette.mode === 'dark'
+        ? theme.palette.grey[700]
+        : theme.palette.grey[400],
+      opacity
+    );
+
+    return {
+      backgroundColor: baseColor,
+      boxShadow: `0 8px 0 0 ${shadowColor}`,
+      '&:hover': {
+        backgroundColor: baseColor,
+        boxShadow: `0 8px 0 0 ${shadowColor}`,
+        filter: isDisabledVariant ? 'none' : 'brightness(1.05)',
+      },
+      '&:active': {
+        boxShadow: '0 0 0 0',
+        transform: 'translateY(6px)',
+      },
+      color: isDisabledVariant ? theme.palette.text.primary : '#ffffff',
+      '&.Mui-disabled': {
+        backgroundColor: theme.palette.action.disabledBackground,
+        color: theme.palette.action.disabled,
+        cursor: 'not-allowed',
+        boxShadow: `0 8px 0 0 ${disabledShadow}`,
+        '&:active': {
+          boxShadow: `0 8px 0 0 ${disabledShadow}`,
+          transform: 'translateY(0)',
+        },
+      },
+    };
+  };
+
+  return {
+    position: 'relative',
+    fontSize: '1rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    transform: 'translateY(0)',
+    borderRadius: '0.375rem',
+    textTransform: 'none',
+    padding: '8px 24px',
+    ...getVariantStyles(),
+  };
+});
 
 export const Button = memo(
   forwardRef<HTMLButtonElement, ButtonProps>(
@@ -40,69 +116,19 @@ export const Button = memo(
         }
       };
 
-      const getVariantClasses = () => {
-        const baseClasses = `
-          relative
-          text-white
-          text-base
-          font-semibold
-          cursor-pointer
-          disabled:cursor-not-allowed
-          transition-all
-          duration-200
-          transform
-          translate-y-0
-          shadow-[0_8px_0_0]
-          rounded-md
-          active:shadow-[0_0_0_0]
-          active:translate-y-1.5
-          disabled:shadow-[0_8px_0_0]
-          disabled:active:shadow-[0_8px_0_0]
-          disabled:active:translate-y-0
-        `;
-
-        let bgColor = '';
-        let shadowColor = '';
-
-        switch (variant) {
-          case 'default':
-            bgColor = 'bg-btn';
-            shadowColor = 'shadow-btn/90 dark:shadow-btn/75';
-            break;
-          case 'escape':
-            bgColor = 'bg-btn-cancel';
-            shadowColor = 'shadow-btn-cancel/75 dark:shadow-btn-cancel/75';
-            break;
-          case 'submit':
-            bgColor = 'bg-btn-submit';
-            shadowColor = 'shadow-btn-submit/75 dark:shadow-btn-submit/75';
-            break;
-          case 'disabled':
-            bgColor = 'bg-btn-disabled';
-            shadowColor = 'shadow-btn-disabled/75 dark:shadow-btn-disabled/75';
-            break;
-          default:
-            bgColor = 'bg-btn';
-            shadowColor = 'shadow-btn/90 dark:shadow-btn/75';
-        }
-
-        return `${baseClasses} ${bgColor} ${shadowColor}`;
-      };
-
-      const baseClasses = getVariantClasses();
-
       return (
-        <button
+        <StyledButton
           ref={ref}
           type={type}
           disabled={disabled}
-          className={cn(baseClasses, className)}
+          buttonVariant={variant}
+          className={className}
           onClick={handleClick}
           title={title}
           {...restProps}
         >
           {children}
-        </button>
+        </StyledButton>
       );
     }
   )

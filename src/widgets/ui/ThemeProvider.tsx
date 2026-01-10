@@ -1,4 +1,13 @@
-import { createContext, useEffect, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createAppTheme } from 'app/theme/theme';
 
 type ThemeContextType = {
   theme: string;
@@ -19,6 +28,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     () => localStorage.getItem('theme') || 'dark'
   );
 
+  // Создаём MUI тему на основе текущей темы
+  const muiTheme = useMemo(
+    () => createAppTheme(theme === 'dark' ? 'dark' : 'light'),
+    [theme]
+  );
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
@@ -30,7 +45,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <MuiThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
     </ThemeContext.Provider>
   );
 };

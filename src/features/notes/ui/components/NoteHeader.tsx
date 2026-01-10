@@ -95,17 +95,6 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
     size: 'lg',
   });
 
-  const handleOpenEditTitle = openModalFromTrigger(
-    <EditNoteModal
-      title={title}
-      onSaved={async (v: string) => {
-        if (onTitleChange) onTitleChange(v);
-        if (onSave) await onSave();
-      }}
-    />,
-    { title: t('notes:editTitle') || 'Edit title', size: 'sm' }
-  );
-
   return (
     <div className={cn('panel-header')}>
       <div className={cn('min-w-0', 'flex-1')}>
@@ -200,8 +189,6 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         >
           <CircleQuestionMark className={cn('h-4', 'w-4')} />
         </Button>
-
-        {/* Edit title moved to sidebar item pencil — button removed */}
 
         {onToggleFullscreen && (
           <Button

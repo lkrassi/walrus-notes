@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import cn from 'shared/lib/cn';
 import { useConfirmCodeMutation } from 'app/store/api';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { Button } from 'shared';
 import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
-import { Formik, Form } from 'formik';
+import { Formik, Form, Field } from 'formik';
+import type { FieldProps } from 'formik';
 import * as Yup from 'yup';
 import 'features/auth/model/validationSchemas';
-import { ValidatedField } from 'features/form/ui/ValidatedField';
+import { Box, TextField, Typography, CircularProgress } from '@mui/material';
 
 interface ResetPasswordModalProps {
   email: string;
@@ -42,7 +42,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -130,75 +130,91 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
   }, []);
 
   return (
-    <div className={cn('flex', 'flex-col', 'gap-6', 'w-full')}>
-      <div className={cn('text-center')}>
-        <p
-          className={cn(
-            'text-sm',
-            'text-secondary',
-            'dark:text-dark-secondary'
-          )}
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
+    >
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography
+          variant='body2'
+          sx={{
+            color: theme =>
+              theme.palette.mode === 'dark'
+                ? theme.palette.grey[400]
+                : theme.palette.text.secondary,
+          }}
         >
           {t('auth:resetPassword.description') ||
             'Код подтверждения отправлен на'}
           <br />
-          <span
-            className={cn('font-semibold', 'text-text', 'dark:text-dark-text')}
+          <Typography
+            component='span'
+            sx={{
+              fontWeight: 600,
+              color: theme =>
+                theme.palette.mode === 'dark'
+                  ? theme.palette.grey[100]
+                  : theme.palette.text.primary,
+            }}
           >
             {email}
-          </span>
-        </p>
-      </div>
+          </Typography>
+        </Typography>
+      </Box>
 
-      <div
-        className={cn(
-          'flex',
-          'gap-2',
-          'justify-center',
-          'mx-auto',
-          'w-full',
-          'max-w-xs'
-        )}
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1,
+          justifyContent: 'center',
+          mx: 'auto',
+          width: '100%',
+          maxWidth: 320,
+        }}
       >
         {code.map((digit, index) => (
-          <input
+          <TextField
             key={index}
-            ref={el => {
+            inputRef={el => {
               inputRefs.current[index] = el;
             }}
             type='text'
             inputMode='numeric'
-            maxLength={1}
             value={digit}
+            autoFocus={index === 0}
             onChange={e => handleInputChange(index, e.target.value)}
             onKeyDown={e => handleKeyDown(index, e)}
             onPaste={handlePaste}
-            className={cn(
-              'w-12',
-              'h-12',
-              'text-center',
-              'text-lg',
-              'font-semibold',
-              'border-2',
-              'rounded-lg',
-              'bg-white',
-              'dark:bg-dark-bg',
-              'text-text',
-              'dark:text-dark-text',
-              'border-border',
-              'dark:border-dark-border',
-              'focus:outline-none',
-              'focus:border-primary',
-              'dark:focus:border-primary',
-              'transition-colors',
-              error && 'border-red-500',
-              digit && 'border-primary',
-              'dark:focus:border-primary'
-            )}
             disabled={isLoading}
+            inputProps={{
+              maxLength: 1,
+              style: { textAlign: 'center' },
+            }}
+            sx={{
+              width: 48,
+              '& .MuiOutlinedInput-root': {
+                height: 48,
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                '& input': {
+                  textAlign: 'center',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: error ? 'error.main' : 'primary.main',
+                  borderWidth: 2,
+                },
+                '& fieldset': {
+                  borderWidth: 2,
+                  borderColor: error
+                    ? 'error.main'
+                    : digit
+                      ? 'primary.main'
+                      : undefined,
+                },
+              },
+            }}
           />
         ))}
-      </div>
+      </Box>
 
       <Formik
         initialValues={{ newPassword: '' }}
@@ -223,36 +239,52 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
         validateOnBlur={true}
       >
         {formik => (
-          <Form className={cn('w-full', 'flex', 'flex-col', 'gap-y-5')}>
-            <div className={cn('relative')}>
-              <ValidatedField
-                name='newPassword'
-                label={
-                  t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
-                }
-                type={showPassword ? 'text' : 'password'}
-                placeholder={
-                  t('auth:login.passwordPlaceholder') || 'Введите новый пароль'
-                }
-                required
-              >
-                <div
-                  className={cn(
-                    'absolute',
-                    'top-1/2',
-                    'right-3',
-                    '-translate-y-1/2'
-                  )}
-                >
-                  <PasswordVisibilityToggle
-                    isVisible={showPassword}
-                    onToggle={() => setShowPassword(!showPassword)}
+          <Form
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 20,
+            }}
+          >
+            <Field name='newPassword'>
+              {({ field, meta }: FieldProps<string>) => (
+                <Box sx={{ position: 'relative' }}>
+                  <TextField
+                    {...field}
+                    label={
+                      t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
+                    }
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder={
+                      t('auth:login.passwordPlaceholder') ||
+                      'Введите новый пароль'
+                    }
+                    required
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    disabled={isLoading}
                   />
-                </div>
-              </ValidatedField>
-            </div>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: meta.touched && meta.error ? '28%' : '50%',
+                      right: 8,
+                      transform: 'translateY(-50%)',
+                      zIndex: 1,
+                    }}
+                  >
+                    <PasswordVisibilityToggle
+                      isVisible={showPassword}
+                      onToggle={() => setShowPassword(!showPassword)}
+                    />
+                  </Box>
+                </Box>
+              )}
+            </Field>
 
-            <div className={cn('flex', 'justify-center')}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 type='submit'
                 variant={
@@ -263,16 +295,18 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
                 disabled={
                   isLoading || code.join('').length !== 6 || !formik.isValid
                 }
-                className={cn('w-full', 'px-8', 'py-3')}
+                style={{ width: '100%', padding: '12px 32px' }}
               >
-                {isLoading
-                  ? t('auth:confirmCode.loading')
-                  : t('auth:confirmCode.submit')}
+                {isLoading ? (
+                  <CircularProgress size={24} sx={{ color: 'inherit' }} />
+                ) : (
+                  t('auth:confirmCode.submit')
+                )}
               </Button>
-            </div>
+            </Box>
           </Form>
         )}
       </Formik>
-    </div>
+    </Box>
   );
 };

@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import React, { useEffect, useRef, useState, type ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
+import Popover from '@mui/material/Popover';
 import cn from 'shared/lib/cn';
 
 interface DropdownProps {
@@ -25,107 +26,67 @@ export const Dropdown = ({
   disabled = false,
   showArrow = true,
 }: DropdownProps) => {
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const [chosenPosition, setChosenPosition] = useState<
-    'top' | 'bottom' | 'left' | 'right'
-  >(
-    position === 'auto'
-      ? 'bottom'
-      : (position as 'top' | 'bottom' | 'left' | 'right')
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [internalIsOpen, setInternalIsOpen] = React.useState(false);
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
-  const handleToggle = () => {
+  const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
     if (disabled) return;
 
     const newState = !isOpen;
-    if (newState && position === 'auto' && triggerRef.current) {
-      try {
-        const rect = triggerRef.current.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-        if (spaceBelow < 200 && spaceAbove > spaceBelow) {
-          setChosenPosition('top');
-        } else {
-          setChosenPosition('bottom');
-        }
-      } catch (_e) {
-        setChosenPosition('bottom');
-      }
-    } else if (position !== 'auto') {
-      setChosenPosition(position as 'top' | 'bottom' | 'left' | 'right');
+
+    if (newState) {
+      setAnchorEl(event.currentTarget);
+    } else {
+      setAnchorEl(null);
     }
+
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(newState);
     }
     onOpenChange?.(newState);
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      if (controlledIsOpen === undefined) {
-        setInternalIsOpen(false);
-      }
-      onOpenChange?.(false);
+  const handleClose = () => {
+    setAnchorEl(null);
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(false);
+    }
+    onOpenChange?.(false);
+  };
+
+  // Преобразуем position в anchorOrigin и transformOrigin для MUI
+  const getAnchorOrigin = () => {
+    switch (position) {
+      case 'top':
+        return { vertical: 'top' as const, horizontal: 'center' as const };
+      case 'bottom':
+        return { vertical: 'bottom' as const, horizontal: 'center' as const };
+      case 'left':
+        return { vertical: 'center' as const, horizontal: 'left' as const };
+      case 'right':
+        return { vertical: 'center' as const, horizontal: 'right' as const };
+      default:
+        return { vertical: 'bottom' as const, horizontal: 'center' as const };
     }
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+  const getTransformOrigin = () => {
+    switch (position) {
+      case 'top':
+        return { vertical: 'bottom' as const, horizontal: 'center' as const };
+      case 'bottom':
+        return { vertical: 'top' as const, horizontal: 'center' as const };
+      case 'left':
+        return { vertical: 'center' as const, horizontal: 'right' as const };
+      case 'right':
+        return { vertical: 'center' as const, horizontal: 'left' as const };
+      default:
+        return { vertical: 'top' as const, horizontal: 'center' as const };
     }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  const positionClasses = {
-    top: 'bottom-full mb-1',
-    bottom: 'top-full mt-1',
-    left: 'right-full mr-1',
-    right: 'left-full ml-1',
   };
-
-  const triggerClassName = cn(
-    'cursor-pointer',
-    disabled ? 'cursor-not-allowed' : ''
-  );
-  const triggerHasGroup =
-    React.isValidElement(trigger) &&
-    String(
-      ((trigger as React.ReactElement).props as Record<string, unknown>)
-        ?.className || ''
-    )
-      .split(/\s+/)
-      .includes('group');
-  const outerClassName = cn(
-    'relative',
-    triggerHasGroup ||
-      String(className || '')
-        .split(/\s+/)
-        .includes('group')
-      ? 'group'
-      : '',
-    className || ''
-  );
-  const contentClassNameFull = cn(
-    'absolute',
-    'rounded-lg',
-    'shadow-lg',
-    'backdrop-blur-sm',
-    positionClasses[chosenPosition],
-    contentClassName || ''
-  );
 
   const renderTrigger = () => {
     if (showArrow && React.isValidElement(trigger)) {
@@ -140,14 +101,39 @@ export const Dropdown = ({
   };
 
   return (
-    <div ref={dropdownRef} className={outerClassName}>
-      <div onClick={handleToggle} ref={triggerRef} className={triggerClassName}>
+    <div className={cn('relative', className)}>
+      <div
+        onClick={handleToggle}
+        className={cn('cursor-pointer', disabled ? 'cursor-not-allowed' : '')}
+      >
         {renderTrigger()}
       </div>
 
-      <div className={contentClassNameFull} aria-hidden={!isOpen}>
+      <Popover
+        open={isOpen && anchorEl !== null}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={getAnchorOrigin()}
+        transformOrigin={getTransformOrigin()}
+        slotProps={{
+          paper: {
+            className: cn(
+              'rounded-lg shadow-lg backdrop-blur-sm',
+              contentClassName
+            ),
+            sx: {
+              marginTop: position === 'bottom' ? '4px' : undefined,
+              marginBottom: position === 'top' ? '4px' : undefined,
+              marginLeft: position === 'right' ? '4px' : undefined,
+              marginRight: position === 'left' ? '4px' : undefined,
+              minWidth: anchorEl?.offsetWidth || 'auto',
+              width: anchorEl?.offsetWidth || 'auto',
+            },
+          },
+        }}
+      >
         {children}
-      </div>
+      </Popover>
     </div>
   );
 };

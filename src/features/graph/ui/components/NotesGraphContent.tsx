@@ -16,6 +16,13 @@ import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
+import { useGraphHistory } from '../../model/hooks/useGraphHistory';
+import {
+  MoveNodeCommand,
+  CreateEdgeCommand,
+  DeleteEdgeCommand,
+  MoveEdgeCommand,
+} from '../../model/commands';
 import NotesGraphView from './NotesGraphView';
 import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 
@@ -48,6 +55,10 @@ const NotesGraphContentComponent = ({
     screenToFlowPosition,
     getEdges,
     getNodes: _getNodes,
+    fitView,
+    updateNodeInternals,
+    setNodes: rfSetNodes,
+    setEdges: rfSetEdges,
   } = useReactFlow();
 
   type NoteNodeData = { note?: Note; layoutColor?: string };
@@ -63,21 +74,20 @@ const NotesGraphContentComponent = ({
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [isDraggingEdge, setIsDraggingEdge] = useState(false);
 
+  // Initialize graph history
+  const graphHistory = useGraphHistory(100);
+
   const isProcessingRef = useRef(false);
   const prevLayoutIdRef = useRef(layoutId);
 
   useEffect(() => {
-    const nodesAreEqual = (() => {
+    // Only compare structural changes (ids, data) and ignore positions to avoid overwriting local undo/redo
+    const nodesStructuralEqual = (() => {
       if (nodes.length !== initialNodes.length) return false;
       const map = new Map(nodes.map(n => [n.id, n]));
       for (const inNode of initialNodes) {
         const prev = map.get(inNode.id as string);
         if (!prev) return false;
-        const px = prev.position?.x ?? 0;
-        const py = prev.position?.y ?? 0;
-        const ix = (inNode.position as { x: number; y: number })?.x ?? 0;
-        const iy = (inNode.position as { x: number; y: number })?.y ?? 0;
-        if (px !== ix || py !== iy) return false;
         try {
           const prevColor =
             (prev.data as { layoutColor?: string } | undefined)?.layoutColor ??
@@ -112,7 +122,12 @@ const NotesGraphContentComponent = ({
       setEdgesState(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      if (!nodesAreEqual) {
+      // Skip syncing positions while dragging or processing commands
+      if (
+        !isNodeDraggingRef.current &&
+        !isProcessingRef.current &&
+        !nodesStructuralEqual
+      ) {
         setNodes(initialNodes);
       }
       if (!edgesAreEqual) {
@@ -126,7 +141,7 @@ const NotesGraphContentComponent = ({
     allEdges,
     onConnectStart,
     onConnectEnd,
-    onConnect,
+    onConnect: onConnectOriginal,
     setTempEdges,
   } = useGraphConnections({
     layoutId,
@@ -142,6 +157,58 @@ const NotesGraphContentComponent = ({
       });
     },
   });
+
+  // Wrap onConnect to create command
+  const onConnect = useCallback(
+    async (connection: any) => {
+      const newEdge = {
+        id: `edge-${connection.source}-${connection.target}`,
+        source: connection.source,
+        target: connection.target,
+        type: 'multiColor' as const,
+        data: {
+          edgeColor: '#6b7280',
+        },
+      };
+
+      const command = new CreateEdgeCommand(
+        newEdge,
+        async (edge: Edge) => {
+          await createNoteLink({
+            layoutId,
+            firstNoteId: edge.source,
+            secondNoteId: edge.target,
+          });
+          setEdgesState(prev => {
+            if (prev.some(e => e.id === edge.id)) return prev;
+            return [...prev, edge];
+          });
+        },
+        async (edgeId: string) => {
+          const edge = edges.find(e => e.id === edgeId);
+          if (!edge) return;
+          await deleteNoteLink({
+            layoutId,
+            firstNoteId: edge.source,
+            secondNoteId: edge.target,
+          });
+          setEdgesState(prev => prev.filter(e => e.id !== edgeId));
+        }
+      );
+
+      await graphHistory.executeCommand(command);
+      await onConnectOriginal(connection);
+    },
+    [
+      layoutId,
+      createNoteLink,
+      deleteNoteLink,
+      edges,
+      setEdgesState,
+      onConnectOriginal,
+      graphHistory,
+    ]
+  );
 
   useEffect(() => {
     if (tempEdges.length > 0) {
@@ -171,60 +238,104 @@ const NotesGraphContentComponent = ({
         const currentEdges = getEdges();
 
         if (newTarget) {
-          const connectionExists = currentEdges.some(
-            edge => edge.source === source && edge.target === newTarget
-          );
+          // Moving edge to a different target
+          const edge = edges.find(e => e.id === edgeId);
+          if (edge) {
+            const command = new MoveEdgeCommand(
+              edgeId,
+              source,
+              target,
+              newTarget,
+              async (
+                edgeId: string,
+                source: string,
+                oldTarget: string,
+                newTarget: string
+              ) => {
+                await deleteNoteLink({
+                  layoutId,
+                  firstNoteId: source,
+                  secondNoteId: oldTarget,
+                });
+                await createNoteLink({
+                  layoutId,
+                  firstNoteId: source,
+                  secondNoteId: newTarget,
+                });
 
-          if (connectionExists) return;
+                setEdgesState(eds => {
+                  const filteredEdges = eds.filter(e => e.id !== edgeId);
+                  const edgesWithoutNewTarget = filteredEdges.filter(
+                    e => !(e.source === source && e.target === newTarget)
+                  );
 
-          await deleteNoteLink({
-            layoutId,
-            firstNoteId: source,
-            secondNoteId: target,
-          });
-          await createNoteLink({
-            layoutId,
-            firstNoteId: source,
-            secondNoteId: newTarget,
-          });
+                  const sourceNode = nodes.find(n => n.id === source);
+                  const edgeColor =
+                    (sourceNode?.data as { layoutColor?: string })
+                      ?.layoutColor || '#6b7280';
 
-          setEdgesState(eds => {
-            const filteredEdges = eds.filter(edge => edge.id !== edgeId);
-            const edgesWithoutNewTarget = filteredEdges.filter(
-              edge => !(edge.source === source && edge.target === newTarget)
+                  const newEdge = {
+                    id: `edge-${source}-${newTarget}`,
+                    source,
+                    target: newTarget,
+                    type: 'multiColor' as const,
+                    data: {
+                      edgeColor,
+                    },
+                  };
+
+                  return [...edgesWithoutNewTarget, newEdge];
+                });
+              }
             );
 
-            const sourceNode = nodes.find(n => n.id === source);
-            const edgeColor =
-              (sourceNode?.data as { layoutColor?: string })?.layoutColor ||
-              '#6b7280';
-
-            const newEdge = {
-              id: `edge-${source}-${newTarget}`,
-              source,
-              target: newTarget,
-              type: 'multiColor' as const,
-              data: {
-                edgeColor,
-              },
-            };
-
-            return [...edgesWithoutNewTarget, newEdge];
-          });
+            await graphHistory.executeCommand(command);
+          }
         } else {
-          await deleteNoteLink({
-            layoutId,
-            firstNoteId: source,
-            secondNoteId: target,
-          });
-          setEdgesState(eds => eds.filter(edge => edge.id !== edgeId));
+          // Deleting edge
+          const edge = edges.find(e => e.id === edgeId);
+          if (edge) {
+            const command = new DeleteEdgeCommand(
+              edge,
+              async (edgeId: string) => {
+                await deleteNoteLink({
+                  layoutId,
+                  firstNoteId: source,
+                  secondNoteId: target,
+                });
+                setEdgesState(eds => eds.filter(e => e.id !== edgeId));
+              },
+              async (edge: Edge) => {
+                await createNoteLink({
+                  layoutId,
+                  firstNoteId: edge.source,
+                  secondNoteId: edge.target,
+                });
+                setEdgesState(prev => {
+                  if (prev.some(e => e.id === edge.id)) return prev;
+                  return [...prev, edge];
+                });
+              }
+            );
+
+            await graphHistory.executeCommand(command);
+          }
         }
       } catch (_error) {
       } finally {
         isProcessingRef.current = false;
       }
     },
-    [layoutId, deleteNoteLink, createNoteLink, setEdgesState, getEdges]
+    [
+      layoutId,
+      deleteNoteLink,
+      createNoteLink,
+      setEdgesState,
+      getEdges,
+      nodes,
+      edges,
+      graphHistory,
+    ]
   );
 
   const handleEdgeDeleteStart = useCallback(() => {
@@ -276,12 +387,27 @@ const NotesGraphContentComponent = ({
   const [isNodeDragging, setIsNodeDragging] = useState(false);
   const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
+  // Track node positions at drag start for undo/redo
+  const nodePositionsAtDragStartRef = useRef<
+    Map<string, { x: number; y: number }>
+  >(new Map());
+
   const handleNodeDragStart = useCallback(
-    (_event: React.MouseEvent, _node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       isNodeDraggingRef.current = true;
       setIsNodeDragging(true);
+
+      // Save starting positions of all selected nodes
+      const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
+      const nodesToSave = selectedNodes.some(n => n.id === node.id)
+        ? selectedNodes
+        : [node];
+
+      nodePositionsAtDragStartRef.current = new Map(
+        nodesToSave.map(n => [n.id, { ...n.position }])
+      );
     },
-    []
+    [nodes]
   );
 
   const handleNodeMouseEnterWrapped = useCallback(
@@ -301,7 +427,7 @@ const NotesGraphContentComponent = ({
   );
 
   const handleNodeDragStopMulti = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    async (_event: React.MouseEvent, node: Node) => {
       if (!node) {
         try {
           isNodeDraggingRef.current = false;
@@ -312,23 +438,72 @@ const NotesGraphContentComponent = ({
 
       try {
         const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
-        if (
-          selectedNodes.length > 1 &&
-          selectedNodes.some(n => n.id === node.id)
-        ) {
-          selectedNodes.forEach(n => {
-            updatePositionCallback(n.id, n.position.x, n.position.y);
-          });
-          try {
-            isNodeDraggingRef.current = false;
-            setIsNodeDragging(false);
-          } catch (_e) {}
-          return;
-        }
+        const isMultiSelect =
+          selectedNodes.length > 1 && selectedNodes.some(n => n.id === node.id);
 
-        onNodeDragStop(_event, node);
+        // Create commands for all moved nodes (both single and multi)
+        const movedNodes = isMultiSelect ? selectedNodes : [node];
+        isProcessingRef.current = true;
+
+        for (const movedNode of movedNodes) {
+          const startPos = nodePositionsAtDragStartRef.current.get(
+            movedNode.id
+          );
+          // Get current node from nodes state to get actual position
+          const currentNode = nodes.find(n => n.id === movedNode.id);
+          const endPos = currentNode?.position;
+
+          if (
+            startPos &&
+            endPos &&
+            (startPos.x !== endPos.x || startPos.y !== endPos.y)
+          ) {
+            const command = new MoveNodeCommand(
+              movedNode.id,
+              startPos,
+              endPos,
+              (nodeId: string, position: { x: number; y: number }) => {
+                setNodes(prev => {
+                  const updated = prev.map(n =>
+                    n.id === nodeId ? { ...n, position } : n
+                  );
+                  return updated;
+                });
+                // Also update ReactFlow internal store to ensure edges recalc
+                try {
+                  rfSetNodes(prev =>
+                    prev.map(n => (n.id === nodeId ? { ...n, position } : n))
+                  );
+                } catch (_e) {}
+                // Notify ReactFlow about a position change to force edge recalculation
+                try {
+                  const change = {
+                    id: nodeId,
+                    type: 'position',
+                    position,
+                    dragging: false,
+                  } as unknown as NodeChange;
+                  onNodesChange([change]);
+                } catch (_e) {}
+                // Force ReactFlow to update connections for this node immediately
+                try {
+                  updateNodeInternals(nodeId);
+                } catch (_e) {}
+                // Force edges to re-render
+                try {
+                  rfSetEdges(prev => prev.map(e => ({ ...e })));
+                } catch (_e) {}
+              }
+            );
+            await graphHistory.executeCommand(command);
+            // Update backend
+            updatePositionCallback(movedNode.id, endPos.x, endPos.y);
+          }
+        }
       } catch (_e) {
         onNodeDragStop(_event, node);
+      } finally {
+        isProcessingRef.current = false;
       }
 
       try {
@@ -336,7 +511,13 @@ const NotesGraphContentComponent = ({
         setIsNodeDragging(false);
       } catch (_e) {}
     },
-    [nodes, updatePositionCallback, onNodeDragStop]
+    [
+      nodes,
+      onNodeDragStop,
+      updatePositionCallback,
+      graphHistory,
+      updateNodeInternals,
+    ]
   );
 
   type LocalNodeChange = {
@@ -626,6 +807,7 @@ const NotesGraphContentComponent = ({
       onAddNoteToGraph={handleAddNoteToGraph}
       screenToFlowPosition={screenToFlowPosition}
       isMain={isMain}
+      graphHistory={graphHistory}
     />
   );
 };

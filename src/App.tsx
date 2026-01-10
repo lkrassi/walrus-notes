@@ -12,7 +12,7 @@ import {
 export const App = () => {
   return (
     <>
-      <div className={cn('bg-gradient', 'min-h-screen', 'relative')}>
+      <div className={cn('min-h-screen', 'relative')}>
         <Provider store={store}>
           <SidebarProvider>
             <ModalProvider>

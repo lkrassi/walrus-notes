@@ -47,21 +47,11 @@
 
 .form-card {
   @apply border-border dark:border-dark-border rounded-2xl border p-8 shadow-sm backdrop-blur-sm;
-  background: linear-gradient(
-    135deg,
-    var(--color-bg) 0%,
-    #f0fdf4 50%,
-    #ecfdf5 100%
-  );
+  background: var(--color-bg);
 }
 
 .dark .form-card {
-  background: linear-gradient(
-    135deg,
-    var(--color-dark-bg) 0%,
-    #134e4a 50%,
-    #042f2e 100%
-  );
+  background: var(--color-dark-bg);
 }
 
 .hero-title {

@@ -1,5 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import cn from 'shared/lib/cn';
+import React, { useMemo } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Zoom from '@mui/material/Zoom';
+import type { TransitionProps } from '@mui/material/transitions';
+import { X } from 'lucide-react';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
 import { ModalContentContext } from './ModalContentContext';
@@ -9,193 +16,154 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const SIZE_CLASSES = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  full: 'max-w-full mx-4',
+const SIZE_MAP = {
+  sm: 'sm' as const,
+  md: 'sm' as const,
+  lg: 'md' as const,
+  xl: 'lg' as const,
+  full: 'xl' as const,
 };
+
+// Кастомный Transition с анимацией из точки триггера
+const CustomTransition = React.forwardRef<
+  unknown,
+  TransitionProps & {
+    children: React.ReactElement;
+    triggerPosition?: { x: number; y: number; width: number; height: number };
+  }
+>(function CustomTransition(props, ref) {
+  const { triggerPosition, children, ...other } = props;
+
+  if (!triggerPosition) {
+    return (
+      <Zoom ref={ref} {...other} timeout={400}>
+        {children}
+      </Zoom>
+    );
+  }
+
+  // Рассчитываем центр триггера относительно viewport
+  const triggerCenterX = triggerPosition.x + triggerPosition.width / 2;
+  const triggerCenterY = triggerPosition.y + triggerPosition.height / 2;
+
+  return (
+    <Zoom
+      ref={ref}
+      {...other}
+      timeout={300}
+      style={{
+        transformOrigin: `${triggerCenterX}px ${triggerCenterY}px`,
+      }}
+    >
+      {children}
+    </Zoom>
+  );
+});
+
+CustomTransition.displayName = 'CustomTransition';
 
 export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   const { t } = useLocalization();
   const { isOpen, content, options } = modalState;
-  const [animationState, setAnimationState] = useState<
-    'entering' | 'open' | 'exiting'
-  >('entering');
-  const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isOpen) {
-      setAnimationState('entering');
-      const timer = setTimeout(() => setAnimationState('open'), 0);
-      return () => clearTimeout(timer);
-    } else {
-      setAnimationState('exiting');
+  const handleClose = (_event: object, reason?: string) => {
+    // Проверяем, разрешено ли закрытие по клику вне модалки
+    if (reason === 'backdropClick' && !options.closeOnOverlayClick) {
+      return;
     }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (options.closeOnEscape && e.key === 'Escape') {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, options.closeOnEscape]);
-
-  const handleClose = () => {
-    setAnimationState('exiting');
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    onClose();
   };
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (options.closeOnOverlayClick && e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
-
-  const getModalTransform = () => {
-    if (!options.triggerPosition) {
-      return animationState === 'open' ? 'scale(1)' : 'scale(0.8)';
-    }
-
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const viewportCenterX = window.innerWidth / 2;
-    const viewportCenterY = window.innerHeight / 2;
-    const triggerCenterX = options.triggerPosition.x + scrollX;
-    const triggerCenterY = options.triggerPosition.y + scrollY;
-    const deltaX = triggerCenterX - viewportCenterX;
-    const deltaY = triggerCenterY - viewportCenterY;
-
-    switch (animationState) {
-      case 'entering':
-        return `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
-      case 'open':
-        return 'translate(0, 0) scale(1)';
-      case 'exiting':
-        return `translate(${deltaX}px, ${deltaY}px) scale(0.1)`;
-      default:
-        return 'translate(0, 0) scale(1)';
-    }
-  };
-
-  const getModalOpacity = () => {
-    switch (animationState) {
-      case 'entering':
-        return 0;
-      case 'open':
-        return 1;
-      case 'exiting':
-        return 0;
-      default:
-        return 1;
-    }
-  };
-
-  if (!isOpen || !content) {
+  // Не возвращаем null при !isOpen, чтобы сохранить анимацию закрытия
+  if (!content) {
     return null;
   }
 
-  const sizeClass = SIZE_CLASSES[options.size || 'md'];
+  const maxWidth = SIZE_MAP[options.size || 'md'];
+
+  // Мемоизируем TransitionComponent с triggerPosition
+  const TransitionComponent = useMemo(() => {
+    const Component = React.forwardRef<
+      unknown,
+      TransitionProps & { children: React.ReactElement }
+    >((props, ref) => (
+      <CustomTransition
+        {...props}
+        ref={ref}
+        triggerPosition={options.triggerPosition}
+      />
+    ));
+    Component.displayName = 'MemoizedTransition';
+    return Component;
+  }, [options.triggerPosition]);
 
   return (
-    <div
-      className={cn(
-        'fixed',
-        'inset-0',
-        'overflow-hidden',
-        'flex',
-        'items-center',
-        'justify-center',
-        'bg-black/50',
-        'backdrop-blur-sm',
-        'transition-opacity',
-        'duration-300',
-        'z-120'
-      )}
-      style={{
-        opacity: animationState === 'entering' ? 0 : 1,
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      maxWidth={maxWidth}
+      fullWidth
+      disableEscapeKeyDown={!options.closeOnEscape}
+      slots={{
+        transition: TransitionComponent,
       }}
-      onClick={handleOverlayClick}
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: '12px',
+            maxHeight: '90vh',
+          },
+          className: options.className,
+        },
+      }}
     >
-      <div
-        ref={modalRef}
-        className={cn(
-          'relative',
-          'w-full',
-          sizeClass,
-          'dark:bg-dark-bg',
-          'border-border',
-          'dark:border-dark-border',
-          'max-h-[90vh]',
-          'overflow-hidden',
-          'rounded-xl',
-          'border',
-          'bg-white',
-          'shadow-2xl',
-          'transition-all',
-          'duration-300',
-          'ease-out',
-          'text-text',
-          'dark:text-dark-text',
-          'flex',
-          'flex-col',
-          options.className || ''
-        )}
-        style={{
-          transform: getModalTransform(),
-          opacity: getModalOpacity(),
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        {(options.title || options.showCloseButton) && (
-          <div className={cn('modal-header')}>
-            {options.title && (
-              <h2 className={cn('modal-title')}>{options.title}</h2>
-            )}
-            {options.showCloseButton && (
-              <button
-                onClick={handleClose}
-                className={cn('icon-btn', 'text-text', 'dark:text-dark-text')}
-                aria-label={t('common:modal.close')}
-              >
-                <svg
-                  className={cn('h-5', 'w-5')}
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M6 18L18 6M6 6l12 12'
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
-        )}
+      {(options.title || options.showCloseButton) && (
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pr: options.showCloseButton ? 1 : 3,
+          }}
+        >
+          {options.title && <span>{options.title}</span>}
+          {options.showCloseButton && (
+            <IconButton
+              aria-label={t('common:modal.close')}
+              onClick={onClose}
+              size='small'
+              sx={{ ml: 'auto' }}
+            >
+              <X size={20} />
+            </IconButton>
+          )}
+        </DialogTitle>
+      )}
 
-        <div className={cn('flex-1', 'overflow-auto', 'p-4')}>
-          <ModalContentContext.Provider value={{ closeModal: handleClose }}>
-            {content}
-          </ModalContentContext.Provider>
-        </div>
-      </div>
-    </div>
+      {(options.title || options.showCloseButton) && <Divider />}
+
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          overflow: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '4px',
+          },
+        }}
+      >
+        <ModalContentContext.Provider value={{ closeModal: onClose }}>
+          {content}
+        </ModalContentContext.Provider>
+      </DialogContent>
+    </Dialog>
   );
 };
