@@ -28,7 +28,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     () => localStorage.getItem('theme') || 'dark'
   );
 
-  // Создаём MUI тему на основе текущей темы
   const muiTheme = useMemo(
     () => createAppTheme(theme === 'dark' ? 'dark' : 'light'),
     [theme]

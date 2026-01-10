@@ -10,6 +10,7 @@ import {
   type Node,
   type Edge,
   type NodeChange,
+  type Connection,
 } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
@@ -55,8 +56,6 @@ const NotesGraphContentComponent = ({
     screenToFlowPosition,
     getEdges,
     getNodes: _getNodes,
-    fitView,
-    updateNodeInternals,
     setNodes: rfSetNodes,
     setEdges: rfSetEdges,
   } = useReactFlow();
@@ -74,14 +73,12 @@ const NotesGraphContentComponent = ({
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [isDraggingEdge, setIsDraggingEdge] = useState(false);
 
-  // Initialize graph history
   const graphHistory = useGraphHistory(100);
 
   const isProcessingRef = useRef(false);
   const prevLayoutIdRef = useRef(layoutId);
 
   useEffect(() => {
-    // Only compare structural changes (ids, data) and ignore positions to avoid overwriting local undo/redo
     const nodesStructuralEqual = (() => {
       if (nodes.length !== initialNodes.length) return false;
       const map = new Map(nodes.map(n => [n.id, n]));
@@ -122,7 +119,6 @@ const NotesGraphContentComponent = ({
       setEdgesState(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      // Skip syncing positions while dragging or processing commands
       if (
         !isNodeDraggingRef.current &&
         !isProcessingRef.current &&
@@ -158,13 +154,15 @@ const NotesGraphContentComponent = ({
     },
   });
 
-  // Wrap onConnect to create command
   const onConnect = useCallback(
-    async (connection: any) => {
+    async (connection: Connection) => {
+      const source = connection.source ?? '';
+      const target = connection.target ?? '';
+      if (!source || !target) return;
       const newEdge = {
-        id: `edge-${connection.source}-${connection.target}`,
-        source: connection.source,
-        target: connection.target,
+        id: `edge-${source}-${target}`,
+        source: source,
+        target: target,
         type: 'multiColor' as const,
         data: {
           edgeColor: '#6b7280',
@@ -235,10 +233,7 @@ const NotesGraphContentComponent = ({
       setIsDraggingEdge(false);
 
       try {
-        const currentEdges = getEdges();
-
         if (newTarget) {
-          // Moving edge to a different target
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             const command = new MoveEdgeCommand(
@@ -292,7 +287,6 @@ const NotesGraphContentComponent = ({
             await graphHistory.executeCommand(command);
           }
         } else {
-          // Deleting edge
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             const command = new DeleteEdgeCommand(
@@ -387,7 +381,6 @@ const NotesGraphContentComponent = ({
   const [isNodeDragging, setIsNodeDragging] = useState(false);
   const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
-  // Track node positions at drag start for undo/redo
   const nodePositionsAtDragStartRef = useRef<
     Map<string, { x: number; y: number }>
   >(new Map());
@@ -397,7 +390,6 @@ const NotesGraphContentComponent = ({
       isNodeDraggingRef.current = true;
       setIsNodeDragging(true);
 
-      // Save starting positions of all selected nodes
       const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
       const nodesToSave = selectedNodes.some(n => n.id === node.id)
         ? selectedNodes
@@ -441,7 +433,6 @@ const NotesGraphContentComponent = ({
         const isMultiSelect =
           selectedNodes.length > 1 && selectedNodes.some(n => n.id === node.id);
 
-        // Create commands for all moved nodes (both single and multi)
         const movedNodes = isMultiSelect ? selectedNodes : [node];
         isProcessingRef.current = true;
 
@@ -449,7 +440,6 @@ const NotesGraphContentComponent = ({
           const startPos = nodePositionsAtDragStartRef.current.get(
             movedNode.id
           );
-          // Get current node from nodes state to get actual position
           const currentNode = nodes.find(n => n.id === movedNode.id);
           const endPos = currentNode?.position;
 
@@ -469,13 +459,11 @@ const NotesGraphContentComponent = ({
                   );
                   return updated;
                 });
-                // Also update ReactFlow internal store to ensure edges recalc
                 try {
                   rfSetNodes(prev =>
                     prev.map(n => (n.id === nodeId ? { ...n, position } : n))
                   );
                 } catch (_e) {}
-                // Notify ReactFlow about a position change to force edge recalculation
                 try {
                   const change = {
                     id: nodeId,
@@ -485,18 +473,12 @@ const NotesGraphContentComponent = ({
                   } as unknown as NodeChange;
                   onNodesChange([change]);
                 } catch (_e) {}
-                // Force ReactFlow to update connections for this node immediately
-                try {
-                  updateNodeInternals(nodeId);
-                } catch (_e) {}
-                // Force edges to re-render
                 try {
                   rfSetEdges(prev => prev.map(e => ({ ...e })));
                 } catch (_e) {}
               }
             );
             await graphHistory.executeCommand(command);
-            // Update backend
             updatePositionCallback(movedNode.id, endPos.x, endPos.y);
           }
         }
@@ -516,7 +498,6 @@ const NotesGraphContentComponent = ({
       onNodeDragStop,
       updatePositionCallback,
       graphHistory,
-      updateNodeInternals,
     ]
   );
 

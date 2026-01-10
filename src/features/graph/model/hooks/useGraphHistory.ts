@@ -12,10 +12,6 @@ export interface UseGraphHistoryReturn {
   clear: () => void;
 }
 
-/**
- * React hook for managing undo/redo history for graph operations
- * @param maxHistorySize Maximum number of commands to keep in history (default: 100)
- */
 export const useGraphHistory = (
   maxHistorySize = 100
 ): UseGraphHistoryReturn => {
@@ -24,7 +20,6 @@ export const useGraphHistory = (
     [maxHistorySize]
   );
 
-  // Force re-render when history state changes
   const [, forceUpdate] = useState({});
   const triggerUpdate = useCallback(() => {
     forceUpdate({});

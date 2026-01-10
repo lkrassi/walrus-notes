@@ -13,18 +13,6 @@ interface TouchEnabledGraphProps {
   disabled?: boolean;
 }
 
-/**
- * Обертка для ReactFlow, добавляющая поддержку тач-устройств через dnd-kit.
- *
- * ReactFlow по умолчанию desktop-first и плохо работает на тач-устройствах.
- * Этот компонент добавляет TouchSensor из dnd-kit для корректного перетаскивания
- * нод на смартфонах и планшетах.
- *
- * @param children - дочерние компоненты (обычно ReactFlow)
- * @param nodes - массив нод для отслеживания позиций
- * @param onNodePositionChange - callback для обновления позиций нод
- * @param disabled - отключить dnd (например, на десктопе где ReactFlow работает нормально)
- */
 export const TouchEnabledGraph = ({
   children,
   nodes,

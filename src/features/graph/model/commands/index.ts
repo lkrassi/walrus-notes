@@ -1,10 +1,7 @@
 import type { Command } from 'shared/model/command';
 import type { Node, Edge } from 'reactflow';
 
-/**
- * Command for moving a node to a new position.
- * Stores the previous position and restores it on undo.
- */
+
 export class MoveNodeCommand implements Command {
   private nodeId: string;
   private previousPosition: { x: number; y: number };
@@ -39,10 +36,7 @@ export class MoveNodeCommand implements Command {
   }
 }
 
-/**
- * Command for creating an edge (connection between two nodes).
- * Stores the edge details and removes the edge on undo.
- */
+
 export class CreateEdgeCommand implements Command {
   private edge: Edge;
   private onExecute: (edge: Edge) => Promise<void> | void;
@@ -71,10 +65,6 @@ export class CreateEdgeCommand implements Command {
   }
 }
 
-/**
- * Command for deleting an edge (disconnecting two nodes).
- * Stores the edge details and restores the edge on undo.
- */
 export class DeleteEdgeCommand implements Command {
   private edge: Edge;
   private onExecute: (edgeId: string) => Promise<void> | void;
@@ -103,10 +93,7 @@ export class DeleteEdgeCommand implements Command {
   }
 }
 
-/**
- * Command for moving an edge to a different target node.
- * Useful when dragging an edge from one node to another.
- */
+
 export class MoveEdgeCommand implements Command {
   private edgeId: string;
   private oldTarget: string;

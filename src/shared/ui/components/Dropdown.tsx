@@ -57,7 +57,6 @@ export const Dropdown = ({
     onOpenChange?.(false);
   };
 
-  // Преобразуем position в anchorOrigin и transformOrigin для MUI
   const getAnchorOrigin = () => {
     switch (position) {
       case 'top':

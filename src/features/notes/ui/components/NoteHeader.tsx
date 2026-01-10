@@ -37,7 +37,7 @@ interface NoteHeaderProps {
   onInsertImage?: (url: string) => void;
   onExport?: () => void;
   onImport?: (content: string) => void;
-  onToggleFullscreen?: () => void; // <--
+  onToggleFullscreen?: () => void;
 }
 
 export const NoteHeader: React.FC<NoteHeaderProps> = ({

@@ -10,10 +10,6 @@ interface GraphUndoRedoControlsProps {
   isHorizontal?: boolean;
 }
 
-/**
- * Undo/Redo controls component for graph editor
- * Includes keyboard shortcuts (Ctrl+Z for undo, Ctrl+Y for redo)
- */
 export const GraphUndoRedoControls: React.FC<GraphUndoRedoControlsProps> = ({
   graphHistory,
   isHorizontal = false,
@@ -23,10 +19,9 @@ export const GraphUndoRedoControls: React.FC<GraphUndoRedoControlsProps> = ({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const code = event.code; // layout-agnostic (e.g., 'KeyZ', 'KeyY')
+      const code = event.code;
       const isCtrlOrCmd = event.ctrlKey || event.metaKey;
 
-      // Ignore if user is typing in an input field
       const target = event.target as HTMLElement;
       if (
         target.tagName === 'INPUT' ||
@@ -36,7 +31,6 @@ export const GraphUndoRedoControls: React.FC<GraphUndoRedoControlsProps> = ({
         return;
       }
 
-      // Ctrl+Z or Cmd+Z for undo (use event.code to handle any keyboard layout)
       if (isCtrlOrCmd && !event.shiftKey && code === 'KeyZ') {
         event.preventDefault();
         event.stopPropagation();
@@ -46,7 +40,6 @@ export const GraphUndoRedoControls: React.FC<GraphUndoRedoControlsProps> = ({
         return;
       }
 
-      // Ctrl+Y or Cmd+Shift+Z for redo (use event.code)
       if (
         isCtrlOrCmd &&
         (code === 'KeyY' || (event.shiftKey && code === 'KeyZ'))

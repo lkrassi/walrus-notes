@@ -100,9 +100,6 @@ export const UnposedNotesList = ({
   );
 };
 
-/**
- * Элемент заметки без позиции, использует useDraggable для простого drag
- */
 const DraggableNoteItem = ({
   note,
   onClick,

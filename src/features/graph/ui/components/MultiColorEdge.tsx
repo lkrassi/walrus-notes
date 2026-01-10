@@ -338,7 +338,6 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
 
     observeEl(viewportEl, { attributes: true, attributeFilter: ['style'] });
 
-    // Observe node subtree for style/transform changes to bump edge recomputation
     observeEl(nodesEl, {
       attributes: true,
       attributeFilter: ['style', 'transform'],

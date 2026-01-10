@@ -60,7 +60,6 @@ export const useDraftSync = ({
   useEffect(() => {
     draftRef.current = draft;
     try {
-      // if user edits after a commit, clear lastCommittedPayload marker
       if (
         lastCommittedPayloadRef.current != null &&
         draft != lastCommittedPayloadRef.current
@@ -77,7 +76,6 @@ export const useDraftSync = ({
       if (storedDraft != null) {
         pendingRef.current = storedDraft;
       }
-      // remember initial payload/draft to avoid sending it immediately
       try {
         initialPayloadRef.current = draftRef.current ?? null;
       } catch (_e) {
@@ -89,12 +87,9 @@ export const useDraftSync = ({
 
   const send = useCallback(
     (value: string) => {
-      // debug removed
       if (!ws || !noteId) {
         return false;
       }
-      // If the last edit happened before or at the last successful commit,
-      // it's stale — don't send it (prevents old drafts being resent after commit).
       try {
         if (
           lastCommitAt != null &&
@@ -123,7 +118,6 @@ export const useDraftSync = ({
       try {
         sendingRef.current = true;
         setIsSaving(true);
-        // debug removed
 
         const event = makeUpdateDraft(noteId, value);
         const ok = ws.send(event);
@@ -183,21 +177,16 @@ export const useDraftSync = ({
     const unsubUpdate =
       ws.subscribe?.('UPDATE_DRAFT_REQUEST', (payload: unknown) => {
         try {
-          // ignore server updates that arrive too soon after a commit (they may be stale)
           try {
             const until = suppressRemoteUntilRef.current;
             if (until != null && Date.now() < until) return;
           } catch (_e) {}
-          // debug removed
           const data = payload as UpdateDraftPayload;
           if (!data || data.noteId !== noteId) return;
           const nd = data.newDraft ?? '';
-          // if there's a pending local send or awaiting ack, ignore remote
           if (pendingRef.current != null || awaitingAckRef.current != null) {
             return;
           }
-          // if we have a recent commit and this incoming draft does not match committed payload
-          // and the commit happened after last local edit, it's stale -> ignore
           try {
             if (
               lastCommitAt != null &&
@@ -217,7 +206,6 @@ export const useDraftSync = ({
             } else {
               dispatch(removeDraft({ noteId }));
             }
-            // debug removed
           } catch (_e) {}
           if (onRemoteDraft) onRemoteDraft(nd);
           setLastSavedAt(new Date().toISOString());
@@ -227,7 +215,6 @@ export const useDraftSync = ({
     const unsubUpdateResp =
       ws.subscribe?.('UPDATE_DRAFT_RESPONSE', (payload: unknown) => {
         try {
-          // debug removed
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
@@ -238,10 +225,8 @@ export const useDraftSync = ({
             }
             awaitingAckRef.current = null;
             pendingRef.current = null;
-            // on update ack we keep draft in cache until commit
             setIsSaving(false);
             setLastSavedAt(new Date().toISOString());
-            // debug removed
           } else {
             setIsSaving(false);
           }
@@ -251,7 +236,6 @@ export const useDraftSync = ({
     const unsubCommit =
       ws.subscribe?.('COMMIT_DRAFT_REQUEST', (payload: unknown) => {
         try {
-          // debug removed
           const data = payload as CommitDraftPayload;
           if (!data || data.noteId !== noteId) return;
           try {
@@ -264,7 +248,6 @@ export const useDraftSync = ({
     const unsubCommitResp =
       ws.subscribe?.('COMMIT_DRAFT_RESPONSE', (payload: unknown) => {
         try {
-          // debug removed
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
@@ -274,7 +257,6 @@ export const useDraftSync = ({
               awaitingCommitPayloadRef.current ??
               draftRef.current ??
               null;
-            // debug removed
             if (confirmed != null) prevSentRef.current = confirmed;
             awaitingAckRef.current = null;
             pendingRef.current = null;
@@ -292,16 +274,13 @@ export const useDraftSync = ({
             } catch (_e) {}
 
             try {
-              // remove local draft first to prevent useNoteEditor reading stale storeDraft
               dispatch(removeDraft({ noteId }));
             } catch (_e) {}
             try {
-              // remember committed payload to ignore stale updates
               lastCommittedPayloadRef.current = confirmed as string;
             } catch (_e) {}
 
             try {
-              // suppress incoming remote updates for a short window after commit
               suppressRemoteUntilRef.current = Date.now() + 3500;
             } catch (_e) {}
 
@@ -376,7 +355,6 @@ export const useDraftSync = ({
             } catch (_e) {}
 
             awaitingCommitRef.current = false;
-            // clear awaiting commit payload
             awaitingCommitPayloadRef.current = null;
             setLastCommitAt(Date.now());
             setIsSaving(false);
@@ -412,8 +390,6 @@ export const useDraftSync = ({
       return;
     }
 
-    // If value equals initial payload when opening note and we haven't sent anything yet,
-    // avoid sending this redundant update.
     try {
       if (
         initialPayloadRef.current != null &&
@@ -442,16 +418,13 @@ export const useDraftSync = ({
     (value?: string) => {
       if (!noteId || !ws) return false;
       try {
-        // mark that we're about to commit — skip automatic sends for a short time
         awaitingCommitRef.current = true;
         try {
-          // suppress incoming remote updates immediately when commit starts
           suppressRemoteUntilRef.current = Date.now() + 3500;
         } catch (_e) {}
         try {
           lastManualSendAtRef.current = Date.now();
         } catch (_e) {}
-        // capture the payload that we intend to commit to avoid race with draftRef
         try {
           awaitingCommitPayloadRef.current = value ?? draftRef.current ?? null;
           if (awaitingCommitPayloadRef.current != null)

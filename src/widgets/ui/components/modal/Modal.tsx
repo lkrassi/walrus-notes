@@ -24,7 +24,6 @@ const SIZE_MAP = {
   full: 'xl' as const,
 };
 
-// Кастомный Transition с анимацией из точки триггера
 const CustomTransition = React.forwardRef<
   unknown,
   TransitionProps & {
@@ -42,7 +41,6 @@ const CustomTransition = React.forwardRef<
     );
   }
 
-  // Рассчитываем центр триггера относительно viewport
   const triggerCenterX = triggerPosition.x + triggerPosition.width / 2;
   const triggerCenterY = triggerPosition.y + triggerPosition.height / 2;
 
@@ -67,21 +65,18 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   const { isOpen, content, options } = modalState;
 
   const handleClose = (_event: object, reason?: string) => {
-    // Проверяем, разрешено ли закрытие по клику вне модалки
     if (reason === 'backdropClick' && !options.closeOnOverlayClick) {
       return;
     }
     onClose();
   };
 
-  // Не возвращаем null при !isOpen, чтобы сохранить анимацию закрытия
   if (!content) {
     return null;
   }
 
   const maxWidth = SIZE_MAP[options.size || 'md'];
 
-  // Мемоизируем TransitionComponent с triggerPosition
   const TransitionComponent = useMemo(() => {
     const Component = React.forwardRef<
       unknown,

@@ -28,7 +28,6 @@ export const NotificationsContainer: React.FC = () => {
     return null;
   }
 
-  // Show only the latest notification
   const latestNotification = notifications[notifications.length - 1];
 
   return (

@@ -37,7 +37,7 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -82,7 +82,6 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
 
       onSuccess();
     } catch (_e) {
-      // show localized error for invalid confirmation code
       showError(t('auth:confirmCode.error.invalid') || 'Неверный код');
     } finally {
       setIsLoading(false);
@@ -128,14 +127,16 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
               inputRefs.current[index] = el;
             }}
             type='text'
-            inputProps={{
-              inputMode: 'numeric',
-              maxLength: 1,
-              style: {
-                textAlign: 'center',
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                padding: '12px 0',
+            slotProps={{
+              htmlInput: {
+                inputMode: 'numeric',
+                maxLength: 1,
+                style: {
+                  textAlign: 'center',
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  padding: '12px 0',
+                },
               },
             }}
             value={digit}
@@ -167,7 +168,7 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
         variant={
           isLoading || code.join('').length !== 6 ? 'disabled' : 'submit'
         }
-        sx={{ width: '100%', px: 4, py: 1.5 }}
+        className='w-full'
       >
         {isLoading
           ? t('auth:confirmCode.loading')
