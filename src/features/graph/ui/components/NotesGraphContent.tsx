@@ -493,12 +493,7 @@ const NotesGraphContentComponent = ({
         setIsNodeDragging(false);
       } catch (_e) {}
     },
-    [
-      nodes,
-      onNodeDragStop,
-      updatePositionCallback,
-      graphHistory,
-    ]
+    [nodes, onNodeDragStop, updatePositionCallback, graphHistory]
   );
 
   type LocalNodeChange = {
