@@ -136,11 +136,19 @@ export const Login: React.FC<LoginProps> = () => {
               mx: 'auto',
               p: 4,
               borderRadius: 2,
-              bgcolor: theme =>
+              backdropFilter: 'blur(20px)',
+              backgroundColor: theme =>
                 theme.palette.mode === 'dark'
-                  ? theme.palette.grey[900]
-                  : theme.palette.background.paper,
-              boxShadow: 3,
+                  ? 'rgba(17, 24, 39, 0.7)'
+                  : 'rgba(255, 255, 255, 0.7)',
+              border: theme =>
+                theme.palette.mode === 'dark'
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : '1px solid rgba(0, 0, 0, 0.1)',
+              boxShadow: theme =>
+                theme.palette.mode === 'dark'
+                  ? '0 8px 32px rgba(0, 0, 0, 0.6)'
+                  : '0 8px 32px rgba(0, 0, 0, 0.1)',
             }}
           >
             <Typography

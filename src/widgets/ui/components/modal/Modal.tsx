@@ -103,10 +103,20 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
         transition: TransitionComponent,
       }}
       slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        },
         paper: {
           sx: {
             borderRadius: '12px',
             maxHeight: '90vh',
+            backgroundColor: theme =>
+              theme.palette.mode === 'dark'
+                ? 'rgba(17, 24, 39, 0.7)'
+                : 'rgba(255, 255, 255, 0.7)',
           },
           className: options.className,
         },
