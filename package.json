@@ -39,6 +39,7 @@
     "html2pdf.js": "^0.12.1",
     "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^8.2.0",
+    "lucide-react": "^0.562.0",
     "react": "^19.1.1",
     "react-colorful": "^5.6.1",
     "react-dom": "^19.1.1",
