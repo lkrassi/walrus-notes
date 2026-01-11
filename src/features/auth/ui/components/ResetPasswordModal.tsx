@@ -2,12 +2,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useConfirmCodeMutation } from 'app/store/api';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { Button } from 'shared';
-import { PasswordVisibilityToggle } from './PasswordVisibilityToggle';
 import { Formik, Form, Field } from 'formik';
 import type { FieldProps } from 'formik';
 import * as Yup from 'yup';
 import 'features/auth/model/validationSchemas';
-import { Box, TextField, Typography, CircularProgress } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Typography,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 interface ResetPasswordModalProps {
   email: string;
@@ -249,38 +256,40 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
           >
             <Field name='newPassword'>
               {({ field, meta }: FieldProps<string>) => (
-                <Box sx={{ position: 'relative' }}>
-                  <TextField
-                    {...field}
-                    label={
-                      t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
-                    }
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder={
-                      t('auth:login.passwordPlaceholder') ||
-                      'Введите новый пароль'
-                    }
-                    required
-                    fullWidth
-                    error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error}
-                    disabled={isLoading}
-                  />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: meta.touched && meta.error ? '28%' : '50%',
-                      right: 8,
-                      transform: 'translateY(-50%)',
-                      zIndex: 1,
-                    }}
-                  >
-                    <PasswordVisibilityToggle
-                      isVisible={showPassword}
-                      onToggle={() => setShowPassword(!showPassword)}
-                    />
-                  </Box>
-                </Box>
+                <TextField
+                  {...field}
+                  label={
+                    t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
+                  }
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={
+                    t('auth:login.passwordPlaceholder') ||
+                    'Введите новый пароль'
+                  }
+                  required
+                  fullWidth
+                  error={meta.touched && Boolean(meta.error)}
+                  helperText={meta.touched && meta.error}
+                  disabled={isLoading}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge='end'
+                          aria-label={
+                            showPassword
+                              ? t('common:password.hide')
+                              : t('common:password.show')
+                          }
+                          disabled={isLoading}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               )}
             </Field>
 

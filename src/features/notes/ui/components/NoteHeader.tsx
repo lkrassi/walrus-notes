@@ -105,12 +105,23 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         </div>
       </div>
 
-      <div className={cn('flex', 'items-center', 'gap-2')}>
+      <div
+        className={cn(
+          'flex',
+          'items-center',
+          'gap-2',
+          'gap-y-4',
+          'flex-wrap',
+          'justify-center',
+          'sm:justify-end',
+          'sm:flex-nowrap'
+        )}
+      >
         {isEditing ? (
           <>
             <Button
               onClick={onSave}
-              className={cn('px-3', 'py-2')}
+              className={cn('px-2', 'py-2', 'sm:px-3')}
               disabled={isLoading}
               title={t('notes:save')}
               variant='submit'
@@ -130,7 +141,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
                 );
                 open(e as React.MouseEvent<HTMLElement>);
               }}
-              className={cn('px-3', 'py-2')}
+              className={cn('px-2', 'py-2', 'sm:px-3')}
               disabled={isLoading}
               title={t('notes:cancel')}
               variant='escape'
@@ -140,7 +151,13 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
 
             <Button
               onClick={handleOpenImageUpload}
-              className={cn('px-3', 'py-2')}
+              className={cn(
+                'px-2',
+                'py-2',
+                'sm:px-3',
+                'hidden',
+                'sm:inline-flex'
+              )}
               disabled={isLoading}
               title={t('notes:uploadImage') || 'Upload image'}
               variant='default'
@@ -151,7 +168,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         ) : (
           <Button
             onClick={onEdit}
-            className={cn('px-3', 'py-2')}
+            className={cn('px-2', 'py-2', 'sm:px-3')}
             title={t('notes:edit')}
             variant='default'
           >
@@ -162,7 +179,13 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         {onExport && (
           <Button
             onClick={onExport}
-            className={cn('px-3', 'py-2')}
+            className={cn(
+              'px-2',
+              'py-2',
+              'sm:px-3',
+              'hidden',
+              'md:inline-flex'
+            )}
             title={t('notes:export')}
             variant='default'
           >
@@ -173,7 +196,13 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         {onImport && (
           <Button
             onClick={handleOpenImport}
-            className={cn('px-3', 'py-2')}
+            className={cn(
+              'px-2',
+              'py-2',
+              'sm:px-3',
+              'hidden',
+              'sm:inline-flex'
+            )}
             title={t('notes:import')}
             variant='default'
           >
@@ -183,7 +212,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
 
         <Button
           onClick={handleOpenHelp}
-          className={cn('px-3', 'py-2')}
+          className={cn('px-2', 'py-2', 'sm:px-3', 'hidden', 'sm:inline-flex')}
           title={t('notes:editorHelp')}
           variant='default'
         >
@@ -193,7 +222,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         {onToggleFullscreen && (
           <Button
             onClick={onToggleFullscreen}
-            className={cn('px-3', 'py-2')}
+            className={cn('px-2', 'py-2', 'sm:px-3')}
             title={
               isFullscreen ? t('notes:exitFullscreen') : t('notes:fullscreen')
             }

@@ -15,6 +15,7 @@ export type ModalOptions = {
   showCloseButton?: boolean;
   className?: string;
   triggerPosition?: TriggerPosition;
+  mobileContentPadding?: '0' | '12px' | '16px' | '24px';
 };
 
 export type ModalState = {

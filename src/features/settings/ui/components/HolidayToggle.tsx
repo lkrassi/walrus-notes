@@ -12,6 +12,7 @@ export const HolidayToggle = () => {
     title: t('settings:holiday.title') || 'Новогодние украшения',
     size: 'md',
     closeOnOverlayClick: true,
+    mobileContentPadding: '16px',
   });
 
   return (

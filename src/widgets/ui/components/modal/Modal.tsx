@@ -143,6 +143,10 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
           flexDirection: 'column',
           gap: 2,
           overflow: 'auto',
+          padding: '24px',
+          '@media (max-width: 600px)': {
+            padding: options.mobileContentPadding || '0',
+          },
           '&::-webkit-scrollbar': {
             width: '8px',
           },

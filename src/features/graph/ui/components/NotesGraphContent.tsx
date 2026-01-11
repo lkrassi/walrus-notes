@@ -476,6 +476,7 @@ const NotesGraphContentComponent = ({
                 try {
                   rfSetEdges(prev => prev.map(e => ({ ...e })));
                 } catch (_e) {}
+                updatePositionCallback(nodeId, position.x, position.y);
               }
             );
             await graphHistory.executeCommand(command);

@@ -6,14 +6,21 @@ import { useNotifications } from 'widgets';
 
 import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
 import { usePasswordVisibility } from 'features/auth/hooks';
-import { PasswordVisibilityToggle } from 'features/auth/ui/components/PasswordVisibilityToggle';
 import { ConfirmCodeModal } from 'features/auth/ui/components/ConfirmCodeModal';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
-import { Box, TextField, Typography, CircularProgress } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Typography,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 type RegisterProps = {
   onSwitchToLogin?: () => void;
@@ -217,34 +224,40 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
               <Field name='password'>
                 {({ field, meta }: FieldProps<string>) => (
-                  <Box sx={{ position: 'relative' }}>
-                    <TextField
-                      {...field}
-                      label={t('auth:register.password')}
-                      type={passwordVisibility.isVisible ? 'text' : 'password'}
-                      placeholder={t('auth:login.passwordPlaceholder')}
-                      autoComplete='current-password'
-                      required
-                      fullWidth
-                      error={meta.touched && Boolean(meta.error)}
-                      helperText={meta.touched && meta.error}
-                      disabled={formikSubmitting || isSubmitting}
-                    />
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: meta.touched && meta.error ? '28%' : '50%',
-                        right: 8,
-                        transform: 'translateY(-50%)',
-                        zIndex: 1,
-                      }}
-                    >
-                      <PasswordVisibilityToggle
-                        isVisible={passwordVisibility.isVisible}
-                        onToggle={passwordVisibility.toggleVisibility}
-                      />
-                    </Box>
-                  </Box>
+                  <TextField
+                    {...field}
+                    label={t('auth:register.password')}
+                    type={passwordVisibility.isVisible ? 'text' : 'password'}
+                    placeholder={t('auth:login.passwordPlaceholder')}
+                    autoComplete='current-password'
+                    required
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    disabled={formikSubmitting || isSubmitting}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position='end'>
+                          <IconButton
+                            onClick={passwordVisibility.toggleVisibility}
+                            edge='end'
+                            aria-label={
+                              passwordVisibility.isVisible
+                                ? t('common:password.hide')
+                                : t('common:password.show')
+                            }
+                            disabled={formikSubmitting || isSubmitting}
+                          >
+                            {passwordVisibility.isVisible ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 )}
               </Field>
 

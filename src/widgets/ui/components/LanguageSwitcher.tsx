@@ -14,12 +14,14 @@ const LANGUAGES = [
   {
     code: 'en',
     name: 'EN',
-    flag: <UKFlagIcon className={cn('h-20', 'w-20')} />,
+    flag: <UKFlagIcon className={cn('h-16', 'w-16', 'sm:h-20', 'sm:w-20')} />,
   },
   {
     code: 'ru',
     name: 'RU',
-    flag: <RussianFlagIcon className={cn('h-20', 'w-20')} />,
+    flag: (
+      <RussianFlagIcon className={cn('h-16', 'w-16', 'sm:h-20', 'sm:w-20')} />
+    ),
   },
 ];
 
@@ -102,7 +104,8 @@ export const LanguageSwitcher: React.FC = () => {
 
   const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
     title: t('common:header.changeLanguage'),
-    size: 'sm',
+    size: 'md',
+    mobileContentPadding: '16px',
   });
 
   return (
