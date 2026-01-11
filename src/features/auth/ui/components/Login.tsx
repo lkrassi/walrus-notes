@@ -172,8 +172,14 @@ export const Login: React.FC<LoginProps> = () => {
                     required
                     fullWidth
                     error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error}
+                    helperText={meta.touched && meta.error ? meta.error : ' '}
                     disabled={formikSubmitting || isSubmitting}
+                    sx={{
+                      '& .MuiFormHelperText-root': {
+                        height: '1.25rem',
+                        margin: '4px 14px 0 14px',
+                      },
+                    }}
                   />
                 )}
               </Field>
@@ -189,29 +195,37 @@ export const Login: React.FC<LoginProps> = () => {
                     required
                     fullWidth
                     error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error}
+                    helperText={meta.touched && meta.error ? meta.error : ' '}
                     disabled={formikSubmitting || isSubmitting}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position='end'>
-                          <IconButton
-                            onClick={passwordVisibility.toggleVisibility}
-                            edge='end'
-                            aria-label={
-                              passwordVisibility.isVisible
-                                ? t('common:password.hide')
-                                : t('common:password.show')
-                            }
-                            disabled={formikSubmitting || isSubmitting}
-                          >
-                            {passwordVisibility.isVisible ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
+                    sx={{
+                      '& .MuiFormHelperText-root': {
+                        height: '1.25rem',
+                        margin: '4px 14px 0 14px',
+                      },
+                    }}
+                    slotProps={{
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position='end'>
+                            <IconButton
+                              onClick={passwordVisibility.toggleVisibility}
+                              edge='end'
+                              aria-label={
+                                passwordVisibility.isVisible
+                                  ? t('common:password.hide')
+                                  : t('common:password.show')
+                              }
+                              disabled={formikSubmitting || isSubmitting}
+                            >
+                              {passwordVisibility.isVisible ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
                     }}
                   />
                 )}

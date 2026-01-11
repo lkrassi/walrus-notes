@@ -70,11 +70,19 @@ export const ForgotPasswordEmailModal: React.FC<
                   required
                   fullWidth
                   error={meta.touched && Boolean(meta.error)}
-                  helperText={meta.touched && meta.error}
+                  helperText={meta.touched && meta.error ? meta.error : ' '}
                   disabled={isSubmitting}
                   autoComplete='email'
-                  inputProps={{
-                    inputMode: 'email',
+                  slotProps={{
+                    htmlInput: {
+                      inputMode: 'email',
+                    },
+                  }}
+                  sx={{
+                    '& .MuiFormHelperText-root': {
+                      height: '1.25rem',
+                      margin: '4px 14px 0 14px',
+                    },
                   }}
                 />
               )}

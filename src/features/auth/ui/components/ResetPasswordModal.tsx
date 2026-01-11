@@ -192,9 +192,11 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
             onKeyDown={e => handleKeyDown(index, e)}
             onPaste={handlePaste}
             disabled={isLoading}
-            inputProps={{
-              maxLength: 1,
-              style: { textAlign: 'center' },
+            slotProps={{
+              htmlInput: {
+                maxLength: 1,
+                style: { textAlign: 'center' },
+              },
             }}
             sx={{
               width: 48,
@@ -269,8 +271,14 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
                   required
                   fullWidth
                   error={meta.touched && Boolean(meta.error)}
-                  helperText={meta.touched && meta.error}
+                  helperText={meta.touched && meta.error ? meta.error : ' '}
                   disabled={isLoading}
+                  sx={{
+                    '& .MuiFormHelperText-root': {
+                      height: '1.25rem',
+                      margin: '4px 14px 0 14px',
+                    },
+                  }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position='end'>
