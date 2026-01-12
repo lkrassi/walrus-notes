@@ -29,9 +29,8 @@ interface NoteHeaderProps {
   isSaving?: boolean;
   isPending?: boolean;
   isFullscreen?: boolean;
-  onTitleChange: (title: string) => void;
   onEdit: () => void;
-  onSave: () => void;
+  onSave: (overrideTitle?: string) => Promise<void> | void;
   onCancel: () => void;
   onDiscardConfirm?: () => void;
   onInsertImage?: (url: string) => void;
@@ -49,7 +48,6 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   isSaving: _isSaving,
   isPending: _isPending,
   isFullscreen,
-  onTitleChange,
   onEdit,
   onSave,
   onCancel,
@@ -95,13 +93,43 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
     size: 'lg',
   });
 
+  const handleOpenEditTitle = openModalFromTrigger(
+    <EditNoteModal
+      title={title}
+      onSaved={async (newTitle: string) => {
+        if (newTitle !== title) {
+          await onSave(newTitle);
+        }
+      }}
+    />,
+    {
+      title: t('notes:editTitle') || 'Edit title',
+      size: 'md',
+    }
+  );
+
   return (
     <div className={cn('panel-header')}>
       <div className={cn('min-w-0', 'flex-1')}>
         <div className={cn('flex', 'items-center', 'gap-3')}>
-          <p className={cn('note-title', 'flex', 'items-center', 'gap-2')}>
+          <button
+            onClick={handleOpenEditTitle}
+            className={cn(
+              'note-title',
+              'flex',
+              'items-center',
+              'gap-2',
+              'text-left',
+              'hover:opacity-75',
+              'transition-opacity',
+              'cursor-pointer',
+              'bg-transparent',
+              'border-none',
+              'padding-0'
+            )}
+          >
             {title}
-          </p>
+          </button>
         </div>
       </div>
 
@@ -120,7 +148,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         {isEditing ? (
           <>
             <Button
-              onClick={onSave}
+              onClick={() => onSave()}
               className={cn('px-2', 'py-2', 'sm:px-3')}
               disabled={isLoading}
               title={t('notes:save')}

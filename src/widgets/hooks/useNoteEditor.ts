@@ -76,7 +76,7 @@ export const useNoteEditor = (
       return prev;
     });
     originalPayloadRef.current = note.payload ?? '';
-  }, [note.title, note.payload, note.draft]);
+  }, [note.id, note.title, note.payload, note.draft]);
 
   useEffect(() => {
     try {
@@ -91,13 +91,14 @@ export const useNoteEditor = (
   };
 
   const handleCancel = () => {
-    setTitle(note.title);
+    setTitle(note.title ?? '');
     setIsEditing(false);
     return true;
   };
 
-  const handleSave = async () => {
-    const safeTitle = title ?? '';
+  const handleSave = async (overrideTitle?: string) => {
+    const safeTitle =
+      overrideTitle !== undefined ? overrideTitle : (title ?? '');
     const safePayload = payload ?? '';
 
     if (!safeTitle.trim()) {
@@ -141,6 +142,7 @@ export const useNoteEditor = (
         updatedAt: new Date().toISOString(),
       };
 
+      setTitle(newTitle);
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
 

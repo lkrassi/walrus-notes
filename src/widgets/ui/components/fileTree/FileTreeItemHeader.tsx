@@ -9,9 +9,6 @@ import cn from 'shared/lib/cn';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import type { Note } from 'shared/model/types/layouts';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import EditNoteModal from 'features/notes/ui/components/EditNoteModal';
-import { useUpdateNoteMutation } from 'app/store/api';
-import { useNotifications } from 'widgets';
 import { useIsMobile, useLocalization } from '../../../hooks';
 import { DeleteNoteForm } from './DeleteNoteForm';
 
@@ -103,28 +100,6 @@ export const FileTreeItemHeader = ({
     />,
     {
       title: t('notes:deleteNote'),
-      size: 'md',
-    }
-  );
-
-  const [updateNote] = useUpdateNoteMutation();
-  const { showError } = useNotifications();
-
-  const handleEditNote = openModalFromTrigger(
-    <EditNoteModal
-      title={item.title}
-      onSaved={async (newTitle: string) => {
-        try {
-          await updateNote({ noteId: item.id, title: newTitle }).unwrap();
-        } catch (_e) {
-          try {
-            showError('notes:noteUpdateError');
-          } catch (_err) {}
-        }
-      }}
-    />,
-    {
-      title: t('notes:editTitle') || 'Edit title',
       size: 'md',
     }
   );
@@ -387,26 +362,6 @@ export const FileTreeItemHeader = ({
 
         {item.type === 'note' && item.isMain !== true && isSelected && (
           <>
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                handleEditNote(e);
-              }}
-              className={cn(
-                'transition-opacity',
-                'duration-150',
-                'opacity-100',
-                isMobile
-                  ? 'text-gray-600 dark:text-white'
-                  : isSelected
-                    ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                    : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-              )}
-              title={t('notes:edit') || 'Edit'}
-            >
-              <Pencil className={cn('h-4', 'w-4')} />
-            </button>
-
             <button
               onClick={e => {
                 e.stopPropagation();

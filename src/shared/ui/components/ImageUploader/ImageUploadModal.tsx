@@ -125,6 +125,7 @@ export const ImageUploadModal: React.FC<Props> = ({
           accept={accept}
           onChange={handleInputChange}
           className={cn('hidden')}
+          autoFocus
         />
 
         {!preview ? (

@@ -76,10 +76,9 @@ export const NoteViewer = ({
         hasServerDraft={hasServerDraft}
         isSaving={isSaving}
         isPending={isPending}
-        onTitleChange={setTitle}
         onEdit={handleEdit}
-        onSave={async () => {
-          await handleSave();
+        onSave={async (overrideTitle?: string) => {
+          await handleSave(overrideTitle);
         }}
         onCancel={async () => {
           await handleCancel();
