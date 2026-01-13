@@ -1,5 +1,6 @@
 import { FileText, Folder, Network } from 'lucide-react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import cn from 'shared/lib/cn';
 import type { TabsProps } from '../../model/types/tabsProps';
 import {
@@ -50,7 +51,7 @@ export const Tabs = ({
   return (
     <div
       className={cn(
-        'border-border dark:border-dark-border dark:bg-dark-bg dark:text-dark-text relative flex border-b bg-white'
+        'border-border dark:border-dark-border dark:bg-dark-bg dark:text-dark-text relative flex bg-white shadow-sm'
       )}
     >
       <DndContext
@@ -63,7 +64,11 @@ export const Tabs = ({
           items={visibleTabs.map(t => t.id)}
           strategy={horizontalListSortingStrategy}
         >
-          <div className={cn('flex flex-1 overflow-x-auto')}>
+          <div
+            className={cn(
+              'relative flex flex-1 overflow-x-auto overflow-y-hidden'
+            )}
+          >
             {visibleTabs.map(tab => (
               <SortableTab
                 key={tab.id}
@@ -71,6 +76,7 @@ export const Tabs = ({
                 isActive={tab.isActive}
                 onClick={() => onTabClick(tab.id)}
                 onClose={() => onTabClose(tab.id)}
+                showAnimatedBackground={tab.isActive}
               />
             ))}
           </div>

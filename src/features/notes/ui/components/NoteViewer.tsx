@@ -25,7 +25,6 @@ export const NoteViewer = ({
     title,
     payload,
     isLoading,
-    setTitle,
     setPayload,
     handleEdit,
     handleCancel,
@@ -62,8 +61,8 @@ export const NoteViewer = ({
         'h-full',
         'w-full',
         'flex-col',
-        'bg-[var(--color-bg)]',
-        'dark:bg-[var(--color-dark-bg)]',
+        'bg-bg',
+        'dark:bg-dark-bg',
         isFullscreen && 'fixed inset-0 z-100'
       )}
     >

@@ -1,4 +1,5 @@
 import { FileText, Folder, X, Network } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTabMiddleClickClose } from '../../hooks/useTabMiddleClickClose';
 import cn from 'shared/lib/cn';
 import type { TabsProps } from '../../model/types/tabsProps';
@@ -10,11 +11,13 @@ export const SortableTab = ({
   isActive,
   onClose,
   onClick,
+  showAnimatedBackground,
 }: {
   tab: TabsProps['tabs'][number];
   isActive: boolean;
   onClose: () => void;
   onClick: () => void;
+  showAnimatedBackground?: boolean;
 }) => {
   const {
     attributes,
@@ -43,21 +46,34 @@ export const SortableTab = ({
   const handleMiddleClick = useTabMiddleClickClose(onClose);
 
   return (
-    <div
+    <motion.div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'border-border dark:border-dark-border relative flex max-w-[200px] min-w-[120px] cursor-grab items-center border-r px-4 py-2 whitespace-nowrap select-none',
+        'relative flex max-w-[200px] min-w-[120px] cursor-grab items-center px-4 py-2 whitespace-nowrap select-none',
         isActive
-          ? 'bg-primary border-b-primary border-b-2 text-white'
-          : 'text-text dark:text-dark-text bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700'
+          ? 'z-10 rounded-t-lg text-white shadow-md'
+          : 'text-text dark:text-dark-text mx-0.5 rounded-t-lg hover:bg-gray-100 dark:hover:bg-gray-700/50'
       )}
       title={tab.item.title}
+      animate={{
+        color: isActive ? 'rgb(255, 255, 255)' : undefined,
+      }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       {...attributes}
       {...listeners}
     >
+      {showAnimatedBackground && (
+        <motion.div
+          layoutId='activeTabBackground'
+          className='bg-primary absolute inset-0 rounded-t-lg'
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        />
+      )}
       <div
-        className={cn('mr-2 flex min-w-0 flex-1 items-center overflow-hidden')}
+        className={cn(
+          'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden'
+        )}
         onClick={handleContentClick}
         onMouseDown={handleMiddleClick}
       >
@@ -79,7 +95,7 @@ export const SortableTab = ({
           onClose();
         }}
         className={cn(
-          'ml-2',
+          'relative z-10 ml-2',
           isActive ? 'text-white' : 'text-text dark:text-dark-text'
         )}
       >
@@ -90,6 +106,6 @@ export const SortableTab = ({
           )}
         />
       </button>
-    </div>
+    </motion.div>
   );
 };
