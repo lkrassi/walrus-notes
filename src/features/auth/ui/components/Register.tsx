@@ -228,6 +228,7 @@ export const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
                     type='text'
                     placeholder={t('auth:register.usernamePlaceholder')}
                     autoComplete='username'
+                    required
                     fullWidth
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error ? meta.error : ' '}

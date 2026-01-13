@@ -10,6 +10,8 @@ import {
   features,
   itemVariants,
 } from '../../models';
+import VideoDemo from './VideoDemo';
+import { BackgroundIcons } from './BackgroundIcons';
 
 export const Main = () => {
   const navigate = useNavigate();
@@ -93,6 +95,7 @@ export const Main = () => {
                 </Button>
               </motion.div>
             </div>
+
             <div className={cn('flex-1')}>
               <motion.div
                 variants={containerVariants}
@@ -134,6 +137,10 @@ export const Main = () => {
           </div>
         </motion.div>
       </div>
+
+      <VideoDemo />
+
+      <BackgroundIcons />
     </>
   );
 };
