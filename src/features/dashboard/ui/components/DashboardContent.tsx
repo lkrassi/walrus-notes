@@ -127,7 +127,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       onCreateNote={handleStartNoteCreation}
     />,
     {
-      title: '',
+      title: t('dashboard:whatToCreate'),
       size: 'md',
       showCloseButton: true,
     }

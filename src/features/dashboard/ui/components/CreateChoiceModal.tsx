@@ -40,7 +40,7 @@ export const CreateChoiceModal = ({
           'md:mb-4'
         )}
       >
-        {t('dashboard:whatToCreate') || 'Что создать?'}
+        {t('dashboard:folderOrNote') || 'Выберите, что создать папку или заметку?'}
       </h3>
 
       <button

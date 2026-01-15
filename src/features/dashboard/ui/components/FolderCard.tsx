@@ -35,7 +35,7 @@ export const FolderCard = ({
   const handleEdit = openModalFromTrigger(
     <UpdateLayoutForm layoutId={layout.id} />,
     {
-      title: t('layout:editLayout') || 'Редактировать папку',
+      title: t('layout:updateLayoutData') || 'Редактировать папку',
       size: 'md',
       showCloseButton: true,
     }

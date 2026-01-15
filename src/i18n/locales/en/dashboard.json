@@ -5,6 +5,7 @@
   "selectNoteHint": "Select a note to view layout folder contents.",
   "selectNoteFromFolder": "Select a note from the folder",
   "whatToCreate": "What to create?",
+  "folderOrNote": "Select create folder or note",
   "createFolder": "Create folder",
   "createFolderDescription": "New folder to organize notes",
   "createNote": "Create note",
