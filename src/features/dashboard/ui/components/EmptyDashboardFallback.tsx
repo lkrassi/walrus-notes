@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FileText, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useGetMyLayoutsQuery } from 'app/store/api';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -17,7 +17,7 @@ export const EmptyDashboardFallback = ({
   onCreateClick,
 }: EmptyDashboardFallbackProps) => {
   const { t } = useLocalization();
-  const { data: layoutsResponse, isLoading } = useGetMyLayoutsQuery();
+  const { data: layoutsResponse } = useGetMyLayoutsQuery();
 
   const layouts: Layout[] = layoutsResponse?.data || [];
 
@@ -54,30 +54,11 @@ export const EmptyDashboardFallback = ({
     },
   };
 
-  if (isLoading) {
-    return (
-      <div
-        className={cn(
-          'h-full',
-          'flex',
-          'items-center',
-          'justify-center',
-          'bg-bg',
-          'dark:bg-dark-bg'
-        )}
-      >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-          className={cn('text-secondary', 'dark:text-dark-secondary')}
-        >
-          <FileText className='h-8 w-8' />
-        </motion.div>
-      </div>
-    );
-  }
-
   const isEmpty = layouts.length === 0;
+
+  if (!layoutsResponse) {
+    return null;
+  }
 
   return (
     <div
@@ -94,6 +75,7 @@ export const EmptyDashboardFallback = ({
       )}
     >
       <motion.div
+        key={layouts.length}
         className={cn(
           'mx-auto',
           'max-w-2xl',
@@ -106,10 +88,10 @@ export const EmptyDashboardFallback = ({
         variants={containerVariants}
         initial='hidden'
         animate='visible'
+        style={{ opacity: 0 }}
       >
         {isEmpty ? (
           <>
-            {/* Empty State */}
             <motion.div
               variants={itemVariants}
               className={cn(
@@ -117,7 +99,8 @@ export const EmptyDashboardFallback = ({
                 'flex',
                 'flex-col',
                 'items-center',
-                'justify-center'
+                'justify-center',
+                'mb-8'
               )}
             >
               <motion.div
@@ -152,7 +135,6 @@ export const EmptyDashboardFallback = ({
                 className={cn(
                   'text-secondary',
                   'dark:text-dark-secondary',
-                  'mb-8',
                   'max-w-xs',
                   'text-sm'
                 )}
@@ -160,35 +142,10 @@ export const EmptyDashboardFallback = ({
                 {t('dashboard:createFolderDescription') ||
                   'Создайте свою первую папку, чтобы начать организовывать заметки'}
               </p>
-
-              <motion.button
-                variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onCreateClick}
-                className={cn(
-                  'flex',
-                  'items-center',
-                  'gap-2',
-                  'rounded-lg',
-                  'bg-accent',
-                  'dark:bg-dark-accent',
-                  'px-6',
-                  'py-3',
-                  'font-medium',
-                  'text-white',
-                  'transition-all',
-                  'duration-200'
-                )}
-              >
-                <Plus className='h-5 w-5' />
-                {t('layout:createLayout') || 'Создать папку'}
-              </motion.button>
             </motion.div>
           </>
         ) : (
           <>
-            {/* Header with summary */}
             <motion.div
               variants={itemVariants}
               className={cn('mb-8', 'text-center')}
@@ -218,7 +175,6 @@ export const EmptyDashboardFallback = ({
               </p>
             </motion.div>
 
-            {/* Folders Grid */}
             <motion.div
               className={cn(
                 'grid',
@@ -239,39 +195,40 @@ export const EmptyDashboardFallback = ({
                 />
               ))}
             </motion.div>
-
-            {/* Create New Button */}
-            <motion.button
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onCreateClick}
-              className={cn(
-                'mt-8',
-                'flex',
-                'items-center',
-                'gap-2',
-                'rounded-lg',
-                'border-2',
-                'border-dashed',
-                'border-accent',
-                'dark:border-dark-accent',
-                'px-6',
-                'py-3',
-                'font-medium',
-                'text-accent',
-                'dark:text-dark-accent',
-                'transition-all',
-                'duration-200',
-                'hover:bg-accent/10',
-                'dark:hover:bg-dark-accent/10'
-              )}
-            >
-              <Plus className='h-5 w-5' />
-              {t('layout:createLayout') || 'Создать папку'}
-            </motion.button>
           </>
         )}
+
+        <motion.button
+          variants={itemVariants}
+          initial='hidden'
+          animate='visible'
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onCreateClick}
+          className={cn(
+            'mt-8',
+            'flex',
+            'items-center',
+            'gap-2',
+            'rounded-lg',
+            'border-2',
+            'border-dashed',
+            'border-accent',
+            'dark:border-dark-accent',
+            'px-6',
+            'py-3',
+            'font-medium',
+            'text-accent',
+            'dark:text-dark-accent',
+            'transition-all',
+            'duration-200',
+            'hover:bg-accent/10',
+            'dark:hover:bg-dark-accent/10'
+          )}
+        >
+          <Plus className='h-5 w-5' />
+          {t('layout:createLayout') || 'Создать папку'}
+        </motion.button>
       </motion.div>
     </div>
   );

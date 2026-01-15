@@ -18,7 +18,7 @@ export const Auth = () => {
 
   const handleSwitchToRegister = useCallback(() => {
     setActiveForm('register');
-  }, []
+  }, [])
 
   return (
     <main>
