@@ -6,10 +6,11 @@ import { useLocalization } from 'widgets/hooks/useLocalization';
 import type { Layout } from 'shared/model/types/layouts';
 import type { Variants } from 'framer-motion';
 import { FolderCard } from './FolderCard';
+import { AllNotesCard } from './AllNotesCard';
 
 interface EmptyDashboardFallbackProps {
   onFolderClick?: (layoutId: string, title: string) => void;
-  onCreateClick?: () => void;
+  onCreateClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const EmptyDashboardFallback = ({
@@ -20,6 +21,10 @@ export const EmptyDashboardFallback = ({
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
 
   const layouts: Layout[] = layoutsResponse?.data || [];
+
+  // Разделяем главную папку и обычные папки
+  const mainLayout = layouts.find(layout => layout.isMain);
+  const regularLayouts = layouts.filter(layout => !layout.isMain);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -54,7 +59,7 @@ export const EmptyDashboardFallback = ({
     },
   };
 
-  const isEmpty = layouts.length === 0;
+  const isEmpty = regularLayouts.length === 0;
 
   if (!layoutsResponse) {
     return null;
@@ -65,11 +70,8 @@ export const EmptyDashboardFallback = ({
       className={cn(
         'h-full',
         'overflow-y-auto',
-        'bg-linear-to-br',
-        'from-bg',
-        'to-bg-secondary',
-        'dark:from-dark-bg',
-        'dark:to-dark-bg-secondary',
+        'bg-bg',
+        'dark:bg-dark-bg',
         'p-4',
         'md:p-6'
       )}
@@ -83,6 +85,7 @@ export const EmptyDashboardFallback = ({
           'flex-col',
           'items-center',
           'justify-center',
+
           isEmpty ? 'h-full' : 'py-8'
         )}
         variants={containerVariants}
@@ -90,6 +93,17 @@ export const EmptyDashboardFallback = ({
         animate='visible'
         style={{ opacity: 0 }}
       >
+        {/* Главный граф - если есть */}
+        {mainLayout && (
+          <div className={cn('w-full', 'mb-8')}>
+            <AllNotesCard
+              layout={mainLayout}
+              onFolderClick={onFolderClick}
+              itemVariants={itemVariants}
+            />
+          </div>
+        )}
+
         {isEmpty ? (
           <>
             <motion.div
@@ -108,11 +122,11 @@ export const EmptyDashboardFallback = ({
                 transition={{ repeat: Infinity, duration: 3 }}
                 className={cn(
                   'mb-6',
-                  'text-accent',
-                  'dark:text-dark-accent',
+                  'text-primary',
+                  'dark:text-dark-primary',
                   'rounded-full',
-                  'bg-accent/10',
-                  'dark:bg-dark-accent/10',
+                  'bg-primary/10',
+                  'dark:bg-dark-primary/10',
                   'p-4'
                 )}
               >
@@ -168,8 +182,8 @@ export const EmptyDashboardFallback = ({
                   'text-sm'
                 )}
               >
-                {layouts.length}{' '}
-                {layouts.length === 1
+                {regularLayouts.length}{' '}
+                {regularLayouts.length === 1
                   ? t('dashboard:folder') || 'папка'
                   : t('dashboard:folders') || 'папок'}{' '}
               </p>
@@ -185,7 +199,7 @@ export const EmptyDashboardFallback = ({
                 'md:grid-cols-3'
               )}
             >
-              {layouts.map((layout: Layout) => (
+              {regularLayouts.map((layout: Layout) => (
                 <FolderCard
                   key={layout.id}
                   layout={layout}
@@ -213,17 +227,17 @@ export const EmptyDashboardFallback = ({
             'rounded-lg',
             'border-2',
             'border-dashed',
-            'border-accent',
-            'dark:border-dark-accent',
+            'border-primary',
+            'dark:border-dark-primary',
             'px-6',
             'py-3',
             'font-medium',
-            'text-accent',
-            'dark:text-dark-accent',
+            'text-primary',
+            'dark:text-dark-primary',
             'transition-all',
             'duration-200',
-            'hover:bg-accent/10',
-            'dark:hover:bg-dark-accent/10'
+            'hover:bg-primary/10',
+            'dark:hover:bg-dark-primary/10'
           )}
         >
           <Plus className='h-5 w-5' />

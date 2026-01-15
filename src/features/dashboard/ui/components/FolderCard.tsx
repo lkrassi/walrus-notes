@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
-import { FileText, Network } from 'lucide-react';
+import { FileText, Network, Pencil, Trash2 } from 'lucide-react';
 import { useGetNotesQuery } from 'app/store/api';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import FolderIcon from 'shared/ui/icons/FolderIcon';
 import type { Layout } from 'shared/model/types/layouts';
 import type { Variants } from 'framer-motion';
+import { UpdateLayoutForm } from 'features/layout/ui/components/UpdateLayoutForm';
+import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
 
 interface FolderCardProps {
   layout: Layout;
@@ -21,12 +24,34 @@ export const FolderCard = ({
   cardHoverVariants,
 }: FolderCardProps) => {
   const { t } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
   const { data: notesResponse } = useGetNotesQuery({
     layoutId: layout.id,
     page: 1,
   });
 
   const notesCount = notesResponse?.data?.length || 0;
+
+  const handleEdit = openModalFromTrigger(
+    <UpdateLayoutForm layoutId={layout.id} />,
+    {
+      title: t('layout:editLayout') || 'Редактировать папку',
+      size: 'md',
+      showCloseButton: true,
+    }
+  );
+
+  const handleDelete = openModalFromTrigger(
+    <DeleteLayoutForm
+      layoutId={layout.id}
+      layoutTitle={layout.title || 'Untitled'}
+    />,
+    {
+      title: t('layout:deleteLayout') || 'Удалить папку',
+      size: 'md',
+      showCloseButton: true,
+    }
+  );
 
   return (
     <motion.div
@@ -44,7 +69,7 @@ export const FolderCard = ({
           'w-full',
           'rounded-xl',
           'bg-white',
-          'dark:bg-dark-card',
+          'dark:bg-gray-800',
           'p-4',
           'text-left',
           'transition-all',
@@ -52,7 +77,9 @@ export const FolderCard = ({
           'border',
           'border-border',
           'dark:border-dark-border',
-          'cursor-pointer'
+          'cursor-pointer',
+          'relative',
+          'group'
         )}
       >
         <div className={cn('flex', 'items-start', 'gap-3')}>
@@ -66,7 +93,7 @@ export const FolderCard = ({
             className={cn('mt-1', 'shrink-0')}
           >
             {layout.isMain ? (
-              <Network className='text-accent dark:text-dark-accent h-6 w-6' />
+              <Network className='text-primary dark:text-dark-primary h-6 w-6' />
             ) : (
               <FolderIcon
                 fillColor={layout.color || '#4F46E5'}
@@ -104,13 +131,64 @@ export const FolderCard = ({
             )}
           </div>
 
-          <motion.div
-            initial={{ x: -5, opacity: 0 }}
-            whileHover={{ x: 0, opacity: 1 }}
-            className={cn('text-accent', 'dark:text-dark-accent', 'shrink-0')}
+          {/* Кнопки редактирования и удаления */}
+          <div
+            className={cn(
+              'flex',
+              'gap-1',
+              'shrink-0',
+              'md:opacity-0',
+              'md:group-hover:opacity-100',
+              'transition-opacity',
+              'duration-200'
+            )}
           >
-            <FileText className='h-4 w-4' />
-          </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={e => {
+                e.stopPropagation();
+                handleEdit(e);
+              }}
+              className={cn(
+                'p-1.5',
+                'rounded-md',
+                'bg-primary/10',
+                'dark:bg-dark-primary/10',
+                'text-primary',
+                'dark:text-dark-primary',
+                'hover:bg-primary/20',
+                'dark:hover:bg-dark-primary/20',
+                'transition-colors'
+              )}
+              title={t('layout:editLayout') || 'Редактировать'}
+            >
+              <Pencil className='h-3.5 w-3.5' />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={e => {
+                e.stopPropagation();
+                handleDelete(e);
+              }}
+              className={cn(
+                'p-1.5',
+                'rounded-md',
+                'bg-red-100',
+                'dark:bg-red-900/20',
+                'text-red-600',
+                'dark:text-red-400',
+                'hover:bg-red-200',
+                'dark:hover:bg-red-900/40',
+                'transition-colors'
+              )}
+              title={t('layout:deleteLayout') || 'Удалить'}
+            >
+              <Trash2 className='h-3.5 w-3.5' />
+            </motion.button>
+          </div>
         </div>
       </motion.button>
     </motion.div>

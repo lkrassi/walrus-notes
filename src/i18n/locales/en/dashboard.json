@@ -18,5 +18,7 @@
   "folder": "folder",
   "folders": "folders",
   "note": "note",
-  "notes": "notes"
+  "notes": "notes",
+  "allNotes": "All Notes Graph",
+  "allNotesDescription": "All notes from all folders"
 }

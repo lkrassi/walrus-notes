@@ -19,6 +19,7 @@ import type { TabType } from 'widgets/model/utils/tabUtils';
 import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { FileText } from 'lucide-react';
 import { CreateChoiceModal } from './CreateChoiceModal';
@@ -35,6 +36,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const dispatch = useAppDispatch();
   const { openTabs } = useTabs();
   const { openModal } = useModalContext();
+  const { openModalFromTrigger } = useModalActions();
 
   const isMobile = useIsMobile();
 
@@ -119,19 +121,17 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
     });
   };
 
-  const handleOnCreateClick = () => {
-    openModal(
-      <CreateChoiceModal
-        onCreateFolder={handleCreateFolder}
-        onCreateNote={handleStartNoteCreation}
-      />,
-      {
-        title: '',
-        size: 'md',
-        showCloseButton: true,
-      }
-    );
-  };
+  const handleOnCreateClick = openModalFromTrigger(
+    <CreateChoiceModal
+      onCreateFolder={handleCreateFolder}
+      onCreateNote={handleStartNoteCreation}
+    />,
+    {
+      title: '',
+      size: 'md',
+      showCloseButton: true,
+    }
+  );
 
   const confirmIfUnsaved = (action: () => void) => {
     if (!activeTab) {

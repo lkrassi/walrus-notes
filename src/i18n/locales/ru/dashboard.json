@@ -18,5 +18,7 @@
   "folder": "папка",
   "folders": "папок",
   "note": "заметка",
-  "notes": "заметок"
+  "notes": "заметок",
+  "allNotes": "Общий граф",
+  "allNotesDescription": "Все заметки из всех папок"
 }
