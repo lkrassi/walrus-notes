@@ -9,8 +9,6 @@ const __dirname = path.dirname(__filename);
 const CSS_FILE_PATH = path.join(__dirname, '../styles/App.css');
 
 function syncColors() {
-  console.log('Синхронизация цветов...');
-
   try {
     const cssContent = fs.readFileSync(CSS_FILE_PATH, 'utf-8');
 

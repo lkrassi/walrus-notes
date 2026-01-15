@@ -9,7 +9,7 @@ interface Props {
 
 export const Garland: React.FC<Props> = ({ active = true }) => {
   const isMobile = useIsMobile();
-  const defaultCount = 14;
+  const defaultCount = 8;
   const count = isMobile
     ? Math.max(6, Math.round(defaultCount * 0.6))
     : defaultCount;

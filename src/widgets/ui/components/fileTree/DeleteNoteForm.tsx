@@ -81,7 +81,7 @@ export const DeleteNoteForm = ({
           type='button'
           onClick={closeModal}
           variant='default'
-          className={cn('px-6 py-3')}
+          className={cn('btn')}
           disabled={isLoading}
         >
           {t('notes:cancel')}
@@ -89,7 +89,7 @@ export const DeleteNoteForm = ({
         <Button
           type='submit'
           variant='escape'
-          className={cn('px-6 py-3')}
+          className={cn('btn')}
           disabled={isLoading}
         >
           {isLoading ? t('notes:deleting') : t('notes:delete')}

@@ -1,6 +1,5 @@
 import { FileText, Folder, Network } from 'lucide-react';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import cn from 'shared/lib/cn';
 import type { TabsProps } from '../../model/types/tabsProps';
 import {

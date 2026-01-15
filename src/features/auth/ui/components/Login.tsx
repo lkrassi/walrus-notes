@@ -6,6 +6,8 @@ import { Button } from 'shared';
 import { useNotifications } from 'widgets';
 
 import { useLoginMutation, useForgotPasswordMutation } from 'app/store/api';
+import { setTokens, setUserProfile } from 'app/store/slices/userSlice';
+import { useAppDispatch } from 'widgets/hooks/redux';
 import { usePasswordVisibility } from 'features/auth/hooks';
 import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
 import { ResetPasswordModal } from 'features/auth/ui/components/ResetPasswordModal';
@@ -29,6 +31,7 @@ type LoginProps = {
 };
 
 export const Login: React.FC<LoginProps> = () => {
+  const dispatch = useAppDispatch();
   const { showError, showSuccess } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
   const [forgotPassword] = useForgotPasswordMutation();
@@ -51,11 +54,29 @@ export const Login: React.FC<LoginProps> = () => {
   const handleSubmit = async (values: typeof initialValues) => {
     try {
       const response = await login(values).unwrap();
-      localStorage.setItem('accessToken', response.data.accessToken);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      localStorage.setItem('userId', response.data.userId);
 
-      window.dispatchEvent(new Event('tokenSet'));
+      // Используем Redux action для синхронизации токенов
+      dispatch(
+        setTokens({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+        })
+      );
+
+      // Сохраняем базовые данные в Redux store
+      dispatch(
+        setUserProfile({
+          id: response.data.userId,
+          username: '',
+          email: values.email,
+          imgUrl: '',
+          role: 'user',
+          createdAt: new Date().toISOString(),
+        })
+      );
+
+      // Оставляем localStorage для обратной совместимости (будет удалено позже)
+      localStorage.setItem('userId', response.data.userId);
       navigate('/dashboard');
     } catch {
       showError(t('auth:login.error'));

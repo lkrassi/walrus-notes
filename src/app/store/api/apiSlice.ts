@@ -4,11 +4,15 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { setTokens, clearUserProfile } from 'app/store/slices/userSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
-  prepareHeaders: headers => {
-    const token = localStorage.getItem('accessToken');
+  prepareHeaders: (headers, { getState }) => {
+    // Читаем токен из Redux store вместо localStorage
+    const state = getState() as { user: { accessToken: string | null } };
+    const token = state.user.accessToken;
+
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
     }
@@ -25,8 +29,12 @@ const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    // Читаем токены из Redux store
+    const state = api.getState() as {
+      user: { accessToken: string | null; refreshToken: string | null };
+    };
+    const accessToken = state.user.accessToken;
+    const refreshToken = state.user.refreshToken;
 
     if (accessToken && refreshToken) {
       try {
@@ -50,26 +58,34 @@ const baseQueryWithReauth: BaseQueryFn<
             const innerObj = inner as Record<string, unknown>;
             const accessTok = innerObj['accessToken'];
             const refreshTok = innerObj['refreshToken'];
-            if (typeof accessTok === 'string')
-              localStorage.setItem('accessToken', accessTok);
-            if (typeof refreshTok === 'string')
-              localStorage.setItem('refreshToken', refreshTok);
-            result = await baseQuery(args, api, extraOptions);
+
+            if (
+              typeof accessTok === 'string' &&
+              typeof refreshTok === 'string'
+            ) {
+              // Используем Redux action для синхронизации токенов
+              api.dispatch(
+                setTokens({
+                  accessToken: accessTok,
+                  refreshToken: refreshTok,
+                })
+              );
+              result = await baseQuery(args, api, extraOptions);
+            } else {
+              // Централизованная очистка через Redux
+              api.dispatch(clearUserProfile());
+            }
           } else {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            api.dispatch(clearUserProfile());
           }
         } else {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
+          api.dispatch(clearUserProfile());
         }
       } catch {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        api.dispatch(clearUserProfile());
       }
     } else {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      api.dispatch(clearUserProfile());
     }
   }
 

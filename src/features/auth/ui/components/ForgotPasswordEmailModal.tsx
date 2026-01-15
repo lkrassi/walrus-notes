@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets/hooks';
 import { Formik, Form, Field } from 'formik';
@@ -17,6 +17,14 @@ export const ForgotPasswordEmailModal: React.FC<
   const { t } = useLocalization();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { closeModal } = useModalContentContext();
+  const emailFieldRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      emailFieldRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -64,6 +72,7 @@ export const ForgotPasswordEmailModal: React.FC<
               {({ field, meta }: FieldProps<string>) => (
                 <TextField
                   {...field}
+                  inputRef={emailFieldRef}
                   label={t('auth:login.email')}
                   type='email'
                   placeholder={t('auth:login.emailPlaceholder')}

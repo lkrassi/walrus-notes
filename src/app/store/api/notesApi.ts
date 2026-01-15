@@ -558,7 +558,10 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: arg.noteId },
+      ],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const state = getState() as RootState;
 
@@ -656,7 +659,11 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: arg.firstNoteId },
+        { type: 'Notes', id: arg.secondNoteId },
+      ],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
         let originalTabLinkedWithOut: string[] | undefined;
@@ -683,7 +690,9 @@ export const notesApi = apiSlice.injectEndpoints({
                     if (sourceNote) {
                       if (!Array.isArray(sourceNote.linkedWithOut))
                         sourceNote.linkedWithOut = [];
-                      if (!sourceNote.linkedWithOut.includes(arg.secondNoteId)) {
+                      if (
+                        !sourceNote.linkedWithOut.includes(arg.secondNoteId)
+                      ) {
                         sourceNote.linkedWithOut.push(arg.secondNoteId);
                       }
                     }
@@ -756,7 +765,8 @@ export const notesApi = apiSlice.injectEndpoints({
               }
 
               const targetTab = tabsState.openTabs.find(
-                t => t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
+                t =>
+                  t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
               );
               if (targetTab && targetTab.item && targetTab.item.note) {
                 originalTabLinkedWithIn = targetTab.item.note.linkedWithIn;
@@ -811,7 +821,11 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: arg.firstNoteId },
+        { type: 'Notes', id: arg.secondNoteId },
+      ],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
         const patchResults: Array<{ undo?: () => void }> = [];
         let originalTabLinkedWithOutDel: string[] | undefined;
@@ -836,9 +850,10 @@ export const notesApi = apiSlice.injectEndpoints({
                       n => n.id === arg.secondNoteId
                     );
                     if (sourceNote && sourceNote.linkedWithOut) {
-                      sourceNote.linkedWithOut = sourceNote.linkedWithOut.filter(
-                        id => id !== arg.secondNoteId
-                      );
+                      sourceNote.linkedWithOut =
+                        sourceNote.linkedWithOut.filter(
+                          id => id !== arg.secondNoteId
+                        );
                     }
                     if (targetNote && targetNote.linkedWithIn) {
                       targetNote.linkedWithIn = targetNote.linkedWithIn.filter(
@@ -903,7 +918,8 @@ export const notesApi = apiSlice.injectEndpoints({
               }
 
               const targetTab = tabsState.openTabs.find(
-                t => t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
+                t =>
+                  t?.item?.type === 'note' && t?.item?.id === arg.secondNoteId
               );
               if (targetTab && targetTab.item && targetTab.item.note) {
                 originalTabLinkedWithInDel = targetTab.item.note.linkedWithIn;

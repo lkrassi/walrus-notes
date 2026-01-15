@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import cn from 'shared/lib/cn';
 
 import { Button } from 'shared';
@@ -28,32 +28,9 @@ const LANGUAGES = [
 export const LanguageSwitcher: React.FC = () => {
   const { t, currentLanguage, changeLanguage } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
-  const [effectiveLanguage, setEffectiveLanguage] = useState(
-    currentLanguage || 'ru'
-  );
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('i18nextLng');
-    const defaultLanguage = 'ru';
-
-    if (savedLanguage && LANGUAGES.find(lang => lang.code === savedLanguage)) {
-      setEffectiveLanguage(savedLanguage);
-      changeLanguage(savedLanguage);
-    } else {
-      setEffectiveLanguage(defaultLanguage);
-      changeLanguage(defaultLanguage);
-    }
-  }, [changeLanguage]);
-
-  useEffect(() => {
-    if (currentLanguage) {
-      setEffectiveLanguage(currentLanguage);
-    }
-  }, [currentLanguage]);
 
   const handleLanguageSelect = (langCode: string, closeModal: () => void) => {
     changeLanguage(langCode);
-    setEffectiveLanguage(langCode);
     closeModal();
   };
 
@@ -66,9 +43,7 @@ export const LanguageSwitcher: React.FC = () => {
           <Button
             key={language.code}
             onClick={() => handleLanguageSelect(language.code, closeModal)}
-            variant={
-              effectiveLanguage === language.code ? 'default' : 'disabled'
-            }
+            variant={currentLanguage === language.code ? 'default' : 'disabled'}
             className={cn(
               'flex',
               'items-center',
@@ -100,7 +75,7 @@ export const LanguageSwitcher: React.FC = () => {
   };
 
   const currentLang =
-    LANGUAGES.find(lang => lang.code === effectiveLanguage) || LANGUAGES[0];
+    LANGUAGES.find(lang => lang.code === currentLanguage) || LANGUAGES[1];
 
   const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
     title: t('common:header.changeLanguage'),
@@ -113,16 +88,7 @@ export const LanguageSwitcher: React.FC = () => {
       data-tour='language-switcher'
       onClick={openLanguageModal}
       variant='default'
-      className={cn(
-        'flex',
-        'h-10',
-        'w-30',
-        'items-center',
-        'justify-center',
-        'gap-3',
-        'px-7',
-        'py-2'
-      )}
+      className={cn('px-2', 'py-2', 'sm:px-3')}
       title={t('common:header.changeLanguage')}
     >
       <span className={cn('text-base', 'font-semibold')}>

@@ -27,8 +27,7 @@ export const ImportDataButton: React.FC = () => {
 
       await importLayout({ info }).unwrap();
       showSuccess(t('settings:backup.import.success'));
-    } catch (error) {
-      console.error(error);
+    } catch {
       showError(t('settings:backup.import.error'));
     }
   };

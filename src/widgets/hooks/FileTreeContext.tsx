@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
+import { useAppSelector } from './redux';
 import {
   fileTreeReducer,
   initialFileTreeState,
@@ -44,39 +45,20 @@ export const FileTreeProvider = ({
   );
   const [isLoading, setIsLoading] = useState(false);
   const { showSuccess } = useNotifications();
+  const { accessToken } = useAppSelector(state => state.user);
 
   const { fileTree, expandedItems } = state;
 
-  const [hasToken, setHasToken] = useState(
-    !!localStorage.getItem('accessToken')
-  );
+  const [hasToken, setHasToken] = useState(!!accessToken);
 
   useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('accessToken');
-      setHasToken(!!token);
-    };
-
-    checkToken();
-
-    const handleTokenSet = () => {
-      setHasToken(true);
-      setTimeout(() => refetch(), 100);
-    };
-
-    window.addEventListener('tokenSet', handleTokenSet);
-    window.addEventListener('storage', checkToken);
-
-    return () => {
-      window.removeEventListener('tokenSet', handleTokenSet);
-      window.removeEventListener('storage', checkToken);
-    };
-  }, []);
+    setHasToken(!!accessToken);
+  }, [accessToken]);
 
   const {
     data: layoutsResponse,
     isLoading: isLayoutsLoading,
-    refetch,
+    refetch: _refetch,
   } = useGetMyLayoutsQuery(undefined, {
     skip: !hasToken,
   });

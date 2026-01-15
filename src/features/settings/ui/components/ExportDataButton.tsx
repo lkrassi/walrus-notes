@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useExportLayoutMutation } from 'app/store/api';
-import { checkAuth } from 'shared/api/checkAuth';
 import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
@@ -13,8 +12,8 @@ export const ExportDataButton: React.FC = () => {
   const { showError, showSuccess } = useNotifications();
   const [exportLayout, { isLoading }] = useExportLayoutMutation();
 
-  const userId =
-    profile?.id || (checkAuth() ? localStorage.getItem('userId') || '' : '');
+  // Используем userId из Redux store
+  const userId = profile?.id || '';
 
   const buildFileName = useCallback(() => {
     const now = new Date();
@@ -24,19 +23,22 @@ export const ExportDataButton: React.FC = () => {
     return `walrus_notes_${date}_${time}.json`;
   }, []);
 
-  const downloadFile = useCallback((data: unknown) => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = buildFileName();
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  }, [buildFileName]);
+  const downloadFile = useCallback(
+    (data: unknown) => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = buildFileName();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    },
+    [buildFileName]
+  );
 
   const handleExport = async () => {
     if (!userId) {
@@ -52,8 +54,7 @@ export const ExportDataButton: React.FC = () => {
 
       downloadFile(response.data);
       showSuccess(t('settings:backup.export.success'));
-    } catch (error) {
-      console.error(error);
+    } catch {
       showError(t('settings:backup.export.error'));
     }
   };
@@ -62,15 +63,15 @@ export const ExportDataButton: React.FC = () => {
     <Button
       onClick={handleExport}
       disabled={isLoading}
-        className={cn(
-          'flex',
-          'h-10',
-          'w-30',
-          'items-center',
-          'justify-center',
-          'px-7',
-          'py-2'
-        )}
+      className={cn(
+        'flex',
+        'h-10',
+        'w-30',
+        'items-center',
+        'justify-center',
+        'px-7',
+        'py-2'
+      )}
       title={t('settings:backup.export.button')}
     >
       {isLoading

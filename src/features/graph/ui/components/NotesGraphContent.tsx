@@ -1,16 +1,9 @@
-import {
-  useCreateNoteLinkMutation,
-  useDeleteNoteLinkMutation,
-} from 'app/store/api';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   useEdgesState,
   useNodesState,
   useReactFlow,
   type Node,
-  type Edge,
-  type NodeChange,
-  type Connection,
 } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
@@ -18,12 +11,11 @@ import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
 import { useGraphHistory } from '../../model/hooks/useGraphHistory';
-import {
-  MoveNodeCommand,
-  CreateEdgeCommand,
-  DeleteEdgeCommand,
-  MoveEdgeCommand,
-} from '../../model/commands';
+import { useGraphInitialization } from '../../model/hooks/useGraphInitialization';
+import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
+import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
+import { useGraphSelectionHandlers } from '../../model/hooks/useGraphSelectionHandlers';
+import { useGraphSyncHandlers } from '../../model/hooks/useGraphSyncHandlers';
 import NotesGraphView from './NotesGraphView';
 import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 
@@ -54,84 +46,49 @@ const NotesGraphContentComponent = ({
 
   const {
     screenToFlowPosition,
-    getEdges,
+    getEdges: _getEdges,
     getNodes: _getNodes,
     setNodes: rfSetNodes,
     setEdges: rfSetEdges,
   } = useReactFlow();
 
-  type NoteNodeData = { note?: Note; layoutColor?: string };
-  type NodeExt = Node<NoteNodeData> & {
-    selected?: boolean;
-    width?: number | null;
-    height?: number | null;
-  };
-
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
-  const [deleteNoteLink] = useDeleteNoteLinkMutation();
-  const [createNoteLink] = useCreateNoteLinkMutation();
-  const [isDraggingEdge, setIsDraggingEdge] = useState(false);
+  const [isNodeDragging, setIsNodeDragging] = useState(false);
 
   const graphHistory = useGraphHistory(100);
 
-  const isProcessingRef = useRef(false);
-  const prevLayoutIdRef = useRef(layoutId);
+  // ========== Инициализация графа ==========
+  const { isProcessingRef, isNodeDraggingRef } = useGraphInitialization({
+    layoutId,
+    initialNodes,
+    initialEdges,
+    nodes,
+    edges,
+    setNodes,
+    setEdges: setEdgesState,
+  });
 
-  useEffect(() => {
-    const nodesStructuralEqual = (() => {
-      if (nodes.length !== initialNodes.length) return false;
-      const map = new Map(nodes.map(n => [n.id, n]));
-      for (const inNode of initialNodes) {
-        const prev = map.get(inNode.id as string);
-        if (!prev) return false;
-        try {
-          const prevColor =
-            (prev.data as { layoutColor?: string } | undefined)?.layoutColor ??
-            null;
-          const newColor =
-            (inNode.data as { layoutColor?: string } | undefined)
-              ?.layoutColor ?? null;
-          if (prevColor !== newColor) return false;
-        } catch (_e) {}
-      }
-      return true;
-    })();
+  // ========== Обработчики Drag ==========
+  const {
+    handleNodeDragStart,
+    handleNodeDragStop,
+    handleNodesChange: _handleNodesChange,
+  } = useGraphDragHandlers({
+    nodes,
+    setNodes,
+    updatePositionCallback,
+    graphHistory,
+    isNodeDraggingRef,
+    isProcessingRef,
+    rfSetNodes,
+    onNodeDragStop: undefined,
+    setIsNodeDragging,
+    onNodesChange,
+    rfSetEdges,
+  });
 
-    const edgesAreEqual = (() => {
-      if (edges.length !== initialEdges.length) return false;
-      const map = new Map(edges.map(e => [e.id, e]));
-      for (const inEdge of initialEdges) {
-        const prev = map.get(inEdge.id as string);
-        if (!prev) return false;
-        if (prev.source !== inEdge.source || prev.target !== inEdge.target)
-          return false;
-        if ((prev as Edge).sourceHandle !== (inEdge as Edge).sourceHandle)
-          return false;
-        if ((prev as Edge).targetHandle !== (inEdge as Edge).targetHandle)
-          return false;
-      }
-      return true;
-    })();
-
-    if (prevLayoutIdRef.current !== layoutId) {
-      setNodes(initialNodes);
-      setEdgesState(initialEdges);
-      prevLayoutIdRef.current = layoutId;
-    } else {
-      if (
-        !isNodeDraggingRef.current &&
-        !isProcessingRef.current &&
-        !nodesStructuralEqual
-      ) {
-        setNodes(initialNodes);
-      }
-      if (!edgesAreEqual) {
-        setEdgesState(initialEdges);
-      }
-    }
-  }, [initialNodes, initialEdges, layoutId, setNodes, setEdgesState]);
-
+  // ========== Обработчики Connection ==========
   const {
     tempEdges,
     allEdges,
@@ -154,60 +111,24 @@ const NotesGraphContentComponent = ({
     },
   });
 
-  const onConnect = useCallback(
-    async (connection: Connection) => {
-      const source = connection.source ?? '';
-      const target = connection.target ?? '';
-      if (!source || !target) return;
-      const newEdge = {
-        id: `edge-${source}-${target}`,
-        source: source,
-        target: target,
-        type: 'multiColor' as const,
-        data: {
-          edgeColor: '#6b7280',
-        },
-      };
+  const {
+    onConnect,
+    handleEdgeDeleteDrop,
+    handleEdgeDeleteStart,
+    isDraggingEdge,
+  } = useGraphConnectionHandlers({
+    layoutId,
+    nodes,
+    edges,
+    setEdges: setEdgesState,
+    tempEdges,
+    setTempEdges,
+    graphHistory,
+    onConnectOriginal,
+    isProcessingRef,
+  });
 
-      const command = new CreateEdgeCommand(
-        newEdge,
-        async (edge: Edge) => {
-          await createNoteLink({
-            layoutId,
-            firstNoteId: edge.source,
-            secondNoteId: edge.target,
-          });
-          setEdgesState(prev => {
-            if (prev.some(e => e.id === edge.id)) return prev;
-            return [...prev, edge];
-          });
-        },
-        async (edgeId: string) => {
-          const edge = edges.find(e => e.id === edgeId);
-          if (!edge) return;
-          await deleteNoteLink({
-            layoutId,
-            firstNoteId: edge.source,
-            secondNoteId: edge.target,
-          });
-          setEdgesState(prev => prev.filter(e => e.id !== edgeId));
-        }
-      );
-
-      await graphHistory.executeCommand(command);
-      await onConnectOriginal(connection);
-    },
-    [
-      layoutId,
-      createNoteLink,
-      deleteNoteLink,
-      edges,
-      setEdgesState,
-      onConnectOriginal,
-      graphHistory,
-    ]
-  );
-
+  // Очистка temp edges при сохранении реальных
   useEffect(() => {
     if (tempEdges.length > 0) {
       setTempEdges(prev =>
@@ -216,155 +137,31 @@ const NotesGraphContentComponent = ({
     }
   }, [edges, tempEdges.length, setTempEdges]);
 
-  const handleEdgeDeleteDrop = useCallback(
-    async (
-      event: CustomEvent<{
-        edgeId: string;
-        source: string;
-        target: string;
-        newTarget?: string | null;
-      }>
-    ) => {
-      const { edgeId, source, target, newTarget } = event.detail;
-
-      if (isProcessingRef.current) return;
-
-      isProcessingRef.current = true;
-      setIsDraggingEdge(false);
-
-      try {
-        if (newTarget) {
-          const edge = edges.find(e => e.id === edgeId);
-          if (edge) {
-            const command = new MoveEdgeCommand(
-              edgeId,
-              source,
-              target,
-              newTarget,
-              async (
-                edgeId: string,
-                source: string,
-                oldTarget: string,
-                newTarget: string
-              ) => {
-                await deleteNoteLink({
-                  layoutId,
-                  firstNoteId: source,
-                  secondNoteId: oldTarget,
-                });
-                await createNoteLink({
-                  layoutId,
-                  firstNoteId: source,
-                  secondNoteId: newTarget,
-                });
-
-                setEdgesState(eds => {
-                  const filteredEdges = eds.filter(e => e.id !== edgeId);
-                  const edgesWithoutNewTarget = filteredEdges.filter(
-                    e => !(e.source === source && e.target === newTarget)
-                  );
-
-                  const sourceNode = nodes.find(n => n.id === source);
-                  const edgeColor =
-                    (sourceNode?.data as { layoutColor?: string })
-                      ?.layoutColor || '#6b7280';
-
-                  const newEdge = {
-                    id: `edge-${source}-${newTarget}`,
-                    source,
-                    target: newTarget,
-                    type: 'multiColor' as const,
-                    data: {
-                      edgeColor,
-                    },
-                  };
-
-                  return [...edgesWithoutNewTarget, newEdge];
-                });
-              }
-            );
-
-            await graphHistory.executeCommand(command);
-          }
-        } else {
-          const edge = edges.find(e => e.id === edgeId);
-          if (edge) {
-            const command = new DeleteEdgeCommand(
-              edge,
-              async (edgeId: string) => {
-                await deleteNoteLink({
-                  layoutId,
-                  firstNoteId: source,
-                  secondNoteId: target,
-                });
-                setEdgesState(eds => eds.filter(e => e.id !== edgeId));
-              },
-              async (edge: Edge) => {
-                await createNoteLink({
-                  layoutId,
-                  firstNoteId: edge.source,
-                  secondNoteId: edge.target,
-                });
-                setEdgesState(prev => {
-                  if (prev.some(e => e.id === edge.id)) return prev;
-                  return [...prev, edge];
-                });
-              }
-            );
-
-            await graphHistory.executeCommand(command);
-          }
-        }
-      } catch (_error) {
-      } finally {
-        isProcessingRef.current = false;
-      }
-    },
-    [
-      layoutId,
-      deleteNoteLink,
-      createNoteLink,
-      setEdgesState,
-      getEdges,
-      nodes,
-      edges,
-      graphHistory,
-    ]
-  );
-
-  const handleEdgeDeleteStart = useCallback(() => {
-    setIsDraggingEdge(true);
-  }, []);
-
+  // Регистрация edge delete events
   useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
 
-  const handleNoteOpen = useCallback(
-    (noteId: string) => {
-      const node = nodes.find(n => n.id === noteId) as
-        | Node<NoteNodeData>
-        | undefined;
-      const note = node ? (node.data as NoteNodeData)?.note : undefined;
-      if (note) {
-        onNoteOpen?.({ noteId, note });
-      }
-    },
-    [nodes, onNoteOpen]
-  );
+  // ========== Обработчики Selection ==========
+  const { handleNodeDoubleClick, handleNoteDrop, handleBoxSelect } =
+    useGraphSelectionHandlers({
+      nodes,
+      setNodes,
+      lastBoxSelectedIdsRef: { current: new Set() },
+      screenToFlowPosition,
+      handleAddNoteToGraph: undefined,
+    });
 
-  const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
+  // ========== Обработчики Sync ==========
+  const { handleNoteOpen } = useGraphSyncHandlers({
     nodes,
-    edges,
-    tempEdges,
-    selectedNodeId,
-    hoveredNodeId,
-    allEdges,
-    onNoteOpen: handleNoteOpen,
+    onNoteOpen,
+    isDraggingEdge,
   });
 
+  // ========== Обработчики из useGraphHandlers (для mouse events) ==========
   const {
-    handleAddNoteToGraph,
-    onNodeDragStop,
-    handleNodesChange,
+    handleAddNoteToGraph: handleAddNoteToGraphOrig,
+    onNodeDragStop: _onNodeDragStop,
+    handleNodesChange: _handleNodesChangeOrig,
     handleNodeClick,
     handleNodeMouseEnter,
     handleNodeMouseLeave,
@@ -377,37 +174,21 @@ const NotesGraphContentComponent = ({
     screenToFlowPosition,
   });
 
-  const isNodeDraggingRef = useRef(false);
-  const [isNodeDragging, setIsNodeDragging] = useState(false);
-  const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
-
-  const nodePositionsAtDragStartRef = useRef<
-    Map<string, { x: number; y: number }>
-  >(new Map());
-
-  const handleNodeDragStart = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
-      isNodeDraggingRef.current = true;
-      setIsNodeDragging(true);
-
-      const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
-      const nodesToSave = selectedNodes.some(n => n.id === node.id)
-        ? selectedNodes
-        : [node];
-
-      nodePositionsAtDragStartRef.current = new Map(
-        nodesToSave.map(n => [n.id, { ...n.position }])
-      );
+  // Обработчик добавления ноты (из useGraphHandlers)
+  const handleAddNoteToGraph = useCallback(
+    (note: Note, dropPosition?: { x: number; y: number }) => {
+      handleAddNoteToGraphOrig?.(note, dropPosition);
     },
-    [nodes]
+    [handleAddNoteToGraphOrig]
   );
 
+  // ========== Обёрнутые обработчики для мыши ==========
   const handleNodeMouseEnterWrapped = useCallback(
     (e: React.MouseEvent, node: Node) => {
       if (isNodeDraggingRef.current) return;
       handleNodeMouseEnter(e, node);
     },
-    [handleNodeMouseEnter]
+    [handleNodeMouseEnter, isNodeDraggingRef]
   );
 
   const handleNodeMouseLeaveWrapped = useCallback(
@@ -415,347 +196,19 @@ const NotesGraphContentComponent = ({
       if (isNodeDraggingRef.current) return;
       handleNodeMouseLeave(e, node);
     },
-    [handleNodeMouseLeave]
+    [handleNodeMouseLeave, isNodeDraggingRef]
   );
 
-  const handleNodeDragStopMulti = useCallback(
-    async (_event: React.MouseEvent, node: Node) => {
-      if (!node) {
-        try {
-          isNodeDraggingRef.current = false;
-          setIsNodeDragging(false);
-        } catch (_e) {}
-        return;
-      }
-
-      try {
-        const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
-        const isMultiSelect =
-          selectedNodes.length > 1 && selectedNodes.some(n => n.id === node.id);
-
-        const movedNodes = isMultiSelect ? selectedNodes : [node];
-        isProcessingRef.current = true;
-
-        for (const movedNode of movedNodes) {
-          const startPos = nodePositionsAtDragStartRef.current.get(
-            movedNode.id
-          );
-          const currentNode = nodes.find(n => n.id === movedNode.id);
-          const endPos = currentNode?.position;
-
-          if (
-            startPos &&
-            endPos &&
-            (startPos.x !== endPos.x || startPos.y !== endPos.y)
-          ) {
-            const command = new MoveNodeCommand(
-              movedNode.id,
-              startPos,
-              endPos,
-              (nodeId: string, position: { x: number; y: number }) => {
-                setNodes(prev => {
-                  const updated = prev.map(n =>
-                    n.id === nodeId ? { ...n, position } : n
-                  );
-                  return updated;
-                });
-                try {
-                  rfSetNodes(prev =>
-                    prev.map(n => (n.id === nodeId ? { ...n, position } : n))
-                  );
-                } catch (_e) {}
-                try {
-                  const change = {
-                    id: nodeId,
-                    type: 'position',
-                    position,
-                    dragging: false,
-                  } as unknown as NodeChange;
-                  onNodesChange([change]);
-                } catch (_e) {}
-                try {
-                  rfSetEdges(prev => prev.map(e => ({ ...e })));
-                } catch (_e) {}
-                updatePositionCallback(nodeId, position.x, position.y);
-              }
-            );
-            await graphHistory.executeCommand(command);
-            updatePositionCallback(movedNode.id, endPos.x, endPos.y);
-          }
-        }
-      } catch (_e) {
-        onNodeDragStop(_event, node);
-      } finally {
-        isProcessingRef.current = false;
-      }
-
-      try {
-        isNodeDraggingRef.current = false;
-        setIsNodeDragging(false);
-      } catch (_e) {}
-    },
-    [nodes, onNodeDragStop, updatePositionCallback, graphHistory]
-  );
-
-  type LocalNodeChange = {
-    id?: string;
-    type?: 'position' | 'select' | string;
-    position?: { x: number; y: number } | null;
-    selected?: boolean;
-  };
-
-  const handleNodesChangeMulti = useCallback(
-    (changes: LocalNodeChange[]) => {
-      const posChanges = changes.filter(
-        ch => ch.type === 'position' && ch.position
-      );
-      if (posChanges.length === 0) {
-        handleNodesChange(changes as unknown as NodeChange[]);
-        return;
-      }
-
-      setNodes(prev => {
-        const prevMap = new Map(prev.map(n => [n.id, n] as [string, typeof n]));
-        const updated = prev.map(n => ({ ...n }));
-
-        const mainChange = posChanges[0] as LocalNodeChange;
-        const movedId = mainChange.id as string;
-        const newPos = mainChange.position as { x: number; y: number };
-        const movedPrev = prevMap.get(movedId);
-        if (!movedPrev) {
-          changes.forEach(ch => {
-            if (ch.id) {
-              const idx = updated.findIndex(u => u.id === ch.id);
-              if (idx !== -1) {
-                if (ch.type === 'position' && ch.position) {
-                  updated[idx].position = ch.position as {
-                    x: number;
-                    y: number;
-                  };
-                }
-                if (ch.type === 'select' && typeof ch.selected === 'boolean') {
-                  const changingId = ch.id as string;
-                  const requested = ch.selected as boolean;
-                  if (
-                    !requested &&
-                    lastBoxSelectedIdsRef.current.has(changingId)
-                  ) {
-                    (updated[idx] as NodeExt).selected = true;
-                  } else {
-                    (updated[idx] as NodeExt).selected = requested;
-                  }
-                }
-              }
-            }
-          });
-
-          return updated;
-        }
-
-        const dx = newPos.x - (movedPrev.position?.x ?? 0);
-        const dy = newPos.y - (movedPrev.position?.y ?? 0);
-
-        const selectedIds = new Set(
-          prev
-            .filter((n: Node & { selected?: boolean }) => n.selected)
-            .map(n => n.id)
-        );
-
-        if (selectedIds.size > 1 && selectedIds.has(movedId)) {
-          return prev.map(n =>
-            selectedIds.has(n.id)
-              ? {
-                  ...n,
-                  position: { x: n.position.x + dx, y: n.position.y + dy },
-                }
-              : n
-          );
-        }
-
-        changes.forEach(ch => {
-          if (ch.id) {
-            const idx = updated.findIndex(u => u.id === ch.id);
-            if (idx !== -1) {
-              if (ch.type === 'position' && ch.position) {
-                updated[idx].position = ch.position as { x: number; y: number };
-              }
-              if (ch.type === 'select' && typeof ch.selected === 'boolean') {
-                const changingId = ch.id as string;
-                const requested = ch.selected as boolean;
-                if (
-                  !requested &&
-                  lastBoxSelectedIdsRef.current.has(changingId)
-                ) {
-                  (updated[idx] as NodeExt).selected = true;
-                } else {
-                  (updated[idx] as NodeExt).selected = requested;
-                }
-              }
-            }
-          }
-        });
-
-        return updated;
-      });
-    },
-    [setNodes, handleNodesChange]
-  );
-
-  const handleNodeDoubleClick = useCallback(
-    (event: React.MouseEvent, node?: Node | null) => {
-      event.stopPropagation();
-      if (!node?.id) return;
-      node.data?.onNoteClick?.(node.id);
-    },
-    []
-  );
-
-  const handleNoteDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-      const noteData = event.dataTransfer.getData('application/reactflow');
-      if (noteData) {
-        try {
-          const note = JSON.parse(noteData);
-          const toFlowCoords = (clientX: number, clientY: number) => {
-            try {
-              const wrapper = document.querySelector(
-                '.react-flow'
-              ) as HTMLElement | null;
-              const viewport = document.querySelector(
-                '.react-flow__viewport'
-              ) as HTMLElement | null;
-              if (!wrapper || !viewport) {
-                return screenToFlowPosition({ x: clientX, y: clientY });
-              }
-
-              const wrapperRect = wrapper.getBoundingClientRect();
-              const style = window.getComputedStyle(viewport);
-              const transform = style.transform || '';
-
-              let scale = 1;
-              let tx = 0;
-              let ty = 0;
-
-              if (transform && transform !== 'none') {
-                const m = transform.match(/matrix\(([^)]+)\)/);
-                if (m && m[1]) {
-                  const parts = m[1].split(',').map(s => parseFloat(s.trim()));
-                  if (parts.length >= 6) {
-                    scale = parts[0];
-                    tx = parts[4];
-                    ty = parts[5];
-                  }
-                }
-              }
-
-              const localX = clientX - wrapperRect.left;
-              const localY = clientY - wrapperRect.top;
-
-              const flowX = (localX - tx) / scale;
-              const flowY = (localY - ty) / scale;
-
-              return { x: flowX, y: flowY };
-            } catch (_e) {
-              return screenToFlowPosition({ x: clientX, y: clientY });
-            }
-          };
-
-          const dropPosition = toFlowCoords(event.clientX, event.clientY);
-          handleAddNoteToGraph(note, dropPosition);
-        } catch (_error) {}
-      }
-    },
-    [handleAddNoteToGraph, screenToFlowPosition]
-  );
-
-  const handleBoxSelect = useCallback(
-    (rect: { x1: number; y1: number; x2: number; y2: number }) => {
-      try {
-        const toFlowCoords = (clientX: number, clientY: number) => {
-          try {
-            const wrapper = document.querySelector(
-              '.react-flow'
-            ) as HTMLElement | null;
-            const viewport = document.querySelector(
-              '.react-flow__viewport'
-            ) as HTMLElement | null;
-            if (!wrapper || !viewport) {
-              return screenToFlowPosition({ x: clientX, y: clientY });
-            }
-
-            const wrapperRect = wrapper.getBoundingClientRect();
-            const style = window.getComputedStyle(viewport);
-            const transform = style.transform || '';
-
-            let scale = 1;
-            let tx = 0;
-            let ty = 0;
-
-            if (transform && transform !== 'none') {
-              const m = transform.match(/matrix\(([^)]+)\)/);
-              if (m && m[1]) {
-                const parts = m[1].split(',').map(s => parseFloat(s.trim()));
-                if (parts.length >= 6) {
-                  scale = parts[0];
-                  tx = parts[4];
-                  ty = parts[5];
-                }
-              }
-            }
-
-            const localX = clientX - wrapperRect.left;
-            const localY = clientY - wrapperRect.top;
-
-            const flowX = (localX - tx) / scale;
-            const flowY = (localY - ty) / scale;
-
-            return { x: flowX, y: flowY };
-          } catch (_e) {
-            return screenToFlowPosition({ x: clientX, y: clientY });
-          }
-        };
-
-        const topLeft = toFlowCoords(rect.x1, rect.y1);
-        const bottomRight = toFlowCoords(rect.x2, rect.y2);
-
-        const fx1 = Math.min(topLeft.x, bottomRight.x);
-        const fx2 = Math.max(topLeft.x, bottomRight.x);
-        const fy1 = Math.min(topLeft.y, bottomRight.y);
-        const fy2 = Math.max(topLeft.y, bottomRight.y);
-
-        const nodesToSelect = nodes
-          .filter(n => {
-            const nx = n.position?.x ?? 0;
-            const ny = n.position?.y ?? 0;
-            const width = (n?.width as number) || 160;
-            const height = (n?.height as number) || 80;
-            const cx = nx + width / 2;
-            const cy = ny + height / 2;
-            return cx >= fx1 && cx <= fx2 && cy >= fy1 && cy <= fy2;
-          })
-          .map(n => n.id);
-
-        if (nodesToSelect.length === 0) return;
-
-        setNodes(prev => {
-          const res = prev.map(n => ({
-            ...n,
-            selected: nodesToSelect.includes(n.id),
-          }));
-          lastBoxSelectedIdsRef.current = new Set(nodesToSelect);
-          setTimeout(() => {
-            setNodes(curr =>
-              curr.map(n => ({ ...n, selected: nodesToSelect.includes(n.id) }))
-            );
-            setTimeout(() => lastBoxSelectedIdsRef.current.clear(), 300);
-          }, 50);
-          return res;
-        });
-      } catch (_e) {}
-    },
-    [nodes, screenToFlowPosition, setNodes]
-  );
+  // ========== Обработчики Selection для graph ==========
+  const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
+    nodes,
+    edges,
+    tempEdges,
+    selectedNodeId,
+    hoveredNodeId,
+    allEdges,
+    onNoteOpen: handleNoteOpen,
+  });
 
   return (
     <NotesGraphView
@@ -765,13 +218,13 @@ const NotesGraphContentComponent = ({
       edges={edges}
       nodesWithSelection={nodesWithSelection}
       edgesWithSelection={edgesWithSelection}
-      onNodesChange={handleNodesChangeMulti}
+      onNodesChange={_handleNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
       onNodeDragStart={handleNodeDragStart}
-      onNodeDragStop={handleNodeDragStopMulti}
+      onNodeDragStop={handleNodeDragStop}
       onNodeClick={handleNodeClick}
       onNodeMouseEnter={handleNodeMouseEnterWrapped}
       onNodeMouseLeave={handleNodeMouseLeaveWrapped}

@@ -1,6 +1,8 @@
 {
   "welcome": "Welcome to our application!",
   "description": "This is a sample application with internationalization",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
   "buttons": {
     "save": "Save",
     "cancel": "Cancel",

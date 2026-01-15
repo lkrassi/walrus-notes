@@ -1,5 +1,5 @@
 import { useCreateNoteMutation } from 'app/store/api';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Textarea } from 'shared';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
@@ -22,6 +22,11 @@ export const CreateNoteForm = ({
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [createNote, { isLoading }] = useCreateNoteMutation();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +63,7 @@ export const CreateNoteForm = ({
           {t('notes:noteTitle')}
         </label>
         <Input
+          ref={inputRef}
           id='note-title'
           type='text'
           value={title}
@@ -65,7 +71,6 @@ export const CreateNoteForm = ({
           placeholder={t('notes:noteTitlePlaceholder')}
           className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
-          autoFocus
         />
       </div>
 

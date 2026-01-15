@@ -18,6 +18,60 @@ interface MarkdownPreviewProps {
   showRelated?: boolean;
 }
 
+// Компонент для безопасного рендера ссылок
+const SafeLink: React.FC<{
+  href?: string;
+  title?: string;
+  children?: React.ReactNode;
+}> = ({ href = '', title, children }) => {
+  // Проверяем, что это безопасная URL
+  if (
+    !href.startsWith('http://') &&
+    !href.startsWith('https://') &&
+    !href.startsWith('mailto:') &&
+    !href.startsWith('#')
+  ) {
+    return <span>{children}</span>;
+  }
+  return (
+    <a
+      href={href}
+      title={title}
+      rel='noopener noreferrer'
+      target={href.startsWith('http') ? '_blank' : undefined}
+    >
+      {children}
+    </a>
+  );
+};
+
+const SafeImage: React.FC<{
+  src?: string;
+  alt?: string;
+  title?: string;
+}> = ({ src = '', alt, title }) => {
+  if (
+    !src.startsWith('http://') &&
+    !src.startsWith('https://') &&
+    !src.startsWith('data:')
+  ) {
+    return <span className='text-red-500'>[Unsafe image URL: {alt}]</span>;
+  }
+  return <img src={src} alt={alt} title={title} loading='lazy' />;
+};
+
+const PreBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = props => {
+  const { children } = props;
+  const child = Array.isArray(children) ? children[0] : children;
+  if (child && child.props) {
+    const className = child.props.className;
+    const code = child.props.children;
+    return <CodeHighlighter className={className}>{code}</CodeHighlighter>;
+  }
+
+  return <pre>{children}</pre>;
+};
+
 const CodeBlock = ({
   inline,
   className,
@@ -42,25 +96,14 @@ const CodeBlock = ({
   );
 };
 
-const PreBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = props => {
-  const { children } = props;
-  const child = Array.isArray(children) ? children[0] : children;
-  if (child && child.props) {
-    const className = child.props.className;
-    const code = child.props.children;
-    return <CodeHighlighter className={className}>{code}</CodeHighlighter>;
-  }
-
-  return <pre>{children}</pre>;
-};
-
 export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
   ({ content, className, note, layoutId, showRelated = true }, ref) => {
     const dispatch = useAppDispatch();
     const effectiveLayoutId = layoutId || note?.layoutId || '';
     const linkedOutIds =
       note?.linkedWithOut ??
-      ((note as unknown as { linkedWith?: string[] })?.linkedWith ?? []);
+      (note as unknown as { linkedWith?: string[] })?.linkedWith ??
+      [];
     const linkedInIds = note?.linkedWithIn ?? [];
     return (
       <div
@@ -120,7 +163,43 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            components={{ code: CodeBlock, pre: PreBlock }}
+            components={{
+              code: CodeBlock,
+              pre: PreBlock,
+              a: SafeLink,
+              img: SafeImage,
+            }}
+            skipHtml={true}
+            allowedElements={[
+              'p',
+              'br',
+              'strong',
+              'em',
+              'u',
+              'h1',
+              'h2',
+              'h3',
+              'h4',
+              'h5',
+              'h6',
+              'blockquote',
+              'code',
+              'pre',
+              'hr',
+              'ul',
+              'ol',
+              'li',
+              'a',
+              'img',
+              'table',
+              'thead',
+              'tbody',
+              'tr',
+              'th',
+              'td',
+              'del',
+              'input',
+            ]}
           >
             {content}
           </ReactMarkdown>

@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import cn from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 export const ChangeProfilePictureForm: React.FC = () => {
@@ -11,7 +12,8 @@ export const ChangeProfilePictureForm: React.FC = () => {
   const { showSuccess, showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [changeProfilePicture] = useChangeProfilePictureMutation();
-  const userId = localStorage.getItem('userId');
+  const { profile } = useAppSelector(state => state.user);
+  const userId = profile?.id || '';
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

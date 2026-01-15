@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import cn from 'shared/lib/cn';
 import { Button, Input } from 'shared';
 import { useLocalization } from 'widgets';
@@ -14,6 +14,11 @@ const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
   const { t } = useLocalization();
   const [value, setValue] = useState(title);
   const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,12 +38,12 @@ const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
           {t('notes:editTitleLabel') || 'Edit title'}
         </label>
         <Input
+          ref={inputRef}
           type='text'
           value={value}
           onChange={e => setValue(e.target.value)}
           className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
-          autoFocus
         />
       </div>
 

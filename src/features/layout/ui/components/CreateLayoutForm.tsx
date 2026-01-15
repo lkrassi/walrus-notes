@@ -1,5 +1,5 @@
 import { useCreateLayoutMutation } from 'app/store/api';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Input } from 'shared';
 import cn from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
@@ -20,6 +20,11 @@ export const CreateLayoutForm = ({
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [createLayout, { isLoading }] = useCreateLayoutMutation();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +59,7 @@ export const CreateLayoutForm = ({
           {t('layout:layoutTitle')}
         </label>
         <Input
+          ref={inputRef}
           id='layout-title'
           type='text'
           value={title}
@@ -61,7 +67,6 @@ export const CreateLayoutForm = ({
           placeholder={t('layout:layoutTitlePlaceholder')}
           className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
-          autoFocus
         />
       </div>
 

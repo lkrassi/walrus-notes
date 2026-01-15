@@ -50,10 +50,7 @@ export const SortableTab = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex max-w-[200px] min-w-[120px] cursor-grab items-center px-4 py-2 whitespace-nowrap select-none',
-        isActive
-          ? 'z-10 rounded-t-lg text-white shadow-md'
-          : 'text-text dark:text-dark-text mx-0.5 rounded-t-lg hover:bg-gray-100 dark:hover:bg-gray-700/50'
+        'relative flex max-w-[200px] min-w-[120px] cursor-grab items-center px-4 py-2 whitespace-nowrap select-none'
       )}
       title={tab.item.title}
       animate={{
@@ -72,7 +69,10 @@ export const SortableTab = ({
       )}
       <div
         className={cn(
-          'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden'
+          'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden',
+          isActive
+            ? 'text-white dark:text-dark-text'
+            : 'text-text dark:text-dark-text'
         )}
         onClick={handleContentClick}
         onMouseDown={handleMiddleClick}

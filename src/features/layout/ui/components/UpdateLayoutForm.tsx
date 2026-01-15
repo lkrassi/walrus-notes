@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useUpdateLayoutMutation } from 'app/store/api';
 import { Button } from 'shared';
 import cn from 'shared/lib/cn';
@@ -27,8 +27,13 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [updateLayout, { isLoading }] = useUpdateLayoutMutation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(layoutTitle);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
   const normalizeHex = (c?: string) => {
     if (!c) return undefined;
     const s = c.trim();
@@ -65,6 +70,7 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
           {t('layout:layoutTitle')}
         </label>
         <Input
+          ref={inputRef}
           id='layout-title'
           type='text'
           value={title}
@@ -72,7 +78,6 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
           placeholder={t('layout:layoutTitlePlaceholder')}
           className={cn('form-input', 'rounded-md')}
           disabled={isLoading}
-          autoFocus
         />
       </div>
 

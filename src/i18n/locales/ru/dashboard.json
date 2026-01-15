@@ -3,5 +3,20 @@
   "selectItemDescription": "Выберите элемент в файловом дереве слева для просмотра его содержимого",
   "noteLoadError": "Ошибка загрузки заметки",
   "selectNoteHint": "Выберите заметку для просмотра содержимого папки.",
-  "selectNoteFromFolder": "Выбери заметку из папки"
+  "selectNoteFromFolder": "Выбери заметку из папки",
+  "whatToCreate": "Что создать?",
+  "createFolder": "Создать папку",
+  "createFolderDescription": "Новая папка для организации заметок",
+  "createNote": "Создать заметку",
+  "createNoteDescription": "Новая заметка в выбранной папке",
+  "selectFolder": "Выберите папку",
+  "noFoldersAvailable": "Нет доступных папок",
+  "createFolderFirst": "Сначала создайте папку",
+  "noFolders": "Нет папок",
+  "createFolderDescription": "Создайте свою первую папку, чтобы начать организовывать заметки",
+  "myFolders": "Мои папки",
+  "folder": "папка",
+  "folders": "папок",
+  "note": "заметка",
+  "notes": "заметок"
 }

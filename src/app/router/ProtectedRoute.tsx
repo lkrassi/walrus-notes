@@ -1,13 +1,14 @@
 import { Navigate } from 'react-router-dom';
-import { checkAuth } from 'shared/api/checkAuth';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { AppRoutes } from './config';
 
 type ProtectedRouteProps = {
   children: React.ReactElement;
-}
+};
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const isAuthenticated = checkAuth();
+  const { accessToken, refreshToken } = useAppSelector(state => state.user);
+  const isAuthenticated = !!(accessToken && refreshToken);
 
   return isAuthenticated ? children : <Navigate to={AppRoutes.AUTH} replace />;
 };

@@ -17,7 +17,7 @@ export const DashBoard = () => {
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
-
+  
   const { updateUrlForTab } = useDashboardNavigation({
     openTabs,
   });

@@ -107,3 +107,8 @@
 .section-title {
   @apply text-text dark:text-dark-text mb-1 text-lg font-semibold max-sm:text-base max-sm:font-medium;
 }
+
+.settings-action :is(button, .MuiButton-root) {
+  min-height: 2.5rem;
+  min-width: 7.5rem;
+}

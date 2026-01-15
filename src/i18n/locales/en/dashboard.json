@@ -3,5 +3,20 @@
   "selectItemDescription": "Select an item in the file tree on the left to view its contents",
   "noteLoadError": "Error loading note",
   "selectNoteHint": "Select a note to view layout folder contents.",
-  "selectNoteFromFolder": "Select a note from the folder"
+  "selectNoteFromFolder": "Select a note from the folder",
+  "whatToCreate": "What to create?",
+  "createFolder": "Create folder",
+  "createFolderDescription": "New folder to organize notes",
+  "createNote": "Create note",
+  "createNoteDescription": "New note in selected folder",
+  "selectFolder": "Select folder",
+  "noFoldersAvailable": "No folders available",
+  "createFolderFirst": "Create a folder first",
+  "noFolders": "No folders",
+  "createFolderDescription": "Create your first folder to start organizing notes",
+  "myFolders": "My folders",
+  "folder": "folder",
+  "folders": "folders",
+  "note": "note",
+  "notes": "notes"
 }

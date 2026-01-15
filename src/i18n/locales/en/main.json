@@ -21,7 +21,7 @@
   },
   "demo": {
     "title": "See it in action",
-    "subtitle": "Video demonstration of the main features of our note management application",
+    "subtitle": "Video demonstration of the main features of our application",
     "videoNotSupported": "Your browser does not support video playback"
   }
 }

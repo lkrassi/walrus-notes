@@ -50,7 +50,7 @@ const PrivateHeaderComponent = () => {
             <img
               src={enabled ? logo2 : logo}
               alt={t('common:header.logoAlt')}
-              className={cn('h-15', 'w-15', 'md:h-25', 'md:w-25')}
+          className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
               loading='lazy'
             />
             <div
@@ -60,10 +60,6 @@ const PrivateHeaderComponent = () => {
                 className={cn(
                   'text-text',
                   'dark:text-dark-text',
-                  'text-base',
-                  'font-bold',
-                  'sm:text-xl',
-                  'md:text-2xl'
                 )}
               >
                 Walrus
@@ -71,10 +67,6 @@ const PrivateHeaderComponent = () => {
               <h1
                 className={cn(
                   'text-primary',
-                  'text-base',
-                  'font-bold',
-                  'sm:text-xl',
-                  'md:text-2xl'
                 )}
               >
                 Notes

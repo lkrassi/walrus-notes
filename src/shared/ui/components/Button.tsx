@@ -1,4 +1,5 @@
 import React, { forwardRef, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MuiButton from '@mui/material/Button';
 import { alpha, styled } from '@mui/material/styles';
 
@@ -85,7 +86,7 @@ const StyledButton = styled(MuiButton, {
     transform: 'translateY(0)',
     borderRadius: '0.375rem',
     textTransform: 'none',
-    padding: '8px 24px',
+    padding: '4px 16px',
     ...getVariantStyles(),
   };
 });
@@ -106,13 +107,20 @@ export const Button = memo(
       }: ButtonProps,
       ref
     ) => {
+      const navigate = useNavigate();
+
       const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (disabled) return;
         if (onClick) {
           onClick(e);
         }
         if (to) {
-          window.location.href = to;
+          const isExternal = /^(https?:\/\/|mailto:|tel:)/.test(to);
+          if (isExternal) {
+            window.location.href = to;
+          } else {
+            navigate(to);
+          }
         }
       };
 

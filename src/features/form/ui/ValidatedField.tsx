@@ -46,7 +46,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
   inputMode,
   enterKeyHint,
   children,
-  autoFocus
+  autoFocus,
 }) => {
   return (
     <div className={cn('flex', 'flex-col', 'gap-3', className)}>
@@ -108,7 +108,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
       <Field name={name}>
         {({ form }: FieldProps) => {
           const showError = Boolean(
-            (form.touched && (form.touched as any)[name]) ||
+            (form.touched && (form.touched as Record<string, boolean>)[name]) ||
               form.submitCount > 0
           );
 

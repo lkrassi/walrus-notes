@@ -43,33 +43,12 @@ const PublicHeaderComponent = () => {
         <img
           src={enabled ? logo2 : logo}
           alt={t('common:header.logoAlt')}
-          className={cn('h-25', 'w-25')}
+          className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
           loading='lazy'
         />
-        <div className={cn('flex', 'items-baseline', 'gap-1')}>
-          <h1
-            className={cn(
-              'text-text',
-              'dark:text-dark-text',
-              'text-base',
-              'font-bold',
-              'sm:text-xl',
-              'md:text-2xl'
-            )}
-          >
-            Walrus
-          </h1>
-          <h1
-            className={cn(
-              'text-primary',
-              'text-base',
-              'font-bold',
-              'sm:text-xl',
-              'md:text-2xl'
-            )}
-          >
-            Notes
-          </h1>
+        <div className={cn('flex', 'items-baseline', 'gap-1', 'max-md:hidden')}>
+          <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
+          <h1 className={cn('text-primary')}>Notes</h1>
         </div>
       </Link>
       <div className={cn('flex', 'gap-x-2')}>

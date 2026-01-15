@@ -12,18 +12,17 @@ import { PublicHeader } from 'widgets/ui';
 export const Auth = () => {
   const [activeForm, setActiveForm] = useState<'login' | 'register'>('login');
   const { t } = useLocalization();
-
   const handleSwitchToLogin = useCallback(() => {
     setActiveForm('login');
   }, []);
 
   const handleSwitchToRegister = useCallback(() => {
     setActiveForm('register');
-  }, []);
+  }, []
 
   return (
     <main>
-      <PublicHeader />
+       <PublicHeader />
 
       <div
         className={cn(

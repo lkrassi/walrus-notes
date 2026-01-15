@@ -9,6 +9,8 @@ import {
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
+import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
+import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import cn from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
@@ -17,7 +19,11 @@ import type { TabType } from 'widgets/model/utils/tabUtils';
 import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { FileText } from 'lucide-react';
+import { CreateChoiceModal } from './CreateChoiceModal';
+import { FolderSelectModal } from './FolderSelectModal';
+import { EmptyDashboardFallback } from './EmptyDashboardFallback';
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
@@ -28,6 +34,7 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { openTabs } = useTabs();
+  const { openModal } = useModalContext();
 
   const isMobile = useIsMobile();
 
@@ -62,6 +69,68 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       dispatch(openTab({ ...item, openedFromSidebar: false }));
       dispatch(switchTab(tabId));
     });
+  };
+
+  const handleCreateFolder = () => {
+    openModal(<CreateLayoutForm />, {
+      title: t('layout:createLayout') || 'Создать папку',
+      size: 'md',
+      showCloseButton: true,
+    });
+  };
+
+  const handleStartNoteCreation = () => {
+    openModal(<FolderSelectModal onFolderSelected={handleFolderSelected} />, {
+      title: '',
+      size: 'md',
+      showCloseButton: true,
+    });
+  };
+
+  const handleFolderSelected = (layoutId: string) => {
+    openModal(<CreateNoteForm layoutId={layoutId} />, {
+      title: t('notes:createNote') || 'Создать заметку',
+      size: 'md',
+      showCloseButton: true,
+    });
+  };
+
+  const handleFolderClickFromGallery = (layoutId: string, title: string) => {
+    const tabId = createTabId('layout', layoutId);
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+
+    if (existingTab) {
+      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+      return;
+    }
+
+    confirmIfUnsaved(() => {
+      dispatch(
+        openTab({
+          id: layoutId,
+          type: 'layout',
+          title: title,
+          color: '',
+          openedFromSidebar: false,
+          isMain: false,
+        } as FileTreeItem)
+      );
+      dispatch(switchTab(tabId));
+    });
+  };
+
+  const handleOnCreateClick = () => {
+    openModal(
+      <CreateChoiceModal
+        onCreateFolder={handleCreateFolder}
+        onCreateNote={handleStartNoteCreation}
+      />,
+      {
+        title: '',
+        size: 'md',
+        showCloseButton: true,
+      }
+    );
   };
 
   const confirmIfUnsaved = (action: () => void) => {
@@ -117,7 +186,12 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
   const renderContent = () => {
     if (!activeTab) {
-      return (
+      return isMobile ? (
+        <EmptyDashboardFallback
+          onFolderClick={handleFolderClickFromGallery}
+          onCreateClick={handleOnCreateClick}
+        />
+      ) : (
         <div
           className={cn(
             'bg-bg',
@@ -282,7 +356,16 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   };
 
   return (
-    <main className={cn('flex-col', 'flex', 'min-h-0', 'min-w-0', 'flex-1')}>
+    <main
+      className={cn(
+        'flex-col',
+        'flex',
+        'min-h-0',
+        'min-w-0',
+        'flex-1',
+        'relative'
+      )}
+    >
       {openTabs.length > 0 && (
         <Tabs
           tabs={openTabs}

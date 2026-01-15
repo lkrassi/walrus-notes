@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { normalizeMessage } from 'shared/model/utils/normalizeMessage';
 
 export type Notification = {
   id: string;
@@ -9,6 +10,21 @@ export type Notification = {
   message: string;
   duration?: number;
 };
+
+type NotificationLogEntry = {
+  action: string;
+  origin: string;
+  message: string;
+  id?: string;
+  existing?: unknown[];
+  time: number;
+};
+
+declare global {
+  interface Window {
+    __NOTIFICATION_LOG__?: NotificationLogEntry[];
+  }
+}
 
 type NotificationsState = {
   notifications: Notification[];
@@ -28,17 +44,10 @@ export const notificationsSlice = createSlice({
     ) => {
       const payload = action.payload;
 
-      const normalize = (s: string) =>
-        s
-          .replace(/\s+/g, ' ')
-          .replace(/request error[:\s-]*/i, '')
-          .trim()
-          .toLowerCase();
-
-      const newMessage = normalize(String(payload.message || ''));
+      const newMessage = normalizeMessage(String(payload.message || ''));
 
       const duplicate = state.notifications.some(n => {
-        const existing = normalize(String(n.message || ''));
+        const existing = normalizeMessage(String(n.message || ''));
         return (
           existing === newMessage ||
           existing.includes(newMessage) ||
@@ -47,13 +56,12 @@ export const notificationsSlice = createSlice({
       });
 
       try {
-        (window as any).__NOTIFICATION_LOG__ =
-          (window as any).__NOTIFICATION_LOG__ || [];
+        window.__NOTIFICATION_LOG__ = window.__NOTIFICATION_LOG__ || [];
       } catch {}
 
       if (duplicate) {
         try {
-          (window as any).__NOTIFICATION_LOG__.push({
+          window.__NOTIFICATION_LOG__?.push({
             action: 'duplicate_prevented',
             origin: payload.origin || 'unknown',
             message: String(payload.message || ''),
@@ -69,7 +77,7 @@ export const notificationsSlice = createSlice({
       state.notifications.push({ id, ...payload });
 
       try {
-        (window as any).__NOTIFICATION_LOG__.push({
+        window.__NOTIFICATION_LOG__?.push({
           action: 'added',
           origin: payload.origin || 'unknown',
           message: String(payload.message || ''),

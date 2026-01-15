@@ -7,10 +7,22 @@
   left: 0;
   right: 0;
   top: 6px;
-  padding: 0 20px;
+  padding: 0 80px;
   pointer-events: none;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .lightrope {
+    padding: 0 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lightrope {
+    padding: 0 50px;
+  }
 }
 
 .lightrope li {

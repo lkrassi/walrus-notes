@@ -1,15 +1,15 @@
 import { useGetUserProfileQuery } from 'app/store/api';
 import { setUserProfile } from 'app/store/slices/userSlice';
 import { useEffect } from 'react';
-import { checkAuth } from 'shared/api/checkAuth';
-import { useAppDispatch } from 'widgets/hooks/redux';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { PrivateHeader } from 'widgets/ui';
 
 export const DashboardHeader = () => {
   const dispatch = useAppDispatch();
+  const { profile } = useAppSelector(state => state.user);
 
-  const userId = checkAuth() ? localStorage.getItem('userId') : null;
-  const { data: userProfileResponse } = useGetUserProfileQuery(userId || '', {
+  const userId = profile?.id || '';
+  const { data: userProfileResponse } = useGetUserProfileQuery(userId, {
     skip: !userId,
   });
 

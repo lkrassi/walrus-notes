@@ -6,25 +6,45 @@ import {
 } from 'app/store/slices/notificationsSlice';
 import { useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { normalizeMessage } from 'shared/model/utils/normalizeMessage';
+
 export const useNotifications = () => {
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(
     state => state.notifications.notifications
   );
 
-  const lastMessagesRef = useRef<Set<string>>(new Set());
+  const lastMessagesRef = useRef<Map<string, number>>(new Map());
+  const MAX_CACHED_MESSAGES = 500;
+  const CACHE_TTL = 5 * 60 * 1000; // 5 минут
 
-  const normalizeMessage = (msg: string) =>
-    msg
-      .replace(/\s+/g, ' ')
-      .replace(/request error[:\s-]*/i, '')
-      .trim()
-      .toLowerCase();
+  // Очистка старых кешированных сообщений
+  const cleanupOldMessages = useCallback(() => {
+    const now = Date.now();
+    for (const [key, timestamp] of lastMessagesRef.current.entries()) {
+      if (now - timestamp > CACHE_TTL) {
+        lastMessagesRef.current.delete(key);
+      }
+    }
+
+    // Если кеш все еще слишком большой, удаляем самые старые
+    if (lastMessagesRef.current.size > MAX_CACHED_MESSAGES) {
+      const entriesToDelete =
+        lastMessagesRef.current.size - MAX_CACHED_MESSAGES;
+      let deleted = 0;
+      for (const key of lastMessagesRef.current.keys()) {
+        if (deleted >= entriesToDelete) break;
+        lastMessagesRef.current.delete(key);
+        deleted++;
+      }
+    }
+  }, []);
 
   const showNotification = useCallback(
     (notification: Omit<Notification, 'id'>) => {
-      const normalized = normalizeMessage(notification.message);
+      cleanupOldMessages();
 
+      const normalized = normalizeMessage(notification.message);
       const messageKey = `${notification.type}:${normalized}`;
 
       if (lastMessagesRef.current.has(messageKey)) {
@@ -42,14 +62,8 @@ export const useNotifications = () => {
 
       if (alreadyShown) return;
 
-      lastMessagesRef.current.add(messageKey);
-
-      if (lastMessagesRef.current.size > 100) {
-        const firstKey = Array.from(lastMessagesRef.current)[0];
-        lastMessagesRef.current.delete(firstKey);
-      }
-
-      dispatch(addNotification({ ...(notification as any), origin: 'ui' }));
+      lastMessagesRef.current.set(messageKey, Date.now());
+      dispatch(addNotification({ ...notification, origin: 'ui' }));
 
       if (notification.duration) {
         setTimeout(() => {
@@ -57,7 +71,7 @@ export const useNotifications = () => {
         }, notification.duration + 1000);
       }
     },
-    [dispatch, notifications]
+    [dispatch, notifications, cleanupOldMessages]
   );
 
   const hideNotification = useCallback(
@@ -72,7 +86,7 @@ export const useNotifications = () => {
   }, [dispatch]);
 
   const showSuccess = useCallback(
-    (message: string, title?: string) => {
+    (message: string, _title?: string) => {
       showNotification({
         type: 'success',
         message,
@@ -83,7 +97,7 @@ export const useNotifications = () => {
   );
 
   const showError = useCallback(
-    (message: string, title?: string) => {
+    (message: string, _title?: string) => {
       showNotification({
         type: 'error',
         message,
@@ -94,7 +108,7 @@ export const useNotifications = () => {
   );
 
   const showWarning = useCallback(
-    (message: string, title?: string) => {
+    (message: string, _title?: string) => {
       showNotification({
         type: 'warning',
         message,
@@ -105,7 +119,7 @@ export const useNotifications = () => {
   );
 
   const showInfo = useCallback(
-    (message: string, title?: string) => {
+    (message: string, _title?: string) => {
       showNotification({
         type: 'info',
         message,

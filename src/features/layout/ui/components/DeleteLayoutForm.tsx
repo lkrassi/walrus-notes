@@ -79,7 +79,7 @@ export const DeleteLayoutForm = ({
           type='button'
           onClick={closeModal}
           variant='default'
-          className={cn('px-6', 'py-3')}
+          className={cn('btn')}
           disabled={isLoading}
         >
           {t('layout:cancel')}
@@ -87,7 +87,7 @@ export const DeleteLayoutForm = ({
         <Button
           type='submit'
           variant='escape'
-          className={cn('px-6', 'py-3')}
+          className={cn('btn')}
           disabled={isLoading}
         >
           {isLoading ? t('layout:deleting') : t('layout:delete')}
