@@ -22,7 +22,7 @@ export const Auth = () => {
 
   return (
     <main>
-       <PublicHeader />
+      <PublicHeader />
 
       <div
         className={cn(

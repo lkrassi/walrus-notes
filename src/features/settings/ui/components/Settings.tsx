@@ -38,51 +38,41 @@ export const Settings: React.FC = () => {
     }
   }, [userProfileResponse, dispatch]);
 
-  const handleOpenImage = useCallback(() => {
-    if (!profile?.imgUrl) return;
-
-    openModalFromTrigger(
+  const handleOpenImage = openModalFromTrigger(
+    profile?.imgUrl ? (
       <ImageViewerModal
         imageUrl={`https://${profile.imgUrl}`}
         alt={profile.username || 'Аватар'}
-      />,
-      {
-        title: ' ',
-        size: 'lg',
-        closeOnOverlayClick: true,
-      }
-    );
-  }, [openModalFromTrigger, profile?.imgUrl, profile?.username]);
+      />
+    ) : null,
+    {
+      title: ' ',
+      size: 'lg',
+      closeOnOverlayClick: true,
+    }
+  );
 
-  const handleChangePhoto = useCallback(() => {
-    openModalFromTrigger(
-      <ImageUploadModal
-        uploadFn={async (file: File) => {
-          const res = await changeProfilePicture({
-            file,
-            userId: getUserId(),
-          }).unwrap();
-          return res?.data?.newImgUrl ?? '';
-        }}
-        onUploaded={(_url: string) => {
-          setTimeout(() => {
-            refetchProfile();
-            setAvatarVersion(Date.now());
-          }, 2000);
-        }}
-      />,
-      {
-        title: t('profile:changePhoto') || 'Изменить фото',
-        size: 'md',
-      }
-    );
-  }, [
-    openModalFromTrigger,
-    changeProfilePicture,
-    getUserId,
-    refetchProfile,
-    t,
-  ]);
+  const handleChangePhoto = openModalFromTrigger(
+    <ImageUploadModal
+      uploadFn={async (file: File) => {
+        const res = await changeProfilePicture({
+          file,
+          userId: getUserId(),
+        }).unwrap();
+        return res?.data?.newImgUrl ?? '';
+      }}
+      onUploaded={(_url: string) => {
+        setTimeout(() => {
+          refetchProfile();
+          setAvatarVersion(Date.now());
+        }, 2000);
+      }}
+    />,
+    {
+      title: t('profile:changePhoto') || 'Изменить фото',
+      size: 'md',
+    }
+  );
 
   const renderAvatar = useCallback(() => {
     if (profile?.imgUrl) {
@@ -150,6 +140,15 @@ export const Settings: React.FC = () => {
                   onClick={profile?.imgUrl ? handleOpenImage : undefined}
                   role={profile?.imgUrl ? 'button' : undefined}
                   tabIndex={profile?.imgUrl ? 0 : undefined}
+                  onKeyDown={e => {
+                    if (
+                      profile?.imgUrl &&
+                      (e.key === 'Enter' || e.key === ' ')
+                    ) {
+                      e.preventDefault();
+                      handleOpenImage(e as any);
+                    }
+                  }}
                 >
                   {renderAvatar()}
                 </div>

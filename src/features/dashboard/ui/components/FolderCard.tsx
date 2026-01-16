@@ -33,7 +33,11 @@ export const FolderCard = ({
   const notesCount = notesResponse?.data?.length || 0;
 
   const handleEdit = openModalFromTrigger(
-    <UpdateLayoutForm layoutId={layout.id} />,
+    <UpdateLayoutForm
+      layoutId={layout.id}
+      layoutTitle={layout.title}
+      layoutColor={layout.color}
+    />,
     {
       title: t('layout:updateLayoutData') || 'Редактировать папку',
       size: 'md',
