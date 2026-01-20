@@ -16,7 +16,7 @@ import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import { createTabId } from 'widgets/model/utils/tabUtils';
 import type { TabType } from 'widgets/model/utils/tabUtils';
-import { useIsMobile } from 'widgets/hooks';
+import { useIsMobile, useTabsPersistence } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
@@ -39,6 +39,9 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const { openModalFromTrigger } = useModalActions();
 
   const isMobile = useIsMobile();
+
+  // Автоматически сохраняет и восстанавливает вкладки из localStorage
+  useTabsPersistence();
 
   const activeTab = openTabs.find(tab => tab.isActive);
 

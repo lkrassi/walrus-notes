@@ -41,6 +41,12 @@ export const tabsSlice = createSlice({
   name: 'tabs',
   initialState,
   reducers: {
+    initializeTabs: (state, action: PayloadAction<TabsState>) => {
+      // Загружает сохраненное состояние вкладок из localStorage
+      state.openTabs = action.payload.openTabs;
+      state.activeTabId = action.payload.activeTabId;
+    },
+
     openTab: (state, action: PayloadAction<FileTreeItem>) => {
       const item = action.payload;
       const tabId = createTabId(item.type, item.id);
@@ -147,6 +153,7 @@ export const tabsSlice = createSlice({
 });
 
 export const {
+  initializeTabs,
   openTab,
   switchTab,
   closeTab,

@@ -18,4 +18,5 @@ export {
 } from './useLocalStorage';
 export { useModal } from './useModal';
 export { useNotifications } from './useNotifications';
+export { useTabsPersistence } from './useTabsPersistence';
 export { useTheme } from './useTheme';
