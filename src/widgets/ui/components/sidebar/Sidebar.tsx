@@ -1,5 +1,6 @@
 import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
+import { ProfileButton } from 'features/profile';
 import { Plus } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import { Link } from 'react-router-dom';
@@ -11,7 +12,7 @@ import {
   useSidebar,
   useIsMobile,
 } from 'widgets/hooks';
-import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
+// import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
 import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
@@ -19,7 +20,7 @@ import { useModalActions } from 'widgets/hooks/useModalActions';
 import { parseTabId } from 'widgets/model/utils/tabUtils';
 import { FileTree } from '../fileTree';
 import { MobileMenu } from '../header/MobileMenu';
-import logo2 from '../../../../assets/logo2.png';
+// import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
 
 type SidebarProps = {
@@ -35,7 +36,7 @@ const SidebarComponent = (
 ) => {
   const { t } = useLocalization();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
-  const { enabled } = useHolidaySettings();
+  // const { enabled } = useHolidaySettings();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
   const dispatch = useAppDispatch();
@@ -162,7 +163,7 @@ const SidebarComponent = (
               aria-label={t('common:header.goToHomepage')}
             >
               <img
-                src={enabled ? logo2 : logo}
+                src={logo}
                 alt={t('common:header.logoAlt')}
                 className={cn('h-15', 'w-15', 'md:h-25', 'md:w-25')}
                 loading='lazy'
@@ -237,6 +238,19 @@ const SidebarComponent = (
             onDeleteLayout={handleDeleteLayout}
           />
         </div>
+
+        <div
+          className={cn(
+            'border-t',
+            'border-border',
+            'dark:border-dark-border',
+            'p-4',
+            'mt-auto'
+          )}
+        >
+          <ProfileButton />
+        </div>
+
         {!isMobile && (
           <div
             role='separator'

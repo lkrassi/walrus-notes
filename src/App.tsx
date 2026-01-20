@@ -7,7 +7,7 @@ import cn from 'shared/lib/cn';
 import {
   ModalProvider,
   NotificationsContainer,
-  SnowfallOverlay,
+  // SnowfallOverlay,
 } from 'widgets/ui';
 
 export const App = () => {
@@ -18,7 +18,6 @@ export const App = () => {
           <AuthSyncProvider>
             <SidebarProvider>
               <ModalProvider>
-                <SnowfallOverlay />
                 <Routes>
                   {appRoutesConfig.map(route => (
                     <Route

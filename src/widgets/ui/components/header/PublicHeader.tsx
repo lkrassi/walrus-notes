@@ -1,19 +1,15 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'shared/lib/cn';
-
-import logo2 from '../../../../assets/logo2.png';
+// import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
-
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
-import Garland from '../Garland';
-import { useHolidaySettings } from '../../../hooks/useHolidaySettings';
+// import Garland from '../Garland';
 
 const PublicHeaderComponent = () => {
   const { t } = useLocalization();
-  const { enabled, settings } = useHolidaySettings();
 
   return (
     <header
@@ -33,7 +29,7 @@ const PublicHeaderComponent = () => {
         'md:px-5'
       )}
     >
-      <Garland active={!!settings?.garland && enabled} />
+      {/*<Garland active={!!settings?.garland && enabled} />*/}
 
       <Link
         to='/'
@@ -41,7 +37,7 @@ const PublicHeaderComponent = () => {
         aria-label={t('common:header.goToHomepage')}
       >
         <img
-          src={enabled ? logo2 : logo}
+          src={logo}
           alt={t('common:header.logoAlt')}
           className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
           loading='lazy'

@@ -1,17 +1,14 @@
-﻿import { ProfileButton } from 'features/profile';
-import { memo } from 'react';
+﻿import { memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
-import Garland from '../Garland';
-import { useHolidaySettings } from '../../../hooks/useHolidaySettings';
+// import Garland from '../Garland';
 import { MobileMenu } from './MobileMenu';
 
 const PrivateHeaderComponent = () => {
   const { t } = useLocalization();
-  const { enabled, settings } = useHolidaySettings();
   const location = useLocation();
   const isProfilePage = location.pathname === '/profile';
 
@@ -26,10 +23,10 @@ const PrivateHeaderComponent = () => {
         'gap-3',
         'border-b',
         'max-md:py-5',
-        'md:px-5'
+        'md:px-0.5'
       )}
     >
-      <Garland active={!!settings?.garland && enabled} />
+      {/*<Garland active={!!settings?.garland && enabled} />*/}
 
       <div
         className={cn(
@@ -48,34 +45,19 @@ const PrivateHeaderComponent = () => {
             aria-label={t('common:header.goToHomepage')}
           >
             <img
-              src={enabled ? logo2 : logo}
+              src={logo}
               alt={t('common:header.logoAlt')}
-          className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
+              className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
               loading='lazy'
             />
             <div
               className={cn('flex', 'items-baseline', 'gap-1', 'max-md:hidden')}
             >
-              <h1
-                className={cn(
-                  'text-text',
-                  'dark:text-dark-text',
-                )}
-              >
-                Walrus
-              </h1>
-              <h1
-                className={cn(
-                  'text-primary',
-                )}
-              >
-                Notes
-              </h1>
+              <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
+              <h1 className={cn('text-primary')}>Notes</h1>
             </div>
           </Link>
         </div>
-
-        <ProfileButton />
       </div>
     </header>
   );

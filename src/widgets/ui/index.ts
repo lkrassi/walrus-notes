@@ -9,4 +9,4 @@ export * from './components/notifications/Notification';
 export * from './components/notifications/NotificationsContainer';
 export * from './components/sidebar';
 export * from './components/theme/ThemeSwitcher';
-export * from './components/SnowfallOverlay';
+// export * from './components/SnowfallOverlay';
