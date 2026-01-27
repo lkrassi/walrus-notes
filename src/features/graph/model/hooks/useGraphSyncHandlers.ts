@@ -8,21 +8,11 @@ interface UseGraphSyncHandlersProps {
   isDraggingEdge?: boolean;
 }
 
-/**
- * Управляет операциями синхронизации с пользовательским интерфейсом.
- *
- * Обрабатывает:
- * - handleNoteOpen: Открытие заметки при клике
- * - Cleanup для prevent memory leaks
- *
- * Интегрирует с внешними event handlers (из useGraphHandlers, useGraphConnections)
- */
 export const useGraphSyncHandlers = ({
   nodes,
   onNoteOpen,
   isDraggingEdge,
 }: UseGraphSyncHandlersProps) => {
-  // Открытие заметки
   const handleNoteOpen = useCallback(
     (noteId: string) => {
       const node = nodes.find(n => n.id === noteId) as
@@ -36,11 +26,8 @@ export const useGraphSyncHandlers = ({
     [nodes, onNoteOpen]
   );
 
-  // Cleanup при unmount или изменении isDraggingEdge
   useEffect(() => {
-    return () => {
-      // Cleanup logic if needed
-    };
+    return () => {};
   }, [isDraggingEdge]);
 
   return {

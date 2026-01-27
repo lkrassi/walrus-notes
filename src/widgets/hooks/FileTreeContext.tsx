@@ -7,12 +7,12 @@ import {
   useState,
 } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
-import { useAppSelector } from './redux';
 import {
   fileTreeReducer,
   initialFileTreeState,
   type FileTreeState,
 } from './fileTreeReducer';
+import { useAppSelector } from './redux';
 import { useNotifications } from './useNotifications';
 
 const FileTreeContext = createContext<{

@@ -1,4 +1,4 @@
-import useResizableBase from './useResizableBase';
+import { useResizableBase } from './useResizableBase';
 
 const STORAGE_KEY = 'wn.sidebar.width';
 const DEFAULT = 320;
@@ -20,5 +20,3 @@ export const useResizableSidebar = () => {
     max: base.max,
   } as const;
 };
-
-export default useResizableSidebar;

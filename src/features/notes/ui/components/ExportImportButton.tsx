@@ -1,11 +1,10 @@
-import React from 'react';
-import { Box, Upload, Download } from 'lucide-react';
+import { Download, Upload } from 'lucide-react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
-import MdImportModal from './MdImportModal';
+import { MdImportModal } from './MdImportModal';
 
 interface Props {
   onExport: () => void;
@@ -77,5 +76,3 @@ export const ExportImportButton: React.FC<Props> = ({
     </Button>
   );
 };
-
-export default ExportImportButton;

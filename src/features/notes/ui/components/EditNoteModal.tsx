@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import cn from 'shared/lib/cn';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Input } from 'shared';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
@@ -9,7 +9,7 @@ interface Props {
   onSaved: (title: string) => Promise<void> | void;
 }
 
-const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
+export const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
   const { closeModal } = useModalContentContext();
   const { t } = useLocalization();
   const [value, setValue] = useState(title);
@@ -69,5 +69,3 @@ const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
     </form>
   );
 };
-
-export default EditNoteModal;

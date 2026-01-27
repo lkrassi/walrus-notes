@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
-import type { Connection, Edge, Node } from 'reactflow';
 import {
   useCreateNoteLinkMutation,
   useDeleteNoteLinkMutation,
 } from 'app/store/api';
+import { useCallback, useState } from 'react';
+import type { Connection, Edge, Node } from 'reactflow';
 import {
   CreateEdgeCommand,
   DeleteEdgeCommand,
@@ -25,18 +25,6 @@ interface UseGraphConnectionHandlersProps {
   isProcessingRef: React.MutableRefObject<boolean>;
 }
 
-/**
- * Управляет логикой создания и удаления connections между nodes.
- *
- * Обрабатывает:
- * - onConnect: Создание новой связи с сохранением в API
- * - handleEdgeDeleteDrop: Удаление связи или перемещение на другой node
- * - handleEdgeDeleteStart: Начало операции удаления
- * - Очистка temp edges при сохранении
- *
- * Использует команды (CreateEdgeCommand, DeleteEdgeCommand, MoveEdgeCommand)
- * для поддержки undo/redo в graphHistory
- */
 export const useGraphConnectionHandlers = ({
   layoutId,
   nodes,
@@ -52,7 +40,6 @@ export const useGraphConnectionHandlers = ({
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [isDraggingEdge, setIsDraggingEdge] = useState(false);
 
-  // Создание новой связи
   const onConnect = useCallback(
     async (connection: Connection) => {
       const source = connection.source ?? '';
@@ -107,7 +94,6 @@ export const useGraphConnectionHandlers = ({
     ]
   );
 
-  // Обработка drop edge (удаление или перемещение)
   const handleEdgeDeleteDrop = useCallback(
     async (
       event: CustomEvent<{
@@ -126,7 +112,6 @@ export const useGraphConnectionHandlers = ({
 
       try {
         if (newTarget) {
-          // Перемещение edge на новый target
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             const command = new MoveEdgeCommand(
@@ -180,7 +165,6 @@ export const useGraphConnectionHandlers = ({
             await graphHistory.executeCommand(command);
           }
         } else {
-          // Удаление edge
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             const command = new DeleteEdgeCommand(
@@ -210,7 +194,6 @@ export const useGraphConnectionHandlers = ({
           }
         }
       } catch (_error) {
-        // ignore
       } finally {
         isProcessingRef.current = false;
       }
@@ -227,7 +210,6 @@ export const useGraphConnectionHandlers = ({
     ]
   );
 
-  // Начало операции удаления edge
   const handleEdgeDeleteStart = useCallback(() => {
     setIsDraggingEdge(true);
   }, []);

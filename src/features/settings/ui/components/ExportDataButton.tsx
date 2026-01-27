@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
 import { useExportLayoutMutation } from 'app/store/api';
+import { useCallback } from 'react';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useNotifications } from 'widgets/hooks/useNotifications';
-import cn from 'shared/lib/cn';
 
 export const ExportDataButton: React.FC = () => {
   const { t } = useLocalization();
@@ -12,7 +12,6 @@ export const ExportDataButton: React.FC = () => {
   const { showError, showSuccess } = useNotifications();
   const [exportLayout, { isLoading }] = useExportLayoutMutation();
 
-  // Используем userId из Redux store
   const userId = profile?.id || '';
 
   const buildFileName = useCallback(() => {

@@ -1,7 +1,6 @@
-import React from 'react';
-import { HexColorPicker, HexColorInput } from 'react-colorful';
+import { HexColorInput, HexColorPicker } from 'react-colorful';
 import 'react-colorful/dist/style.css';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 
 interface CircularColorPickerProps {
   value?: string;
@@ -10,7 +9,7 @@ interface CircularColorPickerProps {
   className?: string;
 }
 
-const CircularColorPicker: React.FC<CircularColorPickerProps> = ({
+export const CircularColorPicker: React.FC<CircularColorPickerProps> = ({
   value,
   onChange,
   size = 220,
@@ -34,5 +33,3 @@ const CircularColorPicker: React.FC<CircularColorPickerProps> = ({
     </div>
   );
 };
-
-export default CircularColorPicker;

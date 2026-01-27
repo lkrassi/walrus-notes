@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { useReactFlow } from 'reactflow';
+import { useEffect, useRef } from 'react';
 import type { Node } from 'reactflow';
+import { useReactFlow } from 'reactflow';
 
 interface OffscreenArrowsProps {
   nodes: Node[];
@@ -188,7 +188,7 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
   const arrows = stateRef.current;
 
   return (
-    <div className={'absolute inset-0 pointer-events-none z-60'} aria-hidden>
+    <div className={'pointer-events-none absolute inset-0 z-60'} aria-hidden>
       {arrows.map(a => (
         <div
           key={a.id}
@@ -238,5 +238,3 @@ export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
     </div>
   );
 };
-
-export default OffscreenArrows;

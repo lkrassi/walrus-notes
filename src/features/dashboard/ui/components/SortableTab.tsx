@@ -1,10 +1,10 @@
-import { FileText, Folder, X, Network } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useTabMiddleClickClose } from '../../hooks/useTabMiddleClickClose';
-import cn from 'shared/lib/cn';
-import type { TabsProps } from '../../model/types/tabsProps';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { motion } from 'framer-motion';
+import { FileText, Folder, Network, X } from 'lucide-react';
+import { cn } from 'shared/lib/cn';
+import { useTabMiddleClickClose } from '../../hooks/useTabMiddleClickClose';
+import type { TabsProps } from '../../model/types/tabsProps';
 
 export const SortableTab = ({
   tab,
@@ -71,7 +71,7 @@ export const SortableTab = ({
         className={cn(
           'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden',
           isActive
-            ? 'text-white dark:text-dark-text'
+            ? 'dark:text-dark-text text-white'
             : 'text-text dark:text-dark-text'
         )}
         onClick={handleContentClick}

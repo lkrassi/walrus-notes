@@ -1,14 +1,14 @@
+import { openTab, switchTab } from 'app/store/slices/tabsSlice';
 import { forwardRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import cn from 'shared/lib/cn';
-import CodeHighlighter from './CodeHighlighter';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
-import LinkedNotesList from './LinkedNotesList';
 import { useAppDispatch } from 'widgets/hooks/redux';
-import { openTab, switchTab } from 'app/store/slices/tabsSlice';
-import { createTabId } from 'widgets/model/utils/tabUtils';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
+import { createTabId } from 'widgets/model/utils/tabUtils';
+import { CodeHighlighter } from './CodeHighlighter';
+import { LinkedNotesList } from './LinkedNotesList';
 
 interface MarkdownPreviewProps {
   content: string;
@@ -17,14 +17,11 @@ interface MarkdownPreviewProps {
   layoutId?: string;
   showRelated?: boolean;
 }
-
-// Компонент для безопасного рендера ссылок
 const SafeLink: React.FC<{
   href?: string;
   title?: string;
   children?: React.ReactNode;
 }> = ({ href = '', title, children }) => {
-  // Проверяем, что это безопасная URL
   if (
     !href.startsWith('http://') &&
     !href.startsWith('https://') &&
@@ -210,5 +207,3 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
 );
 
 MarkdownPreview.displayName = 'MarkdownPreview';
-
-export default MarkdownPreview;

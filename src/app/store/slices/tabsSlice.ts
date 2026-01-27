@@ -42,7 +42,6 @@ export const tabsSlice = createSlice({
   initialState,
   reducers: {
     initializeTabs: (state, action: PayloadAction<TabsState>) => {
-      // Загружает сохраненное состояние вкладок из localStorage
       state.openTabs = action.payload.openTabs;
       state.activeTabId = action.payload.activeTabId;
     },
@@ -164,4 +163,4 @@ export const {
   clearTabs,
 } = tabsSlice.actions;
 
-export default tabsSlice.reducer;
+export const tabsReducer = tabsSlice.reducer;

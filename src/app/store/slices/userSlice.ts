@@ -88,9 +88,8 @@ export const {
   clearUserProfile,
 } = userSlice.actions;
 
-// Селектор для проверки аутентификации
 export const selectIsAuthenticated = (state: { user: UserProfileState }) => {
   return !!(state.user.accessToken && state.user.refreshToken);
 };
 
-export default userSlice.reducer;
+export const userReducer = userSlice.reducer;

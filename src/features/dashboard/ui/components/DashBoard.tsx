@@ -3,13 +3,13 @@ import { useDashboardNavigation } from 'features/dashboard/hooks';
 import { useEffect, useRef } from 'react';
 import type { Note } from 'shared/model';
 import type { FileTreeItem } from 'widgets/hooks';
-import { useAppDispatch, useTabs, useAppSelector } from 'widgets/hooks/redux';
+import { useAppDispatch, useAppSelector, useTabs } from 'widgets/hooks/redux';
+import { WebSocketProvider } from 'widgets/providers/WebSocketProvider';
 import { Sidebar } from 'widgets/ui';
-import WebSocketProvider from 'widgets/providers/WebSocketProvider';
 import { DashboardContent } from './DashboardContent';
 import { DashboardHeader } from './DashboardHeader';
 
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 
 export const DashBoard = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ export const DashBoard = () => {
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
-  
+
   const { updateUrlForTab } = useDashboardNavigation({
     openTabs,
   });

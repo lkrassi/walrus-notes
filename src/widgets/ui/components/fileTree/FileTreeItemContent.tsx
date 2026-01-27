@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import cn from 'shared/lib/cn';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
 import { useLocalization } from '../../../hooks';
@@ -54,7 +54,6 @@ export const FileTreeItemContent = ({
   useEffect(() => {
     if (!isExpanded || item.type !== 'layout' || !notesResponse) return;
 
-
     const notes = Array.isArray(notesResponse.data) ? notesResponse.data : [];
     const pagination = notesResponse.pagination;
 
@@ -100,7 +99,6 @@ export const FileTreeItemContent = ({
 
   const loadMoreNotes = useCallback(
     async (page: number) => {
-
       if (!hasMore || page <= 1) {
         return;
       }

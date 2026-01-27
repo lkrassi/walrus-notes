@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react';
-import cn from 'shared/lib/cn';
+import { forwardRef } from 'react';
+import { cn } from 'shared/lib/cn';
 
 export type TextareaProps = {
   value?: string;
@@ -78,5 +78,3 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 );
 
 Textarea.displayName = 'Textarea';
-
-export default Textarea;

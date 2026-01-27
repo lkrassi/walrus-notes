@@ -1,12 +1,11 @@
 import { useDeleteLayoutMutation } from 'app/store/api';
 import { closeLayoutTabs } from 'app/store/slices/tabsSlice';
-import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
-import { Trash2 } from 'lucide-react';
 
 interface DeleteLayoutFormProps {
   layoutId: string;

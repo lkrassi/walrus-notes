@@ -1,4 +1,6 @@
 import js from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
+import prettierPlugin from 'eslint-plugin-prettier';
 import react from 'eslint-plugin-react';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -35,6 +37,10 @@ export default [
         ...globals.node,
       },
     },
+    plugins: {
+      import: importPlugin,
+      prettier: prettierPlugin,
+    },
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -45,6 +51,11 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      // (consistent-type-exports rule omitted — add via plugin if desired)
+      // discourage default exports across the codebase
+      'import/no-default-export': 'error',
+      // integrate Prettier formatting as ESLint rule
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-useless-escape': 'error',
       'no-empty': ['error', { allowEmptyCatch: true }],

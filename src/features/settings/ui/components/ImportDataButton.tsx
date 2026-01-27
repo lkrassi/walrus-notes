@@ -1,17 +1,17 @@
-import React, { useRef } from 'react';
 import { useImportLayoutMutation } from 'app/store/api';
+import { useRef, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
-import { useNotifications } from 'widgets/hooks/useNotifications';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import cn from 'shared/lib/cn';
+import { useNotifications } from 'widgets/hooks/useNotifications';
 
 export const ImportDataButton: React.FC = () => {
   const { t } = useLocalization();
   const { showError, showSuccess } = useNotifications();
   const [importLayout, { isLoading }] = useImportLayoutMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [isDragOver, setIsDragOver] = React.useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;

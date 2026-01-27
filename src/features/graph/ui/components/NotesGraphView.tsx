@@ -1,17 +1,18 @@
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow, { useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
-import {
-  DndContext,
-  type DragEndEvent,
-  type DragStartEvent,
-  DragOverlay,
-} from '@dnd-kit/core';
-import type { Note } from 'shared/model/types/layouts';
-import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
-import { useIsMobile } from 'widgets/hooks';
 import { useDndSensors } from 'shared/lib/useDndSensors';
+import type { Note } from 'shared/model/types/layouts';
+import { useIsMobile } from 'widgets/hooks';
+import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
+import { CoordinateOverlay } from './CoordinateOverlay';
 import { GraphBackground } from './GraphBackground';
 import { GraphContainer } from './GraphContainer';
 import { GraphControls } from './GraphControls';
@@ -19,10 +20,9 @@ import { GraphDropZone } from './GraphDropZone';
 import { GraphMiniMap } from './GraphMiniMap';
 import { MultiColorEdge } from './MultiColorEdge';
 import { NoteNodeComponent } from './NoteNode';
-import { UnposedNotesList } from './UnposedNotesList';
-import CoordinateOverlay from './CoordinateOverlay';
-import OffscreenArrows from './OffscreenArrows';
+import { OffscreenArrows } from './OffscreenArrows';
 import { TouchEnabledGraph } from './TouchEnabledGraph';
+import { UnposedNotesList } from './UnposedNotesList';
 
 const edgeTypes = {
   multiColor: MultiColorEdge,
@@ -312,5 +312,3 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
     </GraphContainer>
   );
 };
-
-export default NotesGraphView;

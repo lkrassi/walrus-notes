@@ -1,6 +1,6 @@
 import { DoorOpen } from 'lucide-react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalContentContext } from 'widgets/ui';
 

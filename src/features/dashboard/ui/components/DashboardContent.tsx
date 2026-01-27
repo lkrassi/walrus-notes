@@ -8,23 +8,23 @@ import {
 } from 'app/store/slices/tabsSlice';
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
-import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
-import cn from 'shared/lib/cn';
+import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
+import { FileText } from 'lucide-react';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
-import { createTabId } from 'widgets/model/utils/tabUtils';
-import type { TabType } from 'widgets/model/utils/tabUtils';
 import { useIsMobile, useTabsPersistence } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
+import type { TabType } from 'widgets/model/utils/tabUtils';
+import { createTabId } from 'widgets/model/utils/tabUtils';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-import { FileText } from 'lucide-react';
 import { CreateChoiceModal } from './CreateChoiceModal';
-import { FolderSelectModal } from './FolderSelectModal';
 import { EmptyDashboardFallback } from './EmptyDashboardFallback';
+import { FolderSelectModal } from './FolderSelectModal';
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
@@ -40,7 +40,6 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
   const isMobile = useIsMobile();
 
-  // Автоматически сохраняет и восстанавливает вкладки из localStorage
   useTabsPersistence();
 
   const activeTab = openTabs.find(tab => tab.isActive);

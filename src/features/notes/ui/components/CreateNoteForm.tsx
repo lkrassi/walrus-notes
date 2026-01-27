@@ -1,7 +1,7 @@
 import { useCreateNoteMutation } from 'app/store/api';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Textarea } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useLocalization, useNotifications } from 'widgets';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';

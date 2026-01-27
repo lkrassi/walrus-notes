@@ -1,5 +1,4 @@
-import React from 'react';
-import { Controls, useReactFlow, Panel } from 'reactflow';
+import { Controls, Panel, useReactFlow } from 'reactflow';
 import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 import { GraphUndoRedoControls } from './GraphUndoRedoControls';
 

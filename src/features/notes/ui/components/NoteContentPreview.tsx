@@ -1,8 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
-import MarkdownPreview from './MarkdownPreview';
+import { MarkdownPreview } from './MarkdownPreview';
 
 import type { Note } from 'shared/model/types/layouts';
 
@@ -14,7 +13,7 @@ interface Props {
   enterFromRight?: boolean;
 }
 
-const NoteContentPreview: React.FC<Props> = ({
+export const NoteContentPreview: React.FC<Props> = ({
   payload,
   layoutId,
   note,
@@ -50,5 +49,3 @@ const NoteContentPreview: React.FC<Props> = ({
     </motion.div>
   );
 };
-
-export default NoteContentPreview;

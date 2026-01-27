@@ -1,6 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization, useTheme } from 'widgets/hooks';
 
 export const ThemeSwitcher = () => {

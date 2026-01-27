@@ -6,7 +6,6 @@ export interface Command {
   getDescription(): string;
 }
 
-
 export class CommandHistory {
   private undoStack: Command[] = [];
   private redoStack: Command[] = [];

@@ -1,11 +1,11 @@
-import { type Variants } from 'framer-motion';
 import {
-  Psychology,
-  FlashOn,
   AutoAwesome,
-  Security,
+  FlashOn,
   People,
+  Psychology,
+  Security,
 } from '@mui/icons-material';
+import { type Variants } from 'framer-motion';
 
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },

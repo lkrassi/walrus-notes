@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import {
   useEdgesState,
   useNodesState,
@@ -6,17 +6,17 @@ import {
   type Node,
 } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
+import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
+import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
 import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
-import { useGraphSelection } from '../../model/hooks/useGraphSelection';
-import { useNotesGraph } from '../../model/hooks/useNotesGraph';
 import { useGraphHistory } from '../../model/hooks/useGraphHistory';
 import { useGraphInitialization } from '../../model/hooks/useGraphInitialization';
-import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
-import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
+import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useGraphSelectionHandlers } from '../../model/hooks/useGraphSelectionHandlers';
 import { useGraphSyncHandlers } from '../../model/hooks/useGraphSyncHandlers';
-import NotesGraphView from './NotesGraphView';
+import { useNotesGraph } from '../../model/hooks/useNotesGraph';
+import { NotesGraphView } from './NotesGraphView';
 import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 
 interface NotesGraphContentProps {
@@ -26,12 +26,12 @@ interface NotesGraphContentProps {
   isMain?: boolean;
 }
 
-const NotesGraphContentComponent = ({
+export const NotesGraphContent = memo(function NotesGraphContent({
   layoutId,
   onNoteOpen,
   allowNodeDrag,
   isMain,
-}: NotesGraphContentProps) => {
+}: NotesGraphContentProps) {
   const {
     initialNodes,
     initialEdges,
@@ -58,7 +58,6 @@ const NotesGraphContentComponent = ({
 
   const graphHistory = useGraphHistory(100);
 
-  // ========== Инициализация графа ==========
   const { isProcessingRef, isNodeDraggingRef } = useGraphInitialization({
     layoutId,
     initialNodes,
@@ -69,7 +68,6 @@ const NotesGraphContentComponent = ({
     setEdges: setEdgesState,
   });
 
-  // ========== Обработчики Drag ==========
   const {
     handleNodeDragStart,
     handleNodeDragStop,
@@ -88,7 +86,6 @@ const NotesGraphContentComponent = ({
     rfSetEdges,
   });
 
-  // ========== Обработчики Connection ==========
   const {
     tempEdges,
     allEdges,
@@ -128,7 +125,6 @@ const NotesGraphContentComponent = ({
     isProcessingRef,
   });
 
-  // Очистка temp edges при сохранении реальных
   useEffect(() => {
     if (tempEdges.length > 0) {
       setTempEdges(prev =>
@@ -137,10 +133,8 @@ const NotesGraphContentComponent = ({
     }
   }, [edges, tempEdges.length, setTempEdges]);
 
-  // Регистрация edge delete events
   useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
 
-  // ========== Обработчики Selection ==========
   const { handleNodeDoubleClick, handleNoteDrop, handleBoxSelect } =
     useGraphSelectionHandlers({
       nodes,
@@ -150,14 +144,12 @@ const NotesGraphContentComponent = ({
       handleAddNoteToGraph: undefined,
     });
 
-  // ========== Обработчики Sync ==========
   const { handleNoteOpen } = useGraphSyncHandlers({
     nodes,
     onNoteOpen,
     isDraggingEdge,
   });
 
-  // ========== Обработчики из useGraphHandlers (для mouse events) ==========
   const {
     handleAddNoteToGraph: handleAddNoteToGraphOrig,
     onNodeDragStop: _onNodeDragStop,
@@ -174,7 +166,6 @@ const NotesGraphContentComponent = ({
     screenToFlowPosition,
   });
 
-  // Обработчик добавления ноты (из useGraphHandlers)
   const handleAddNoteToGraph = useCallback(
     (note: Note, dropPosition?: { x: number; y: number }) => {
       handleAddNoteToGraphOrig?.(note, dropPosition);
@@ -182,7 +173,6 @@ const NotesGraphContentComponent = ({
     [handleAddNoteToGraphOrig]
   );
 
-  // ========== Обёрнутые обработчики для мыши ==========
   const handleNodeMouseEnterWrapped = useCallback(
     (e: React.MouseEvent, node: Node) => {
       if (isNodeDraggingRef.current) return;
@@ -199,7 +189,6 @@ const NotesGraphContentComponent = ({
     [handleNodeMouseLeave, isNodeDraggingRef]
   );
 
-  // ========== Обработчики Selection для graph ==========
   const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
     nodes,
     edges,
@@ -240,9 +229,4 @@ const NotesGraphContentComponent = ({
       graphHistory={graphHistory}
     />
   );
-};
-
-export const NotesGraphContent = React.memo(NotesGraphContentComponent);
-NotesGraphContent.displayName = 'NotesGraphContent';
-
-export default NotesGraphContent;
+});

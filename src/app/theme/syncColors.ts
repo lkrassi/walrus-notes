@@ -1,7 +1,7 @@
-import { appColors, generateCSSVariables } from './colors.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { appColors, generateCSSVariables } from './colors.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

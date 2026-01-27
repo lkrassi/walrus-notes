@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface UseDropdownBaseOptions<T> {
   items: T[];
@@ -35,8 +35,7 @@ export const useDropdown = <T>(
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => {
-  }, [items, isOpen, enablePagination, currentPage]);
+  useEffect(() => {}, [items, isOpen, enablePagination, currentPage]);
 
   const loadMore = useCallback(async () => {
     if (!enablePagination) return;

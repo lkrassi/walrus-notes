@@ -11,15 +11,6 @@ interface UseGraphInitializationProps {
   setEdges: (edges: Edge[]) => void;
 }
 
-/**
- * Управляет инициализацией и синхронизацией nodes/edges при изменении layoutId
- * или при получении обновленных данных с сервера.
- *
- * Логика:
- * - При смене layoutId → полностью заменить nodes/edges
- * - При обновлении данных → сравнить структуру и обновить если нужно
- * - Не обновлять во время drag операции (isNodeDraggingRef используется извне)
- */
 export const useGraphInitialization = ({
   layoutId,
   initialNodes,
@@ -33,9 +24,7 @@ export const useGraphInitialization = ({
   const isNodeDraggingRef = useRef(false);
   const prevLayoutIdRef = useRef(layoutId);
 
-  // Основной эффект синхронизации
   useEffect(() => {
-    // Проверка, равны ли структуры nodes
     const nodesStructuralEqual = () => {
       if (nodes.length !== initialNodes.length) return false;
       const map = new Map(nodes.map(n => [n.id, n]));
@@ -50,14 +39,11 @@ export const useGraphInitialization = ({
             (inNode.data as { layoutColor?: string } | undefined)
               ?.layoutColor ?? null;
           if (prevColor !== newColor) return false;
-        } catch (_e) {
-          // ignore
-        }
+        } catch (_e) {}
       }
       return true;
     };
 
-    // Проверка, равны ли структуры edges
     const edgesStructuralEqual = () => {
       if (edges.length !== initialEdges.length) return false;
       const map = new Map(edges.map(e => [e.id, e]));
@@ -75,12 +61,10 @@ export const useGraphInitialization = ({
     };
 
     if (prevLayoutIdRef.current !== layoutId) {
-      // Смена layoutId → полная замена
       setNodes(initialNodes);
       setEdges(initialEdges);
       prevLayoutIdRef.current = layoutId;
     } else {
-      // Обновление данных в рамках одного layoutId
       if (
         !isNodeDraggingRef.current &&
         !isProcessingRef.current &&

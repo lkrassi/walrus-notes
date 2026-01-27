@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Zoom from '@mui/material/Zoom';
 import type { TransitionProps } from '@mui/material/transitions';
 import { X } from 'lucide-react';
+import { forwardRef, useMemo } from 'react';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
 import { ModalContentContext } from './ModalContentContext';
@@ -24,7 +24,7 @@ const SIZE_MAP = {
   full: 'xl' as const,
 };
 
-const CustomTransition = React.forwardRef<
+const CustomTransition = forwardRef<
   unknown,
   TransitionProps & {
     children: React.ReactElement;
@@ -78,7 +78,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   const maxWidth = SIZE_MAP[options.size || 'md'];
 
   const TransitionComponent = useMemo(() => {
-    const Component = React.forwardRef<
+    const Component = forwardRef<
       unknown,
       TransitionProps & { children: React.ReactElement }
     >((props, ref) => (

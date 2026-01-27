@@ -1,7 +1,6 @@
 import { Settings } from 'lucide-react';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets';
 

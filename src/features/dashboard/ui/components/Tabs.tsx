@@ -1,21 +1,21 @@
-import { FileText, Folder, Network } from 'lucide-react';
-import { useState } from 'react';
-import cn from 'shared/lib/cn';
-import type { TabsProps } from '../../model/types/tabsProps';
 import {
   DndContext,
   DragOverlay,
   closestCenter,
-  type DragStartEvent,
   type DragEndEvent,
+  type DragStartEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
+  arrayMove,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { SortableTab } from './SortableTab';
+import { FileText, Folder, Network } from 'lucide-react';
+import { useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import { useDndSensors } from 'shared/lib/useDndSensors';
+import type { TabsProps } from '../../model/types/tabsProps';
+import { SortableTab } from './SortableTab';
 
 export const Tabs = ({
   tabs,

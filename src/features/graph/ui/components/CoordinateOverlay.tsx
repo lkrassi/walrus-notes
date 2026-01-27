@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface CoordinateOverlayProps {
   nodeId?: string | null;
   coords?: { x: number; y: number } | null;
@@ -12,10 +10,7 @@ export const CoordinateOverlay: React.FC<CoordinateOverlayProps> = ({
   centerCoords,
 }) => {
   return (
-    <div
-      className='pointer-events-none absolute top-2 right-2'
-      aria-hidden
-    >
+    <div className='pointer-events-none absolute top-2 right-2' aria-hidden>
       <div className='bg-bg dark:bg-dark-bg text-text dark:text-dark-text m-2 rounded p-2 text-xl shadow'>
         {centerCoords ? (
           <div className='text-xs'>
@@ -36,5 +31,3 @@ export const CoordinateOverlay: React.FC<CoordinateOverlayProps> = ({
     </div>
   );
 };
-
-export default CoordinateOverlay;

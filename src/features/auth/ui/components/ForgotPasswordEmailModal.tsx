@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { Box, CircularProgress, TextField, Typography } from '@mui/material';
+import type { FieldProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets/hooks';
-import { Formik, Form, Field } from 'formik';
-import type { FieldProps } from 'formik';
-import * as Yup from 'yup';
 import { useModalContentContext } from 'widgets/ui';
-import { TextField, Box, Typography, CircularProgress } from '@mui/material';
+import * as Yup from 'yup';
 
 interface ForgotPasswordEmailModalProps {
   onSubmit: (email: string) => Promise<void>;

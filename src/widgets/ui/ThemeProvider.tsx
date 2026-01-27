@@ -1,3 +1,6 @@
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import { createAppTheme } from 'app/theme/theme';
 import {
   createContext,
   useEffect,
@@ -5,9 +8,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createAppTheme } from 'app/theme/theme';
 
 type ThemeContextType = {
   theme: string;
@@ -51,5 +51,3 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
-
-export default ThemeProvider;

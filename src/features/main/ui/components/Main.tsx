@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { PublicHeader } from 'widgets/ui';
@@ -10,8 +10,8 @@ import {
   features,
   itemVariants,
 } from '../../models';
-import VideoDemo from './VideoDemo';
 import { BackgroundIcons } from './BackgroundIcons';
+import { VideoDemo } from './VideoDemo';
 
 export const Main = () => {
   const navigate = useNavigate();

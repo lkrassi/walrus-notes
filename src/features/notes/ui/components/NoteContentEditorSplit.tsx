@@ -1,8 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import cn from 'shared/lib/cn';
-import MarkdownEditor from './MarkdownEditor';
-import MarkdownPreview from './MarkdownPreview';
+import { cn } from 'shared/lib/cn';
+import { MarkdownEditor } from './MarkdownEditor';
+import { MarkdownPreview } from './MarkdownPreview';
 
 import type { Note } from 'shared/model/types/layouts';
 
@@ -37,7 +36,7 @@ interface Props {
   onToggleFullscreen?: () => void;
 }
 
-const NoteContentEditorSplit: React.FC<Props> = ({
+export const NoteContentEditorSplit: React.FC<Props> = ({
   payload,
   onPayloadChange,
   isLoading,
@@ -159,5 +158,3 @@ const NoteContentEditorSplit: React.FC<Props> = ({
     </div>
   );
 };
-
-export default NoteContentEditorSplit;

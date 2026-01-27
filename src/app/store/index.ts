@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from 'app/store/api/apiSlice';
-import notificationsReducer from 'app/store/slices/notificationsSlice';
-import tabsReducer from 'app/store/slices/tabsSlice';
-import userReducer from 'app/store/slices/userSlice';
-import draftsReducer from 'app/store/slices/draftsSlice';
+import { draftsReducer } from 'app/store/slices/draftsSlice';
+import { notificationsReducer } from 'app/store/slices/notificationsSlice';
+import { tabsReducer } from 'app/store/slices/tabsSlice';
+import { userReducer } from 'app/store/slices/userSlice';
 
 export const store = configureStore({
   reducer: {

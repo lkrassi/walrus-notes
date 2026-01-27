@@ -31,5 +31,3 @@ export function buildWsUrl(baseHost?: string, userId?: string) {
 
   return url;
 }
-
-export default buildWsUrl;

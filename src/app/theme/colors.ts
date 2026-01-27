@@ -9,7 +9,7 @@ export const appColors = {
     border: '#E5E7EB',
     inputPlaceholder: '#94A3B8',
     borderFocus: '#6366F1',
-    
+
     btn: '#6366F1',
     btnCancel: '#EF4444',
     btnDisabled: '#CBD5E1',

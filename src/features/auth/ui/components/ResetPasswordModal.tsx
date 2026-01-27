@@ -1,20 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useConfirmCodeMutation } from 'app/store/api';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { Button } from 'shared';
-import { Formik, Form, Field } from 'formik';
-import type { FieldProps } from 'formik';
-import * as Yup from 'yup';
-import 'features/auth/model/validationSchemas';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Box,
-  TextField,
-  Typography,
   CircularProgress,
   IconButton,
   InputAdornment,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useConfirmCodeMutation } from 'app/store/api';
+import 'features/auth/model/validationSchemas';
+import type { FieldProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from 'shared';
+import { useLocalization, useNotifications } from 'widgets/hooks';
+import * as Yup from 'yup';
 
 interface ResetPasswordModalProps {
   email: string;

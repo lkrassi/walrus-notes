@@ -1,6 +1,4 @@
-import React from 'react';
-
-const FolderOpenIcon: React.FC<{
+export const FolderOpenIcon: React.FC<{
   fillColor?: string;
   strokeColor?: string;
   className?: string;
@@ -16,5 +14,3 @@ const FolderOpenIcon: React.FC<{
     <path d='M3 11h18v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5z' />
   </svg>
 );
-
-export default FolderOpenIcon;

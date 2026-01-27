@@ -106,7 +106,6 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: unknown) => {
-
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
         setTempEdge(null);
         return;
@@ -128,7 +127,7 @@ export const useGraphConnections = ({
       ) {
         clientX = event.changedTouches[0].clientX;
         clientY = event.changedTouches[0].clientY;
-      } 
+      }
 
       if (clientX !== undefined && clientY !== undefined) {
         const flowPosition = screenToFlowPosition({

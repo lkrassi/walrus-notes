@@ -1,18 +1,17 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneLight,
   oneDark,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { ThemeContext } from 'widgets/ui/ThemeProvider';
 
 interface CodeHighlighterProps {
   children: React.ReactNode;
   className?: string;
 }
-
-const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
+export const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   children,
   className,
 }) => {
@@ -59,5 +58,3 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     </div>
   );
 };
-
-export default CodeHighlighter;

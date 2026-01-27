@@ -16,16 +16,6 @@ interface UseGraphSelectionHandlersProps {
   ) => void;
 }
 
-/**
- * Управляет всеми операциями выбора elements в графе.
- *
- * Обрабатывает:
- * - handleNoteDrop: Drop note на граф для добавления
- * - handleBoxSelect: Выбор нескольких nodes в прямоугольнике
- * - handleNodeDoubleClick: Double click для открытия заметки
- *
- * Box select использует координаты viewport и трансформирует их в flow coordinates
- */
 export const useGraphSelectionHandlers = ({
   nodes,
   setNodes,
@@ -33,7 +23,6 @@ export const useGraphSelectionHandlers = ({
   screenToFlowPosition,
   handleAddNoteToGraph,
 }: UseGraphSelectionHandlersProps) => {
-  // Helper для трансформации координат из viewport в flow coordinates
   const toFlowCoords = useCallback(
     (clientX: number, clientY: number) => {
       try {
@@ -81,7 +70,6 @@ export const useGraphSelectionHandlers = ({
     [screenToFlowPosition]
   );
 
-  // Drop note для добавления на граф
   const handleNoteDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
@@ -91,15 +79,12 @@ export const useGraphSelectionHandlers = ({
           const note = JSON.parse(noteData);
           const dropPosition = toFlowCoords(event.clientX, event.clientY);
           handleAddNoteToGraph?.(note, dropPosition);
-        } catch (_error) {
-          // ignore
-        }
+        } catch (_error) {}
       }
     },
     [toFlowCoords, handleAddNoteToGraph]
   );
 
-  // Box select несколько nodes
   const handleBoxSelect = useCallback(
     (rect: { x1: number; y1: number; x2: number; y2: number }) => {
       try {
@@ -139,14 +124,11 @@ export const useGraphSelectionHandlers = ({
           }, 50);
           return res;
         });
-      } catch (_e) {
-        // ignore
-      }
+      } catch (_e) {}
     },
     [nodes, toFlowCoords, setNodes, lastBoxSelectedIdsRef]
   );
 
-  // Double click для открытия заметки
   const handleNodeDoubleClick = useCallback(
     (event: React.MouseEvent, node?: Node | null) => {
       event.stopPropagation();

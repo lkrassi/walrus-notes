@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import cn from 'shared/lib/cn';
+import { useEffect, useState } from 'react';
 import { Input } from 'shared';
+import { cn } from 'shared/lib/cn';
 
 interface ColorSelectorProps {
   value?: string;
@@ -16,7 +16,7 @@ const normalizeHex = (c?: string) => {
   return undefined;
 };
 
-const ColorSelector: React.FC<ColorSelectorProps> = ({
+export const ColorSelector: React.FC<ColorSelectorProps> = ({
   value,
   onChange,
   className,
@@ -75,5 +75,3 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
     </div>
   );
 };
-
-export default ColorSelector;

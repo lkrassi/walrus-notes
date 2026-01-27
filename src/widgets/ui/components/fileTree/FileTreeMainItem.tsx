@@ -1,6 +1,5 @@
-import React from 'react';
 import { Network } from 'lucide-react';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 
 type Props = {
@@ -71,5 +70,3 @@ export const FileTreeMainItem: React.FC<Props> = ({
     </div>
   );
 };
-
-export default FileTreeMainItem;

@@ -1,6 +1,5 @@
+import type { Edge } from 'reactflow';
 import type { Command } from 'shared/model/command';
-import type { Node, Edge } from 'reactflow';
-
 
 export class MoveNodeCommand implements Command {
   private nodeId: string;
@@ -35,7 +34,6 @@ export class MoveNodeCommand implements Command {
     return `Move note to (${Math.round(this.newPosition.x)}, ${Math.round(this.newPosition.y)})`;
   }
 }
-
 
 export class CreateEdgeCommand implements Command {
   private edge: Edge;
@@ -92,7 +90,6 @@ export class DeleteEdgeCommand implements Command {
     return `Disconnect notes`;
   }
 }
-
 
 export class MoveEdgeCommand implements Command {
   private edgeId: string;

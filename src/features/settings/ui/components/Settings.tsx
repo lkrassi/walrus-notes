@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { PhotoCamera } from '@mui/icons-material';
-import cn from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import { useAppSelector, useAppDispatch } from 'widgets/hooks/redux';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { PrivateHeader } from 'widgets/ui';
-import { settingsSections } from '../../models/variants';
-import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
-import ImageUploadModal from 'shared/ui/components/ImageUploader';
 import {
   useChangeProfilePictureMutation,
   useGetUserProfileQuery,
 } from 'app/store/api';
 import { setUserProfile } from 'app/store/slices/userSlice';
+import { motion } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
+import { cn } from 'shared/lib/cn';
+import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
+import { useLocalization } from 'widgets/hooks';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useModalActions } from 'widgets/hooks/useModalActions';
+import { PrivateHeader } from 'widgets/ui';
+import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
+import { settingsSections } from '../../models/variants';
 
 export const Settings: React.FC = () => {
   const { t } = useLocalization();
@@ -241,5 +241,3 @@ export const Settings: React.FC = () => {
     </div>
   );
 };
-
-export default Settings;

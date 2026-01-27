@@ -1,6 +1,6 @@
 import { FileText } from 'lucide-react';
-import cn from 'shared/lib/cn';
-import FolderIcon from 'shared/ui/icons/FolderIcon';
+import { cn } from 'shared/lib/cn';
+import { FolderIcon } from 'shared/ui/icons/FolderIcon';
 import { useLocalization } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
@@ -40,7 +40,8 @@ export const CreateChoiceModal = ({
           'md:mb-4'
         )}
       >
-        {t('dashboard:folderOrNote') || 'Выберите, что создать папку или заметку?'}
+        {t('dashboard:folderOrNote') ||
+          'Выберите, что создать папку или заметку?'}
       </h3>
 
       <button
@@ -83,8 +84,7 @@ export const CreateChoiceModal = ({
             'justify-center',
             'rounded-full',
             'bg-blue-100',
-            'dark:bg-blue-900/30',
-            'flex-shrink-0'
+            'dark:bg-blue-900/30'
           )}
         >
           <FolderIcon
@@ -166,8 +166,7 @@ export const CreateChoiceModal = ({
             'justify-center',
             'rounded-full',
             'bg-green-100',
-            'dark:bg-green-900/30',
-            'flex-shrink-0'
+            'dark:bg-green-900/30'
           )}
         >
           <FileText

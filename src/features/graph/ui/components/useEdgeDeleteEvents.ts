@@ -27,5 +27,3 @@ export const useEdgeDeleteEvents = (
     };
   }, [onDrop, onStart]);
 };
-
-export default useEdgeDeleteEvents;

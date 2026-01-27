@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface FieldErrorProps {
   error?: string;
   className?: string;
@@ -10,9 +8,9 @@ export const FieldError: React.FC<FieldErrorProps> = ({ error, className }) => {
 
   return (
     <div
-      role="alert"
-      aria-live="polite"
-      className={`text-red-500 text-sm ${className || ''}`}
+      role='alert'
+      aria-live='polite'
+      className={`text-sm text-red-500 ${className || ''}`}
     >
       {error}
     </div>

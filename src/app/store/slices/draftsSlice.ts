@@ -24,4 +24,5 @@ const drafts = createSlice({
 });
 
 export const { setDraft, removeDraft, clearDrafts } = drafts.actions;
-export default drafts.reducer;
+
+export const draftsReducer = drafts.reducer;

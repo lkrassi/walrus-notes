@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useGetUserProfileQuery } from 'app/store/api';
 import {
-  syncAuthFromStorage,
   clearUserProfile,
   setUserProfile,
+  syncAuthFromStorage,
 } from 'app/store/slices/userSlice';
-import { useGetUserProfileQuery } from 'app/store/api';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 
 export const AuthSyncProvider = ({
   children,
@@ -48,7 +48,6 @@ export const AuthSyncProvider = ({
     };
   }, [dispatch]);
 
-  // Sync fetched profile into redux
   useEffect(() => {
     if (profileResponse?.data) {
       dispatch(setUserProfile(profileResponse.data));

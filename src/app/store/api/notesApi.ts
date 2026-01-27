@@ -1,9 +1,9 @@
 import type { RootState } from 'app/store';
-import type { Note, Layout } from 'shared/model/types/layouts';
+import { updateTabNote } from 'app/store/slices/tabsSlice';
+import type { Layout, Note } from 'shared/model/types/layouts';
 import type { NotePosition } from 'shared/model/types/notes';
 import { apiSlice } from './apiSlice';
 import { layoutApi } from './layoutApi';
-import { updateTabNote } from 'app/store/slices/tabsSlice';
 
 interface GetNotesRequest {
   layoutId: string;

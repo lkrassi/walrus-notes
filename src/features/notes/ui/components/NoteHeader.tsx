@@ -1,24 +1,24 @@
-import { Button } from 'shared';
-import cn from 'shared/lib/cn';
-import { useLocalization } from 'widgets';
+import { useUploadFileMutation } from 'app/store/api';
 import {
+  CircleQuestionMark,
+  Download,
+  Edit3,
+  Image as ImageIcon,
   Maximize2,
   Minimize2,
-  Edit3,
   Save,
-  X,
-  Image as ImageIcon,
-  Download,
   Upload,
-  CircleQuestionMark,
+  X,
 } from 'lucide-react';
+import { Button } from 'shared';
+import { cn } from 'shared/lib/cn';
+import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
+import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import ImageUploadModal from 'shared/ui/components/ImageUploader';
-import MdImportModal from './MdImportModal';
-import { MarkdownHelp } from './MarkdownHelp';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
-import { useUploadFileMutation } from 'app/store/api';
-import EditNoteModal from './EditNoteModal';
+import { EditNoteModal } from './EditNoteModal';
+import { MarkdownHelp } from './MarkdownHelp';
+import { MdImportModal } from './MdImportModal';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -149,7 +149,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
           <>
             <Button
               onClick={() => onSave()}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+              className={cn('flex', 'h-8', 'items-center', 'justify-center')}
               disabled={isLoading}
               title={t('notes:save')}
               variant='submit'
@@ -169,7 +169,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
                 );
                 open(e as React.MouseEvent<HTMLElement>);
               }}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+              className={cn('flex', 'h-8', 'items-center', 'justify-center')}
               disabled={isLoading}
               title={t('notes:cancel')}
               variant='escape'
@@ -179,7 +179,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
 
             <Button
               onClick={handleOpenImageUpload}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+              className={cn('flex', 'h-8', 'items-center', 'justify-center')}
               disabled={isLoading}
               title={t('notes:uploadImage') || 'Upload image'}
               variant='default'
@@ -212,8 +212,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         {onImport && (
           <Button
             onClick={handleOpenImport}
-                        className={cn('flex', 'h-8', 'items-center', 'justify-center')}
-
+            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
             title={t('notes:import')}
             variant='default'
           >
@@ -223,7 +222,15 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
 
         <Button
           onClick={handleOpenHelp}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center', 'py-2', 'hidden', 'sm:inline-flex')}
+          className={cn(
+            'flex',
+            'h-8',
+            'items-center',
+            'justify-center',
+            'py-2',
+            'hidden',
+            'sm:inline-flex'
+          )}
           title={t('notes:editorHelp')}
           variant='default'
         >

@@ -168,5 +168,3 @@ export const useHolidaySettings = () => {
 
   return { enabled, setEnabled, settings, setSettings } as const;
 };
-
-export default useHolidaySettings;

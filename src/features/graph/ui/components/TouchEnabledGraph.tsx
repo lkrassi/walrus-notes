@@ -1,7 +1,7 @@
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
-import { useDndSensors } from 'shared/lib/useDndSensors';
 import { useCallback, type ReactNode } from 'react';
 import type { Node } from 'reactflow';
+import { useDndSensors } from 'shared/lib/useDndSensors';
 
 interface TouchEnabledGraphProps {
   children: ReactNode;

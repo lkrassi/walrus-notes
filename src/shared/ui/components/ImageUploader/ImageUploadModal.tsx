@@ -1,8 +1,8 @@
-import React, { useRef, useState, useCallback } from 'react';
-import cn from 'shared/lib/cn';
+import { useCallback, useRef, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 import { useLocalization, useNotifications } from 'widgets/hooks';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 type UploadFn = (file: File) => Promise<string>;
 
@@ -166,5 +166,3 @@ export const ImageUploadModal: React.FC<Props> = ({
     </div>
   );
 };
-
-export default ImageUploadModal;

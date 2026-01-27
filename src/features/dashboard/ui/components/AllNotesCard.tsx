@@ -1,9 +1,9 @@
+import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Network } from 'lucide-react';
-import cn from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks/useLocalization';
+import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
-import type { Variants } from 'framer-motion';
+import { useLocalization } from 'widgets/hooks/useLocalization';
 
 interface AllNotesCardProps {
   layout: Layout;

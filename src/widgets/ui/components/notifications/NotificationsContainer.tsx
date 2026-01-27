@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import Snackbar from '@mui/material/Snackbar';
+import { useEffect } from 'react';
 import { useNotifications } from 'widgets/hooks';
 import { Notification } from 'widgets/ui/components/notifications/Notification';
 

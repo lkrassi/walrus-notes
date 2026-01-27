@@ -4,12 +4,11 @@ import type {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { setTokens, clearUserProfile } from 'app/store/slices/userSlice';
+import { clearUserProfile, setTokens } from 'app/store/slices/userSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
   prepareHeaders: (headers, { getState }) => {
-    // Читаем токен из Redux store вместо localStorage
     const state = getState() as { user: { accessToken: string | null } };
     const token = state.user.accessToken;
 
@@ -29,7 +28,6 @@ const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === 401) {
-    // Читаем токены из Redux store
     const state = api.getState() as {
       user: { accessToken: string | null; refreshToken: string | null };
     };
@@ -63,7 +61,6 @@ const baseQueryWithReauth: BaseQueryFn<
               typeof accessTok === 'string' &&
               typeof refreshTok === 'string'
             ) {
-              // Используем Redux action для синхронизации токенов
               api.dispatch(
                 setTokens({
                   accessToken: accessTok,
@@ -72,7 +69,6 @@ const baseQueryWithReauth: BaseQueryFn<
               );
               result = await baseQuery(args, api, extraOptions);
             } else {
-              // Централизованная очистка через Redux
               api.dispatch(clearUserProfile());
             }
           } else {

@@ -1,6 +1,6 @@
 import { useChangeProfilePictureMutation } from 'app/store/api';
-import React, { useRef, useState } from 'react';
-import cn from 'shared/lib/cn';
+import { useRef, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';

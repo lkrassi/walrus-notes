@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import { Redo as RedoIcon, Undo as UndoIcon } from '@mui/icons-material';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import Box from '@mui/material/Box';
-import { Undo as UndoIcon, Redo as RedoIcon } from '@mui/icons-material';
+import { useEffect } from 'react';
 import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 
 interface GraphUndoRedoControlsProps {

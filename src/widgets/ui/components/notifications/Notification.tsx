@@ -1,8 +1,7 @@
-import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
-import React from 'react';
+import type { AlertColor } from '@mui/material/Alert';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import type { AlertColor } from '@mui/material/Alert';
+import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
 
 interface NotificationProps {
   notification: NotificationType;

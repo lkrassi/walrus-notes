@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { DeleteLayoutForm } from './DeleteLayoutForm';

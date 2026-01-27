@@ -6,7 +6,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-
 export const useDndSensors = (options?: {
   mouseDistance?: number;
   touchDelay?: number;

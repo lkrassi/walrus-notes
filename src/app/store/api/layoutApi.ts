@@ -214,7 +214,6 @@ export const layoutApi = apiSlice.injectEndpoints({
           })
         );
 
-
         try {
           await queryFulfilled;
         } catch {

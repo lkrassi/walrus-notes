@@ -1,7 +1,6 @@
-import React from 'react';
-import cn from 'shared/lib/cn';
-import './garland.css';
+import { cn } from 'shared/lib/cn';
 import { useIsMobile } from 'widgets/hooks';
+import './garland.css';
 
 interface Props {
   active?: boolean;
@@ -23,5 +22,3 @@ export const Garland: React.FC<Props> = ({ active = true }) => {
     </ul>
   );
 };
-
-export default Garland;

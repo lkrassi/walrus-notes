@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
-import cn from 'shared/lib/cn';
+import { useEffect, useRef, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
+import { useExportNote } from 'widgets/hooks/useExportNote';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
-import useExportNote from 'widgets/hooks/useExportNote';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 

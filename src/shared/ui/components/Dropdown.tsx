@@ -1,7 +1,7 @@
-import { ChevronDown } from 'lucide-react';
-import React, { type ReactNode } from 'react';
 import Popover from '@mui/material/Popover';
-import cn from 'shared/lib/cn';
+import { ChevronDown } from 'lucide-react';
+import React, { type ReactNode, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -26,8 +26,8 @@ export const Dropdown = ({
   disabled = false,
   showArrow = true,
 }: DropdownProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [internalIsOpen, setInternalIsOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;

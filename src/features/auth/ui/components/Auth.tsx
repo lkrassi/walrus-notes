@@ -1,12 +1,9 @@
-import { useCallback, useState } from 'react';
-import cn from 'shared/lib/cn';
-
-import { Button } from 'shared';
-
 import { Login } from 'features/auth/ui/components/Login';
 import { Register } from 'features/auth/ui/components/Register';
+import { useCallback, useState } from 'react';
+import { Button } from 'shared';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-
 import { PublicHeader } from 'widgets/ui';
 
 export const Auth = () => {
@@ -18,7 +15,7 @@ export const Auth = () => {
 
   const handleSwitchToRegister = useCallback(() => {
     setActiveForm('register');
-  }, [])
+  }, []);
 
   return (
     <main>

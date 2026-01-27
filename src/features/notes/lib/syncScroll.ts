@@ -3,7 +3,6 @@ export const syncScroll = (a: HTMLElement | null, b: HTMLElement | null) => {
     return () => {};
   }
 
-
   let syncingA = false;
   let syncingB = false;
 
@@ -34,8 +33,7 @@ export const syncScroll = (a: HTMLElement | null, b: HTMLElement | null) => {
       syncingB = true;
       a.scrollTop = newTop;
       setTimeout(() => (syncingB = false), 20);
-    } catch (_e) {
-    }
+    } catch (_e) {}
   };
 
   a.addEventListener('scroll', handlerA);
@@ -46,5 +44,3 @@ export const syncScroll = (a: HTMLElement | null, b: HTMLElement | null) => {
     b.removeEventListener('scroll', handlerB);
   };
 };
-
-export default syncScroll;

@@ -1,12 +1,10 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import cn from 'shared/lib/cn';
-// import logo2 from '../../../../assets/logo2.png';
-import logo from '../../../../assets/logo.png';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
-// import Garland from '../Garland';
 
 const PublicHeaderComponent = () => {
   const { t } = useLocalization();
@@ -29,8 +27,6 @@ const PublicHeaderComponent = () => {
         'md:px-5'
       )}
     >
-      {/*<Garland active={!!settings?.garland && enabled} />*/}
-
       <Link
         to='/'
         className={cn('flex', 'items-center', 'gap-2', 'max-md:flex-col')}

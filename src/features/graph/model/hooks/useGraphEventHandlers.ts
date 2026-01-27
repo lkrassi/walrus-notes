@@ -30,8 +30,7 @@ export const useGraphEventHandlers = ({
             y: event.clientY,
           });
           handleAddNoteToGraph(note, dropPosition);
-        } catch (_error) {
-        }
+        } catch (_error) {}
       }
     },
     [handleAddNoteToGraph, screenToFlowPosition]

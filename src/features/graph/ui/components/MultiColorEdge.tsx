@@ -1,18 +1,12 @@
 import { useDeleteNoteLinkMutation } from 'app/store/api';
-import React, {
-  useCallback,
-  useRef,
-  useState,
-  useMemo,
-  useEffect,
-} from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BaseEdge,
   type EdgeProps,
   getBezierPath,
   useReactFlow,
 } from 'reactflow';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 
 interface MultiColorStepEdgeData {
   isRelatedToSelected?: boolean;
@@ -27,7 +21,9 @@ interface EdgeDeleteEventDetail {
   newTarget?: string | null;
 }
 
-const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
+export const MultiColorEdge = memo(function MultiColorEdge(
+  props: EdgeProps<MultiColorStepEdgeData>
+) {
   const {
     id,
     sourceX,
@@ -470,5 +466,4 @@ const MultiColorEdgeInner = (props: EdgeProps<MultiColorStepEdgeData>) => {
       <title>Перетащите связь для удаления или переподключения</title>
     </>
   );
-};
-export const MultiColorEdge = React.memo(MultiColorEdgeInner);
+});

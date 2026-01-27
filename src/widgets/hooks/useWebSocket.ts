@@ -27,8 +27,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
     return full;
   }, [url, userId]);
 
-  const instanceIdRef = useRef<string>(Math.random().toString(36).slice(2, 8));
-
   const connect = useCallback(() => {
     const full = getFullUrl();
     if (!full) {
@@ -166,5 +164,3 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
     wsRef,
   } as const;
 };
-
-export default useWebSocket;

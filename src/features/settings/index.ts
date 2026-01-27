@@ -1,2 +1,2 @@
+export * from './ui/components/Settings';
 export * from './ui/components/SettingsButton';
-export * from './ui/components/Settings'

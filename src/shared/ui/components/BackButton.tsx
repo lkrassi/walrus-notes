@@ -1,8 +1,7 @@
-import { ArrowLeft } from 'lucide-react';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import { alpha, styled } from '@mui/material/styles';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export type BackButtonProps = {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;

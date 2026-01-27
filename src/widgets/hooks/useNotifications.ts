@@ -5,8 +5,8 @@ import {
   removeNotification,
 } from 'app/store/slices/notificationsSlice';
 import { useCallback, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { normalizeMessage } from 'shared/model/utils/normalizeMessage';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 
 export const useNotifications = () => {
   const dispatch = useAppDispatch();
@@ -16,9 +16,8 @@ export const useNotifications = () => {
 
   const lastMessagesRef = useRef<Map<string, number>>(new Map());
   const MAX_CACHED_MESSAGES = 500;
-  const CACHE_TTL = 5 * 60 * 1000; // 5 минут
+  const CACHE_TTL = 5 * 60 * 1000;
 
-  // Очистка старых кешированных сообщений
   const cleanupOldMessages = useCallback(() => {
     const now = Date.now();
     for (const [key, timestamp] of lastMessagesRef.current.entries()) {
@@ -27,7 +26,6 @@ export const useNotifications = () => {
       }
     }
 
-    // Если кеш все еще слишком большой, удаляем самые старые
     if (lastMessagesRef.current.size > MAX_CACHED_MESSAGES) {
       const entriesToDelete =
         lastMessagesRef.current.size - MAX_CACHED_MESSAGES;

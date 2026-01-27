@@ -1,10 +1,8 @@
 ﻿import { memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
-import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
-// import Garland from '../Garland';
 import { MobileMenu } from './MobileMenu';
 
 const PrivateHeaderComponent = () => {
@@ -26,8 +24,6 @@ const PrivateHeaderComponent = () => {
         'md:px-0.5'
       )}
     >
-      {/*<Garland active={!!settings?.garland && enabled} />*/}
-
       <div
         className={cn(
           'flex',

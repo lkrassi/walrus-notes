@@ -1,8 +1,7 @@
-import { Moon, Languages, LogOut, Download, Upload } from 'lucide-react';
-// import { HolidayToggle } from '../ui/components/HolidayToggle';
-import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
+import { Download, Languages, LogOut, Moon, Upload } from 'lucide-react';
 import { LanguageSwitcher } from 'widgets/ui/components/LanguageSwitcher';
 import { LogoutButton } from 'widgets/ui/components/logout/LogoutButton';
+import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
 import { ExportDataButton } from '../ui/components/ExportDataButton';
 import { ImportDataButton } from '../ui/components/ImportDataButton';
 

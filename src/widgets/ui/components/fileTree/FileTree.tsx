@@ -1,15 +1,14 @@
-import { useGetMyLayoutsQuery } from 'app/store/api';
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
-import { useAppSelector } from '../../../hooks/redux';
-import { notesApi } from '../../../model';
-import cn from 'shared/lib/cn';
+import { useGetMyLayoutsQuery, useLazySearchNotesQuery } from 'app/store/api';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
+import { useAppSelector } from '../../../hooks/redux';
+import { notesApi } from '../../../model';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
 import { FileTreeMainItem } from './FileTreeMainItem';
 import { SearchInput } from './SearchInput';
-import { useLazySearchNotesQuery } from 'app/store/api';
 
 interface FileTreeProps {
   expandedItems: Set<string>;

@@ -99,4 +99,4 @@ export const notificationsSlice = createSlice({
 
 export const { addNotification, removeNotification, clearAllNotifications } =
   notificationsSlice.actions;
-export default notificationsSlice.reducer;
+export const notificationsReducer = notificationsSlice.reducer;

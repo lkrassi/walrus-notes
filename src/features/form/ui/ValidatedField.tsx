@@ -1,8 +1,7 @@
 import type { FieldProps } from 'formik';
 import { Field } from 'formik';
-import React from 'react';
 import { Input } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { FieldError } from './FieldError';
 
 interface ValidatedFieldProps {

@@ -1,14 +1,10 @@
-import { appRoutesConfig } from 'app/router/config';
 import { AuthSyncProvider } from 'app/providers/AuthSyncProvider';
+import { appRoutesConfig } from 'app/router/config';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import { cn } from 'shared/lib/cn';
 import { SidebarProvider, store } from 'widgets';
-import cn from 'shared/lib/cn';
-import {
-  ModalProvider,
-  NotificationsContainer,
-  // SnowfallOverlay,
-} from 'widgets/ui';
+import { ModalProvider, NotificationsContainer } from 'widgets/ui';
 
 export const App = () => {
   return (

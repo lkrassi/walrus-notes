@@ -5,8 +5,8 @@ export const emptyStateVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5 }
-  }
+    transition: { duration: 0.5 },
+  },
 };
 
 export const iconVariants: Variants = {
@@ -16,33 +16,33 @@ export const iconVariants: Variants = {
     transition: {
       delay: 0.2,
       type: 'spring',
-      stiffness: 200
-    }
-  }
+      stiffness: 200,
+    },
+  },
 };
 
 export const titleVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delay: 0.3 }
-  }
+    transition: { delay: 0.3 },
+  },
 };
 
 export const descriptionVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delay: 0.4 }
-  }
+    transition: { delay: 0.4 },
+  },
 };
 
 export const listVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delay: 0.5 }
-  }
+    transition: { delay: 0.5 },
+  },
 };
 
 export const itemVariants: Variants = {
@@ -50,14 +50,14 @@ export const itemVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { delay: 0.6 }
-  }
+    transition: { delay: 0.6 },
+  },
 };
 
 export const instructionVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delay: 0.7 }
-  }
+    transition: { delay: 0.7 },
+  },
 };

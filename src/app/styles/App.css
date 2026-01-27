@@ -67,33 +67,37 @@ h6 {
 }
 
 @theme {
-  --color-bg: #F8FAFC;
-  --color-text: #0F172A;
-  --color-primary: #6366F1;
-  --color-primary-dark: #4F46E5;
-  --color-primary-gradient: #818CF8;
-  --color-secondary: #64748B;
-  --color-border: #E5E7EB;
-  --color-input-placeholder: #94A3B8;
-  --color-border-focus: #6366F1;
-  --color-btn: #6366F1;
-  --color-btn-cancel: #EF4444;
-  --color-btn-disabled: #CBD5E1;
-  --color-btn-submit: #22C55E;
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-gradient: #818cf8;
+  --color-secondary: #64748b;
+  --color-border: #e5e7eb;
+  --color-input-placeholder: #94a3b8;
+  --color-border-focus: #6366f1;
+  --color-btn: #6366f1;
+  --color-btn-cancel: #ef4444;
+  --color-btn-disabled: #cbd5e1;
+  --color-btn-submit: #22c55e;
 
-  --color-dark-bg: #0F172A;
-  --color-dark-text: #E5E7EB;
-  --color-dark-primary: #818CF8;
-  --color-dark-primary-dark: #6366F1;
-  --color-dark-primary-gradient: #A5B4FC;
-  --color-dark-secondary: #94A3B8;
-  --color-dark-border: #1F2937;
-  --color-dark-input-placeholder: #64748B;
-  --color-dark-border-focus: #818CF8;
-  --color-dark-btn: #6366F1;
-  --color-dark-btn-cancel: #EF4444;
-  --color-dark-btn-disabled: #CBD5E1;
-  --color-dark-btn-submit: #22C55E;
+  --color-dark-bg: #0f172a;
+  --color-dark-text: #e5e7eb;
+  --color-dark-primary: #818cf8;
+  --color-dark-primary-dark: #6366f1;
+  --color-dark-primary-gradient: #a5b4fc;
+  --color-dark-secondary: #94a3b8;
+  --color-dark-border: #1f2937;
+  --color-dark-input-placeholder: #64748b;
+  --color-dark-border-focus: #818cf8;
+  --color-dark-btn: #6366f1;
+  --color-dark-btn-cancel: #ef4444;
+  --color-dark-btn-disabled: #cbd5e1;
+  --color-dark-btn-submit: #22c55e;
+}
+
+.ewq {
+  background-color: #6366f1;
 }
 
 a:focus-visible,

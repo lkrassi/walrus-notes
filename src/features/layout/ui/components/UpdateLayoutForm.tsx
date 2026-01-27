@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { useUpdateLayoutMutation } from 'app/store/api';
-import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Input } from 'shared';
+import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
-import ColorSelector from './ColorSelector';
-import { Input } from 'shared';
+import { ColorSelector } from './ColorSelector';
 
 interface UpdateLayoutFormProps {
   layoutId: string;
@@ -110,5 +109,3 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
     </form>
   );
 };
-
-export default UpdateLayoutForm;

@@ -1,26 +1,23 @@
-import { Form, Formik, Field } from 'formik';
-import type { FieldProps } from 'formik';
-import React from 'react';
-import { Button } from 'shared';
-import { useNotifications } from 'widgets';
-
-import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
-import { usePasswordVisibility } from 'features/auth/hooks';
-import { ConfirmCodeModal } from 'features/auth/ui/components/ConfirmCodeModal';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-
-import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
-import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Box,
-  TextField,
-  Typography,
   CircularProgress,
   IconButton,
   InputAdornment,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
+import { usePasswordVisibility } from 'features/auth/hooks';
+import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
+import { ConfirmCodeModal } from 'features/auth/ui/components/ConfirmCodeModal';
+import type { FieldProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import { Button } from 'shared';
+import { useNotifications } from 'widgets';
+import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 type RegisterProps = {
   onSwitchToLogin?: () => void;

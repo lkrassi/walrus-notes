@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
-import cn from '../../../../shared/lib/cn';
-import {useRef, useEffect} from 'react'
+import { useEffect, useRef } from 'react';
+import { cn } from '../../../../shared/lib/cn';
 
 export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
 
@@ -15,7 +14,7 @@ interface DropdownContentProps {
   animationDuration?: number;
   maxHeight?: string;
   onReachEnd?: () => void;
-  reachMargin?: string; 
+  reachMargin?: string;
   reachDebounceMs?: number;
 }
 
@@ -68,13 +67,12 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
         return null;
       };
 
-      const rootForObserver = findScrollParent(container) ?? null; 
+      const rootForObserver = findScrollParent(container) ?? null;
 
       io = new IntersectionObserver(
         entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-
               if (isThrottledRef.current) {
                 return;
               }
@@ -112,8 +110,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
     };
   }, [onReachEnd, reachMargin, isOpen, state, reachDebounceMs]);
 
-  useEffect(() => {
-  }, [isOpen, state]);
+  useEffect(() => {}, [isOpen, state]);
 
   const renderContent = () => {
     switch (state) {

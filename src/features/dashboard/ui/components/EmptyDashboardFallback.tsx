@@ -1,12 +1,12 @@
+import { useGetMyLayoutsQuery } from 'app/store/api';
+import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { useGetMyLayoutsQuery } from 'app/store/api';
-import cn from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks/useLocalization';
+import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
-import type { Variants } from 'framer-motion';
-import { FolderCard } from './FolderCard';
+import { useLocalization } from 'widgets/hooks/useLocalization';
 import { AllNotesCard } from './AllNotesCard';
+import { FolderCard } from './FolderCard';
 
 interface EmptyDashboardFallbackProps {
   onFolderClick?: (layoutId: string, title: string) => void;
@@ -22,7 +22,6 @@ export const EmptyDashboardFallback = ({
 
   const layouts: Layout[] = layoutsResponse?.data || [];
 
-  // Разделяем главную папку и обычные папки
   const mainLayout = layouts.find(layout => layout.isMain);
   const regularLayouts = layouts.filter(layout => !layout.isMain);
 

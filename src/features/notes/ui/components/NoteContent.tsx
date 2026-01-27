@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useLayoutEffect } from 'react';
-import useResizableSplit from 'widgets/hooks/useResizableSplit';
-import { syncScroll } from '../../lib/syncScroll';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useIsDesktop } from 'widgets/hooks';
+import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
+import { syncScroll } from '../../lib/syncScroll';
 
 import type { Note } from 'shared/model/types/layouts';
 
-import NoteContentEditorSplit from './NoteContentEditorSplit';
+import { NoteContentEditorSplit } from './NoteContentEditorSplit';
 
 interface NoteContentProps {
   isEditing: boolean;
@@ -141,5 +141,3 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     />
   );
 };
-
-export default NoteContent;

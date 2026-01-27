@@ -24,8 +24,7 @@ export const useResizableBase = ({
   const startPosRef = useRef(0);
   const startSizeRef = useRef(size);
 
-  useEffect(() => {
-  }, [size, storageKey]);
+  useEffect(() => {}, [size, storageKey]);
 
   const onPointerMove = useCallback(
     (e: PointerEvent) => {
@@ -67,5 +66,3 @@ export const useResizableBase = ({
     isResizing,
   } as const;
 };
-
-export default useResizableBase;

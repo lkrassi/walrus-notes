@@ -1,10 +1,10 @@
 import { useGetMyLayoutsQuery } from 'app/store/api';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import cn from 'shared/lib/cn';
-import { Button } from 'shared/ui';
+import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
-import FolderIcon from 'shared/ui/icons/FolderIcon';
+import { Button } from 'shared/ui';
+import { FolderIcon } from 'shared/ui/icons/FolderIcon';
 import { useLocalization } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 

@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import { MiniMap, type Node } from 'reactflow';
 
-const GraphMiniMapInner = () => {
+export const GraphMiniMap = memo(function GraphMiniMap() {
   const nodeColor = useCallback((node: Node) => {
     try {
-      const color = (node?.data as { layoutColor?: string } | undefined)?.layoutColor;
+      const color = (node?.data as { layoutColor?: string } | undefined)
+        ?.layoutColor;
       return color ?? '#000000';
     } catch (_e) {
       return '#000000';
@@ -27,7 +28,4 @@ const GraphMiniMapInner = () => {
       }}
     />
   );
-};
-
-export const GraphMiniMap = React.memo(GraphMiniMapInner);
-GraphMiniMap.displayName = 'GraphMiniMap';
+});

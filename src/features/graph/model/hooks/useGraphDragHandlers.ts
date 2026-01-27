@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import type { Node, NodeChange, Edge } from 'reactflow';
+import type { Edge, Node, NodeChange } from 'reactflow';
 import { MoveNodeCommand } from '../commands';
 import type { useGraphHistory } from './useGraphHistory';
 
@@ -25,17 +25,6 @@ interface NodeExt extends Node {
   height?: number | null;
 }
 
-/**
- * Управляет всеми операциями drag-and-drop для nodes.
- *
- * Обрабатывает:
- * - handleNodeDragStart: Инициация drag, сохранение позиций
- * - handleNodeDragStop: Создание команды для истории, синхронизация с API
- * - handleNodeMouseEnter/Leave: Обёрнут в проверку, что не во время drag
- * - handleNodesChange: Специальная логика для multi-select drag
- *
- * Поддерживает multi-select: Если выбрано несколько nodes, все двигаются вместе
- */
 export const useGraphDragHandlers = ({
   nodes,
   setNodes,
@@ -54,7 +43,6 @@ export const useGraphDragHandlers = ({
   >(new Map());
   const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
-  // Обработчик начала drag
   const handleNodeDragStart = useCallback(
     (_event: React.MouseEvent, node: Node) => {
       isNodeDraggingRef.current = true;
@@ -72,16 +60,13 @@ export const useGraphDragHandlers = ({
     [nodes, isNodeDraggingRef, setIsNodeDragging]
   );
 
-  // Обработчик окончания drag
   const handleNodeDragStop = useCallback(
     async (_event: React.MouseEvent, node: Node) => {
       if (!node) {
         try {
           isNodeDraggingRef.current = false;
           setIsNodeDragging?.(false);
-        } catch (_e) {
-          // ignore
-        }
+        } catch (_e) {}
         return;
       }
 
@@ -120,9 +105,7 @@ export const useGraphDragHandlers = ({
                   rfSetNodes?.(prev =>
                     prev.map(n => (n.id === nodeId ? { ...n, position } : n))
                   );
-                } catch (_e) {
-                  // ignore
-                }
+                } catch (_e) {}
                 try {
                   const change = {
                     id: nodeId,
@@ -131,14 +114,10 @@ export const useGraphDragHandlers = ({
                     dragging: false,
                   } as unknown as NodeChange;
                   onNodesChange?.([change]);
-                } catch (_e) {
-                  // ignore
-                }
+                } catch (_e) {}
                 try {
                   rfSetEdges?.(prev => prev.map(e => ({ ...e })));
-                } catch (_e) {
-                  // ignore
-                }
+                } catch (_e) {}
                 updatePositionCallback(nodeId, position.x, position.y);
               }
             );
@@ -155,9 +134,7 @@ export const useGraphDragHandlers = ({
       try {
         isNodeDraggingRef.current = false;
         setIsNodeDragging?.(false);
-      } catch (_e) {
-        // ignore
-      }
+      } catch (_e) {}
     },
     [
       nodes,
@@ -174,7 +151,6 @@ export const useGraphDragHandlers = ({
     ]
   );
 
-  // Обработчик изменения nodes (включая multi-select)
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
       type LocalNodeChange = {

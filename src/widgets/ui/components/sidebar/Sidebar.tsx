@@ -4,23 +4,21 @@ import { ProfileButton } from 'features/profile';
 import { Plus } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import { Link } from 'react-router-dom';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import {
   useFileTree,
+  useIsMobile,
   useLocalization,
   useSidebar,
-  useIsMobile,
 } from 'widgets/hooks';
-// import { useHolidaySettings } from 'widgets/hooks/useHolidaySettings';
-import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
+import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { parseTabId } from 'widgets/model/utils/tabUtils';
 import { FileTree } from '../fileTree';
 import { MobileMenu } from '../header/MobileMenu';
-// import logo2 from '../../../../assets/logo2.png';
 import logo from '../../../../assets/logo.png';
 
 type SidebarProps = {
@@ -36,7 +34,6 @@ const SidebarComponent = (
 ) => {
   const { t } = useLocalization();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
-  // const { enabled } = useHolidaySettings();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
   const dispatch = useAppDispatch();

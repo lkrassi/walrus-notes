@@ -1,4 +1,4 @@
-import useResizableBase from './useResizableBase';
+import { useResizableBase } from './useResizableBase';
 
 type Options = {
   storageKey?: string;
@@ -29,5 +29,3 @@ export const useResizableSplit = ({
     isResizing: base.isResizing,
   } as const;
 };
-
-export default useResizableSplit;

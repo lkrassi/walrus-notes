@@ -1,6 +1,5 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useAppSelector } from 'widgets/hooks/redux';
 
@@ -37,15 +36,7 @@ export const ProfileButton: React.FC = () => {
       )}
       title={t('profile:title')}
     >
-      <div
-        className={cn(
-          'flex-shrink-0',
-          'overflow-hidden',
-          'rounded-full',
-          'h-10',
-          'w-10'
-        )}
-      >
+      <div className={cn('overflow-hidden', 'rounded-full', 'h-10', 'w-10')}>
         {profile?.imgUrl ? (
           <img
             src={`https://${profile.imgUrl}`}

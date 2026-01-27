@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import cn from 'shared/lib/cn';
 import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { cn } from 'shared/lib/cn';
+import { useDebounced } from 'widgets/hooks/useDebounced';
 import { useLocalization } from '../../../hooks';
-import useDebounced from 'widgets/hooks/useDebounced';
 
 type SearchInputProps = {
   onSearchChange: (value: string) => void;
@@ -65,5 +65,3 @@ export const SearchInput = ({
     </div>
   );
 };
-
-export default SearchInput;

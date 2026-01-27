@@ -1,6 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import cn from 'shared/lib/cn';
+import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { Textarea } from 'shared';
+import { cn } from 'shared/lib/cn';
 
 interface MarkdownEditorProps {
   value: string;
@@ -106,5 +106,3 @@ export const MarkdownEditor = forwardRef<
 });
 
 MarkdownEditor.displayName = 'MarkdownEditor';
-
-export default MarkdownEditor;

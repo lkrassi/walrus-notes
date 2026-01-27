@@ -1,14 +1,14 @@
-import { motion } from 'framer-motion';
-import { FileText, Network, Pencil, Trash2 } from 'lucide-react';
 import { useGetNotesQuery } from 'app/store/api';
-import cn from 'shared/lib/cn';
+import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
+import { UpdateLayoutForm } from 'features/layout/ui/components/UpdateLayoutForm';
+import type { Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Network, Pencil, Trash2 } from 'lucide-react';
+import { cn } from 'shared/lib/cn';
+import type { Layout } from 'shared/model/types/layouts';
+import { FolderIcon } from 'shared/ui/icons/FolderIcon';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
-import FolderIcon from 'shared/ui/icons/FolderIcon';
-import type { Layout } from 'shared/model/types/layouts';
-import type { Variants } from 'framer-motion';
-import { UpdateLayoutForm } from 'features/layout/ui/components/UpdateLayoutForm';
-import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
 
 interface FolderCardProps {
   layout: Layout;

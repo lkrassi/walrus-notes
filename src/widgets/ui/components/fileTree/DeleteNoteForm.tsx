@@ -1,12 +1,11 @@
 import { useDeleteNoteMutation } from 'app/store/api';
 import { closeTabsByItemId } from 'app/store/slices/tabsSlice';
-import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { Button } from 'shared';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppDispatch } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
-import { Trash2 } from 'lucide-react';
 
 interface DeleteNoteFormProps {
   noteId: string;

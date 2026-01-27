@@ -1,7 +1,7 @@
 import { Menu, X } from 'lucide-react';
 import { useLocalization, useSidebar } from 'widgets/hooks';
 
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 
 type MobileMenuProps = {
   className?: string;

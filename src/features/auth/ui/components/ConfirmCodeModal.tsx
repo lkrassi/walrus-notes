@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useConfirmCodeMutation } from 'app/store/api';
-import { useLocalization } from 'widgets/hooks';
-import { useNotifications } from 'widgets/hooks';
-import { Button } from 'shared';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useConfirmCodeMutation } from 'app/store/api';
+import { useEffect, useRef, useState } from 'react';
+import { Button } from 'shared';
+import { useLocalization, useNotifications } from 'widgets/hooks';
 
 interface ConfirmCodeModalProps {
   email: string;

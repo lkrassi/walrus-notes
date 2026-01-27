@@ -1,13 +1,13 @@
 import type { RootState } from 'app/store';
 import { notesApi, useGetNotesQuery } from 'app/store/api';
 import { useState } from 'react';
-import cn from 'shared/lib/cn';
+import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useDropdown } from 'widgets/hooks/useDropdown';
-import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
 
 interface LinkedNotesListProps {
   layoutId?: string | null;
@@ -285,5 +285,3 @@ export const LinkedNotesList = ({
     </div>
   );
 };
-
-export default LinkedNotesList;

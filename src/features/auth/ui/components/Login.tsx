@@ -1,30 +1,28 @@
-import { Form, Formik, Field } from 'formik';
-import type { FieldProps } from 'formik';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from 'shared';
-import { useNotifications } from 'widgets';
-
-import { useLoginMutation, useForgotPasswordMutation } from 'app/store/api';
-import { setTokens, setUserProfile } from 'app/store/slices/userSlice';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import { usePasswordVisibility } from 'features/auth/hooks';
-import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
-import { ResetPasswordModal } from 'features/auth/ui/components/ResetPasswordModal';
-import { ForgotPasswordEmailModal } from 'features/auth/ui/components/ForgotPasswordEmailModal';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
-import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Box,
-  TextField,
-  Typography,
   CircularProgress,
   IconButton,
   InputAdornment,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useForgotPasswordMutation, useLoginMutation } from 'app/store/api';
+import { setTokens, setUserProfile } from 'app/store/slices/userSlice';
+import { usePasswordVisibility } from 'features/auth/hooks';
+import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
+import { ForgotPasswordEmailModal } from 'features/auth/ui/components/ForgotPasswordEmailModal';
+import { ResetPasswordModal } from 'features/auth/ui/components/ResetPasswordModal';
+import type { FieldProps } from 'formik';
+import { Field, Form, Formik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'shared';
+import { useNotifications } from 'widgets';
+import { useAppDispatch } from 'widgets/hooks/redux';
+import { useLocalization } from 'widgets/hooks/useLocalization';
+import { useMobileForm } from 'widgets/hooks/useMobileForm';
+import { useModalActions } from 'widgets/hooks/useModalActions';
+import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
@@ -55,7 +53,6 @@ export const Login: React.FC<LoginProps> = () => {
     try {
       const response = await login(values).unwrap();
 
-      // Используем Redux action для синхронизации токенов
       dispatch(
         setTokens({
           accessToken: response.data.accessToken,
@@ -63,7 +60,6 @@ export const Login: React.FC<LoginProps> = () => {
         })
       );
 
-      // Сохраняем базовые данные в Redux store
       dispatch(
         setUserProfile({
           id: response.data.userId,
@@ -75,7 +71,6 @@ export const Login: React.FC<LoginProps> = () => {
         })
       );
 
-      // Оставляем localStorage для обратной совместимости (будет удалено позже)
       localStorage.setItem('userId', response.data.userId);
       navigate('/dashboard');
     } catch {

@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react';
-import cn from 'shared/lib/cn';
+import { useCallback, useRef, useState } from 'react';
 import { Button } from 'shared';
+import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
@@ -146,5 +146,3 @@ export const MdImportModal: React.FC<Props> = ({
     </div>
   );
 };
-
-export default MdImportModal;

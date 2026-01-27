@@ -26,5 +26,3 @@ export const useExportNote = () => {
 
   return { exportNote };
 };
-
-export default useExportNote;

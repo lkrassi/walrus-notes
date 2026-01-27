@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import useWebSocket from 'widgets/hooks/useWebSocket';
-import { useWSContext } from 'widgets/providers/WebSocketProvider';
-import useDebounced from 'widgets/hooks/useDebounced';
-import { makeUpdateDraft, makeCommitDraft } from 'shared/model/ws';
-import type { UpdateDraftPayload, CommitDraftPayload } from 'shared/model/ws';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
-import { setDraft, removeDraft } from 'app/store/slices/draftsSlice';
-import { notesApi } from 'app/store/api/notesApi';
-import { layoutApi } from 'app/store/api/layoutApi';
 import { store } from 'app/store';
+import { layoutApi } from 'app/store/api/layoutApi';
+import { notesApi } from 'app/store/api/notesApi';
+import { removeDraft, setDraft } from 'app/store/slices/draftsSlice';
 import { updateTabNote } from 'app/store/slices/tabsSlice';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { CommitDraftPayload, UpdateDraftPayload } from 'shared/model/ws';
+import { makeCommitDraft, makeUpdateDraft } from 'shared/model/ws';
+import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useDebounced } from 'widgets/hooks/useDebounced';
+import { useWebSocket } from 'widgets/hooks/useWebSocket';
+import { useWSContext } from 'widgets/providers/WebSocketProvider';
 
 interface UseDraftSyncOpts {
   noteId: string | null | undefined;
@@ -469,5 +469,3 @@ export const useDraftSync = ({
     sendUpdateDraft,
   } as const;
 };
-
-export default useDraftSync;

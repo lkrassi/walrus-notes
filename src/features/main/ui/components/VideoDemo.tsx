@@ -1,10 +1,10 @@
-import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import cn from 'shared/lib/cn';
-import demoVideo from '../../../../assets/demo.webm';
+import { useEffect, useRef } from 'react';
+import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
+import demoVideo from '../../../../assets/demo.webm';
 
-const VideoDemo = () => {
+export const VideoDemo = () => {
   const { t } = useLocalization();
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -172,5 +172,3 @@ const VideoDemo = () => {
     </div>
   );
 };
-
-export default VideoDemo;
