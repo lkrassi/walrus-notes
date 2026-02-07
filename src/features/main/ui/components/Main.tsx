@@ -11,7 +11,6 @@ import {
   itemVariants,
 } from '../../models';
 import { BackgroundIcons } from './BackgroundIcons';
-import { VideoDemo } from './VideoDemo';
 
 export const Main = () => {
   const navigate = useNavigate();
@@ -137,8 +136,6 @@ export const Main = () => {
           </div>
         </motion.div>
       </div>
-
-      <VideoDemo />
 
       <BackgroundIcons />
     </>
