@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { cn } from 'shared/lib/cn';
+import { CollaborativeNoteEditor } from './CollaborativeNoteEditor';
 import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownPreview } from './MarkdownPreview';
-import { CollaborativeNoteEditor } from './CollaborativeNoteEditor';
 
 import type { Note } from 'shared/model/types/layouts';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';

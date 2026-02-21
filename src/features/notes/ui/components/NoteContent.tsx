@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIsDesktop } from 'widgets/hooks';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
 import { syncScroll } from '../../lib/syncScroll';
-import { useAppSelector } from 'widgets/hooks/redux';
 
 import type { Note } from 'shared/model/types/layouts';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';

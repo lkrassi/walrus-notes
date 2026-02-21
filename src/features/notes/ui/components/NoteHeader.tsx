@@ -15,12 +15,12 @@ import { cn } from 'shared/lib/cn';
 import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
 import { useLocalization } from 'widgets';
 import { useModalActions } from 'widgets/hooks/useModalActions';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 import { EditNoteModal } from './EditNoteModal';
 import { MarkdownHelp } from './MarkdownHelp';
 import { MdImportModal } from './MdImportModal';
 import { OnlineUsersList } from './OnlineUsersList';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -117,7 +117,15 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   return (
     <div className={cn('panel-header')}>
       <div className={cn('min-w-0', 'flex-1')}>
-        <div className={cn('flex', 'items-center', 'justify-between', 'gap-3', 'flex-wrap')}>
+        <div
+          className={cn(
+            'flex',
+            'items-center',
+            'justify-between',
+            'gap-3',
+            'flex-wrap'
+          )}
+        >
           <button
             onClick={handleOpenEditTitle}
             className={cn(

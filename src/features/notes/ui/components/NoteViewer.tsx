@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { useExportNote } from 'widgets/hooks/useExportNote';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
-import { useAppSelector } from 'widgets/hooks/redux';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 
