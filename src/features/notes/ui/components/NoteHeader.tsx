@@ -19,6 +19,8 @@ import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 import { EditNoteModal } from './EditNoteModal';
 import { MarkdownHelp } from './MarkdownHelp';
 import { MdImportModal } from './MdImportModal';
+import { OnlineUsersList } from './OnlineUsersList';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
 interface NoteHeaderProps {
   isEditing: boolean;
@@ -29,6 +31,8 @@ interface NoteHeaderProps {
   isSaving?: boolean;
   isPending?: boolean;
   isFullscreen?: boolean;
+  onlineUsers?: Map<number, AwarenessUser>;
+  currentUserId?: string;
   onEdit: () => void;
   onSave: (overrideTitle?: string) => Promise<void> | void;
   onCancel: () => void;
@@ -48,6 +52,8 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   isSaving: _isSaving,
   isPending: _isPending,
   isFullscreen,
+  onlineUsers,
+  currentUserId,
   onEdit,
   onSave,
   onCancel,
@@ -111,7 +117,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
   return (
     <div className={cn('panel-header')}>
       <div className={cn('min-w-0', 'flex-1')}>
-        <div className={cn('flex', 'items-center', 'gap-3')}>
+        <div className={cn('flex', 'items-center', 'justify-between', 'gap-3', 'flex-wrap')}>
           <button
             onClick={handleOpenEditTitle}
             className={cn(
@@ -125,11 +131,22 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
               'cursor-pointer',
               'bg-transparent',
               'border-none',
-              'padding-0'
+              'padding-0',
+              'min-w-0'
             )}
           >
             {title}
           </button>
+
+          {/* Список онлайн-пользователей в режиме редактирования */}
+          {isEditing && onlineUsers && currentUserId && (
+            <div className={cn('hidden md:block')}>
+              <OnlineUsersList
+                onlineUsers={onlineUsers}
+                currentUserId={currentUserId}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -254,6 +271,16 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
           </Button>
         )}
       </div>
+
+      {/* Список онлайн-пользователей для мобильных экранов */}
+      {isEditing && onlineUsers && currentUserId && (
+        <div className={cn('md:hidden', 'w-full', 'mt-2')}>
+          <OnlineUsersList
+            onlineUsers={onlineUsers}
+            currentUserId={currentUserId}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -87,5 +87,12 @@
   "importWarning": "Примечание: импортированное содержимое заменит существующие данные заметки",
   "pleaseSelectMd": "Пожалуйста, выберите markdown-файл",
   "fileTooLarge": "Размер файла не должен превышать 5MB",
-  "untitled": "без названия"
+  "untitled": "без названия",
+  "collaborativeEditorInitializing": "Инициализация редактора...",
+  "collaborativeEditorActivated": "Режим совместного редактирования активирован",
+  "connectionLostRetrying": "Потеряно соединение. Попытка восстановления...",
+  "connectionRestored": "Соединение восстановлено",
+  "connectionFailedReload": "Не удаётся восстановить соединение. Попробуйте перезагрузить страницу.",
+  "online": "Онлайн",
+  "you": "Вы"
 }

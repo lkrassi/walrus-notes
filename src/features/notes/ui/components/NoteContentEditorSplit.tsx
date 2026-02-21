@@ -2,8 +2,10 @@ import { motion } from 'framer-motion';
 import { cn } from 'shared/lib/cn';
 import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownPreview } from './MarkdownPreview';
+import { CollaborativeNoteEditor } from './CollaborativeNoteEditor';
 
 import type { Note } from 'shared/model/types/layouts';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
 interface Props {
   payload: string;
@@ -34,6 +36,10 @@ interface Props {
   onExport?: () => void;
   onImport?: (content: string) => void;
   onToggleFullscreen?: () => void;
+  enableCollaboration?: boolean;
+  userId?: string;
+  userName?: string;
+  onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
 export const NoteContentEditorSplit: React.FC<Props> = ({
@@ -51,6 +57,10 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
   layoutId,
   isEditing = false,
   isResizing = false,
+  enableCollaboration = false,
+  userId,
+  userName,
+  onOnlineUsersChange,
 }) => {
   const computeWidth = () => {
     if (isDesktop) {
@@ -68,6 +78,95 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
   };
 
   const heightValue = computeHeight();
+
+  if (enableCollaboration && isEditing && note?.id && userId && userName) {
+    return (
+      <div className={cn('flex', 'flex-col', 'h-full')}>
+        <div
+          className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
+        >
+          {/* Collaborative редактор */}
+          <motion.div
+            initial={false}
+            animate={
+              isDesktop ? { width: widthValue } : { height: heightValue }
+            }
+            transition={{ duration: isResizing ? 0 : 0.22 }}
+            className={cn(
+              'h-full',
+              'bg-transparent',
+              'min-h-0',
+              'overflow-hidden',
+              'relative'
+            )}
+            style={
+              isDesktop && leftWidth && isEditing
+                ? { minWidth: `${min}px`, maxWidth: `${max}px`, height: '100%' }
+                : !isDesktop
+                  ? { width: '100%' }
+                  : undefined
+            }
+          >
+            <CollaborativeNoteEditor
+              noteId={note.id}
+              userId={userId}
+              userName={userName}
+              initialContent={payload}
+              disabled={isLoading}
+              className={cn('h-full')}
+              onContentChange={onPayloadChange}
+              onOnlineUsersChange={onOnlineUsersChange}
+            />
+          </motion.div>
+
+          {/* Divider */}
+          <div
+            role='separator'
+            aria-orientation={isDesktop ? 'vertical' : 'horizontal'}
+            onPointerDown={onDividerPointerDown}
+            className={cn(
+              isEditing ? 'block' : 'hidden',
+              isDesktop
+                ? 'h-full w-2 cursor-col-resize'
+                : 'h-2 w-full cursor-row-resize',
+              'select-none',
+              'touch-none',
+              'bg-transparent',
+              'hover:bg-border',
+              'dark:hover:bg-dark-border'
+            )}
+          />
+
+          {/* Preview */}
+          <motion.div
+            initial={false}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.22 }}
+            className={cn(
+              'flex-1',
+              'h-full',
+              'min-h-0',
+              'border-border',
+              'dark:border-dark-border',
+              isDesktop ? 'border-l' : 'border-t',
+              'p-4',
+              'bg-transparent',
+              !isDesktop && 'basis-1/2',
+              !isDesktop && 'min-h-0'
+            )}
+          >
+            <MarkdownPreview
+              ref={previewRef}
+              content={payload}
+              note={note}
+              layoutId={layoutId}
+              showRelated={!isEditing}
+            />
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex', 'flex-col', 'h-full')}>

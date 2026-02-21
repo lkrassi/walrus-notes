@@ -14,10 +14,11 @@ export const useNoteEditor = (
   const [title, setTitle] = useState<string>(note.title ?? '');
   const storeDraft = useAppSelector(s => s.drafts?.[note.id] ?? null);
   let initialPayload = note.payload ?? '';
+  if (note.draft && note.draft.length) {
+    initialPayload = note.draft;
+  }
   if (storeDraft && storeDraft.length) {
     initialPayload = storeDraft;
-  } else if (note.draft && note.draft.length) {
-    initialPayload = note.draft;
   }
 
   const [payload, setPayloadState] = useState<string>(initialPayload);
@@ -38,7 +39,7 @@ export const useNoteEditor = (
     draft: payload,
   });
 
-  const originalPayloadRef = useRef<string>(note.payload ?? '');
+  const originalPayloadRef = useRef<string>(initialPayload);
   const lastLocalCommitRef = useRef<number | null>(null);
   const dispatch = useAppDispatch();
 
@@ -56,12 +57,13 @@ export const useNoteEditor = (
   useEffect(() => {
     setTitle(note.title ?? '');
     const incoming =
-      note.draft && note.draft.length ? note.draft : note.payload;
+      storeDraft && storeDraft.length
+        ? storeDraft
+        : note.draft && note.draft.length
+          ? note.draft
+          : note.payload;
     setPayloadState(prev => {
       const incomingSafe = incoming ?? '';
-      if (storeDraft && storeDraft.length) {
-        return storeDraft;
-      }
       try {
         if (
           lastLocalCommitRef.current != null &&
@@ -74,8 +76,10 @@ export const useNoteEditor = (
       if (prev === originalPayloadRef.current) return incomingSafe;
       return prev;
     });
-    originalPayloadRef.current = note.payload ?? '';
-  }, [note.id, note.title, note.payload, note.draft]);
+    const newOriginal =
+      note.draft && note.draft.length ? note.draft : (note.payload ?? '');
+    originalPayloadRef.current = newOriginal;
+  }, [note.id, note.title, note.payload, note.draft, storeDraft]);
 
   useEffect(() => {
     try {

@@ -15,7 +15,7 @@ import { FileText } from 'lucide-react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
-import { useIsMobile, useTabsPersistence } from 'widgets/hooks';
+import { useIsMobile } from 'widgets/hooks';
 import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
@@ -39,8 +39,6 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
   const { openModalFromTrigger } = useModalActions();
 
   const isMobile = useIsMobile();
-
-  useTabsPersistence();
 
   const activeTab = openTabs.find(tab => tab.isActive);
 

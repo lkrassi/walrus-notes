@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import { useExportNote } from 'widgets/hooks/useExportNote';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
+import { useAppSelector } from 'widgets/hooks/redux';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 
@@ -48,6 +50,12 @@ export const NoteViewer = ({
   }, [hasLocalChanges, hasServerDraft, handleEdit]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
+    new Map()
+  );
+
+  const profile = useAppSelector(state => state.user.profile);
+  const currentUserId = profile?.id || '';
 
   const toggleFullscreen = () => {
     setIsFullscreen(prev => !prev);
@@ -101,6 +109,8 @@ export const NoteViewer = ({
           setPayload(content);
           if (!isEditing) handleEdit();
         }}
+        onlineUsers={onlineUsers}
+        currentUserId={currentUserId}
       />
       <div className={cn('flex-1', 'overflow-hidden')}>
         <NoteContent
@@ -140,6 +150,7 @@ export const NoteViewer = ({
             if (!isEditing) handleEdit();
           }}
           onToggleFullscreen={toggleFullscreen}
+          onOnlineUsersChange={setOnlineUsers}
         />
       </div>
     </div>

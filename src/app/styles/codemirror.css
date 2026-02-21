@@ -1,0 +1,97 @@
+/* Стили для CodeMirror редактора */
+.collaborative-editor .cm-editor {
+  height: 100%;
+}
+
+.collaborative-editor .cm-scroller {
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.collaborative-editor .cm-content {
+  caret-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.dark .collaborative-editor .cm-content {
+  caret-color: var(--color-dark-text);
+  color: var(--color-dark-text);
+}
+
+/* Стили для gutters (номера строк и т.д.) */
+.collaborative-editor .cm-gutters {
+  background-color: transparent;
+  border: none;
+}
+
+/* Курсоры и выделения других пользователей */
+.collaborative-editor .cm-ySelection {
+  opacity: 0.3;
+}
+
+.collaborative-editor .cm-yLineSelection {
+  opacity: 0.2;
+}
+
+/* Информация о пользователе (имя) рядом с курсором */
+.collaborative-editor .cm-ySelectionInfo {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* Каретка (курсор) пользователя */
+.collaborative-editor .cm-ySelectionCaret {
+  position: relative;
+  border-left-width: 2px;
+  border-left-style: solid;
+}
+
+/* Активная линия (где курсор) */
+.collaborative-editor .cm-activeLine {
+  background-color: transparent;
+}
+
+.dark .collaborative-editor .cm-activeLine {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Подсветка синтаксиса Markdown */
+.collaborative-editor .cm-header {
+  font-weight: bold;
+}
+
+.collaborative-editor .cm-strong {
+  font-weight: bold;
+}
+
+.collaborative-editor .cm-em {
+  font-style: italic;
+}
+
+.collaborative-editor .cm-link {
+  color: #0969da;
+  text-decoration: underline;
+}
+
+.dark .collaborative-editor .cm-link {
+  color: #58a6ff;
+}
+
+.collaborative-editor .cm-strikethrough {
+  text-decoration: line-through;
+}
+
+.collaborative-editor .cm-code {
+  font-family: 'Courier New', monospace;
+  background-color: rgba(175, 184, 193, 0.2);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.dark .collaborative-editor .cm-code {
+  background-color: rgba(110, 118, 129, 0.4);
+}

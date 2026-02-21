@@ -51,10 +51,7 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      // (consistent-type-exports rule omitted — add via plugin if desired)
-      // discourage default exports across the codebase
       'import/no-default-export': 'error',
-      // integrate Prettier formatting as ESLint rule
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-useless-escape': 'error',

@@ -1,9 +1,11 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIsDesktop } from 'widgets/hooks';
 import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
 import { syncScroll } from '../../lib/syncScroll';
+import { useAppSelector } from 'widgets/hooks/redux';
 
 import type { Note } from 'shared/model/types/layouts';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
 import { NoteContentEditorSplit } from './NoteContentEditorSplit';
 
@@ -27,6 +29,8 @@ interface NoteContentProps {
   onExport?: () => void;
   onImport?: (content: string) => void;
   onToggleFullscreen?: () => void;
+  enableCollaboration?: boolean;
+  onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
 export const NoteContent: React.FC<NoteContentProps> = ({
@@ -49,10 +53,18 @@ export const NoteContent: React.FC<NoteContentProps> = ({
   onExport,
   onImport,
   onToggleFullscreen,
+  enableCollaboration = true,
+  onOnlineUsersChange,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const prevIsEditingRef = useRef<boolean>(isEditing);
+  const [_onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
+    new Map()
+  );
+  const profile = useAppSelector(state => state.user.profile);
+  const userId = profile?.id || '';
+  const userName = profile?.username || 'Anonymous';
   const { leftWidth, onDividerPointerDown, min, max, isResizing } =
     useResizableSplit({
       storageKey: 'wn.note.split',
@@ -108,6 +120,13 @@ export const NoteContent: React.FC<NoteContentProps> = ({
     prevIsEditingRef.current = isEditing;
   }, [isEditing]);
 
+  const handleOnlineUsersChange = (users: Map<number, AwarenessUser>) => {
+    setOnlineUsers(users);
+    if (onOnlineUsersChange) {
+      onOnlineUsersChange(users);
+    }
+  };
+
   return (
     <NoteContentEditorSplit
       payload={payload}
@@ -138,6 +157,10 @@ export const NoteContent: React.FC<NoteContentProps> = ({
       onExport={onExport}
       onImport={onImport}
       onToggleFullscreen={onToggleFullscreen}
+      enableCollaboration={enableCollaboration}
+      userId={userId}
+      userName={userName}
+      onOnlineUsersChange={handleOnlineUsersChange}
     />
   );
 };
