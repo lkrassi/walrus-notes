@@ -46,9 +46,7 @@ const PrivateHeaderComponent = () => {
               className={cn('h-24', 'w-24', 'md:h-28', 'md:w-28')}
               loading='lazy'
             />
-            <div
-              className={cn('flex', 'items-baseline', 'gap-1')}
-            >
+            <div className={cn('flex', 'items-baseline', 'gap-1')}>
               <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
               <h1 className={cn('text-primary')}>Notes</h1>
             </div>
