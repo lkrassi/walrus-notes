@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+} from 'react';
 import { useIsMobile } from './index';
 
 type Options = {
@@ -45,7 +51,7 @@ export const useResizableBase = ({
   }, [onPointerMove]);
 
   const onPointerDown = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent) => {
       if (isMobile) return;
       resizingRef.current = true;
       setIsResizing(true);

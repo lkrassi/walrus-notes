@@ -1,5 +1,5 @@
 import { useCreateLayoutMutation } from 'app/store/api';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
@@ -26,7 +26,7 @@ export const CreateLayoutForm = ({
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {

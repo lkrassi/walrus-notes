@@ -1,4 +1,9 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  type KeyboardEventHandler,
+} from 'react';
 import { Textarea } from 'shared';
 import { cn } from 'shared/lib/cn';
 
@@ -17,7 +22,7 @@ export const MarkdownEditor = forwardRef<
 
   useImperativeHandle(ref, () => taRef.current as HTMLTextAreaElement);
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = e => {
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = e => {
     const el = e.currentTarget as HTMLTextAreaElement;
     const { selectionStart, selectionEnd } = el;
 

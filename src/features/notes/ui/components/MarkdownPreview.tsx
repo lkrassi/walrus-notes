@@ -1,5 +1,10 @@
 import { openTab, switchTab } from 'app/store/slices/tabsSlice';
-import { forwardRef } from 'react';
+import {
+  forwardRef,
+  type FC,
+  type HTMLAttributes,
+  type ReactNode,
+} from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from 'shared/lib/cn';
@@ -17,11 +22,11 @@ interface MarkdownPreviewProps {
   layoutId?: string;
   showRelated?: boolean;
 }
-const SafeLink: React.FC<{
-  href?: string;
-  title?: string;
-  children?: React.ReactNode;
-}> = ({ href = '', title, children }) => {
+const SafeLink: FC<{ href?: string; title?: string; children?: ReactNode }> = ({
+  href = '',
+  title,
+  children,
+}) => {
   if (
     !href.startsWith('http://') &&
     !href.startsWith('https://') &&
@@ -42,11 +47,11 @@ const SafeLink: React.FC<{
   );
 };
 
-const SafeImage: React.FC<{
-  src?: string;
-  alt?: string;
-  title?: string;
-}> = ({ src = '', alt, title }) => {
+const SafeImage: FC<{ src?: string; alt?: string; title?: string }> = ({
+  src = '',
+  alt,
+  title,
+}) => {
   if (
     !src.startsWith('http://') &&
     !src.startsWith('https://') &&
@@ -57,8 +62,8 @@ const SafeImage: React.FC<{
   return <img src={src} alt={alt} title={title} loading='lazy' />;
 };
 
-const PreBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = props => {
-  const { children } = props;
+const PreBlock: FC<HTMLAttributes<HTMLPreElement>> = props => {
+  const { children } = props as { children?: ReactNode };
   const child = Array.isArray(children) ? children[0] : children;
   if (child && child.props) {
     const className = child.props.className;
@@ -77,7 +82,7 @@ const CodeBlock = ({
 }: {
   inline?: boolean;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) => {
   if (inline)
     return (

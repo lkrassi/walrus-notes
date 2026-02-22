@@ -1,10 +1,12 @@
+import { type FC } from 'react';
+
 interface CoordinateOverlayProps {
   nodeId?: string | null;
   coords?: { x: number; y: number } | null;
   centerCoords?: { x: number; y: number } | null;
 }
 
-export const CoordinateOverlay: React.FC<CoordinateOverlayProps> = ({
+export const CoordinateOverlay: FC<CoordinateOverlayProps> = ({
   nodeId,
   coords,
   centerCoords,

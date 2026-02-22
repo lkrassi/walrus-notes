@@ -1,6 +1,7 @@
 import { Auth } from 'features';
+import { type FC } from 'react';
 
-export const AuthPage: React.FC = () => {
+export const AuthPage: FC = () => {
   return (
     <main>
       <Auth />

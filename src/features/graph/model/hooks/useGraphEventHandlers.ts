@@ -1,4 +1,4 @@
-import type { MouseEvent } from 'react';
+import type { DragEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
 import type { Note } from 'shared/model';
@@ -19,7 +19,7 @@ export const useGraphEventHandlers = ({
   screenToFlowPosition,
 }: UseGraphEventHandlersProps) => {
   const handleNoteDrop = useCallback(
-    (event: React.DragEvent) => {
+    (event: DragEvent) => {
       event.preventDefault();
       const noteData = event.dataTransfer.getData('application/reactflow');
       if (noteData) {

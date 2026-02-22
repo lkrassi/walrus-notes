@@ -1,9 +1,22 @@
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import {
+  Suspense,
+  lazy,
+  useRef,
+  type FC,
+  type PointerEventHandler,
+  type RefObject,
+} from 'react';
 import { cn } from 'shared/lib/cn';
-import { CollaborativeNoteEditor } from './CollaborativeNoteEditor';
 import { MarkdownEditor } from './MarkdownEditor';
-import { MarkdownPreview } from './MarkdownPreview';
+const CollaborativeNoteEditor = lazy(() =>
+  import('./CollaborativeNoteEditor').then(m => ({
+    default: m.CollaborativeNoteEditor,
+  }))
+);
+const MarkdownPreview = lazy(() =>
+  import('./MarkdownPreview').then(m => ({ default: m.MarkdownPreview }))
+);
 
 import type { Note } from 'shared/model/types/layouts';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
@@ -12,12 +25,12 @@ interface Props {
   payload: string;
   onPayloadChange: (p: string) => void;
   isLoading: boolean;
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
-  previewRef: React.RefObject<HTMLDivElement | null>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
+  previewRef: RefObject<HTMLDivElement | null>;
   leftWidth?: number | null;
   min?: number;
   max?: number;
-  onDividerPointerDown?: React.PointerEventHandler<HTMLDivElement>;
+  onDividerPointerDown?: PointerEventHandler<HTMLDivElement>;
   isDesktop: boolean;
   note?: Note;
   layoutId?: string;
@@ -43,7 +56,7 @@ interface Props {
   onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
-export const NoteContentEditorSplit: React.FC<Props> = ({
+export const NoteContentEditorSplit: FC<Props> = ({
   payload,
   onPayloadChange,
   isLoading,
@@ -119,16 +132,32 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
                   : undefined
             }
           >
-            <CollaborativeNoteEditor
-              noteId={note.id}
-              userId={userId}
-              userName={userName}
-              initialContent={initialContentRef.current}
-              disabled={isLoading}
-              className={cn('h-full')}
-              onContentChange={onPayloadChange}
-              onOnlineUsersChange={onOnlineUsersChange}
-            />
+            <Suspense
+              fallback={
+                <div
+                  className={cn(
+                    'flex',
+                    'items-center',
+                    'justify-center',
+                    'h-full',
+                    'text-gray-500'
+                  )}
+                >
+                  Инициализация редактора...
+                </div>
+              }
+            >
+              <CollaborativeNoteEditor
+                noteId={note.id}
+                userId={userId}
+                userName={userName}
+                initialContent={initialContentRef.current}
+                disabled={isLoading}
+                className={cn('h-full')}
+                onContentChange={onPayloadChange}
+                onOnlineUsersChange={onOnlineUsersChange}
+              />
+            </Suspense>
           </motion.div>
 
           <div
@@ -165,13 +194,15 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
               !isDesktop && 'min-h-0'
             )}
           >
-            <MarkdownPreview
-              ref={previewRef}
-              content={payload}
-              note={note}
-              layoutId={layoutId}
-              showRelated={!isEditing}
-            />
+            <Suspense fallback={<div style={{ padding: 16 }}>{payload}</div>}>
+              <MarkdownPreview
+                ref={previewRef}
+                content={payload}
+                note={note}
+                layoutId={layoutId}
+                showRelated={!isEditing}
+              />
+            </Suspense>
           </motion.div>
         </div>
       </div>

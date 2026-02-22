@@ -5,7 +5,14 @@ import {
 } from 'app/store/api';
 import { setUserProfile } from 'app/store/slices/userSlice';
 import { motion } from 'framer-motion';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentType,
+  type FC,
+  type ReactElement,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
 import { useLocalization } from 'widgets/hooks';
@@ -15,7 +22,7 @@ import { PrivateHeader } from 'widgets/ui';
 import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
 import { settingsSections } from '../../models/variants';
 
-export const Settings: React.FC = () => {
+export const Settings: FC = () => {
   const { t } = useLocalization();
   const { profile } = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
@@ -101,16 +108,12 @@ export const Settings: React.FC = () => {
   }, [profile?.imgUrl, profile?.username, avatarVersion]);
 
   const renderSectionIcon = useCallback(
-    (
-      icon:
-        | React.ComponentType<{ className?: string }>
-        | (() => React.ReactElement)
-    ) => {
+    (icon: ComponentType<{ className?: string }> | (() => ReactElement)) => {
       if (typeof icon === 'function' && icon.length === 0) {
-        return (icon as () => React.ReactElement)();
+        return (icon as () => ReactElement)();
       }
 
-      const IconComponent = icon as React.ComponentType<{ className?: string }>;
+      const IconComponent = icon as ComponentType<{ className?: string }>;
       return <IconComponent className='h-5 w-5 max-sm:h-4 max-sm:w-4' />;
     },
     []

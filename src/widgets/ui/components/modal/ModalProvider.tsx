@@ -1,15 +1,22 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import {
+  createContext,
+  lazy,
+  Suspense,
+  useContext,
+  type FC,
+  type ReactNode,
+} from 'react';
 import {
   useModal,
   type ModalOptions,
   type ModalState,
 } from 'widgets/hooks/useModal';
-import { Modal } from './Modal';
+const Modal = lazy(() => import('./Modal').then(m => ({ default: m.Modal })));
 
 interface ModalContextType {
-  openModal: (content: React.ReactNode, options?: ModalOptions) => void;
+  openModal: (content: ReactNode, options?: ModalOptions) => void;
   closeModal: () => void;
-  updateModalContent: (content: React.ReactNode) => void;
+  updateModalContent: (content: ReactNode) => void;
   modalState: ModalState;
 }
 
@@ -19,7 +26,7 @@ interface ModalProviderProps {
   children: ReactNode;
 }
 
-export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
+export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
   const { modalState, openModal, closeModal, updateModalContent } = useModal();
 
   return (
@@ -32,7 +39,9 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
       }}
     >
       {children}
-      <Modal modalState={modalState} onClose={closeModal} />
+      <Suspense fallback={null}>
+        <Modal modalState={modalState} onClose={closeModal} />
+      </Suspense>
     </ModalContext.Provider>
   );
 };

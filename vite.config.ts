@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -12,6 +13,77 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  build: {
+    rollupOptions: {
+      plugins: [
+        visualizer({ filename: 'dist/bundle-stats.html', open: false }),
+      ],
+      output: {
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined;
+
+          // extract package path after the first node_modules/
+          const parts = id.split('node_modules/');
+          if (parts.length < 2) return undefined;
+          let pkgPath = parts[1];
+
+          if (pkgPath.startsWith('.pnpm')) {
+            const afterPnpm = pkgPath.replace(/^\.pnpm\//, '');
+            const nmIndex = afterPnpm.indexOf('/node_modules/');
+            if (nmIndex !== -1) {
+              pkgPath = afterPnpm.slice(nmIndex + '/node_modules/'.length);
+            } else {
+              const seg = afterPnpm.split('/')[0];
+              const lastAt = seg.lastIndexOf('@');
+              pkgPath = lastAt > 0 ? seg.slice(0, lastAt) : seg;
+            }
+          }
+
+          const pkgName = pkgPath.startsWith('@')
+            ? pkgPath.split('/').slice(0, 2).join('/')
+            : pkgPath.split('/')[0];
+
+          if (pkgName === 'react' || pkgName === 'react-dom')
+            return 'vendor.react';
+          if (pkgName.startsWith('@mui') || pkgName.startsWith('@emotion'))
+            return 'vendor.mui';
+
+          if (pkgName === 'yjs') return 'vendor.yjs';
+          if (pkgName === 'y-websocket' || pkgName.startsWith('y-'))
+            return 'vendor.yjs.websocket';
+          if (pkgName === 'codemirror' || pkgName.startsWith('@codemirror'))
+            return 'vendor.codemirror';
+
+          if (pkgName.startsWith('reactflow')) return 'vendor.reactflow';
+
+          if (pkgName === 'refractor') {
+            if (
+              id.includes('/lang') ||
+              id.includes('/languages') ||
+              id.includes('lang-')
+            ) {
+              const pathParts = id.split(/[/\\\\]/);
+              const fileName = pathParts[pathParts.length - 1] || 'langs';
+              const lang = fileName.split('.')[0].replace(/[^a-z0-9_-]/gi, '');
+              return `vendor.refractor.lang.${lang}`;
+            }
+            return 'vendor.refractor.core';
+          }
+
+          if (
+            [
+              'highlight.js',
+              'react-syntax-highlighter',
+              'html2pdf.js',
+            ].includes(pkgName)
+          )
+            return `vendor.${pkgName.replace('/', '_')}`;
+
+          return `vendor.${pkgName.replace('/', '_')}`;
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       app: fileURLToPath(new URL('./src/app', import.meta.url)),

@@ -1,4 +1,5 @@
 import { Network } from 'lucide-react';
+import { type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 
@@ -10,7 +11,7 @@ type Props = {
   onItemClick?: (item: FileTreeItemType) => void;
 };
 
-export const FileTreeMainItem: React.FC<Props> = ({
+export const FileTreeMainItem: FC<Props> = ({
   item,
   level = 0,
   isSelected,

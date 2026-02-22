@@ -1,10 +1,10 @@
-// import React from 'react';
+// import { type FC } from 'react';
 // import cn from 'shared/lib/cn';
 // import { useLocalization } from 'widgets/hooks';
 // import useHolidaySettings from 'widgets/hooks/useHolidaySettings';
 // import { Button } from 'shared';
 
-// export const HolidaySettingsModal: React.FC = () => {
+// export const HolidaySettingsModal: FC = () => {
 //   const { t } = useLocalization();
 //   const { settings, setSettings } = useHolidaySettings();
 

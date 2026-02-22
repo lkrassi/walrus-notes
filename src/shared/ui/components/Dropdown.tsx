@@ -1,6 +1,13 @@
 import Popover from '@mui/material/Popover';
 import { ChevronDown } from 'lucide-react';
-import React, { type ReactNode, useState } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  useState,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 
 interface DropdownProps {
@@ -32,7 +39,7 @@ export const Dropdown = ({
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
-  const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
+  const handleToggle = (event: MouseEvent<HTMLElement>) => {
     if (disabled) return;
 
     const newState = !isOpen;
@@ -88,13 +95,10 @@ export const Dropdown = ({
   };
 
   const renderTrigger = () => {
-    if (showArrow && React.isValidElement(trigger)) {
-      return React.cloneElement(
-        trigger as React.ReactElement<Record<string, unknown>>,
-        {
-          isOpen,
-        }
-      );
+    if (showArrow && isValidElement(trigger)) {
+      return cloneElement(trigger as ReactElement<Record<string, unknown>>, {
+        isOpen,
+      });
     }
     return trigger;
   };

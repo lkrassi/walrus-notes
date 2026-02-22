@@ -2,11 +2,12 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
-import React, { useEffect, useRef } from 'react';
+import { type FC, useEffect, useRef } from 'react';
 import { cn } from 'shared/lib/cn';
 import { yCollab } from 'y-codemirror.next';
 import type { WebsocketProvider } from 'y-websocket';
 import type * as Y from 'yjs';
+import '../../../../app/styles/codemirror.css';
 
 interface CollaborativeEditorProps {
   ytext: Y.Text;
@@ -17,7 +18,7 @@ interface CollaborativeEditorProps {
   isContentLoaded?: boolean;
 }
 
-export const CollaborativeEditor: React.FC<CollaborativeEditorProps> = ({
+export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
   ytext,
   provider,
   disabled = false,

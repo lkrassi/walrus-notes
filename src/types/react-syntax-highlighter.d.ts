@@ -1,8 +1,8 @@
 declare module 'react-syntax-highlighter' {
-  import * as React from 'react';
+  import type { ComponentType } from 'react';
 
-  export const Prism: React.ComponentType<Record<string, unknown>>;
-  export const Light: React.ComponentType<Record<string, unknown>>;
+  export const Prism: ComponentType<Record<string, unknown>>;
+  export const Light: ComponentType<Record<string, unknown>>;
   const _default: unknown;
   export default _default;
 }

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type FC, type ReactNode } from 'react';
 import { cn } from '../../../../shared/lib/cn';
 
 export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
@@ -7,9 +7,9 @@ export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
 interface DropdownContentProps {
   isOpen: boolean;
   state: DropdownContentState;
-  children: React.ReactNode;
-  emptyContent?: React.ReactNode;
-  errorContent?: React.ReactNode;
+  children: ReactNode;
+  emptyContent?: ReactNode;
+  errorContent?: ReactNode;
   className?: string;
   animationDuration?: number;
   maxHeight?: string;
@@ -18,7 +18,7 @@ interface DropdownContentProps {
   reachDebounceMs?: number;
 }
 
-export const DropdownContent: React.FC<DropdownContentProps> = ({
+export const DropdownContent: FC<DropdownContentProps> = ({
   isOpen,
   state,
   children,

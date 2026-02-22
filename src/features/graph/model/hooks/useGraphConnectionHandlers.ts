@@ -2,7 +2,7 @@ import {
   useCreateNoteLinkMutation,
   useDeleteNoteLinkMutation,
 } from 'app/store/api';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type RefObject } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
 import {
   CreateEdgeCommand,
@@ -22,7 +22,7 @@ interface UseGraphConnectionHandlersProps {
   setTempEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
   graphHistory: GraphHistory;
   onConnectOriginal: (connection: Connection) => Promise<void>;
-  isProcessingRef: React.MutableRefObject<boolean>;
+  isProcessingRef: RefObject<boolean>;
 }
 
 export const useGraphConnectionHandlers = ({

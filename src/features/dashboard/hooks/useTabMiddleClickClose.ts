@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, type MouseEvent } from 'react';
 
 export const useTabMiddleClickClose = (onClose: () => void) => {
   return useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       if (e.button === 1) {
         e.preventDefault();
         e.stopPropagation();

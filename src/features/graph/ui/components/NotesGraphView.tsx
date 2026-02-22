@@ -4,7 +4,15 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type FC,
+  type MouseEvent,
+} from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow, { useReactFlow } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -43,19 +51,15 @@ interface NotesGraphViewProps {
   onConnect: ReactFlowProps['onConnect'];
   onConnectStart: ReactFlowProps['onConnectStart'];
   onConnectEnd: ReactFlowProps['onConnectEnd'];
-  onNodeDragStop?: (
-    event: React.MouseEvent,
-    node: Node,
-    nodes?: Node[]
-  ) => void;
+  onNodeDragStop?: (event: MouseEvent, node: Node, nodes?: Node[]) => void;
   onNodeDragStart?: ReactFlowProps['onNodeDragStart'];
   onNodeClick: ReactFlowProps['onNodeClick'];
   onNodeMouseEnter: ReactFlowProps['onNodeMouseEnter'];
   onNodeMouseLeave: ReactFlowProps['onNodeMouseLeave'];
-  onPaneClick: (event: React.MouseEvent) => void;
-  onNodeDoubleClick: (event: React.MouseEvent, node: Node) => void;
+  onPaneClick: (event: MouseEvent) => void;
+  onNodeDoubleClick: (event: MouseEvent, node: Node) => void;
   isDraggingEdge: boolean;
-  onDrop: (event: React.DragEvent) => void;
+  onDrop: (event: DragEvent) => void;
   onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;
   screenToFlowPosition?: (position: { x: number; y: number }) => {
     x: number;
@@ -73,7 +77,7 @@ interface NotesGraphViewProps {
   graphHistory?: UseGraphHistoryReturn;
 }
 
-export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
+export const NotesGraphView: FC<NotesGraphViewProps> = ({
   layoutId,
   screenToFlowPosition,
   nodesWithSelection,
@@ -116,19 +120,19 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
 
   const isMobile = useIsMobile();
 
-  const handleNodeDrag = useCallback((_event: React.MouseEvent, node: Node) => {
+  const handleNodeDrag = useCallback((_event: MouseEvent, node: Node) => {
     setOverlayCoords({ x: node.position.x, y: node.position.y });
   }, []);
 
   const handleNodeDragStop = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (event: MouseEvent, node: Node) => {
       setOverlayCoords(null);
       onNodeDragStop?.(event, node, nodesWithSelection as Node[]);
     },
     [onNodeDragStop, nodesWithSelection]
   );
 
-  const ViewportTracker: React.FC<{
+  const ViewportTracker: FC<{
     onViewportChange: (c: { x: number; y: number } | null) => void;
   }> = ({ onViewportChange }) => {
     const { getViewport } = useReactFlow();
@@ -174,7 +178,7 @@ export const NotesGraphView: React.FC<NotesGraphViewProps> = ({
       if (!node || !onNodeDragStop) return;
 
       const updatedNode = { ...node, position };
-      onNodeDragStop({} as React.MouseEvent, updatedNode, [updatedNode]);
+      onNodeDragStop({} as MouseEvent, updatedNode, [updatedNode]);
     },
     [nodesWithSelection, onNodeDragStop]
   );

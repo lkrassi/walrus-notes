@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { FileTreeItemContent } from './FileTreeItemContent';
@@ -15,7 +16,7 @@ type FileTreeItemProps = {
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
   toggleExpanded?: (itemId: string) => void;
-  renderChild?: (child: FileTreeItemType, level: number) => React.ReactNode;
+  renderChild?: (child: FileTreeItemType, level: number) => ReactNode;
   onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
 

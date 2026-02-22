@@ -1,10 +1,11 @@
 import IconButton from '@mui/material/IconButton';
 import { alpha, styled } from '@mui/material/styles';
 import { ArrowLeft } from 'lucide-react';
+import { type FC, type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export type BackButtonProps = {
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   title?: string;
   ariaLabel?: string;
@@ -34,7 +35,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => {
   };
 });
 
-export const BackButton: React.FC<BackButtonProps> = ({
+export const BackButton: FC<BackButtonProps> = ({
   onClick,
   className = '',
   title,
@@ -42,7 +43,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(e);
       return;

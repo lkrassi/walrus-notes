@@ -1,10 +1,11 @@
 import { Settings } from 'lucide-react';
+import { type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization } from 'widgets';
 
-export const SettingsButton: React.FC = () => {
+export const SettingsButton: FC = () => {
   const navigate = useNavigate();
 
   const { t } = useLocalization();

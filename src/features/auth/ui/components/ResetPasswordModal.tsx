@@ -11,7 +11,14 @@ import { useConfirmCodeMutation } from 'app/store/api';
 import 'features/auth/model/validationSchemas';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import {
+  type FC,
+  type KeyboardEvent,
+  type ClipboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Button } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import * as Yup from 'yup';
@@ -21,7 +28,7 @@ interface ResetPasswordModalProps {
   onSuccess: () => void;
 }
 
-export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
+export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   email,
   onSuccess,
 }) => {
@@ -47,10 +54,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLDivElement>
-  ) => {
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     } else if (e.key === 'ArrowLeft' && index > 0) {
@@ -60,7 +64,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
     const pastedCode = pastedData.replace(/\D/g, '').slice(0, 6).split('');

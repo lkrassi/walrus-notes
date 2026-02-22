@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
@@ -16,7 +22,7 @@ type FileTreeItemContentProps = {
   item: UseFileTreeItem;
   level: number;
   isExpanded: boolean;
-  renderChild?: (child: UseFileTreeItem, level: number) => React.ReactNode;
+  renderChild?: (child: UseFileTreeItem, level: number) => ReactNode;
   onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
 

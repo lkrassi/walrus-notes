@@ -1,5 +1,5 @@
 import { useCreateNoteMutation } from 'app/store/api';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Button, Input, Textarea } from 'shared';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
@@ -28,7 +28,7 @@ export const CreateNoteForm = ({
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {

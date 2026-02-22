@@ -2,6 +2,7 @@ import { useGetMyLayoutsQuery } from 'app/store/api';
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
+import type { MouseEvent } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -10,7 +11,7 @@ import { FolderCard } from './FolderCard';
 
 interface EmptyDashboardFallbackProps {
   onFolderClick?: (layoutId: string, title: string) => void;
-  onCreateClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onCreateClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const EmptyDashboardFallback = ({

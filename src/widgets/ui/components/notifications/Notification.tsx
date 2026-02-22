@@ -2,6 +2,7 @@ import type { AlertColor } from '@mui/material/Alert';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import type { Notification as NotificationType } from 'app/store/slices/notificationsSlice';
+import { type FC } from 'react';
 
 interface NotificationProps {
   notification: NotificationType;
@@ -17,7 +18,7 @@ const mapTypeToSeverity = (type: string): AlertColor => {
   return severityMap[type] || 'info';
 };
 
-export const Notification: React.FC<NotificationProps> = ({ notification }) => {
+export const Notification: FC<NotificationProps> = ({ notification }) => {
   const severity = mapTypeToSeverity(notification.type);
 
   return (

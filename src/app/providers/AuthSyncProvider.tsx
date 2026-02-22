@@ -4,14 +4,10 @@ import {
   setUserProfile,
   syncAuthFromStorage,
 } from 'app/store/slices/userSlice';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 
-export const AuthSyncProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const AuthSyncProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const { accessToken, refreshToken, profile } = useAppSelector(
     state => state.user

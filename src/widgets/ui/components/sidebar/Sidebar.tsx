@@ -17,9 +17,9 @@ import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { parseTabId } from 'widgets/model/utils/tabUtils';
+import logo from '../../../../assets/logo.avif';
 import { FileTree } from '../fileTree';
 import { MobileMenu } from '../header/MobileMenu';
-import logo from '../../../../assets/logo.png';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;
@@ -156,23 +156,16 @@ const SidebarComponent = (
 
             <Link
               to='/dashboard'
-              className={cn('flex', 'items-center', 'gap-2', 'md:gap-3')}
+              className={cn('flex', 'items-center', 'md:gap-3')}
               aria-label={t('common:header.goToHomepage')}
             >
               <img
                 src={logo}
                 alt={t('common:header.logoAlt')}
-                className={cn('h-15', 'w-15', 'md:h-25', 'md:w-25')}
+                className={cn('h-24', 'w-24', 'md:h-28', 'md:w-28')}
                 loading='lazy'
               />
-              <div
-                className={cn(
-                  'flex',
-                  'items-baseline',
-                  'gap-1',
-                  'max-md:hidden'
-                )}
-              >
+              <div className={cn('flex', 'items-baseline', 'gap-1')}>
                 <h1
                   className={cn(
                     'text-text',

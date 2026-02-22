@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import { FileText, Folder, Network, X } from 'lucide-react';
+import type { MouseEvent } from 'react';
 import { cn } from 'shared/lib/cn';
 import { useTabMiddleClickClose } from '../../hooks/useTabMiddleClickClose';
 import type { TabsProps } from '../../model/types/tabsProps';
@@ -38,7 +39,7 @@ export const SortableTab = ({
     position: 'relative' as const,
   };
 
-  const handleContentClick = (e: React.MouseEvent) => {
+  const handleContentClick = (e: MouseEvent) => {
     if ((e.target as HTMLElement).closest('button')) return;
     onClick();
   };

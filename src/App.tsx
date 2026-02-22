@@ -1,10 +1,17 @@
 import { AuthSyncProvider } from 'app/providers/AuthSyncProvider';
 import { appRoutesConfig } from 'app/router/config';
+import { Suspense, lazy } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { SidebarProvider, store } from 'widgets';
-import { ModalProvider, NotificationsContainer } from 'widgets/ui';
+import { ModalProvider } from 'widgets/ui';
+
+const NotificationsContainer = lazy(() =>
+  import('widgets/ui/components/notifications/NotificationsContainer').then(
+    m => ({ default: m.NotificationsContainer })
+  )
+);
 
 export const App = () => {
   return (
@@ -23,7 +30,9 @@ export const App = () => {
                     />
                   ))}
                 </Routes>
-                <NotificationsContainer />
+                <Suspense fallback={null}>
+                  <NotificationsContainer />
+                </Suspense>
               </ModalProvider>
             </SidebarProvider>
           </AuthSyncProvider>

@@ -1,12 +1,12 @@
 import { useChangeProfilePictureMutation } from 'app/store/api';
-import { useRef, useState } from 'react';
+import { useRef, useState, type ChangeEvent, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
-export const ChangeProfilePictureForm: React.FC = () => {
+export const ChangeProfilePictureForm: FC = () => {
   const { t } = useLocalization();
   const { closeModal } = useModalContentContext();
   const { showSuccess, showError } = useNotifications();
@@ -18,7 +18,7 @@ export const ChangeProfilePictureForm: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {

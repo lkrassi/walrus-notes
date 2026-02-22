@@ -1,15 +1,19 @@
-import { forwardRef } from 'react';
+import {
+  forwardRef,
+  type ChangeEvent,
+  type TextareaHTMLAttributes,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 
 export type TextareaProps = {
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   disabled?: boolean;
   rows?: number;
   className?: string;
   variant?: 'default' | 'error';
-} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+} & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (

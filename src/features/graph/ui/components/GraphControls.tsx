@@ -1,3 +1,4 @@
+import { type FC } from 'react';
 import { Controls, Panel, useReactFlow } from 'reactflow';
 import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 import { GraphUndoRedoControls } from './GraphUndoRedoControls';
@@ -6,9 +7,7 @@ interface GraphControlsProps {
   graphHistory?: UseGraphHistoryReturn;
 }
 
-export const GraphControls: React.FC<GraphControlsProps> = ({
-  graphHistory,
-}) => {
+export const GraphControls: FC<GraphControlsProps> = ({ graphHistory }) => {
   const { fitView } = useReactFlow();
 
   const handleFitView = () => {

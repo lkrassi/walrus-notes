@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type FC,
   type ReactNode,
 } from 'react';
 
@@ -23,7 +24,7 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<string>(
     () => localStorage.getItem('theme') || 'dark'
   );
@@ -37,6 +38,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // CSS variables are defined in App.css (source of truth). Keep ThemeProvider
+  // responsible only for MUI theme and document `dark` class.
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));

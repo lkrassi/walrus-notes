@@ -7,11 +7,11 @@ import {
   updateTabNote,
 } from 'app/store/slices/tabsSlice';
 import { Tabs } from 'features/dashboard/ui/components/Tabs';
-import { NotesGraph } from 'features/graph/ui/components/NotesGraph';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { FileText } from 'lucide-react';
+import { Suspense, lazy } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
@@ -25,6 +25,11 @@ import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { CreateChoiceModal } from './CreateChoiceModal';
 import { EmptyDashboardFallback } from './EmptyDashboardFallback';
 import { FolderSelectModal } from './FolderSelectModal';
+const NotesGraph = lazy(() =>
+  import('features/graph/ui/components/NotesGraph').then(m => ({
+    default: m.NotesGraph,
+  }))
+);
 
 interface DashboardContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
@@ -291,12 +296,22 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       }
 
       return (
-        <NotesGraph
-          layoutId={layoutId}
-          onNoteOpen={handleNoteOpenFromGraph}
-          allowNodeDrag={activeTab.item.isMain !== true}
-          isMain={activeTab.item.isMain === true}
-        />
+        <Suspense
+          fallback={
+            <div
+              className={cn('flex', 'items-center', 'justify-center', 'h-full')}
+            >
+              {t('graph:loading')}
+            </div>
+          }
+        >
+          <NotesGraph
+            layoutId={layoutId}
+            onNoteOpen={handleNoteOpenFromGraph}
+            allowNodeDrag={activeTab.item.isMain !== true}
+            isMain={activeTab.item.isMain === true}
+          />
+        </Suspense>
       );
     }
 

@@ -2,7 +2,7 @@ import { Redo as RedoIcon, Undo as UndoIcon } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { useEffect } from 'react';
+import { type FC, useEffect } from 'react';
 import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 
 interface GraphUndoRedoControlsProps {
@@ -10,7 +10,7 @@ interface GraphUndoRedoControlsProps {
   isHorizontal?: boolean;
 }
 
-export const GraphUndoRedoControls: React.FC<GraphUndoRedoControlsProps> = ({
+export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
   graphHistory,
   isHorizontal = false,
 }) => {

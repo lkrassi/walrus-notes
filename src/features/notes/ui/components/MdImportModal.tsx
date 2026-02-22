@@ -1,4 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FC,
+} from 'react';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
@@ -10,7 +17,7 @@ type Props = {
   maxSizeBytes?: number;
 };
 
-export const MdImportModal: React.FC<Props> = ({
+export const MdImportModal: FC<Props> = ({
   onImported,
   accept = '.md,text/markdown',
   maxSizeBytes = 5 * 1024 * 1024,
@@ -42,19 +49,19 @@ export const MdImportModal: React.FC<Props> = ({
     [closeModal, maxSizeBytes, onImported, showError, showSuccess, t]
   );
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) readFile(f);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
     const f = e.dataTransfer.files?.[0];
     if (f) readFile(f);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
   };

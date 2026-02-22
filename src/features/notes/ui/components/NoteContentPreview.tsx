@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
+import { Suspense, lazy } from 'react';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
-import { MarkdownPreview } from './MarkdownPreview';
 
+const MarkdownPreview = lazy(() =>
+  import('./MarkdownPreview').then(m => ({ default: m.MarkdownPreview }))
+);
+
+import { type FC } from 'react';
 import type { Note } from 'shared/model/types/layouts';
 
 interface Props {
@@ -13,7 +18,7 @@ interface Props {
   enterFromRight?: boolean;
 }
 
-export const NoteContentPreview: React.FC<Props> = ({
+export const NoteContentPreview: FC<Props> = ({
   payload,
   layoutId,
   note,
@@ -34,12 +39,14 @@ export const NoteContentPreview: React.FC<Props> = ({
     >
       <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
         {payload ? (
-          <MarkdownPreview
-            content={payload}
-            layoutId={layoutId}
-            note={note}
-            showRelated={!isEditing}
-          />
+          <Suspense fallback={<div className={cn('p-4')}>{payload}</div>}>
+            <MarkdownPreview
+              content={payload}
+              layoutId={layoutId}
+              note={note}
+              showRelated={!isEditing}
+            />
+          </Suspense>
         ) : (
           <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
             {t('notes:emptyNoteMessage')}

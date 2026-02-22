@@ -1,9 +1,18 @@
 import { useDroppable } from '@dnd-kit/core';
-import { useCallback, useRef, useState } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type CSSProperties,
+  type DragEvent,
+  type FC,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 
 interface GraphDropZoneProps {
-  onDrop: (event: React.DragEvent) => void;
-  children: React.ReactNode;
+  onDrop: (event: DragEvent) => void;
+  children: ReactNode;
   isDraggingEdge?: boolean;
   onBoxSelect?: (rect: {
     x1: number;
@@ -13,7 +22,7 @@ interface GraphDropZoneProps {
   }) => void;
 }
 
-export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
+export const GraphDropZone: FC<GraphDropZoneProps> = ({
   onDrop,
   children,
   isDraggingEdge = false,
@@ -27,7 +36,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
   const [start, setStart] = useState<{ x: number; y: number } | null>(null);
   const [current, setCurrent] = useState<{ x: number; y: number } | null>(null);
 
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
+  const onMouseDown = useCallback((e: MouseEvent) => {
     if (e.button !== 0 || !e.ctrlKey) return;
     e.preventDefault();
     setDragging(true);
@@ -36,7 +45,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
   }, []);
 
   const onMouseMove = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       if (!dragging) return;
       setCurrent({ x: e.clientX, y: e.clientY });
     },
@@ -64,7 +73,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
   }, [dragging, start, current, onBoxSelect]);
 
   const onContextMenu = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       if (dragging) e.preventDefault();
     },
     [dragging]
@@ -81,7 +90,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
       top,
       width,
       height,
-    } as React.CSSProperties;
+    } as CSSProperties;
   })();
 
   return (
@@ -96,7 +105,7 @@ export const GraphDropZone: React.FC<GraphDropZoneProps> = ({
           : ''
       } transition-all duration-200`}
       onDrop={e => {
-        onDrop(e);
+        onDrop(e as unknown as DragEvent);
       }}
       onDragOver={e => {
         e.preventDefault();

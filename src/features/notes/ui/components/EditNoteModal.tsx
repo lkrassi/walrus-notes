@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type FC, type FormEvent } from 'react';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
@@ -9,7 +9,7 @@ interface Props {
   onSaved: (title: string) => Promise<void> | void;
 }
 
-export const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
+export const EditNoteModal: FC<Props> = ({ title = '', onSaved }) => {
   const { closeModal } = useModalContentContext();
   const { t } = useLocalization();
   const [value, setValue] = useState(title);
@@ -20,7 +20,7 @@ export const EditNoteModal: React.FC<Props> = ({ title = '', onSaved }) => {
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);

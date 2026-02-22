@@ -1,6 +1,7 @@
 import { useDeleteLayoutMutation } from 'app/store/api';
 import { closeLayoutTabs } from 'app/store/slices/tabsSlice';
 import { Trash2 } from 'lucide-react';
+import type { FormEvent } from 'react';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
@@ -24,7 +25,7 @@ export const DeleteLayoutForm = ({
   const dispatch = useAppDispatch();
   const [deleteLayout, { isLoading }] = useDeleteLayoutMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {

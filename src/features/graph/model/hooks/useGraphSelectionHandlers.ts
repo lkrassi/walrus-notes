@@ -1,3 +1,4 @@
+import type { DragEvent, MouseEvent, RefObject } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
@@ -5,7 +6,7 @@ import type { Note } from 'shared/model/types/layouts';
 interface UseGraphSelectionHandlersProps {
   nodes: Node[];
   setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-  lastBoxSelectedIdsRef: React.MutableRefObject<Set<string>>;
+  lastBoxSelectedIdsRef: RefObject<Set<string>>;
   screenToFlowPosition: (point: { x: number; y: number }) => {
     x: number;
     y: number;
@@ -71,7 +72,7 @@ export const useGraphSelectionHandlers = ({
   );
 
   const handleNoteDrop = useCallback(
-    (event: React.DragEvent) => {
+    (event: DragEvent) => {
       event.preventDefault();
       const noteData = event.dataTransfer.getData('application/reactflow');
       if (noteData) {
@@ -130,7 +131,7 @@ export const useGraphSelectionHandlers = ({
   );
 
   const handleNodeDoubleClick = useCallback(
-    (event: React.MouseEvent, node?: Node | null) => {
+    (event: MouseEvent, node?: Node | null) => {
       event.stopPropagation();
       if (!node?.id) return;
       node.data?.onNoteClick?.(node.id);

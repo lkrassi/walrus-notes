@@ -1,8 +1,10 @@
+import { type FC } from 'react';
+
 type FlagIconProps = {
   className?: string;
 };
 
-export const RussianFlagIcon: React.FC<FlagIconProps> = ({ className = '' }) => {
+export const RussianFlagIcon: FC<FlagIconProps> = ({ className = '' }) => {
   return (
     <svg
       viewBox='0 0 36 36'

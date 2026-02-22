@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, type MouseEvent, type RefObject } from 'react';
 import type { Edge, Node, NodeChange } from 'reactflow';
 import { MoveNodeCommand } from '../commands';
 import type { useGraphHistory } from './useGraphHistory';
@@ -10,10 +10,10 @@ interface UseGraphDragHandlersProps {
   setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
   updatePositionCallback: (nodeId: string, x: number, y: number) => void;
   graphHistory: GraphHistory;
-  isNodeDraggingRef: React.MutableRefObject<boolean>;
-  isProcessingRef: React.MutableRefObject<boolean>;
+  isNodeDraggingRef: RefObject<boolean>;
+  isProcessingRef: RefObject<boolean>;
   rfSetNodes?: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-  onNodeDragStop?: (event: React.MouseEvent, node: Node) => void;
+  onNodeDragStop?: (event: MouseEvent, node: Node) => void;
   setIsNodeDragging?: (dragging: boolean) => void;
   onNodesChange?: (changes: NodeChange[]) => void;
   rfSetEdges?: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
@@ -44,7 +44,7 @@ export const useGraphDragHandlers = ({
   const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
   const handleNodeDragStart = useCallback(
-    (_event: React.MouseEvent, node: Node) => {
+    (_event: MouseEvent, node: Node) => {
       isNodeDraggingRef.current = true;
       setIsNodeDragging?.(true);
 
@@ -61,7 +61,7 @@ export const useGraphDragHandlers = ({
   );
 
   const handleNodeDragStop = useCallback(
-    async (_event: React.MouseEvent, node: Node) => {
+    async (_event: MouseEvent, node: Node) => {
       if (!node) {
         try {
           isNodeDraggingRef.current = false;
@@ -126,7 +126,7 @@ export const useGraphDragHandlers = ({
           }
         }
       } catch (_e) {
-        onNodeDragStop?.(_event, node);
+        onNodeDragStop?.(_event as unknown as any, node);
       } finally {
         isProcessingRef.current = false;
       }

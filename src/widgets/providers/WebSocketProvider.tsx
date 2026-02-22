@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, type FC, type ReactNode } from 'react';
 import { buildWsUrl } from 'shared/config/ws';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useWebSocket } from 'widgets/hooks/useWebSocket';
@@ -12,10 +12,10 @@ export const useWSContext = () => {
 };
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const WebSocketProvider: React.FC<Props> = ({ children }) => {
+export const WebSocketProvider: FC<Props> = ({ children }) => {
   const { profile } = useAppSelector(state => state.user);
   const userId = profile?.id;
 

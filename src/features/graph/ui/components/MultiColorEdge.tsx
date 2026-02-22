@@ -1,10 +1,18 @@
 import { useDeleteNoteLinkMutation } from 'app/store/api';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+} from 'react';
 import {
   BaseEdge,
-  type EdgeProps,
   getBezierPath,
   useReactFlow,
+  type EdgeProps,
 } from 'reactflow';
 import { cn } from 'shared/lib/cn';
 
@@ -85,7 +93,7 @@ export const MultiColorEdge = memo(function MultiColorEdge(
   );
 
   const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
       setIsDragging(true);
@@ -159,7 +167,7 @@ export const MultiColorEdge = memo(function MultiColorEdge(
   }, [id, source, target, deleteNoteLink, setEdges]);
 
   const handleClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.stopPropagation();
       if (confirm('Удалить связь между заметками?')) {
         handleDeleteEdge();

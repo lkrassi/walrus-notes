@@ -1,5 +1,6 @@
 import { NotFound } from 'features/not-found/ui';
+import { type FC } from 'react';
 
-export const NotFoundPage: React.FC = () => {
+export const NotFoundPage: FC = () => {
   return <NotFound />;
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import { Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 
@@ -16,7 +16,7 @@ const normalizeHex = (c?: string) => {
   return undefined;
 };
 
-export const ColorSelector: React.FC<ColorSelectorProps> = ({
+export const ColorSelector: FC<ColorSelectorProps> = ({
   value,
   onChange,
   className,

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type FC, useEffect, useRef } from 'react';
 import type { Node } from 'reactflow';
 import { useReactFlow } from 'reactflow';
 
@@ -41,7 +41,7 @@ function intersectRect(
   return null;
 }
 
-export const OffscreenArrows: React.FC<OffscreenArrowsProps> = ({
+export const OffscreenArrows: FC<OffscreenArrowsProps> = ({
   nodes,
   minDistance = 50,
   maxArrows = 100,

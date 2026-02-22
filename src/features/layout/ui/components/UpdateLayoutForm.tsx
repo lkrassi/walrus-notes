@@ -1,5 +1,5 @@
 import { useUpdateLayoutMutation } from 'app/store/api';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type FC, type FormEvent } from 'react';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization, useNotifications } from 'widgets/hooks';
@@ -16,7 +16,7 @@ interface UpdateLayoutFormProps {
   ) => void;
 }
 
-export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
+export const UpdateLayoutForm: FC<UpdateLayoutFormProps> = ({
   layoutId,
   layoutTitle = '',
   layoutColor = undefined,
@@ -46,7 +46,7 @@ export const UpdateLayoutForm: React.FC<UpdateLayoutFormProps> = ({
     normalizeHex(layoutColor)
   );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       await updateLayout({

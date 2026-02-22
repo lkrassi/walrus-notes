@@ -1,9 +1,10 @@
+import { type ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { AppRoutes } from './config';
 
 type GuestRouteProps = {
-  children: React.ReactElement;
+  children: ReactElement;
 };
 
 export const GuestRoute = ({ children }: GuestRouteProps) => {

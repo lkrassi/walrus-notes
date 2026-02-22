@@ -1,8 +1,10 @@
+import { type FC } from 'react';
+
 type FlagIconProps = {
   className?: string;
 };
 
-export const UKFlagIcon: React.FC<FlagIconProps> = ({ className = '' }) => {
+export const UKFlagIcon: FC<FlagIconProps> = ({ className = '' }) => {
   return (
     <svg
       version='1.1'

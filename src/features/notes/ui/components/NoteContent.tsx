@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIsDesktop } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
@@ -33,7 +33,7 @@ interface NoteContentProps {
   onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
-export const NoteContent: React.FC<NoteContentProps> = ({
+export const NoteContent: FC<NoteContentProps> = ({
   isEditing,
   payload,
   isLoading,

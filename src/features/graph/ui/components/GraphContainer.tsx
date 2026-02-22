@@ -1,10 +1,11 @@
+import { type FC, type ReactNode } from 'react';
 import { cn } from 'shared/lib/cn';
 
 interface GraphContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const GraphContainer: React.FC<GraphContainerProps> = ({ children }) => {
+export const GraphContainer: FC<GraphContainerProps> = ({ children }) => {
   return (
     <div
       className={cn(

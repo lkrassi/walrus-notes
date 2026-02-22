@@ -1,9 +1,11 @@
+import { type FC } from 'react';
+
 interface FieldErrorProps {
   error?: string;
   className?: string;
 }
 
-export const FieldError: React.FC<FieldErrorProps> = ({ error, className }) => {
+export const FieldError: FC<FieldErrorProps> = ({ error, className }) => {
   if (!error) return null;
 
   return (

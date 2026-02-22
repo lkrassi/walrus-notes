@@ -5,6 +5,7 @@ import {
   useEffect,
   useReducer,
   useState,
+  type ReactNode,
 } from 'react';
 import type { Layout, Note } from 'shared/model/types/layouts';
 import {
@@ -34,11 +35,7 @@ const FileTreeContext = createContext<{
   loadMoreNotes: (layoutId: string) => Promise<void>;
 } | null>(null);
 
-export const FileTreeProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatchFileTree] = useReducer(
     fileTreeReducer,
     initialFileTreeState

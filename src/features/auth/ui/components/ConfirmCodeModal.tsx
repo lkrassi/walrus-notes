@@ -2,7 +2,14 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useConfirmCodeMutation } from 'app/store/api';
-import { useEffect, useRef, useState } from 'react';
+import {
+  type FC,
+  type KeyboardEvent,
+  type ClipboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Button } from 'shared';
 import { useLocalization, useNotifications } from 'widgets/hooks';
 
@@ -11,7 +18,7 @@ interface ConfirmCodeModalProps {
   onSuccess: () => void;
 }
 
-export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
+export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   email,
   onSuccess,
 }) => {
@@ -34,10 +41,7 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLDivElement>
-  ) => {
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     } else if (e.key === 'ArrowLeft' && index > 0) {
@@ -47,7 +51,7 @@ export const ConfirmCodeModal: React.FC<ConfirmCodeModalProps> = ({
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
     const pastedCode = pastedData.replace(/\D/g, '').slice(0, 6).split('');

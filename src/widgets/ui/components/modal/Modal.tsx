@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Zoom from '@mui/material/Zoom';
 import type { TransitionProps } from '@mui/material/transitions';
 import { X } from 'lucide-react';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, type FC, type ReactElement } from 'react';
 import { useLocalization } from 'widgets/hooks';
 import type { ModalState } from 'widgets/hooks/useModal';
 import { ModalContentContext } from './ModalContentContext';
@@ -27,7 +27,7 @@ const SIZE_MAP = {
 const CustomTransition = forwardRef<
   unknown,
   TransitionProps & {
-    children: React.ReactElement;
+    children: ReactElement;
     triggerPosition?: { x: number; y: number; width: number; height: number };
   }
 >(function CustomTransition(props, ref) {
@@ -60,7 +60,7 @@ const CustomTransition = forwardRef<
 
 CustomTransition.displayName = 'CustomTransition';
 
-export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
+export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
   const { t } = useLocalization();
   const { isOpen, content, options } = modalState;
 
@@ -80,7 +80,7 @@ export const Modal: React.FC<ModalProps> = ({ modalState, onClose }) => {
   const TransitionComponent = useMemo(() => {
     const Component = forwardRef<
       unknown,
-      TransitionProps & { children: React.ReactElement }
+      TransitionProps & { children: ReactElement }
     >((props, ref) => (
       <CustomTransition
         {...props}

@@ -1,3 +1,4 @@
+import { type FC } from 'react';
 import { cn } from '../../../../shared/lib/cn';
 
 interface ImageViewerModalProps {
@@ -5,7 +6,7 @@ interface ImageViewerModalProps {
   alt?: string;
 }
 
-export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
+export const ImageViewerModal: FC<ImageViewerModalProps> = ({
   imageUrl,
   alt = 'Изображение',
 }) => {

@@ -1,4 +1,6 @@
-export const FolderIcon: React.FC<{
+import { type FC } from 'react';
+
+export const FolderIcon: FC<{
   fillColor?: string;
   strokeColor?: string;
   className?: string;

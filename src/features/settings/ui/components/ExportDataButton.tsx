@@ -1,12 +1,12 @@
 import { useExportLayoutMutation } from 'app/store/api';
-import { useCallback } from 'react';
+import { useCallback, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useNotifications } from 'widgets/hooks/useNotifications';
 
-export const ExportDataButton: React.FC = () => {
+export const ExportDataButton: FC = () => {
   const { t } = useLocalization();
   const { profile } = useAppSelector(state => state.user);
   const { showError, showSuccess } = useNotifications();

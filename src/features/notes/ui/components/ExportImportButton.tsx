@@ -1,4 +1,5 @@
 import { Download, Upload } from 'lucide-react';
+import { type FC, type MouseEvent } from 'react';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
@@ -12,7 +13,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export const ExportImportButton: React.FC<Props> = ({
+export const ExportImportButton: FC<Props> = ({
   onExport,
   onImport,
   disabled,
@@ -20,7 +21,7 @@ export const ExportImportButton: React.FC<Props> = ({
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
 
-  const ModalContent: React.FC<{
+  const ModalContent: FC<{
     onExport: () => void;
     onImport: (c: string) => void;
   }> = ({ onExport: doExport, onImport: doImport }) => {
@@ -44,7 +45,7 @@ export const ExportImportButton: React.FC<Props> = ({
                 <MdImportModal onImported={doImport} />,
                 { title: t('notes:import') }
               );
-              openImport(e as React.MouseEvent<HTMLElement>);
+              openImport(e as unknown as MouseEvent<HTMLElement>);
             }}
             className={cn('px-4', 'py-2')}
             variant='default'

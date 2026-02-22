@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState, type MouseEvent } from 'react';
 import {
   useEdgesState,
   useNodesState,
@@ -174,7 +174,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   );
 
   const handleNodeMouseEnterWrapped = useCallback(
-    (e: React.MouseEvent, node: Node) => {
+    (e: MouseEvent, node: Node) => {
       if (isNodeDraggingRef.current) return;
       handleNodeMouseEnter(e, node);
     },
@@ -182,7 +182,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   );
 
   const handleNodeMouseLeaveWrapped = useCallback(
-    (e: React.MouseEvent, node: Node) => {
+    (e: MouseEvent, node: Node) => {
       if (isNodeDraggingRef.current) return;
       handleNodeMouseLeave(e, node);
     },

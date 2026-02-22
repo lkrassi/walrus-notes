@@ -10,6 +10,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
+import { type FC, type MouseEvent } from 'react';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
@@ -42,7 +43,7 @@ interface NoteHeaderProps {
   onToggleFullscreen?: () => void;
 }
 
-export const NoteHeader: React.FC<NoteHeaderProps> = ({
+export const NoteHeader: FC<NoteHeaderProps> = ({
   isEditing,
   title,
   isLoading,
@@ -70,7 +71,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
         const res = await uploadFile({ file }).unwrap();
         return res?.data?.imgUrl ?? '';
       }}
-      onUploaded={url => {
+      onUploaded={(url: string) => {
         if (url && onInsertImage) {
           const normalized = url.startsWith('http') ? url : `https://${url}`;
           onInsertImage(normalized);
@@ -179,7 +180,7 @@ export const NoteHeader: React.FC<NoteHeaderProps> = ({
                   <ConfirmationLeaveForm onConfirm={onDiscardConfirm} />,
                   { title: t('notes:unsavedConfirmTitle'), size: 'sm' }
                 );
-                open(e as React.MouseEvent<HTMLElement>);
+                open(e as unknown as MouseEvent<HTMLElement>);
               }}
               className={cn('flex', 'h-8', 'items-center', 'justify-center')}
               disabled={isLoading}

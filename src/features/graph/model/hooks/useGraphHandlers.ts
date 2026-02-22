@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, type DragEvent, type MouseEvent } from 'react';
 import type { Node, NodeChange, OnNodesChange } from 'reactflow';
 import type { Note } from 'shared/model/types/layouts';
 
@@ -37,7 +37,7 @@ export const useGraphHandlers = ({
   );
 
   const onNodeDragStop = useCallback(
-    (_event: React.MouseEvent, node?: Node | null) => {
+    (_event: MouseEvent, node?: Node | null) => {
       if (!node) return;
       updatePositionCallback(node.id, node.position.x, node.position.y);
     },
@@ -52,7 +52,7 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeClick = useCallback(
-    (_event: React.MouseEvent, node?: Node | null) => {
+    (_event: MouseEvent, node?: Node | null) => {
       if (!node?.id) return;
       onNodeClick(node.id);
     },
@@ -60,7 +60,7 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeMouseEnter = useCallback(
-    (_event: React.MouseEvent, node?: Node | null) => {
+    (_event: MouseEvent, node?: Node | null) => {
       if (!node?.id) return;
       onNodeMouseEnter(node.id);
     },
@@ -68,14 +68,14 @@ export const useGraphHandlers = ({
   );
 
   const handleNodeMouseLeave = useCallback(
-    (_event: React.MouseEvent, node?: Node | null) => {
+    (_event: MouseEvent, node?: Node | null) => {
       onNodeMouseLeave(node?.id);
     },
     [onNodeMouseLeave]
   );
 
   const onDrop = useCallback(
-    (event: React.DragEvent) => {
+    (event: DragEvent) => {
       event.preventDefault();
 
       const noteData = event.dataTransfer.getData('application/reactflow');

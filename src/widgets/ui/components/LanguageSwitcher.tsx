@@ -24,7 +24,7 @@ const LANGUAGES = [
   },
 ];
 
-export const LanguageSwitcher: React.FC = () => {
+export const LanguageSwitcher: FC = () => {
   const { t, currentLanguage, changeLanguage } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
 
@@ -33,7 +33,7 @@ export const LanguageSwitcher: React.FC = () => {
     closeModal();
   };
 
-  const LanguageModal: React.FC = () => {
+  const LanguageModal: FC = () => {
     const { closeModal } = useModalContentContext();
 
     return (

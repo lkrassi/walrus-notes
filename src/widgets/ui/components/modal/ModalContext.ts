@@ -1,10 +1,10 @@
-import { createContext } from 'react';
+import { createContext, type ReactNode } from 'react';
 import type { ModalOptions, ModalState } from 'widgets/hooks/useModal';
 
 export interface ModalContextType {
-  openModal: (content: React.ReactNode, options?: ModalOptions) => void;
+  openModal: (content: ReactNode, options?: ModalOptions) => void;
   closeModal: () => void;
-  updateModalContent: (content: React.ReactNode) => void;
+  updateModalContent: (content: ReactNode) => void;
   modalState: ModalState;
 }
 

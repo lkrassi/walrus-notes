@@ -1,5 +1,6 @@
 import type { FieldProps } from 'formik';
 import { Field } from 'formik';
+import type { ChangeEvent, FC, FocusEvent, ReactNode } from 'react';
 import { Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { FieldError } from './FieldError';
@@ -30,10 +31,10 @@ interface ValidatedFieldProps {
     | 'previous'
     | 'search'
     | 'send';
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
-export const ValidatedField: React.FC<ValidatedFieldProps> = ({
+export const ValidatedField: FC<ValidatedFieldProps> = ({
   name,
   label,
   type = 'text',
@@ -90,10 +91,10 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
                   enterKeyHint={enterKeyHint}
                   required={required}
                   autoFocus={autoFocus}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     field.onChange(e);
                   }}
-                  onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                  onBlur={(e: FocusEvent<HTMLInputElement>) => {
                     field.onBlur(e);
                     form.validateField(name);
                   }}
@@ -108,7 +109,7 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
         {({ form }: FieldProps) => {
           const showError = Boolean(
             (form.touched && (form.touched as Record<string, boolean>)[name]) ||
-              form.submitCount > 0
+            form.submitCount > 0
           );
 
           const errorMessage =

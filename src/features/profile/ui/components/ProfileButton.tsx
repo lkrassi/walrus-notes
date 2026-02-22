@@ -1,9 +1,10 @@
+import { type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useAppSelector } from 'widgets/hooks/redux';
 
-export const ProfileButton: React.FC = () => {
+export const ProfileButton: FC = () => {
   const { profile } = useAppSelector(state => state.user);
   const { t } = useLocalization();
   const navigate = useNavigate();

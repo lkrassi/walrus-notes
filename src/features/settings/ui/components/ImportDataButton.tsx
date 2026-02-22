@@ -1,12 +1,18 @@
 import { useImportLayoutMutation } from 'app/store/api';
-import { useRef, useState } from 'react';
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FC,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui';
 import { useLocalization } from 'widgets/hooks';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useNotifications } from 'widgets/hooks/useNotifications';
 
-export const ImportDataButton: React.FC = () => {
+export const ImportDataButton: FC = () => {
   const { t } = useLocalization();
   const { showError, showSuccess } = useNotifications();
   const [importLayout, { isLoading }] = useImportLayoutMutation();
@@ -32,28 +38,26 @@ export const ImportDataButton: React.FC = () => {
     }
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     await handleFile(event.target.files?.[0]);
     event.target.value = '';
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file) handleFile(file);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(true);
   };
 
   const handleDragLeave = () => setIsDragOver(false);
 
-  const DropZone: React.FC = () => (
+  const DropZone: FC = () => (
     <div className={cn('p-4', 'space-y-4')}>
       <div
         className={cn(

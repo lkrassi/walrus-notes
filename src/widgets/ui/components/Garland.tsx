@@ -1,3 +1,4 @@
+import { type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { useIsMobile } from 'widgets/hooks';
 import './garland.css';
@@ -6,7 +7,7 @@ interface Props {
   active?: boolean;
 }
 
-export const Garland: React.FC<Props> = ({ active = true }) => {
+export const Garland: FC<Props> = ({ active = true }) => {
   const isMobile = useIsMobile();
   const defaultCount = 8;
   const count = isMobile

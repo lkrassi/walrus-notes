@@ -1,7 +1,7 @@
 import { Box, CircularProgress, TextField, Typography } from '@mui/material';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useRef, useState } from 'react';
 import { Button } from 'shared';
 import { useLocalization } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui';
@@ -11,9 +11,9 @@ interface ForgotPasswordEmailModalProps {
   onSubmit: (email: string) => Promise<void>;
 }
 
-export const ForgotPasswordEmailModal: React.FC<
-  ForgotPasswordEmailModalProps
-> = ({ onSubmit }) => {
+export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
+  onSubmit,
+}) => {
   const { t } = useLocalization();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { closeModal } = useModalContentContext();

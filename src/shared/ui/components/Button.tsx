@@ -1,20 +1,26 @@
 import MuiButton from '@mui/material/Button';
 import { alpha, styled } from '@mui/material/styles';
-import { forwardRef, memo } from 'react';
+import {
+  forwardRef,
+  memo,
+  type ButtonHTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export type ButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
 
 export type ButtonProps = {
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  children: ReactNode;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   variant?: ButtonVariant;
   className?: string;
   to?: string;
   title?: string;
-} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
 
 const StyledButton = styled(MuiButton, {
   shouldForwardProp: prop => prop !== 'buttonVariant',
@@ -109,7 +115,7 @@ export const Button = memo(
     ) => {
       const navigate = useNavigate();
 
-      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
         if (disabled) return;
         if (onClick) {
           onClick(e);

@@ -1,17 +1,21 @@
-import { useContext } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import Highlight, { defaultProps, type Language } from 'prism-react-renderer';
+import duotoneDark from 'prism-react-renderer/themes/duotoneDark';
+import duotoneLight from 'prism-react-renderer/themes/duotoneLight';
 import {
-  oneLight,
-  oneDark,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
+  useContext,
+  useEffect,
+  useState,
+  type FC,
+  type ReactNode,
+} from 'react';
 import { cn } from 'shared/lib/cn';
 import { ThemeContext } from 'widgets/ui/ThemeProvider';
 
 interface CodeHighlighterProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
-export const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
+export const CodeHighlighter: FC<CodeHighlighterProps> = ({
   children,
   className,
 }) => {
@@ -23,7 +27,56 @@ export const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     const match = className.match(/language-([a-zA-Z0-9_+-]+)/);
     if (match) language = match[1];
   }
-  const style = theme === 'dark' ? oneDark : oneLight;
+  const [loaded, setLoaded] = useState(false);
+  const langMap: Record<string, string> = {
+    tsx: 'tsx',
+    jsx: 'jsx',
+    js: 'javascript',
+    javascript: 'javascript',
+    ts: 'typescript',
+    typescript: 'typescript',
+    py: 'python',
+    python: 'python',
+    json: 'json',
+    bash: 'bash',
+    sh: 'bash',
+    css: 'css',
+    html: 'markup',
+    md: 'markdown',
+    markdown: 'markdown',
+    c: 'c',
+    cpp: 'cpp',
+    java: 'java',
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadLang() {
+      try {
+        if (language && language in langMap) {
+          const name = langMap[language] || language;
+          await import(`prismjs/components/prism-${name}`);
+          if (name === 'tsx') {
+            await import('prismjs/components/prism-jsx');
+            await import('prismjs/components/prism-typescript');
+          }
+        }
+      } catch (_e) {}
+      if (mounted) setLoaded(true);
+    }
+
+    loadLang();
+    return () => {
+      mounted = false;
+    };
+  }, [language]);
+
+  const selectedTheme = theme === 'dark' ? duotoneDark : duotoneLight;
+
+  const prismLanguage: Language = ((language &&
+    (langMap[language] || language)) ||
+    '') as unknown as Language;
 
   return (
     <div className={cn('m-0', 'overflow-x-auto', 'rounded-lg', 'relative')}>
@@ -46,15 +99,38 @@ export const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
           {language}
         </div>
       )}
-      <SyntaxHighlighter
-        style={style}
-        language={language}
-        showLineNumbers={false}
-        PreTag='div'
-        customStyle={{ margin: 0, padding: '1rem', borderRadius: 8 }}
-      >
-        {code}
-      </SyntaxHighlighter>
+
+      {loaded ? (
+        <Highlight
+          {...defaultProps}
+          code={code}
+          language={prismLanguage}
+          theme={selectedTheme}
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              className={className}
+              style={{
+                ...style,
+                margin: 0,
+                padding: '1rem',
+                borderRadius: 8,
+                overflowX: 'auto',
+              }}
+            >
+              {tokens.map((line, i) => (
+                <div key={i} {...getLineProps({ line, key: i })}>
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token, key })} />
+                  ))}
+                </div>
+              ))}
+            </pre>
+          )}
+        </Highlight>
+      ) : (
+        <div style={{ padding: '1rem' }}>{code}</div>
+      )}
     </div>
   );
 };

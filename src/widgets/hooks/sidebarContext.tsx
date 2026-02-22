@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 type SidebarContextType = {
   isMobileOpen: boolean;
@@ -7,11 +7,7 @@ type SidebarContextType = {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export const SidebarProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 
 export interface TriggerPosition {
   x: number;
@@ -20,7 +20,7 @@ export type ModalOptions = {
 
 export type ModalState = {
   isOpen: boolean;
-  content: React.ReactNode | null;
+  content: ReactNode | null;
   options: ModalOptions;
 };
 
@@ -32,7 +32,7 @@ export const useModal = () => {
   });
 
   const openModal = useCallback(
-    (content: React.ReactNode, options: ModalOptions = {}) => {
+    (content: ReactNode, options: ModalOptions = {}) => {
       setModalState({
         isOpen: true,
         content,
@@ -55,7 +55,7 @@ export const useModal = () => {
     }));
   }, []);
 
-  const updateModalContent = useCallback((content: React.ReactNode) => {
+  const updateModalContent = useCallback((content: ReactNode) => {
     setModalState(prev => ({
       ...prev,
       content,

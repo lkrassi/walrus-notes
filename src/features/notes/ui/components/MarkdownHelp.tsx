@@ -1,7 +1,8 @@
+import { type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
 
-export const MarkdownHelp: React.FC = () => {
+export const MarkdownHelp: FC = () => {
   const { t } = useLocalization();
 
   return (
