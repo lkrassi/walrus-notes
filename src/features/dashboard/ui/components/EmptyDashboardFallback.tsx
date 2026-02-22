@@ -92,7 +92,6 @@ export const EmptyDashboardFallback = ({
         animate='visible'
         style={{ opacity: 0 }}
       >
-        {/* Главный граф - если есть */}
         {mainLayout && (
           <div className={cn('w-full', 'mb-8')}>
             <AllNotesCard

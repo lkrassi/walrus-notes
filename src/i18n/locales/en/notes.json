@@ -88,7 +88,6 @@
   "fileTooLarge": "File size should not exceed 5MB",
   "untitled": "untitled",
   "collaborativeEditorInitializing": "Initializing editor...",
-  "collaborativeEditorActivated": "Collaborative editing mode activated",
   "connectionLostRetrying": "Connection lost. Attempting to reconnect...",
   "connectionRestored": "Connection restored",
   "connectionFailedReload": "Unable to restore connection. Try reloading the page.",

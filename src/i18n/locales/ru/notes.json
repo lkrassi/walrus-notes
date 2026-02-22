@@ -89,7 +89,6 @@
   "fileTooLarge": "Размер файла не должен превышать 5MB",
   "untitled": "без названия",
   "collaborativeEditorInitializing": "Инициализация редактора...",
-  "collaborativeEditorActivated": "Режим совместного редактирования активирован",
   "connectionLostRetrying": "Потеряно соединение. Попытка восстановления...",
   "connectionRestored": "Соединение восстановлено",
   "connectionFailedReload": "Не удаётся восстановить соединение. Попробуйте перезагрузить страницу.",

@@ -30,7 +30,7 @@ export const CollaborativeNoteEditor: React.FC<
   onContentChange,
   onOnlineUsersChange,
 }) => {
-  const { showError, showSuccess } = useNotifications();
+  const { showError } = useNotifications();
   const { t } = useLocalization();
   const [reconnectAttempts, setReconnectAttempts] = React.useState(0);
 
@@ -38,12 +38,6 @@ export const CollaborativeNoteEditor: React.FC<
     (status: 'connected' | 'disconnected') => {
       if (status === 'connected') {
         setReconnectAttempts(0);
-        try {
-          showSuccess(
-            t('notes:collaborativeEditorActivated') ||
-              'Режим совместного редактирования активирован'
-          );
-        } catch (_e) {}
       } else if (status === 'disconnected') {
         setReconnectAttempts(prev => prev + 1);
         try {

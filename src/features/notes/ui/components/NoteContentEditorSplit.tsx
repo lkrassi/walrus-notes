@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
 import { cn } from 'shared/lib/cn';
 import { CollaborativeNoteEditor } from './CollaborativeNoteEditor';
 import { MarkdownEditor } from './MarkdownEditor';
@@ -62,6 +63,18 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
   userName,
   onOnlineUsersChange,
 }) => {
+  const initialContentRef = useRef<string>('');
+  const lastNoteIdRef = useRef<string | undefined>(undefined);
+
+  if (enableCollaboration && isEditing && note?.id) {
+    const noteIdChanged = lastNoteIdRef.current !== note.id;
+    const shouldInitContent = initialContentRef.current === '' && payload;
+
+    if (noteIdChanged || shouldInitContent) {
+      initialContentRef.current = payload;
+      lastNoteIdRef.current = note.id;
+    }
+  }
   const computeWidth = () => {
     if (isDesktop) {
       if (isEditing) return leftWidth ? `${leftWidth}px` : '480px';
@@ -85,7 +98,6 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
         <div
           className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
         >
-          {/* Collaborative редактор */}
           <motion.div
             initial={false}
             animate={
@@ -111,7 +123,7 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
               noteId={note.id}
               userId={userId}
               userName={userName}
-              initialContent={payload}
+              initialContent={initialContentRef.current}
               disabled={isLoading}
               className={cn('h-full')}
               onContentChange={onPayloadChange}
@@ -119,7 +131,6 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
             />
           </motion.div>
 
-          {/* Divider */}
           <div
             role='separator'
             aria-orientation={isDesktop ? 'vertical' : 'horizontal'}
@@ -137,7 +148,6 @@ export const NoteContentEditorSplit: React.FC<Props> = ({
             )}
           />
 
-          {/* Preview */}
           <motion.div
             initial={false}
             animate={{ x: 0, opacity: 1 }}

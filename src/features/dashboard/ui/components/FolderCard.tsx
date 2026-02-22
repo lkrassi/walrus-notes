@@ -135,7 +135,6 @@ export const FolderCard = ({
             )}
           </div>
 
-          {/* Кнопки редактирования и удаления */}
           <div
             className={cn(
               'flex',

@@ -33,6 +33,7 @@ export function useYjsCollaboration(
   const hasInitializedRef = useRef(false);
   const firstInitialContentRef = useRef<string | undefined>(undefined);
   const isFirstMountRef = useRef(true);
+  const lastOnlineUsersKeyRef = useRef<string>('');
 
   useEffect(() => {
     if (!noteId || !userId) {
@@ -91,10 +92,6 @@ export function useYjsCollaboration(
           },
         });
       }
-
-      if (event.status === 'disconnected') {
-        providerInstance.awareness.setLocalState(null);
-      }
     };
 
     const handleSync = (isSynced: boolean) => {
@@ -120,12 +117,37 @@ export function useYjsCollaboration(
     providerInstance.on('status', handleStatus);
     providerInstance.on('sync', handleSync);
 
+    const pendingAwarenessFrame = { id: 0 as number | null };
+
     const handleAwarenessChange = () => {
-      const states = providerInstance.awareness.getStates() as Map<
-        number,
-        AwarenessUser
-      >;
-      setOnlineUsers(new Map(states));
+      if (pendingAwarenessFrame.id !== null) {
+        return;
+      }
+
+      pendingAwarenessFrame.id = requestAnimationFrame(() => {
+        pendingAwarenessFrame.id = null;
+
+        const states = providerInstance.awareness.getStates() as Map<
+          number,
+          AwarenessUser
+        >;
+        const usersKey = Array.from(states.values())
+          .map(state => {
+            const user = state.user;
+            if (!user) return '';
+            return `${user.id}:${user.name}:${user.color}`;
+          })
+          .filter(Boolean)
+          .sort()
+          .join('|');
+
+        if (usersKey === lastOnlineUsersKeyRef.current) {
+          return;
+        }
+
+        lastOnlineUsersKeyRef.current = usersKey;
+        setOnlineUsers(new Map(states));
+      });
     };
 
     providerInstance.awareness.on('change', handleAwarenessChange);
@@ -134,7 +156,6 @@ export function useYjsCollaboration(
       providerInstance.off('status', handleStatus);
       providerInstance.off('sync', handleSync);
       providerInstance.awareness.off('change', handleAwarenessChange);
-      providerInstance.awareness.setLocalState(null);
       providerInstance.destroy();
       ydoc.destroy();
       ydocRef.current = null;
