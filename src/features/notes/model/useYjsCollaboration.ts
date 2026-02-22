@@ -91,6 +91,10 @@ export function useYjsCollaboration(
           },
         });
       }
+
+      if (event.status === 'disconnected') {
+        providerInstance.awareness.setLocalState(null);
+      }
     };
 
     const handleSync = (isSynced: boolean) => {
@@ -130,6 +134,7 @@ export function useYjsCollaboration(
       providerInstance.off('status', handleStatus);
       providerInstance.off('sync', handleSync);
       providerInstance.awareness.off('change', handleAwarenessChange);
+      providerInstance.awareness.setLocalState(null);
       providerInstance.destroy();
       ydoc.destroy();
       ydocRef.current = null;
