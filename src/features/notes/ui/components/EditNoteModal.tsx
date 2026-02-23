@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type FC, type FormEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FC,
+  type SyntheticEvent,
+} from 'react';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
@@ -20,7 +26,7 @@ export const EditNoteModal: FC<Props> = ({ title = '', onSaved }) => {
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setIsLoading(true);

@@ -13,7 +13,8 @@ import { createAuthValidationSchemas } from 'features/auth/model/validationSchem
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, Suspense, lazy } from 'react';
-import { Button } from 'shared';
+import { Button, Loader } from 'shared';
+import { cn } from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useMobileForm } from 'widgets/hooks/useMobileForm';
@@ -65,7 +66,13 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
         };
 
         openModal(
-          <Suspense fallback={<div>{t('auth:confirmCode.title')}</div>}>
+          <Suspense
+            fallback={
+              <div className={cn('flex', 'justify-center', 'p-8')}>
+                <Loader size='md' text={t('auth:confirmCode.title')} />
+              </div>
+            }
+          >
             <ConfirmCodeModal
               email={values.email}
               onSuccess={handleConfirmSuccess}

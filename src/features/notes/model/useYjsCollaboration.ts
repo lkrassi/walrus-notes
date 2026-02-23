@@ -34,6 +34,11 @@ export function useYjsCollaboration(
   const firstInitialContentRef = useRef<string | undefined>(undefined);
   const isFirstMountRef = useRef(true);
   const lastOnlineUsersKeyRef = useRef<string>('');
+  const onStatusChangeRef = useRef(onStatusChange);
+
+  useEffect(() => {
+    onStatusChangeRef.current = onStatusChange;
+  }, [onStatusChange]);
 
   useEffect(() => {
     if (!noteId || !userId) {
@@ -80,7 +85,9 @@ export function useYjsCollaboration(
       setIsConnected(event.status === 'connected');
 
       if (event.status !== 'connecting') {
-        onStatusChange?.(event.status as 'connected' | 'disconnected');
+        onStatusChangeRef.current?.(
+          event.status as 'connected' | 'disconnected'
+        );
       }
 
       if (event.status === 'connected') {
@@ -160,7 +167,20 @@ export function useYjsCollaboration(
       ydoc.destroy();
       ydocRef.current = null;
     };
-  }, [noteId, userId, userName, onStatusChange]);
+  }, [noteId, userId]);
+
+  useEffect(() => {
+    if (provider && userId) {
+      const userColor = getUserColor(userId);
+      provider.awareness.setLocalState({
+        user: {
+          id: userId,
+          name: userName,
+          color: userColor,
+        },
+      });
+    }
+  }, [userName, userId, provider]);
 
   return {
     ydoc: ydocRef.current,

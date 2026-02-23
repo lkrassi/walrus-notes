@@ -1,5 +1,5 @@
 import { useUpdateNoteMutation } from 'app/store/api';
-import { removeDraft, setDraft } from 'app/store/slices/draftsSlice';
+import { removeDraft } from 'app/store/slices/draftsSlice';
 import { useDraftSync } from 'features/notes/model/useDraftSync';
 import { useEffect, useRef, useState } from 'react';
 import type { Note } from 'shared/model/types/layouts';
@@ -41,16 +41,16 @@ export const useNoteEditor = (
 
   const originalPayloadRef = useRef<string>(initialPayload);
   const lastLocalCommitRef = useRef<number | null>(null);
+  const lastLocalUpdateRef = useRef<number | null>(null);
   const dispatch = useAppDispatch();
 
-  const setPayload = (value: string) => {
+  const setPayload = (value: string | ((prev: string) => string)) => {
     try {
-      setPayloadState(value);
-      if (value != null && value !== originalPayloadRef.current) {
-        dispatch(setDraft({ noteId: note.id, text: value }));
-      } else {
-        dispatch(removeDraft({ noteId: note.id }));
-      }
+      lastLocalUpdateRef.current = Date.now();
+      setPayloadState(prev => {
+        const newValue = typeof value === 'function' ? value(prev) : value;
+        return newValue;
+      });
     } catch (_e) {}
   };
 
@@ -84,6 +84,12 @@ export const useNoteEditor = (
   useEffect(() => {
     try {
       if (storeDraft && storeDraft.length) {
+        if (
+          lastLocalUpdateRef.current != null &&
+          Date.now() - lastLocalUpdateRef.current < 2000
+        ) {
+          return;
+        }
         setPayloadState(storeDraft);
       }
     } catch (_e) {}

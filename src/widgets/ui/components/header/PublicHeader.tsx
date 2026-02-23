@@ -52,4 +52,3 @@ const PublicHeaderComponent = () => {
 };
 
 export const PublicHeader = memo(PublicHeaderComponent);
-PublicHeader.displayName = 'PublicHeader';

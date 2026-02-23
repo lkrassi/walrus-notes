@@ -1,4 +1,11 @@
-import { type FC, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type FC,
+  type RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useIsDesktop } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
@@ -6,8 +13,9 @@ import { syncScroll } from '../../lib/syncScroll';
 
 import type { Note } from 'shared/model/types/layouts';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 
-import { NoteContentEditorSplit } from './NoteContentEditorSplit';
+import { NoteContentEditorSplit } from './editor-split';
 
 interface NoteContentProps {
   isEditing: boolean;
@@ -31,6 +39,7 @@ interface NoteContentProps {
   onToggleFullscreen?: () => void;
   enableCollaboration?: boolean;
   onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
+  collaborativeEditorRef?: RefObject<CollaborativeNoteEditorHandle | null>;
 }
 
 export const NoteContent: FC<NoteContentProps> = ({
@@ -55,6 +64,7 @@ export const NoteContent: FC<NoteContentProps> = ({
   onToggleFullscreen,
   enableCollaboration = true,
   onOnlineUsersChange,
+  collaborativeEditorRef,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -161,6 +171,7 @@ export const NoteContent: FC<NoteContentProps> = ({
       userId={userId}
       userName={userName}
       onOnlineUsersChange={handleOnlineUsersChange}
+      collaborativeEditorRef={collaborativeEditorRef}
     />
   );
 };

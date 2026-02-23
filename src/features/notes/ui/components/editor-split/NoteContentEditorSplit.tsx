@@ -1,0 +1,141 @@
+import { memo, useRef, type FC } from 'react';
+import { cn } from 'shared/lib/cn';
+import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
+import { CollaborativeEditorPanel } from './CollaborativeEditorPanel';
+import { Divider } from './Divider';
+import { EditorPanel } from './EditorPanel';
+import { PreviewPanel } from './PreviewPanel';
+import type { EditorSplitProps } from './types';
+import { useCollaborativeContent } from './useCollaborativeContent';
+import { useEditorDimensions } from './useEditorDimensions';
+
+export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
+  function NoteContentEditorSplit({
+    payload,
+    onPayloadChange,
+    isLoading,
+    textareaRef,
+    previewRef,
+    leftWidth,
+    min,
+    max,
+    onDividerPointerDown,
+    isDesktop,
+    note,
+    layoutId,
+    isEditing = false,
+    isResizing = false,
+    enableCollaboration = false,
+    userId,
+    userName,
+    onOnlineUsersChange,
+    collaborativeEditorRef: externalCollaborativeEditorRef,
+  }) {
+    const localCollaborativeEditorRef =
+      useRef<CollaborativeNoteEditorHandle>(null);
+    const collaborativeEditorRef =
+      externalCollaborativeEditorRef || localCollaborativeEditorRef;
+
+    const { widthValue, heightValue } = useEditorDimensions({
+      isDesktop,
+      isEditing,
+      leftWidth,
+    });
+
+    const initialContent = useCollaborativeContent({
+      enableCollaboration,
+      isEditing,
+      noteId: note?.id,
+      payload,
+    });
+
+    if (enableCollaboration && isEditing && note?.id && userId && userName) {
+      return (
+        <div className={cn('flex', 'flex-col', 'h-full')}>
+          <div
+            className={cn(
+              'flex',
+              'flex-col',
+              'md:flex-row',
+              'flex-1',
+              'min-h-0'
+            )}
+          >
+            <CollaborativeEditorPanel
+              payload={payload}
+              onPayloadChange={onPayloadChange}
+              isLoading={isLoading}
+              isEditing={isEditing}
+              isResizing={isResizing}
+              isDesktop={isDesktop}
+              leftWidth={leftWidth}
+              min={min}
+              max={max}
+              widthValue={widthValue}
+              heightValue={heightValue}
+              noteId={note.id}
+              userId={userId}
+              userName={userName}
+              initialContent={initialContent}
+              onOnlineUsersChange={onOnlineUsersChange}
+              collaborativeEditorRef={collaborativeEditorRef}
+            />
+
+            <Divider
+              isEditing={isEditing}
+              isDesktop={isDesktop}
+              onPointerDown={onDividerPointerDown}
+            />
+
+            <PreviewPanel
+              payload={payload}
+              isEditing={isEditing}
+              isDesktop={isDesktop}
+              note={note}
+              layoutId={layoutId}
+              previewRef={previewRef}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={cn('flex', 'flex-col', 'h-full')}>
+        <div
+          className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
+        >
+          <EditorPanel
+            payload={payload}
+            onPayloadChange={onPayloadChange}
+            isLoading={isLoading}
+            isEditing={isEditing}
+            isResizing={isResizing}
+            isDesktop={isDesktop}
+            leftWidth={leftWidth}
+            min={min}
+            max={max}
+            widthValue={widthValue}
+            heightValue={heightValue}
+            textareaRef={textareaRef}
+          />
+
+          <Divider
+            isEditing={isEditing}
+            isDesktop={isDesktop}
+            onPointerDown={onDividerPointerDown}
+          />
+
+          <PreviewPanel
+            payload={payload}
+            isEditing={isEditing}
+            isDesktop={isDesktop}
+            note={note}
+            layoutId={layoutId}
+            previewRef={previewRef}
+          />
+        </div>
+      </div>
+    );
+  }
+);

@@ -44,6 +44,12 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
       return;
     }
 
+    if (existing && existing.readyState !== WebSocket.CLOSED) {
+      try {
+        existing.close();
+      } catch (_e) {}
+    }
+
     const DELAY = 50;
     if (connectTimer.current) window.clearTimeout(connectTimer.current);
     connectTimer.current = window.setTimeout(() => {

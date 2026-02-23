@@ -39,9 +39,6 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // CSS variables are defined in App.css (source of truth). Keep ThemeProvider
-  // responsible only for MUI theme and document `dark` class.
-
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };

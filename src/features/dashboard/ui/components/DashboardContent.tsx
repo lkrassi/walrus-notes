@@ -11,7 +11,8 @@ import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { FileText } from 'lucide-react';
-import { Suspense, lazy } from 'react';
+import { lazy, memo, Suspense, useCallback } from 'react';
+import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
@@ -36,7 +37,9 @@ interface DashboardContentProps {
   onItemSelect?: (item: FileTreeItem) => void;
 }
 
-export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
+export const DashboardContent = memo(function DashboardContent({
+  onNoteOpen,
+}: DashboardContentProps) {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { openTabs } = useTabs();
@@ -47,84 +50,129 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
 
   const activeTab = openTabs.find(tab => tab.isActive);
 
-  const handleTabClick = (tabId: string) => {
-    confirmIfUnsaved(() => dispatch(switchTab(tabId)));
-  };
+  const confirmIfUnsaved = useCallback(
+    (action: () => void) => {
+      if (!activeTab) {
+        action();
+        return;
+      }
 
-  const handleTabClose = (tabId: string) => {
-    confirmIfUnsaved(() => dispatch(closeTab(tabId)));
-  };
+      if (activeTab.item.type !== 'note') {
+        action();
+        return;
+      }
 
-  const handleTabReorder = (tabs: DashboardTab[]) => {
-    dispatch(reorderTabs(tabs));
-  };
+      const note = activeTab.item.note;
+      if (!note) {
+        action();
+        return;
+      }
 
-  const handleNoteUpdated = (noteId: string, updates: Partial<Note>) => {
-    dispatch(updateTabNote({ noteId, updates }));
-  };
-
-  const handleItemSelect = (item: FileTreeItem) => {
-    const tabId = createTabId(item.type as unknown as TabType, item.id);
-    const existingTab = openTabs.find(tab => tab.id === tabId);
-
-    if (existingTab) {
-      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+      action();
       return;
-    }
+    },
+    [activeTab]
+  );
 
-    confirmIfUnsaved(() => {
-      dispatch(openTab({ ...item, openedFromSidebar: false }));
-      dispatch(switchTab(tabId));
-    });
-  };
+  const handleTabClick = useCallback(
+    (tabId: string) => {
+      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+    },
+    [confirmIfUnsaved, dispatch]
+  );
 
-  const handleCreateFolder = () => {
+  const handleTabClose = useCallback(
+    (tabId: string) => {
+      confirmIfUnsaved(() => dispatch(closeTab(tabId)));
+    },
+    [confirmIfUnsaved, dispatch]
+  );
+
+  const handleTabReorder = useCallback(
+    (tabs: DashboardTab[]) => {
+      dispatch(reorderTabs(tabs));
+    },
+    [dispatch]
+  );
+
+  const handleNoteUpdated = useCallback(
+    (noteId: string, updates: Partial<Note>) => {
+      dispatch(updateTabNote({ noteId, updates }));
+    },
+    [dispatch]
+  );
+
+  const handleItemSelect = useCallback(
+    (item: FileTreeItem) => {
+      const tabId = createTabId(item.type as unknown as TabType, item.id);
+      const existingTab = openTabs.find(tab => tab.id === tabId);
+
+      if (existingTab) {
+        confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+        return;
+      }
+
+      confirmIfUnsaved(() => {
+        dispatch(openTab({ ...item, openedFromSidebar: false }));
+        dispatch(switchTab(tabId));
+      });
+    },
+    [confirmIfUnsaved, dispatch, openTabs]
+  );
+
+  const handleCreateFolder = useCallback(() => {
     openModal(<CreateLayoutForm />, {
       title: t('layout:createLayout') || 'Создать папку',
       size: 'md',
       showCloseButton: true,
     });
-  };
+  }, [openModal, t]);
 
-  const handleStartNoteCreation = () => {
+  const handleFolderSelected = useCallback(
+    (layoutId: string) => {
+      openModal(<CreateNoteForm layoutId={layoutId} />, {
+        title: t('notes:createNote') || 'Создать заметку',
+        size: 'md',
+        showCloseButton: true,
+      });
+    },
+    [openModal, t]
+  );
+
+  const handleStartNoteCreation = useCallback(() => {
     openModal(<FolderSelectModal onFolderSelected={handleFolderSelected} />, {
       title: '',
       size: 'md',
       showCloseButton: true,
     });
-  };
+  }, [handleFolderSelected, openModal]);
 
-  const handleFolderSelected = (layoutId: string) => {
-    openModal(<CreateNoteForm layoutId={layoutId} />, {
-      title: t('notes:createNote') || 'Создать заметку',
-      size: 'md',
-      showCloseButton: true,
-    });
-  };
+  const handleFolderClickFromGallery = useCallback(
+    (layoutId: string, title: string) => {
+      const tabId = createTabId('layout', layoutId);
+      const existingTab = openTabs.find(tab => tab.id === tabId);
 
-  const handleFolderClickFromGallery = (layoutId: string, title: string) => {
-    const tabId = createTabId('layout', layoutId);
-    const existingTab = openTabs.find(tab => tab.id === tabId);
+      if (existingTab) {
+        confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+        return;
+      }
 
-    if (existingTab) {
-      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
-      return;
-    }
-
-    confirmIfUnsaved(() => {
-      dispatch(
-        openTab({
-          id: layoutId,
-          type: 'layout',
-          title: title,
-          color: '',
-          openedFromSidebar: false,
-          isMain: false,
-        } as FileTreeItem)
-      );
-      dispatch(switchTab(tabId));
-    });
-  };
+      confirmIfUnsaved(() => {
+        dispatch(
+          openTab({
+            id: layoutId,
+            type: 'layout',
+            title: title,
+            color: '',
+            openedFromSidebar: false,
+            isMain: false,
+          } as FileTreeItem)
+        );
+        dispatch(switchTab(tabId));
+      });
+    },
+    [confirmIfUnsaved, dispatch, openTabs]
+  );
 
   const handleOnCreateClick = openModalFromTrigger(
     <CreateChoiceModal
@@ -138,56 +186,35 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
     }
   );
 
-  const confirmIfUnsaved = (action: () => void) => {
-    if (!activeTab) {
-      action();
-      return;
-    }
+  const handleNoteOpenFromGraph = useCallback(
+    (noteData: { noteId: string; note: Note }) => {
+      if (onNoteOpen) {
+        onNoteOpen(noteData);
+        return;
+      }
 
-    if (activeTab.item.type !== 'note') {
-      action();
-      return;
-    }
+      const existingTab = openTabs.find(
+        tab => tab.item.type === 'note' && tab.item.id === noteData.noteId
+      );
 
-    const note = activeTab.item.note;
-    if (!note) {
-      action();
-      return;
-    }
+      if (existingTab) {
+        handleTabClick(existingTab.id);
+        return;
+      }
 
-    action();
-    return;
-  };
+      const noteItem: FileTreeItem = {
+        id: noteData.noteId,
+        type: 'note',
+        title: noteData.note.title,
+        parentId: noteData.note.layoutId,
+        note: noteData.note,
+        isMain: false,
+      };
 
-  const handleNoteOpenFromGraph = (noteData: {
-    noteId: string;
-    note: Note;
-  }) => {
-    if (onNoteOpen) {
-      onNoteOpen(noteData);
-      return;
-    }
-
-    const existingTab = openTabs.find(
-      tab => tab.item.type === 'note' && tab.item.id === noteData.noteId
-    );
-
-    if (existingTab) {
-      handleTabClick(existingTab.id);
-      return;
-    }
-
-    const noteItem: FileTreeItem = {
-      id: noteData.noteId,
-      type: 'note',
-      title: noteData.note.title,
-      parentId: noteData.note.layoutId,
-      note: noteData.note,
-      isMain: false,
-    };
-
-    handleItemSelect(noteItem);
-  };
+      handleItemSelect(noteItem);
+    },
+    [handleItemSelect, handleTabClick, onNoteOpen, openTabs]
+  );
 
   const renderContent = () => {
     if (!activeTab) {
@@ -301,7 +328,10 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
             <div
               className={cn('flex', 'items-center', 'justify-center', 'h-full')}
             >
-              {t('graph:loading')}
+              <Loader
+                size='md'
+                text={t('notes:collaborativeEditorInitializing')}
+              />
             </div>
           }
         >
@@ -392,4 +422,4 @@ export const DashboardContent = ({ onNoteOpen }: DashboardContentProps) => {
       <div className={cn('min-h-0', 'flex-1')}>{renderContent()}</div>
     </main>
   );
-};
+});

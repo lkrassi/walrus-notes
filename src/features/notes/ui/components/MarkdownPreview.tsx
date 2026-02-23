@@ -1,19 +1,13 @@
-import { openTab, switchTab } from 'app/store/slices/tabsSlice';
-import {
-  forwardRef,
-  type FC,
-  type HTMLAttributes,
-  type ReactNode,
-} from 'react';
+import { forwardRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import type { FileTreeItem } from 'widgets/hooks/useFileTree';
-import { createTabId } from 'widgets/model/utils/tabUtils';
-import { CodeHighlighter } from './CodeHighlighter';
-import { LinkedNotesList } from './LinkedNotesList';
+import {
+  allowedMarkdownElements,
+  markdownComponents,
+} from '../../lib/markdownConfig';
+import { RelatedNotes } from './RelatedNotes';
 
 interface MarkdownPreviewProps {
   content: string;
@@ -22,91 +16,9 @@ interface MarkdownPreviewProps {
   layoutId?: string;
   showRelated?: boolean;
 }
-const SafeLink: FC<{ href?: string; title?: string; children?: ReactNode }> = ({
-  href = '',
-  title,
-  children,
-}) => {
-  if (
-    !href.startsWith('http://') &&
-    !href.startsWith('https://') &&
-    !href.startsWith('mailto:') &&
-    !href.startsWith('#')
-  ) {
-    return <span>{children}</span>;
-  }
-  return (
-    <a
-      href={href}
-      title={title}
-      rel='noopener noreferrer'
-      target={href.startsWith('http') ? '_blank' : undefined}
-    >
-      {children}
-    </a>
-  );
-};
-
-const SafeImage: FC<{ src?: string; alt?: string; title?: string }> = ({
-  src = '',
-  alt,
-  title,
-}) => {
-  if (
-    !src.startsWith('http://') &&
-    !src.startsWith('https://') &&
-    !src.startsWith('data:')
-  ) {
-    return <span className='text-red-500'>[Unsafe image URL: {alt}]</span>;
-  }
-  return <img src={src} alt={alt} title={title} loading='lazy' />;
-};
-
-const PreBlock: FC<HTMLAttributes<HTMLPreElement>> = props => {
-  const { children } = props as { children?: ReactNode };
-  const child = Array.isArray(children) ? children[0] : children;
-  if (child && child.props) {
-    const className = child.props.className;
-    const code = child.props.children;
-    return <CodeHighlighter className={className}>{code}</CodeHighlighter>;
-  }
-
-  return <pre>{children}</pre>;
-};
-
-const CodeBlock = ({
-  inline,
-  className,
-  children,
-  ...props
-}: {
-  inline?: boolean;
-  className?: string;
-  children?: ReactNode;
-}) => {
-  if (inline)
-    return (
-      <code className={cn('inline-code', className)} {...props}>
-        {children}
-      </code>
-    );
-
-  return (
-    <code className={cn('block-code', className)} {...props}>
-      {children}
-    </code>
-  );
-};
 
 export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
   ({ content, className, note, layoutId, showRelated = true }, ref) => {
-    const dispatch = useAppDispatch();
-    const effectiveLayoutId = layoutId || note?.layoutId || '';
-    const linkedOutIds =
-      note?.linkedWithOut ??
-      (note as unknown as { linkedWith?: string[] })?.linkedWith ??
-      [];
-    const linkedInIds = note?.linkedWithIn ?? [];
     return (
       <div
         ref={ref}
@@ -119,36 +31,7 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
         )}
       >
         {showRelated && note && (
-          <div
-            className={cn(
-              'mb-4',
-              'flex',
-              'justify-end',
-              'max-sm:justify-center'
-            )}
-          >
-            <div className={cn('w-full', 'max-w-md')}>
-              <LinkedNotesList
-                layoutId={effectiveLayoutId}
-                linkedOutIds={linkedOutIds}
-                linkedInIds={linkedInIds}
-                onNoteSelect={(selected: Note) => {
-                  try {
-                    const item: FileTreeItem = {
-                      id: selected.id,
-                      type: 'note',
-                      title: selected.title,
-                      isMain: false,
-                      parentId: note.layoutId || selected.layoutId,
-                      note: selected,
-                    };
-                    dispatch(openTab(item));
-                    dispatch(switchTab(createTabId('note', selected.id)));
-                  } catch (_e) {}
-                }}
-              />
-            </div>
-          </div>
+          <RelatedNotes note={note} layoutId={layoutId} />
         )}
 
         <div
@@ -165,43 +48,9 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            components={{
-              code: CodeBlock,
-              pre: PreBlock,
-              a: SafeLink,
-              img: SafeImage,
-            }}
+            components={markdownComponents}
             skipHtml={true}
-            allowedElements={[
-              'p',
-              'br',
-              'strong',
-              'em',
-              'u',
-              'h1',
-              'h2',
-              'h3',
-              'h4',
-              'h5',
-              'h6',
-              'blockquote',
-              'code',
-              'pre',
-              'hr',
-              'ul',
-              'ol',
-              'li',
-              'a',
-              'img',
-              'table',
-              'thead',
-              'tbody',
-              'tr',
-              'th',
-              'td',
-              'del',
-              'input',
-            ]}
+            allowedElements={allowedMarkdownElements as unknown as string[]}
           >
             {content}
           </ReactMarkdown>
@@ -210,5 +59,3 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
     );
   }
 );
-
-MarkdownPreview.displayName = 'MarkdownPreview';

@@ -15,7 +15,7 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { Suspense, lazy, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'shared';
+import { Button, Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 import { useAppDispatch } from 'widgets/hooks/redux';
@@ -118,7 +118,13 @@ export const Login: FC<LoginProps> = () => {
             };
 
             openModal(
-              <Suspense fallback={<div>{t('auth:resetPassword.title')}</div>}>
+              <Suspense
+                fallback={
+                  <div className={cn('flex', 'justify-center', 'p-8')}>
+                    <Loader size='md' text={t('auth:resetPassword.title')} />
+                  </div>
+                }
+              >
                 <ResetPasswordModal
                   email={email}
                   onSuccess={handleResetSuccess}

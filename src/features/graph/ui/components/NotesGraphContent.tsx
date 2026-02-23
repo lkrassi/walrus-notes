@@ -1,23 +1,10 @@
-import { memo, useCallback, useEffect, useState, type MouseEvent } from 'react';
-import {
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
-  type Node,
-} from 'reactflow';
+import { memo } from 'react';
 import type { Note } from 'shared/model/types/layouts';
-import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
-import { useGraphConnections } from '../../model/hooks/useGraphConnections';
-import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
-import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
-import { useGraphHistory } from '../../model/hooks/useGraphHistory';
-import { useGraphInitialization } from '../../model/hooks/useGraphInitialization';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
-import { useGraphSelectionHandlers } from '../../model/hooks/useGraphSelectionHandlers';
-import { useGraphSyncHandlers } from '../../model/hooks/useGraphSyncHandlers';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
+import { useGraphContentHandlers } from './hooks/useGraphContentHandlers';
+import { useGraphState } from './hooks/useGraphState';
 import { NotesGraphView } from './NotesGraphView';
-import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
 
 interface NotesGraphContentProps {
   layoutId: string;
@@ -46,148 +33,67 @@ export const NotesGraphContent = memo(function NotesGraphContent({
 
   const {
     screenToFlowPosition,
-    getEdges: _getEdges,
-    getNodes: _getNodes,
-    setNodes: rfSetNodes,
-    setEdges: rfSetEdges,
-  } = useReactFlow();
-
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
-  const [isNodeDragging, setIsNodeDragging] = useState(false);
-
-  const graphHistory = useGraphHistory(100);
-
-  const { isProcessingRef, isNodeDraggingRef } = useGraphInitialization({
+    nodes,
+    setNodes,
+    onNodesChange,
+    edges,
+    setEdgesState,
+    onEdgesChange,
+    isNodeDragging,
+    setIsNodeDragging,
+    graphHistory,
+    isProcessingRef,
+    isNodeDraggingRef,
+    rfSetNodes,
+    rfSetEdges,
+  } = useGraphState({
     layoutId,
     initialNodes,
     initialEdges,
-    nodes,
-    edges,
-    setNodes,
-    setEdges: setEdgesState,
   });
 
   const {
     handleNodeDragStart,
     handleNodeDragStop,
-    handleNodesChange: _handleNodesChange,
-  } = useGraphDragHandlers({
-    nodes,
-    setNodes,
-    updatePositionCallback,
-    graphHistory,
-    isNodeDraggingRef,
-    isProcessingRef,
-    rfSetNodes,
-    onNodeDragStop: undefined,
-    setIsNodeDragging,
-    onNodesChange,
-    rfSetEdges,
-  });
-
-  const {
-    tempEdges,
-    allEdges,
+    handleNodesChange,
+    onConnect,
     onConnectStart,
     onConnectEnd,
-    onConnect: onConnectOriginal,
-    setTempEdges,
-  } = useGraphConnections({
+    handleNodeDoubleClick,
+    handleNoteDrop,
+    handleBoxSelect,
+    handleAddNoteToGraph,
+    handleNodeClick,
+    handleNodeMouseEnterWrapped,
+    handleNodeMouseLeaveWrapped,
+    handleNoteOpen,
+    isDraggingEdge,
+    tempEdges,
+    allEdges,
+  } = useGraphContentHandlers({
     layoutId,
     nodes,
+    setNodes,
     edges,
+    setEdgesState,
+    onNodesChange,
+    onEdgesChange,
     selectedNodeId,
     hoveredNodeId,
-    screenToFlowPosition,
-    onEdgeCreated: newEdge => {
-      setEdgesState(prev => {
-        if (prev.some(e => e.id === newEdge.id)) return prev;
-        return [...prev, newEdge];
-      });
-    },
-  });
-
-  const {
-    onConnect,
-    handleEdgeDeleteDrop,
-    handleEdgeDeleteStart,
-    isDraggingEdge,
-  } = useGraphConnectionHandlers({
-    layoutId,
-    nodes,
-    edges,
-    setEdges: setEdgesState,
-    tempEdges,
-    setTempEdges,
-    graphHistory,
-    onConnectOriginal,
-    isProcessingRef,
-  });
-
-  useEffect(() => {
-    if (tempEdges.length > 0) {
-      setTempEdges(prev =>
-        prev.filter(tempEdge => !edges.some(edge => edge.id === tempEdge.id))
-      );
-    }
-  }, [edges, tempEdges.length, setTempEdges]);
-
-  useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
-
-  const { handleNodeDoubleClick, handleNoteDrop, handleBoxSelect } =
-    useGraphSelectionHandlers({
-      nodes,
-      setNodes,
-      lastBoxSelectedIdsRef: { current: new Set() },
-      screenToFlowPosition,
-      handleAddNoteToGraph: undefined,
-    });
-
-  const { handleNoteOpen } = useGraphSyncHandlers({
-    nodes,
-    onNoteOpen,
-    isDraggingEdge,
-  });
-
-  const {
-    handleAddNoteToGraph: handleAddNoteToGraphOrig,
-    onNodeDragStop: _onNodeDragStop,
-    handleNodesChange: _handleNodesChangeOrig,
-    handleNodeClick,
-    handleNodeMouseEnter,
-    handleNodeMouseLeave,
-  } = useGraphHandlers({
     updatePositionCallback,
-    onNodeClick,
-    onNodeMouseEnter,
-    onNodeMouseLeave,
-    onNodesChange,
+    onNodeClick: onNodeClick,
+    onNodeMouseEnter: onNodeMouseEnter,
+    onNodeMouseLeave: onNodeMouseLeave,
+    onPaneClick,
+    onNoteOpen,
     screenToFlowPosition,
+    graphHistory,
+    isProcessingRef,
+    isNodeDraggingRef,
+    rfSetNodes,
+    rfSetEdges,
+    setIsNodeDragging,
   });
-
-  const handleAddNoteToGraph = useCallback(
-    (note: Note, dropPosition?: { x: number; y: number }) => {
-      handleAddNoteToGraphOrig?.(note, dropPosition);
-    },
-    [handleAddNoteToGraphOrig]
-  );
-
-  const handleNodeMouseEnterWrapped = useCallback(
-    (e: MouseEvent, node: Node) => {
-      if (isNodeDraggingRef.current) return;
-      handleNodeMouseEnter(e, node);
-    },
-    [handleNodeMouseEnter, isNodeDraggingRef]
-  );
-
-  const handleNodeMouseLeaveWrapped = useCallback(
-    (e: MouseEvent, node: Node) => {
-      if (isNodeDraggingRef.current) return;
-      handleNodeMouseLeave(e, node);
-    },
-    [handleNodeMouseLeave, isNodeDraggingRef]
-  );
 
   const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
     nodes,
@@ -207,7 +113,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
       edges={edges}
       nodesWithSelection={nodesWithSelection}
       edgesWithSelection={edgesWithSelection}
-      onNodesChange={_handleNodesChange}
+      onNodesChange={handleNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onConnectStart={onConnectStart}

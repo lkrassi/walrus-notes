@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Suspense, lazy } from 'react';
+import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 
@@ -39,7 +40,20 @@ export const NoteContentPreview: FC<Props> = ({
     >
       <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
         {payload ? (
-          <Suspense fallback={<div className={cn('p-4')}>{payload}</div>}>
+          <Suspense
+            fallback={
+              <div
+                className={cn(
+                  'flex',
+                  'items-center',
+                  'justify-center',
+                  'min-h-50'
+                )}
+              >
+                <Loader size='md' />
+              </div>
+            }
+          >
             <MarkdownPreview
               content={payload}
               layoutId={layoutId}

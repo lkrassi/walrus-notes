@@ -11,18 +11,18 @@ import {
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { FileText, Folder, Network } from 'lucide-react';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import { useDndSensors } from 'shared/lib/useDndSensors';
 import type { TabsProps } from '../../model/types/tabsProps';
 import { SortableTab } from './SortableTab';
 
-export const Tabs = ({
+export const Tabs = memo(function Tabs({
   tabs,
   onTabClick,
   onTabClose,
   onTabReorder,
-}: TabsProps) => {
+}: TabsProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useDndSensors();
@@ -108,4 +108,4 @@ export const Tabs = ({
       </DndContext>
     </div>
   );
-};
+});

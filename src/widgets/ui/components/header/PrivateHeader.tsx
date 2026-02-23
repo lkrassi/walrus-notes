@@ -21,7 +21,7 @@ const PrivateHeaderComponent = () => {
         'gap-3',
         'border-b',
         'max-md:py-5',
-        'md:px-0.5'
+        'md:px-5'
       )}
     >
       <div
@@ -58,4 +58,3 @@ const PrivateHeaderComponent = () => {
 };
 
 export const PrivateHeader = memo(PrivateHeaderComponent);
-PrivateHeader.displayName = 'PrivateHeader';

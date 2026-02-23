@@ -1,5 +1,12 @@
 import { useCreateNoteMutation } from 'app/store/api';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type SyntheticEvent,
+} from 'react';
 import { Button, Input, Textarea } from 'shared';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
@@ -12,10 +19,10 @@ interface CreateNoteFormProps {
   onMultipleNotesCreated?: (notes: Note[]) => void;
 }
 
-export const CreateNoteForm = ({
+export const CreateNoteForm = memo(function CreateNoteForm({
   layoutId,
   onNoteCreated,
-}: CreateNoteFormProps) => {
+}: CreateNoteFormProps) {
   const { t } = useLocalization();
   const [title, setTitle] = useState('');
   const [payload, setPayload] = useState('');
@@ -28,33 +35,45 @@ export const CreateNoteForm = ({
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: SyntheticEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!title.trim()) {
-      showError(t('notes:enterNoteTitle'));
-      return;
-    }
-
-    try {
-      const response = await createNote({
-        layoutId,
-        title: title.trim(),
-        payload: payload.trim(),
-      }).unwrap();
-
-      const newNote: Note = response.data;
-
-      if (onNoteCreated) {
-        onNoteCreated(newNote);
+      if (!title.trim()) {
+        showError(t('notes:enterNoteTitle'));
+        return;
       }
-      setTitle('');
-      setPayload('');
-      closeModal();
-    } catch {
-      showError(t('notes:noteCreationError'));
-    }
-  };
+
+      try {
+        const response = await createNote({
+          layoutId,
+          title: title.trim(),
+          payload: payload.trim(),
+        }).unwrap();
+
+        const newNote: Note = response.data;
+
+        if (onNoteCreated) {
+          onNoteCreated(newNote);
+        }
+        setTitle('');
+        setPayload('');
+        closeModal();
+      } catch {
+        showError(t('notes:noteCreationError'));
+      }
+    },
+    [
+      closeModal,
+      createNote,
+      layoutId,
+      onNoteCreated,
+      payload,
+      showError,
+      t,
+      title,
+    ]
+  );
 
   return (
     <form onSubmit={handleSubmit} className={cn('space-y-6 p-6')}>
@@ -110,4 +129,4 @@ export const CreateNoteForm = ({
       </div>
     </form>
   );
-};
+});

@@ -80,4 +80,3 @@ const DeleteLayoutComponent = ({
 };
 
 export const DeleteLayout = memo(DeleteLayoutComponent);
-DeleteLayout.displayName = 'DeleteLayout';

@@ -58,8 +58,6 @@ const CustomTransition = forwardRef<
   );
 });
 
-CustomTransition.displayName = 'CustomTransition';
-
 export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
   const { t } = useLocalization();
   const { isOpen, content, options } = modalState;
@@ -88,7 +86,6 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
         triggerPosition={options.triggerPosition}
       />
     ));
-    Component.displayName = 'MemoizedTransition';
     return Component;
   }, [options.triggerPosition]);
 

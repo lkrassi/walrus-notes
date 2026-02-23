@@ -109,5 +109,3 @@ export const MarkdownEditor = forwardRef<
     />
   );
 });
-
-MarkdownEditor.displayName = 'MarkdownEditor';

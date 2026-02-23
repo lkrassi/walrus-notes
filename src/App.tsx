@@ -3,6 +3,7 @@ import { appRoutesConfig } from 'app/router/config';
 import { Suspense, lazy } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
+import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { SidebarProvider, store } from 'widgets';
 import { ModalProvider } from 'widgets/ui';
@@ -30,7 +31,13 @@ export const App = () => {
                     />
                   ))}
                 </Routes>
-                <Suspense fallback={null}>
+                <Suspense
+                  fallback={
+                    <div className='flex min-h-screen items-center justify-center'>
+                      <Loader size='lg' />
+                    </div>
+                  }
+                >
                   <NotificationsContainer />
                 </Suspense>
               </ModalProvider>

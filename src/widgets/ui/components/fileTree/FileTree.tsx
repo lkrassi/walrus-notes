@@ -286,5 +286,3 @@ export const FileTree = memo(
     );
   }
 );
-
-FileTree.displayName = 'FileTree';

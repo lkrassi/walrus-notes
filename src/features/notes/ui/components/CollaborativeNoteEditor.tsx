@@ -1,15 +1,20 @@
 import {
   Suspense,
+  forwardRef,
   lazy,
+  memo,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useState,
-  type FC,
 } from 'react';
+import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useNotifications } from 'widgets/hooks';
+import type * as Y from 'yjs';
 import { useYjsCollaboration } from '../../model/useYjsCollaboration';
+
 const CollaborativeEditor = lazy(() =>
   import('./CollaborativeEditor').then(m => ({
     default: m.CollaborativeEditor,
@@ -17,6 +22,11 @@ const CollaborativeEditor = lazy(() =>
 );
 
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
+
+export interface CollaborativeNoteEditorHandle {
+  insertText: (text: string) => void;
+  ytext: Y.Text | null;
+}
 
 interface CollaborativeNoteEditorProps {
   noteId: string;
@@ -29,108 +39,134 @@ interface CollaborativeNoteEditorProps {
   onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
-export const CollaborativeNoteEditor: FC<CollaborativeNoteEditorProps> = ({
-  noteId,
-  userId,
-  userName,
-  initialContent = '',
-  disabled,
-  className,
-  onContentChange,
-  onOnlineUsersChange,
-}) => {
-  const { showError } = useNotifications();
-  const { t } = useLocalization();
-  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+export const CollaborativeNoteEditor = memo(
+  forwardRef<CollaborativeNoteEditorHandle, CollaborativeNoteEditorProps>(
+    function CollaborativeNoteEditor(
+      {
+        noteId,
+        userId,
+        userName,
+        initialContent = '',
+        disabled,
+        className,
+        onContentChange,
+        onOnlineUsersChange,
+      },
+      ref
+    ) {
+      const { showError } = useNotifications();
+      const { t } = useLocalization();
+      const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
-  const handleStatusChange = useCallback(
-    (status: 'connected' | 'disconnected') => {
-      if (status === 'connected') {
-        setReconnectAttempts(0);
-      } else if (status === 'disconnected') {
-        setReconnectAttempts(prev => prev + 1);
-        try {
+      const handleStatusChange = useCallback(
+        (status: 'connected' | 'disconnected') => {
+          if (status === 'connected') {
+            setReconnectAttempts(0);
+          } else if (status === 'disconnected') {
+            setReconnectAttempts(prev => prev + 1);
+            try {
+              showError(
+                t('notes:connectionLostRetrying') ||
+                  'Потеряно соединение. Попытка восстановления...'
+              );
+            } catch (_e) {}
+          }
+        },
+        [showError, t]
+      );
+
+      const { ytext, provider, onlineUsers, isContentLoaded } =
+        useYjsCollaboration(
+          noteId,
+          userId,
+          userName,
+          initialContent,
+          handleStatusChange
+        );
+
+      useImperativeHandle(
+        ref,
+        () => ({
+          insertText: (text: string) => {
+            if (ytext) {
+              const currentLength = ytext.length;
+              if (currentLength > 0) {
+                ytext.insert(currentLength, '\n\n' + text);
+              } else {
+                ytext.insert(0, text);
+              }
+            }
+          },
+          ytext,
+        }),
+        [ytext]
+      );
+
+      useEffect(() => {
+        if (onOnlineUsersChange) {
+          onOnlineUsersChange(onlineUsers);
+        }
+      }, [onlineUsers, onOnlineUsersChange]);
+
+      useEffect(() => {
+        if (reconnectAttempts >= 5) {
           showError(
-            t('notes:connectionLostRetrying') ||
-              'Потеряно соединение. Попытка восстановления...'
+            t('notes:connectionFailedReload') ||
+              'Не удаётся восстановить соединение. Попробуйте перезагрузить страницу.'
           );
-        } catch (_e) {}
+        }
+      }, [reconnectAttempts, showError, t]);
+
+      if (!ytext || !provider) {
+        return (
+          <div
+            className={cn(
+              'flex',
+              'items-center',
+              'justify-center',
+              'h-full',
+              'text-gray-500',
+              className
+            )}
+          >
+            {t('notes:collaborativeEditorInitializing') ||
+              'Инициализация редактора...'}
+          </div>
+        );
       }
-    },
-    []
-  );
 
-  const { ytext, provider, onlineUsers, isContentLoaded } = useYjsCollaboration(
-    noteId,
-    userId,
-    userName,
-    initialContent,
-    handleStatusChange
-  );
-
-  useEffect(() => {
-    if (onOnlineUsersChange) {
-      onOnlineUsersChange(onlineUsers);
-    }
-  }, [onlineUsers, onOnlineUsersChange]);
-
-  useEffect(() => {
-    if (reconnectAttempts >= 5) {
-      showError(
-        t('notes:connectionFailedReload') ||
-          'Не удаётся восстановить соединение. Попробуйте перезагрузить страницу.'
+      return (
+        <div className={cn('flex', 'flex-col', 'h-full', 'gap-2', className)}>
+          <div className={cn('flex-1', 'min-h-0', 'overflow-hidden')}>
+            <Suspense
+              fallback={
+                <div
+                  className={cn(
+                    'flex',
+                    'items-center',
+                    'justify-center',
+                    'h-full'
+                  )}
+                >
+                  <Loader
+                    size='md'
+                    text={t('notes:collaborativeEditorInitializing')}
+                  />
+                </div>
+              }
+            >
+              <CollaborativeEditor
+                ytext={ytext}
+                provider={provider}
+                disabled={disabled}
+                className={cn('h-full')}
+                onContentChange={onContentChange}
+                isContentLoaded={isContentLoaded}
+              />
+            </Suspense>
+          </div>
+        </div>
       );
     }
-  }, [reconnectAttempts, showError, t]);
-
-  if (!ytext || !provider) {
-    return (
-      <div
-        className={cn(
-          'flex',
-          'items-center',
-          'justify-center',
-          'h-full',
-          'text-gray-500',
-          className
-        )}
-      >
-        {t('notes:collaborativeEditorInitializing') ||
-          'Инициализация редактора...'}
-      </div>
-    );
-  }
-
-  return (
-    <div className={cn('flex', 'flex-col', 'h-full', 'gap-2', className)}>
-      <div className={cn('flex-1', 'min-h-0', 'overflow-hidden')}>
-        <Suspense
-          fallback={
-            <div
-              className={cn(
-                'flex',
-                'items-center',
-                'justify-center',
-                'h-full',
-                'text-gray-500'
-              )}
-            >
-              {t('notes:collaborativeEditorInitializing')}
-            </div>
-          }
-        >
-          <CollaborativeEditor
-            ytext={ytext}
-            provider={provider}
-            disabled={disabled}
-            className={cn('h-full')}
-            onContentChange={onContentChange}
-            isContentLoaded={isContentLoaded}
-          />
-        </Suspense>
-      </div>
-    </div>
-  );
-};
-
-CollaborativeNoteEditor.displayName = 'CollaborativeNoteEditor';
+  )
+);

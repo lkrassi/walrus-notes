@@ -69,5 +69,3 @@ export const BackButton: FC<BackButtonProps> = ({
     </StyledIconButton>
   );
 };
-
-BackButton.displayName = 'BackButton';

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useExportNote } from 'widgets/hooks/useExportNote';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 
@@ -16,12 +17,12 @@ interface NoteViewerProps {
   openedFromSidebar?: boolean;
 }
 
-export const NoteViewer = ({
+export const NoteViewer = memo(function NoteViewer({
   note,
   layoutId,
   onNoteUpdated,
   openedFromSidebar: _openedFromSidebar,
-}: NoteViewerProps) => {
+}: NoteViewerProps) {
   const {
     isEditing,
     title,
@@ -39,6 +40,7 @@ export const NoteViewer = ({
   } = useNoteEditor(note, onNoteUpdated);
 
   const { exportNote } = useExportNote();
+  const collaborativeEditorRef = useRef<CollaborativeNoteEditorHandle>(null);
 
   const autoOpenedRef = useRef(false);
   useEffect(() => {
@@ -96,17 +98,20 @@ export const NoteViewer = ({
         onInsertImage={url => {
           const alt = 'image';
           const snippet = `![${alt}](${url})`;
-          const next =
-            payload && payload.trim().length > 0
-              ? `${payload}\n\n${snippet}`
-              : snippet;
-          setPayload(next);
+
+          if (collaborativeEditorRef.current) {
+            collaborativeEditorRef.current.insertText(snippet);
+          } else {
+            setPayload(prev =>
+              prev && prev.trim().length > 0 ? `${prev}\n\n${snippet}` : snippet
+            );
+          }
         }}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
         onExport={() => exportNote(title, payload)}
         onImport={content => {
-          setPayload(content);
+          setPayload(() => content);
           if (!isEditing) handleEdit();
         }}
         onlineUsers={onlineUsers}
@@ -138,21 +143,27 @@ export const NoteViewer = ({
           onInsertImage={url => {
             const alt = 'image';
             const snippet = `![${alt}](${url})`;
-            const next =
-              payload && payload.trim().length > 0
-                ? `${payload}\n\n${snippet}`
-                : snippet;
-            setPayload(next);
+
+            if (collaborativeEditorRef.current) {
+              collaborativeEditorRef.current.insertText(snippet);
+            } else {
+              setPayload(prev =>
+                prev && prev.trim().length > 0
+                  ? `${prev}\n\n${snippet}`
+                  : snippet
+              );
+            }
           }}
           onExport={() => exportNote(title, payload)}
           onImport={content => {
-            setPayload(content);
+            setPayload(() => content);
             if (!isEditing) handleEdit();
           }}
           onToggleFullscreen={toggleFullscreen}
           onOnlineUsersChange={setOnlineUsers}
+          collaborativeEditorRef={collaborativeEditorRef}
         />
       </div>
     </div>
   );
-};
+});
