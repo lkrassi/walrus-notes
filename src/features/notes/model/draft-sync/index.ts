@@ -34,7 +34,7 @@ export const useDraftSync = ({
     lastCommitAt,
     setLastCommitAt,
     refs,
-  } = useDraftState(draft, noteId);
+  } = useDraftState(draft);
 
   useEffect(() => {
     if (!noteId) return;
@@ -128,7 +128,9 @@ export const useDraftSync = ({
 
   const commitDraft = useCallback(
     (value?: string) => {
-      if (!noteId || !ws) return false;
+      if (!noteId || !ws) {
+        return false;
+      }
 
       try {
         refs.awaitingCommitRef.current = true;
@@ -152,7 +154,7 @@ export const useDraftSync = ({
 
         ws.send(makeCommitDraft(noteId));
         return true;
-      } catch (_) {
+      } catch (_e) {
         return false;
       }
     },
@@ -161,7 +163,9 @@ export const useDraftSync = ({
 
   const sendUpdateDraft = useCallback(
     (value: string) => {
-      if (!noteId) return false;
+      if (!noteId) {
+        return false;
+      }
 
       try {
         refs.lastManualSendAtRef.current = Date.now();

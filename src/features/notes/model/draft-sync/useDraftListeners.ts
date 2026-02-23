@@ -33,18 +33,24 @@ export const useDraftListeners = ({
   onRemoteCommit,
 }: UseDraftListenersOpts) => {
   useEffect(() => {
-    if (!ws || !noteId) return;
+    if (!ws || !noteId) {
+      return;
+    }
 
     const unsubUpdate =
       ws.subscribe?.('UPDATE_DRAFT_REQUEST', (payload: unknown) => {
         try {
           try {
             const until = refs.suppressRemoteUntilRef.current;
-            if (until != null && Date.now() < until) return;
+            if (until != null && Date.now() < until) {
+              return;
+            }
           } catch (_e) {}
 
           const data = payload as UpdateDraftPayload;
-          if (!data || data.noteId !== noteId) return;
+          if (!data || data.noteId !== noteId) {
+            return;
+          }
           const nd = data.newDraft ?? '';
 
           if (
@@ -108,7 +114,9 @@ export const useDraftListeners = ({
       ws.subscribe?.('COMMIT_DRAFT_REQUEST', (payload: unknown) => {
         try {
           const data = payload as CommitDraftPayload;
-          if (!data || data.noteId !== noteId) return;
+          if (!data || data.noteId !== noteId) {
+            return;
+          }
 
           try {
             dispatch(removeDraft({ noteId }));
@@ -177,8 +185,10 @@ export const useDraftListeners = ({
                           const idx = draft.data.findIndex(
                             n => n.id === noteId
                           );
-                          if (idx !== -1)
+                          if (idx !== -1) {
                             draft.data[idx].payload = confirmed as string;
+                            draft.data[idx].draft = undefined;
+                          }
                         }
                       )
                     );
@@ -193,8 +203,10 @@ export const useDraftListeners = ({
                           const idx = draft.data.findIndex(
                             n => n.id === noteId
                           );
-                          if (idx !== -1)
+                          if (idx !== -1) {
                             draft.data[idx].payload = confirmed as string;
+                            draft.data[idx].draft = undefined;
+                          }
                         }
                       )
                     );
@@ -209,8 +221,10 @@ export const useDraftListeners = ({
                           const idx = draft.data.findIndex(
                             n => n.id === noteId
                           );
-                          if (idx !== -1)
+                          if (idx !== -1) {
                             draft.data[idx].payload = confirmed as string;
+                            draft.data[idx].draft = undefined;
+                          }
                         }
                       )
                     );

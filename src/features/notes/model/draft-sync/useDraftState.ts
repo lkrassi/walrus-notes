@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DraftRefs } from './types';
 
-export const useDraftState = (
-  draft: string,
-  noteId: string | null | undefined
-) => {
+export const useDraftState = (draft: string) => {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [lastCommitAt, setLastCommitAt] = useState<number | null>(null);

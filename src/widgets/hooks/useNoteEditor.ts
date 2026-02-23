@@ -73,7 +73,9 @@ export const useNoteEditor = (
           return prev;
         }
       } catch (_e) {}
-      if (prev === originalPayloadRef.current) return incomingSafe;
+      if (prev === originalPayloadRef.current) {
+        return incomingSafe;
+      }
       return prev;
     });
     const newOriginal =
@@ -116,7 +118,7 @@ export const useNoteEditor = (
     }
 
     const newTitle = safeTitle.trim();
-    const newPayload = safePayload.trim();
+    const newPayload = safePayload; // Не удаляем пробелы/переносы строк
 
     if (newTitle === note.title && newPayload === note.payload) {
       setIsEditing(false);
@@ -124,16 +126,12 @@ export const useNoteEditor = (
     }
 
     try {
-      await updateNote({
-        noteId: note.id,
-        payload: newPayload,
-        title: newTitle,
-      }).unwrap();
-
       try {
         const res = commitDraft(newPayload);
         try {
-          if (res) lastLocalCommitRef.current = Date.now();
+          if (res) {
+            lastLocalCommitRef.current = Date.now();
+          }
         } catch (_e) {}
       } catch (_e) {}
       try {
@@ -156,7 +154,7 @@ export const useNoteEditor = (
       onNoteUpdated?.(updatedNote);
 
       return true;
-    } catch {
+    } catch (_e) {
       showError('notes:noteUpdateError');
       return false;
     }

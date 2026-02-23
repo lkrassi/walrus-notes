@@ -19,7 +19,9 @@ const drafts = createSlice({
       const { noteId } = action.payload;
       delete state[noteId];
     },
-    clearDrafts: () => initialState,
+    clearDrafts: () => {
+      return initialState;
+    },
   },
 });
 
