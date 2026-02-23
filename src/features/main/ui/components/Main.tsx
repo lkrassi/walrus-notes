@@ -2,19 +2,24 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
+import { useIsMobile } from 'widgets/hooks';
 import { useLocalization } from 'widgets/hooks/useLocalization';
 import { PublicHeader } from 'widgets/ui';
 import {
   containerVariants,
+  containerVariantsMobile,
   featureVariants,
+  featureVariantsMobile,
   features,
   itemVariants,
+  itemVariantsMobile,
 } from '../../models';
 import { BackgroundIcons } from './BackgroundIcons';
 
 export const Main = () => {
   const navigate = useNavigate();
   const { t } = useLocalization();
+  const isMobile = useIsMobile();
 
   const featureKeys = [
     'visualThinking',
@@ -38,7 +43,7 @@ export const Main = () => {
       >
         <motion.div
           className={cn('mx-40', 'max-lg:m-10')}
-          variants={containerVariants}
+          variants={isMobile ? containerVariantsMobile : containerVariants}
           initial='hidden'
           animate='visible'
         >
@@ -54,7 +59,10 @@ export const Main = () => {
             )}
           >
             <div className={cn('flex-1', 'text-left')}>
-              <motion.h1 variants={itemVariants} className={cn('hero-h1')}>
+              <motion.h1
+                variants={isMobile ? itemVariantsMobile : itemVariants}
+                className={cn('hero-h1')}
+              >
                 {t('main:title.line1')}
                 <br />
                 <span className={cn('text-primary')}>
@@ -62,7 +70,7 @@ export const Main = () => {
                 </span>
               </motion.h1>
               <motion.p
-                variants={itemVariants}
+                variants={isMobile ? itemVariantsMobile : itemVariants}
                 className={cn(
                   'muted-text',
                   'mb-8',
@@ -75,7 +83,7 @@ export const Main = () => {
                 {t('main:subtitle')}
               </motion.p>
               <motion.div
-                variants={itemVariants}
+                variants={isMobile ? itemVariantsMobile : itemVariants}
                 className={cn(
                   'flex',
                   'flex-col',
@@ -97,13 +105,17 @@ export const Main = () => {
 
             <div className={cn('flex-1')}>
               <motion.div
-                variants={containerVariants}
+                variants={
+                  isMobile ? containerVariantsMobile : containerVariants
+                }
                 className={cn('grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2')}
               >
                 {localizedFeatures.map((feature, index) => (
                   <motion.div
                     key={featureKeys[index]}
-                    variants={featureVariants}
+                    variants={
+                      isMobile ? featureVariantsMobile : featureVariants
+                    }
                     className={cn('feature-card')}
                   >
                     <div
@@ -137,7 +149,7 @@ export const Main = () => {
         </motion.div>
       </div>
 
-      <BackgroundIcons />
+      {!isMobile && <BackgroundIcons />}
     </>
   );
 };
