@@ -5,6 +5,17 @@
 .collaborative-editor .cm-scroller {
   font-family: inherit;
   line-height: 1.6;
+  font-size: 1rem;
+}
+
+.collaborative-editor .cm-line {
+  margin-top: 50px;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.collaborative-editor .cm-line ~ .cm-line {
+  margin-top: 0;
 }
 
 .collaborative-editor .cm-content {

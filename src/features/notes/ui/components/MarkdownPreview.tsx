@@ -43,7 +43,8 @@ export const MarkdownPreview = forwardRef<HTMLDivElement, MarkdownPreviewProps>(
             'wrap-break-word',
             'markdown-content',
             'text-text',
-            'dark:text-dark-text'
+            'dark:text-dark-text',
+            !showRelated && 'pt-12.5'
           )}
         >
           <ReactMarkdown

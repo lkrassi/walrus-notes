@@ -3,7 +3,6 @@ import { cn } from 'shared/lib/cn';
 import type { DividerProps } from './types';
 
 export const Divider: FC<DividerProps> = memo(function Divider({
-  isEditing,
   isDesktop,
   onPointerDown,
 }) {
@@ -13,7 +12,6 @@ export const Divider: FC<DividerProps> = memo(function Divider({
       aria-orientation={isDesktop ? 'vertical' : 'horizontal'}
       onPointerDown={onPointerDown}
       className={cn(
-        isEditing ? 'block' : 'hidden',
         isDesktop
           ? 'h-full w-2 cursor-col-resize'
           : 'h-2 w-full cursor-row-resize',

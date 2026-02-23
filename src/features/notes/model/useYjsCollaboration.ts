@@ -31,6 +31,7 @@ export function useYjsCollaboration(
 
   const ydocRef = useRef<Y.Doc | null>(null);
   const hasInitializedRef = useRef(false);
+  const hasOptimisticInitRef = useRef(false);
   const firstInitialContentRef = useRef<string | undefined>(undefined);
   const isFirstMountRef = useRef(true);
   const lastOnlineUsersKeyRef = useRef<string>('');
@@ -45,12 +46,13 @@ export function useYjsCollaboration(
       return;
     }
 
-    if (isFirstMountRef.current && initialContent !== undefined) {
+    // Обновляем initialContent при каждом входе в режим редактирования
+    if (initialContent !== undefined) {
       firstInitialContentRef.current = initialContent;
-      isFirstMountRef.current = false;
     }
 
     hasInitializedRef.current = false;
+    hasOptimisticInitRef.current = false;
     setIsContentLoaded(false);
 
     const ydoc = new Y.Doc();
@@ -59,6 +61,12 @@ export function useYjsCollaboration(
     const ytextInstance = ydoc.getText('shared');
 
     setYtext(ytextInstance);
+
+    if (ytextInstance.length === 0 && firstInitialContentRef.current) {
+      hasOptimisticInitRef.current = true;
+      ytextInstance.insert(0, firstInitialContentRef.current);
+      setIsContentLoaded(true);
+    }
 
     const wsUrl = buildYjsWsUrl();
 

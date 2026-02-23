@@ -18,9 +18,20 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(function PreviewPanel({
 }) {
   return (
     <motion.div
+      layout
+      layoutId='preview-panel'
       initial={false}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.22 }}
+      animate={{
+        x: 0,
+        opacity: 1,
+        transition: {
+          duration: 0.15,
+          ease: 'easeOut',
+        },
+      }}
+      transition={{
+        layout: { duration: 0.15, ease: 'easeOut' },
+      }}
       className={cn(
         'flex-1',
         'h-full',

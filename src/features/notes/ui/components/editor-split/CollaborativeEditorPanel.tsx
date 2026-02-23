@@ -1,17 +1,23 @@
 import { motion } from 'framer-motion';
 import { Suspense, lazy, memo, type FC } from 'react';
-import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
+import { MarkdownEditor } from '../MarkdownEditor';
 import type { CollaborativeEditorPanelProps } from './types';
 
-const CollaborativeNoteEditor = lazy(() =>
-  import('../CollaborativeNoteEditor').then(m => ({
-    default: m.CollaborativeNoteEditor,
-  }))
-);
+const loadCollaborativeNoteEditor = () =>
+  import('../CollaborativeNoteEditor').then(m => {
+    return { default: m.CollaborativeNoteEditor };
+  });
+
+export const preloadCollaborativeNoteEditor = (): void => {
+  void loadCollaborativeNoteEditor();
+};
+
+const CollaborativeNoteEditor = lazy(loadCollaborativeNoteEditor);
 
 export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
   function CollaborativeEditorPanel({
+    payload,
     isLoading,
     isEditing,
     isResizing,
@@ -31,9 +37,19 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
   }) {
     return (
       <motion.div
-        initial={false}
-        animate={isDesktop ? { width: widthValue } : { height: heightValue }}
-        transition={{ duration: isResizing ? 0 : 0.22 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={
+          isDesktop
+            ? { width: widthValue, opacity: 1, scale: 1 }
+            : { height: heightValue, opacity: 1, scale: 1 }
+        }
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{
+          width: { duration: 0 },
+          height: { duration: 0 },
+          opacity: { duration: 0.15, ease: 'easeOut' },
+          scale: { duration: 0.15, ease: 'easeOut' },
+        }}
         className={cn(
           'h-full',
           'bg-transparent',
@@ -55,10 +71,13 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
       >
         <Suspense
           fallback={
-            <div
-              className={cn('flex', 'items-center', 'justify-center', 'h-full')}
-            >
-              <Loader size='md' text='Инициализация редактора...' />
+            <div className={cn('h-full', 'min-h-0', 'w-full')}>
+              <MarkdownEditor
+                value={payload}
+                onChange={() => {}}
+                disabled={true}
+                className={cn('h-full', 'min-h-0', 'w-full')}
+              />
             </div>
           }
         >

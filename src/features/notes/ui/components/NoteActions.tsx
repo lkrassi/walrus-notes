@@ -12,6 +12,7 @@ import {
 import { memo, type FC, type MouseEvent } from 'react';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
+import { preloadCollaborativeNoteEditor } from './editor-split';
 
 interface NoteActionsProps {
   isEditing: boolean;
@@ -100,6 +101,8 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       ) : (
         <Button
           onClick={onEdit}
+          onMouseEnter={preloadCollaborativeNoteEditor}
+          onFocus={preloadCollaborativeNoteEditor}
           className={cn('flex', 'h-8', 'items-center', 'justify-center')}
           title={t('notes:edit')}
           variant='default'

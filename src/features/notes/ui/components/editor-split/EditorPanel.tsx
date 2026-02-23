@@ -20,9 +20,19 @@ export const EditorPanel: FC<EditorPanelProps> = memo(function EditorPanel({
 }) {
   return (
     <motion.div
-      initial={false}
-      animate={isDesktop ? { width: widthValue } : { height: heightValue }}
-      transition={{ duration: isResizing ? 0 : 0.22 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={
+        isDesktop
+          ? { width: widthValue, opacity: 1, scale: 1 }
+          : { height: heightValue, opacity: 1, scale: 1 }
+      }
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{
+        width: { duration: 0 },
+        height: { duration: 0 },
+        opacity: { duration: 0.15, ease: 'easeOut' },
+        scale: { duration: 0.15, ease: 'easeOut' },
+      }}
       className={cn(
         'h-full',
         'bg-transparent',

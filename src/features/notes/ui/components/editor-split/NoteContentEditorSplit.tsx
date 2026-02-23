@@ -1,7 +1,11 @@
-import { memo, useRef, type FC } from 'react';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { memo, useEffect, useRef, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
-import { CollaborativeEditorPanel } from './CollaborativeEditorPanel';
+import {
+  CollaborativeEditorPanel,
+  preloadCollaborativeNoteEditor,
+} from './CollaborativeEditorPanel';
 import { Divider } from './Divider';
 import { EditorPanel } from './EditorPanel';
 import { PreviewPanel } from './PreviewPanel';
@@ -42,6 +46,12 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
       leftWidth,
     });
 
+    useEffect(() => {
+      if (enableCollaboration && isEditing) {
+        preloadCollaborativeNoteEditor();
+      }
+    }, [enableCollaboration, isEditing]);
+
     const initialContent = useCollaborativeContent({
       enableCollaboration,
       isEditing,
@@ -52,40 +62,126 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
     if (enableCollaboration && isEditing && note?.id && userId && userName) {
       return (
         <div className={cn('flex', 'flex-col', 'h-full')}>
+          <LayoutGroup>
+            <div
+              className={cn(
+                'flex',
+                'flex-col',
+                'md:flex-row',
+                'flex-1',
+                'min-h-0',
+                'relative',
+                'overflow-hidden'
+              )}
+            >
+              <AnimatePresence initial={false}>
+                {isEditing && (
+                  <CollaborativeEditorPanel
+                    key='collaborative-editor'
+                    payload={payload}
+                    onPayloadChange={onPayloadChange}
+                    isLoading={isLoading}
+                    isEditing={isEditing}
+                    isResizing={isResizing}
+                    isDesktop={isDesktop}
+                    leftWidth={leftWidth}
+                    min={min}
+                    max={max}
+                    widthValue={widthValue}
+                    heightValue={heightValue}
+                    noteId={note.id}
+                    userId={userId}
+                    userName={userName}
+                    initialContent={initialContent}
+                    onOnlineUsersChange={onOnlineUsersChange}
+                    collaborativeEditorRef={collaborativeEditorRef}
+                  />
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence initial={false}>
+                {isEditing && (
+                  <motion.div
+                    key='divider-collab'
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                  >
+                    <Divider
+                      isEditing={isEditing}
+                      isDesktop={isDesktop}
+                      onPointerDown={onDividerPointerDown}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <PreviewPanel
+                payload={payload}
+                isEditing={isEditing}
+                isDesktop={isDesktop}
+                note={note}
+                layoutId={layoutId}
+                previewRef={previewRef}
+              />
+            </div>
+          </LayoutGroup>
+        </div>
+      );
+    }
+
+    return (
+      <div className={cn('flex', 'flex-col', 'h-full')}>
+        <LayoutGroup>
           <div
             className={cn(
               'flex',
               'flex-col',
               'md:flex-row',
               'flex-1',
-              'min-h-0'
+              'min-h-0',
+              'relative',
+              'overflow-hidden'
             )}
           >
-            <CollaborativeEditorPanel
-              payload={payload}
-              onPayloadChange={onPayloadChange}
-              isLoading={isLoading}
-              isEditing={isEditing}
-              isResizing={isResizing}
-              isDesktop={isDesktop}
-              leftWidth={leftWidth}
-              min={min}
-              max={max}
-              widthValue={widthValue}
-              heightValue={heightValue}
-              noteId={note.id}
-              userId={userId}
-              userName={userName}
-              initialContent={initialContent}
-              onOnlineUsersChange={onOnlineUsersChange}
-              collaborativeEditorRef={collaborativeEditorRef}
-            />
+            <AnimatePresence initial={false}>
+              {isEditing && (
+                <EditorPanel
+                  key='editor'
+                  payload={payload}
+                  onPayloadChange={onPayloadChange}
+                  isLoading={isLoading}
+                  isEditing={isEditing}
+                  isResizing={isResizing}
+                  isDesktop={isDesktop}
+                  leftWidth={leftWidth}
+                  min={min}
+                  max={max}
+                  widthValue={widthValue}
+                  heightValue={heightValue}
+                  textareaRef={textareaRef}
+                />
+              )}
+            </AnimatePresence>
 
-            <Divider
-              isEditing={isEditing}
-              isDesktop={isDesktop}
-              onPointerDown={onDividerPointerDown}
-            />
+            <AnimatePresence initial={false}>
+              {isEditing && (
+                <motion.div
+                  key='divider'
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                >
+                  <Divider
+                    isEditing={isEditing}
+                    isDesktop={isDesktop}
+                    onPointerDown={onDividerPointerDown}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <PreviewPanel
               payload={payload}
@@ -96,45 +192,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
               previewRef={previewRef}
             />
           </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className={cn('flex', 'flex-col', 'h-full')}>
-        <div
-          className={cn('flex', 'flex-col', 'md:flex-row', 'flex-1', 'min-h-0')}
-        >
-          <EditorPanel
-            payload={payload}
-            onPayloadChange={onPayloadChange}
-            isLoading={isLoading}
-            isEditing={isEditing}
-            isResizing={isResizing}
-            isDesktop={isDesktop}
-            leftWidth={leftWidth}
-            min={min}
-            max={max}
-            widthValue={widthValue}
-            heightValue={heightValue}
-            textareaRef={textareaRef}
-          />
-
-          <Divider
-            isEditing={isEditing}
-            isDesktop={isDesktop}
-            onPointerDown={onDividerPointerDown}
-          />
-
-          <PreviewPanel
-            payload={payload}
-            isEditing={isEditing}
-            isDesktop={isDesktop}
-            note={note}
-            layoutId={layoutId}
-            previewRef={previewRef}
-          />
-        </div>
+        </LayoutGroup>
       </div>
     );
   }

@@ -8,12 +8,12 @@ import {
   useImperativeHandle,
   useState,
 } from 'react';
-import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets';
 import { useNotifications } from 'widgets/hooks';
 import type * as Y from 'yjs';
 import { useYjsCollaboration } from '../../model/useYjsCollaboration';
+import { MarkdownEditor } from './MarkdownEditor';
 
 const CollaborativeEditor = lazy(() =>
   import('./CollaborativeEditor').then(m => ({
@@ -129,8 +129,12 @@ export const CollaborativeNoteEditor = memo(
               className
             )}
           >
-            {t('notes:collaborativeEditorInitializing') ||
-              'Инициализация редактора...'}
+            <MarkdownEditor
+              value={initialContent}
+              onChange={() => {}}
+              disabled={true}
+              className={cn('h-full', 'min-h-0', 'w-full')}
+            />
           </div>
         );
       }
@@ -140,17 +144,12 @@ export const CollaborativeNoteEditor = memo(
           <div className={cn('flex-1', 'min-h-0', 'overflow-hidden')}>
             <Suspense
               fallback={
-                <div
-                  className={cn(
-                    'flex',
-                    'items-center',
-                    'justify-center',
-                    'h-full'
-                  )}
-                >
-                  <Loader
-                    size='md'
-                    text={t('notes:collaborativeEditorInitializing')}
+                <div className={cn('h-full', 'min-h-0', 'w-full')}>
+                  <MarkdownEditor
+                    value={initialContent}
+                    onChange={() => {}}
+                    disabled={true}
+                    className={cn('h-full', 'min-h-0', 'w-full')}
                   />
                 </div>
               }

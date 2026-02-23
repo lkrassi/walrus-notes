@@ -15,16 +15,20 @@ export const useCollaborativeContent = ({
 }: UseCollaborativeContentProps) => {
   const initialContentRef = useRef<string>('');
   const lastNoteIdRef = useRef<string | undefined>(undefined);
+  const lastEditingStateRef = useRef<boolean>(false);
 
   if (enableCollaboration && isEditing && noteId) {
     const noteIdChanged = lastNoteIdRef.current !== noteId;
+    const editingStateChanged = !lastEditingStateRef.current && isEditing;
     const shouldInitContent = initialContentRef.current === '' && payload;
 
-    if (noteIdChanged || shouldInitContent) {
+    if (noteIdChanged || editingStateChanged || shouldInitContent) {
       initialContentRef.current = payload;
       lastNoteIdRef.current = noteId;
     }
   }
+
+  lastEditingStateRef.current = isEditing;
 
   return initialContentRef.current;
 };
