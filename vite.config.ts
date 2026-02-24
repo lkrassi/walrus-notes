@@ -51,8 +51,6 @@ export default defineConfig({
           if (pkgName === 'yjs') return 'vendor.yjs';
           if (pkgName === 'y-websocket' || pkgName.startsWith('y-'))
             return 'vendor.yjs.websocket';
-          if (pkgName === 'codemirror' || pkgName.startsWith('@codemirror'))
-            return 'vendor.codemirror';
 
           if (pkgName.startsWith('reactflow')) return 'vendor.reactflow';
 

@@ -24,7 +24,6 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-// Определение системной темы
 const getSystemTheme = (): 'dark' | 'light' => {
   if (typeof window === 'undefined') return 'dark';
 
@@ -34,7 +33,6 @@ const getSystemTheme = (): 'dark' | 'light' => {
   return 'light';
 };
 
-// Получение начальной темы: сначала из localStorage, если нет - из системы
 const getInitialTheme = (): string => {
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
@@ -56,12 +54,10 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Отслеживание изменений системной темы
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleChange = (e: MediaQueryListEvent) => {
-      // Обновляем тему только если пользователь не выбирал её вручную
       const savedTheme = localStorage.getItem('theme');
       if (!savedTheme) {
         setTheme(e.matches ? 'dark' : 'light');

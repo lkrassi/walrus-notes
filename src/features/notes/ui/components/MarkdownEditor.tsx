@@ -103,7 +103,7 @@ export const MarkdownEditor = forwardRef<
         'resize-none',
         'h-full',
         'px-4',
-        'pt-[3.125rem]',
+        'pt-12.5',
         'pb-4',
         'outline-none',
         className

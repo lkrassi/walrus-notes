@@ -75,14 +75,13 @@ export const CollaborativeNoteEditor = memo(
         [showError, t]
       );
 
-      const { ytext, provider, onlineUsers, isContentLoaded } =
-        useYjsCollaboration(
-          noteId,
-          userId,
-          userName,
-          initialContent,
-          handleStatusChange
-        );
+      const { ytext, provider, onlineUsers } = useYjsCollaboration(
+        noteId,
+        userId,
+        userName,
+        initialContent,
+        handleStatusChange
+      );
 
       useImperativeHandle(
         ref,
@@ -156,11 +155,9 @@ export const CollaborativeNoteEditor = memo(
             >
               <CollaborativeEditor
                 ytext={ytext}
-                provider={provider}
                 disabled={disabled}
                 className={cn('h-full')}
                 onContentChange={onContentChange}
-                isContentLoaded={isContentLoaded}
               />
             </Suspense>
           </div>

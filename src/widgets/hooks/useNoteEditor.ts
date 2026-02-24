@@ -118,7 +118,7 @@ export const useNoteEditor = (
     }
 
     const newTitle = safeTitle.trim();
-    const newPayload = safePayload; // Не удаляем пробелы/переносы строк
+    const newPayload = safePayload;
 
     if (newTitle === note.title && newPayload === note.payload) {
       setIsEditing(false);
