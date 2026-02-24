@@ -24,10 +24,27 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+// Определение системной темы
+const getSystemTheme = (): 'dark' | 'light' => {
+  if (typeof window === 'undefined') return 'dark';
+
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+};
+
+// Получение начальной темы: сначала из localStorage, если нет - из системы
+const getInitialTheme = (): string => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    return savedTheme;
+  }
+  return getSystemTheme();
+};
+
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<string>(
-    () => localStorage.getItem('theme') || 'dark'
-  );
+  const [theme, setTheme] = useState<string>(getInitialTheme);
 
   const muiTheme = useMemo(
     () => createAppTheme(theme === 'dark' ? 'dark' : 'light'),
@@ -38,6 +55,22 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Отслеживание изменений системной темы
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Обновляем тему только если пользователь не выбирал её вручную
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));

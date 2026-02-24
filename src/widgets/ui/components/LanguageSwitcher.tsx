@@ -8,6 +8,7 @@ import { useModalContentContext } from 'widgets/ui/components/modal/ModalContent
 
 import { RussianFlagIcon } from 'public/RussianFlagIcon';
 import { UKFlagIcon } from 'public/UKFlagIcon';
+import type { FC } from 'react';
 
 const LANGUAGES = [
   {

@@ -46,9 +46,15 @@ export function useYjsCollaboration(
       return;
     }
 
+    console.log('[YJS] Инициализация для noteId:', noteId, 'userId:', userId);
+
     // Обновляем initialContent при каждом входе в режим редактирования
     if (initialContent !== undefined) {
       firstInitialContentRef.current = initialContent;
+      console.log(
+        '[YJS] Сохранен initialContent, длина:',
+        initialContent.length
+      );
     }
 
     hasInitializedRef.current = false;
@@ -62,11 +68,18 @@ export function useYjsCollaboration(
 
     setYtext(ytextInstance);
 
-    if (ytextInstance.length === 0 && firstInitialContentRef.current) {
-      hasOptimisticInitRef.current = true;
-      ytextInstance.insert(0, firstInitialContentRef.current);
-      setIsContentLoaded(true);
-    }
+    console.log(
+      '[YJS] Создан ytextInstance, начальная длина:',
+      ytextInstance.length
+    );
+
+    // УБРАЛ оптимистичную вставку - будем ждать sync события
+    // Это предотвращает дублирование у второго пользователя
+    // if (ytextInstance.length === 0 && firstInitialContentRef.current) {
+    //   hasOptimisticInitRef.current = true;
+    //   ytextInstance.insert(0, firstInitialContentRef.current);
+    //   setIsContentLoaded(true);
+    // }
 
     const wsUrl = buildYjsWsUrl();
 
@@ -90,6 +103,7 @@ export function useYjsCollaboration(
     const handleStatus = (event: {
       status: 'connected' | 'disconnected' | 'connecting';
     }) => {
+      console.log('[YJS] Status изменен:', event.status);
       setIsConnected(event.status === 'connected');
 
       if (event.status !== 'connecting') {
@@ -99,6 +113,7 @@ export function useYjsCollaboration(
       }
 
       if (event.status === 'connected') {
+        console.log('[YJS] Подключено, устанавливаем awareness');
         providerInstance.awareness.setLocalState({
           user: {
             id: userId,
@@ -110,20 +125,45 @@ export function useYjsCollaboration(
     };
 
     const handleSync = (isSynced: boolean) => {
+      console.log(
+        '[YJS] Sync событие, isSynced:',
+        isSynced,
+        'hasInitialized:',
+        hasInitializedRef.current
+      );
+
       if (!isSynced || hasInitializedRef.current) {
         return;
       }
 
       hasInitializedRef.current = true;
 
+      console.log(
+        '[YJS] После синхронизации, длина ytextInstance:',
+        ytextInstance.length
+      );
+
       if (ytextInstance.length > 0) {
+        console.log('[YJS] Документ не пустой, контент уже есть на сервере');
         setIsContentLoaded(true);
         return;
       }
 
+      console.log(
+        '[YJS] Документ пустой, вставляем initialContent через 100мс'
+      );
       setTimeout(() => {
         if (ytextInstance.length === 0 && firstInitialContentRef.current) {
+          console.log(
+            '[YJS] Вставляем initialContent, длина:',
+            firstInitialContentRef.current.length
+          );
           ytextInstance.insert(0, firstInitialContentRef.current);
+        } else {
+          console.log(
+            '[YJS] Пропускаем вставку, ytextInstance.length:',
+            ytextInstance.length
+          );
         }
         setIsContentLoaded(true);
       }, 100);
@@ -146,6 +186,12 @@ export function useYjsCollaboration(
           number,
           AwarenessUser
         >;
+
+        console.log(
+          '[YJS] Awareness изменение, количество пользователей online:',
+          states.size
+        );
+
         const usersKey = Array.from(states.values())
           .map(state => {
             const user = state.user;
@@ -160,6 +206,10 @@ export function useYjsCollaboration(
           return;
         }
 
+        console.log(
+          '[YJS] Список пользователей изменился, обновляем состояние'
+        );
+
         lastOnlineUsersKeyRef.current = usersKey;
         setOnlineUsers(new Map(states));
       });
@@ -167,7 +217,10 @@ export function useYjsCollaboration(
 
     providerInstance.awareness.on('change', handleAwarenessChange);
 
+    console.log('[YJS] Все обработчики установлены, ждем событий');
+
     return () => {
+      console.log('[YJS] Cleanup: отключаем обработчики и уничтожаем provider');
       providerInstance.off('status', handleStatus);
       providerInstance.off('sync', handleSync);
       providerInstance.awareness.off('change', handleAwarenessChange);
