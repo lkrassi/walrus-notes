@@ -85,8 +85,7 @@ export const NoteContent: FC<NoteContentProps> = ({
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
-      const timer = setTimeout(focusAndScrollToEnd, 10);
-      return () => clearTimeout(timer);
+      focusAndScrollToEnd();
     }
     return undefined;
   }, [isEditing]);

@@ -4,7 +4,8 @@ import type * as Y from 'yjs';
 import { YjsTextarea, type YjsTextareaHandle } from './YjsTextarea';
 
 interface CollaborativeEditorProps {
-  ytext: Y.Text;
+  ytext: Y.Text | null;
+  fallbackContent?: string;
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
@@ -12,6 +13,7 @@ interface CollaborativeEditorProps {
 
 export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
   ytext,
+  fallbackContent = '',
   disabled = false,
   className,
   onContentChange,
@@ -31,6 +33,7 @@ export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
       <YjsTextarea
         ref={editorRef}
         ytext={ytext}
+        fallbackContent={fallbackContent}
         disabled={disabled}
         onContentChange={onContentChange}
         className='h-full'

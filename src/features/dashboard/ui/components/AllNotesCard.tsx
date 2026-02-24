@@ -27,6 +27,7 @@ export const AllNotesCard = ({
         className={cn(
           'w-full',
           'rounded-xl',
+          'bg-gradient-to-br',
           'from-primary',
           'to-primary-dark',
           'dark:from-dark-primary',
@@ -72,8 +73,7 @@ export const AllNotesCard = ({
               {t('dashboard:allNotes') || 'Общий граф'}
             </h3>
             <p className={cn('text-white/80', 'text-sm')}>
-              {t('dashboard:allNotesDescription') ||
-                'Все заметки из всех папок'}
+              {t('dashboard:allNotesDescription')}
             </p>
           </div>
         </div>

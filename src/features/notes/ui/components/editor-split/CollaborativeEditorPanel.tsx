@@ -1,25 +1,15 @@
 import { motion } from 'framer-motion';
-import { Suspense, lazy, memo, type FC } from 'react';
+import { memo, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
-import { MarkdownEditor } from '../MarkdownEditor';
+import { CollaborativeNoteEditor } from '../CollaborativeNoteEditor';
 import type { CollaborativeEditorPanelProps } from './types';
-
-const loadCollaborativeNoteEditor = () =>
-  import('../CollaborativeNoteEditor').then(m => {
-    return { default: m.CollaborativeNoteEditor };
-  });
-
-export const preloadCollaborativeNoteEditor = (): void => {
-  void loadCollaborativeNoteEditor();
-};
-
-const CollaborativeNoteEditor = lazy(loadCollaborativeNoteEditor);
 
 export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
   function CollaborativeEditorPanel({
-    payload,
+    payload: _payload,
     isLoading,
     isEditing,
+    isResizing: _isResizing,
     isDesktop,
     leftWidth,
     min,
@@ -68,30 +58,17 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
               : undefined
         }
       >
-        <Suspense
-          fallback={
-            <div className={cn('h-full', 'min-h-0', 'w-full')}>
-              <MarkdownEditor
-                value={payload}
-                onChange={() => {}}
-                disabled={true}
-                className={cn('h-full', 'min-h-0', 'w-full')}
-              />
-            </div>
-          }
-        >
-          <CollaborativeNoteEditor
-            ref={collaborativeEditorRef}
-            noteId={noteId}
-            userId={userId}
-            userName={userName}
-            initialContent={initialContent}
-            disabled={isLoading}
-            className={cn('h-full')}
-            onContentChange={onPayloadChange}
-            onOnlineUsersChange={onOnlineUsersChange}
-          />
-        </Suspense>
+        <CollaborativeNoteEditor
+          ref={collaborativeEditorRef}
+          noteId={noteId}
+          userId={userId}
+          userName={userName}
+          initialContent={initialContent}
+          disabled={isLoading}
+          className={cn('h-full')}
+          onContentChange={onPayloadChange}
+          onOnlineUsersChange={onOnlineUsersChange}
+        />
       </motion.div>
     );
   }

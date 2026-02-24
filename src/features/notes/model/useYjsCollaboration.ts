@@ -108,17 +108,7 @@ export function useYjsCollaboration(
 
       hasInitializedRef.current = true;
 
-      if (ytextInstance.length > 0) {
-        setIsContentLoaded(true);
-        return;
-      }
-
-      setTimeout(() => {
-        if (ytextInstance.length === 0 && firstInitialContentRef.current) {
-          ytextInstance.insert(0, firstInitialContentRef.current);
-        }
-        setIsContentLoaded(true);
-      }, 100);
+      setIsContentLoaded(true);
     };
 
     providerInstance.on('status', handleStatus);
@@ -138,7 +128,6 @@ export function useYjsCollaboration(
           number,
           AwarenessUser
         >;
-
         const usersKey = Array.from(states.values())
           .map(state => {
             const user = state.user;

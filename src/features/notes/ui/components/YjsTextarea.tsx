@@ -15,19 +15,30 @@ export interface YjsTextareaHandle {
 }
 
 interface YjsTextareaProps {
-  ytext: Y.Text;
+  ytext: Y.Text | null;
+  fallbackContent?: string;
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
 }
 
 export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
-  ({ ytext, disabled = false, className, onContentChange }, ref) => {
+  (
+    {
+      ytext,
+      fallbackContent = '',
+      disabled = false,
+      className,
+      onContentChange,
+    },
+    ref
+  ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useYjsTextareaBinding({
       textareaRef,
       ytext,
+      fallbackContent,
       disabled,
       onContentChange,
     });

@@ -4,6 +4,7 @@ import type * as Y from 'yjs';
 interface UseYjsTextareaBindingProps {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   ytext: Y.Text | null;
+  fallbackContent?: string;
   disabled?: boolean;
   onContentChange?: (content: string) => void;
 }
@@ -11,6 +12,7 @@ interface UseYjsTextareaBindingProps {
 export const useYjsTextareaBinding = ({
   textareaRef,
   ytext,
+  fallbackContent = '',
   disabled = false,
   onContentChange,
 }: UseYjsTextareaBindingProps) => {
@@ -23,15 +25,32 @@ export const useYjsTextareaBinding = ({
   }, [onContentChange]);
 
   useEffect(() => {
-    if (!textareaRef.current || !ytext) return;
+    if (!textareaRef.current) return;
 
-    const initialContent = ytext.toString();
-    if (textareaRef.current.value !== initialContent) {
-      textareaRef.current.value = initialContent;
-      lastRemoteContentRef.current = initialContent;
+    if (ytext) {
+      const initialContent = ytext.toString();
+      const hasFallback = fallbackContent.length > 0;
+      const hasTextareaValue = textareaRef.current.value.length > 0;
+
+      if (initialContent.length === 0 && hasFallback && hasTextareaValue) {
+        console.info('[YjsTextareaBinding] skip empty ytext sync', {
+          fallbackLength: fallbackContent.length,
+        });
+        return;
+      }
+
+      if (textareaRef.current.value !== initialContent) {
+        textareaRef.current.value = initialContent;
+        lastRemoteContentRef.current = initialContent;
+      }
+      return;
     }
-  }, [ytext, textareaRef]);
 
+    if (fallbackContent && textareaRef.current.value === '') {
+      textareaRef.current.value = fallbackContent;
+      lastRemoteContentRef.current = fallbackContent;
+    }
+  }, [ytext, textareaRef, fallbackContent]);
   useEffect(() => {
     if (!textareaRef.current || !ytext || disabled) return;
 
@@ -93,7 +112,6 @@ export const useYjsTextareaBinding = ({
       if (isLocalChangeRef.current || !textarea) return;
 
       const newContent = ytext.toString();
-
       if (textarea.value === newContent) {
         lastRemoteContentRef.current = newContent;
         return;

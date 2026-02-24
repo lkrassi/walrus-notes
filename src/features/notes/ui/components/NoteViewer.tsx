@@ -6,7 +6,6 @@ import { useExportNote } from 'widgets/hooks/useExportNote';
 import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
-import { preloadCollaborativeNoteEditor } from './editor-split';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 
@@ -51,10 +50,6 @@ export const NoteViewer = memo(function NoteViewer({
       autoOpenedRef.current = true;
     }
   }, [hasLocalChanges, hasServerDraft, handleEdit]);
-
-  useEffect(() => {
-    preloadCollaborativeNoteEditor();
-  }, []);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(

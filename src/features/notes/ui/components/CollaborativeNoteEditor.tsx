@@ -1,7 +1,5 @@
 import {
-  Suspense,
   forwardRef,
-  lazy,
   memo,
   useCallback,
   useEffect,
@@ -13,13 +11,7 @@ import { useLocalization } from 'widgets';
 import { useNotifications } from 'widgets/hooks';
 import type * as Y from 'yjs';
 import { useYjsCollaboration } from '../../model/useYjsCollaboration';
-import { MarkdownEditor } from './MarkdownEditor';
-
-const CollaborativeEditor = lazy(() =>
-  import('./CollaborativeEditor').then(m => ({
-    default: m.CollaborativeEditor,
-  }))
-);
+import { CollaborativeEditor } from './CollaborativeEditor';
 
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
@@ -75,7 +67,7 @@ export const CollaborativeNoteEditor = memo(
         [showError, t]
       );
 
-      const { ytext, provider, onlineUsers } = useYjsCollaboration(
+      const { ytext, onlineUsers } = useYjsCollaboration(
         noteId,
         userId,
         userName,
@@ -116,50 +108,16 @@ export const CollaborativeNoteEditor = memo(
         }
       }, [reconnectAttempts, showError, t]);
 
-      if (!ytext || !provider) {
-        return (
-          <div
-            className={cn(
-              'flex',
-              'items-center',
-              'justify-center',
-              'h-full',
-              'text-gray-500',
-              className
-            )}
-          >
-            <MarkdownEditor
-              value={initialContent}
-              onChange={() => {}}
-              disabled={true}
-              className={cn('h-full', 'min-h-0', 'w-full')}
-            />
-          </div>
-        );
-      }
-
       return (
         <div className={cn('flex', 'flex-col', 'h-full', 'gap-2', className)}>
           <div className={cn('flex-1', 'min-h-0', 'overflow-hidden')}>
-            <Suspense
-              fallback={
-                <div className={cn('h-full', 'min-h-0', 'w-full')}>
-                  <MarkdownEditor
-                    value={initialContent}
-                    onChange={() => {}}
-                    disabled={true}
-                    className={cn('h-full', 'min-h-0', 'w-full')}
-                  />
-                </div>
-              }
-            >
-              <CollaborativeEditor
-                ytext={ytext}
-                disabled={disabled}
-                className={cn('h-full')}
-                onContentChange={onContentChange}
-              />
-            </Suspense>
+            <CollaborativeEditor
+              ytext={ytext}
+              fallbackContent={initialContent}
+              disabled={disabled}
+              className={cn('h-full')}
+              onContentChange={onContentChange}
+            />
           </div>
         </div>
       );

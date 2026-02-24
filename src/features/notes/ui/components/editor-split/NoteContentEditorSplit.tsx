@@ -1,11 +1,8 @@
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { memo, useEffect, useRef, type FC } from 'react';
+import { memo, useRef, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
-import {
-  CollaborativeEditorPanel,
-  preloadCollaborativeNoteEditor,
-} from './CollaborativeEditorPanel';
+import { CollaborativeEditorPanel } from './CollaborativeEditorPanel';
 import { Divider } from './Divider';
 import { EditorPanel } from './EditorPanel';
 import { PreviewPanel } from './PreviewPanel';
@@ -46,12 +43,6 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
       leftWidth,
     });
 
-    useEffect(() => {
-      if (enableCollaboration && isEditing) {
-        preloadCollaborativeNoteEditor();
-      }
-    }, [enableCollaboration, isEditing]);
-
     const initialContent = useCollaborativeContent({
       enableCollaboration,
       isEditing,
@@ -74,7 +65,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                 'overflow-hidden'
               )}
             >
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={true}>
                 {isEditing && (
                   <CollaborativeEditorPanel
                     key='collaborative-editor'
@@ -99,7 +90,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                 )}
               </AnimatePresence>
 
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={true}>
                 {isEditing && (
                   <motion.div
                     key='divider-collab'
@@ -145,7 +136,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
               'overflow-hidden'
             )}
           >
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={true}>
               {isEditing && (
                 <EditorPanel
                   key='editor'
@@ -165,7 +156,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
               )}
             </AnimatePresence>
 
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={true}>
               {isEditing && (
                 <motion.div
                   key='divider'
