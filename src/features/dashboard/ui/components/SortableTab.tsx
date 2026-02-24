@@ -51,7 +51,7 @@ export const SortableTab = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex max-w-[200px] min-w-[120px] cursor-grab items-center px-4 py-2 whitespace-nowrap select-none'
+        'relative flex max-w-50 min-w-30 cursor-grab items-center px-4 py-2 whitespace-nowrap select-none'
       )}
       title={tab.item.title}
       animate={{

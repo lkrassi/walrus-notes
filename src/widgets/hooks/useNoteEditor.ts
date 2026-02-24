@@ -23,7 +23,7 @@ export const useNoteEditor = (
 
   const [payload, setPayloadState] = useState<string>(initialPayload);
   const { showError } = useNotifications();
-  const [updateNote, { isLoading }] = useUpdateNoteMutation();
+  const [, { isLoading }] = useUpdateNoteMutation();
   const userId = useAppSelector(s => s.user.profile?.id ?? '');
 
   const {

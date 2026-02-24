@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type PointerEvent,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsMobile } from './index';
 
 type Options = {
@@ -46,19 +40,19 @@ export const useResizableBase = ({
     if (!resizingRef.current) return;
     resizingRef.current = false;
     setIsResizing(false);
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener('pointermove', onPointerMove as EventListener);
+    document.removeEventListener('pointerup', onPointerUp as EventListener);
   }, [onPointerMove]);
 
   const onPointerDown = useCallback(
-    (e: PointerEvent) => {
+    (e: React.PointerEvent<HTMLElement>) => {
       if (isMobile) return;
       resizingRef.current = true;
       setIsResizing(true);
       startPosRef.current = e.clientX;
       startSizeRef.current = size;
-      document.addEventListener('pointermove', onPointerMove);
-      document.addEventListener('pointerup', onPointerUp);
+      document.addEventListener('pointermove', onPointerMove as EventListener);
+      document.addEventListener('pointerup', onPointerUp as EventListener);
     },
     [isMobile, onPointerMove, onPointerUp, size]
   );

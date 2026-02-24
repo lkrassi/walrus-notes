@@ -27,7 +27,6 @@ export const AllNotesCard = ({
         className={cn(
           'w-full',
           'rounded-xl',
-          'bg-gradient-to-br',
           'from-primary',
           'to-primary-dark',
           'dark:from-dark-primary',

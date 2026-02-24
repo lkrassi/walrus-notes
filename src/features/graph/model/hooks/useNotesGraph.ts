@@ -18,8 +18,6 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
   const layouts = layoutsResponse?.data || [];
-  const isMain = layouts.find(l => l.id === layoutId)?.isMain === true;
-
   const [updatePosition] = useUpdateNotePositionMutation();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);

@@ -61,7 +61,7 @@ i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
     },
-    debug: process.env.NODE_ENV === 'development',
+    debug: import.meta.env.MODE === 'development',
   });
 
 export { i18n };

@@ -1,4 +1,8 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  type PayloadAction,
+  type Reducer,
+} from '@reduxjs/toolkit';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
 import {
@@ -37,7 +41,7 @@ const updateActiveTab = (state: TabsState) => {
   }
 };
 
-export const tabsSlice = createSlice({
+const tabsSlice = createSlice({
   name: 'tabs',
   initialState,
   reducers: {
@@ -163,4 +167,4 @@ export const {
   clearTabs,
 } = tabsSlice.actions;
 
-export const tabsReducer = tabsSlice.reducer;
+export const tabsReducer = tabsSlice.reducer as Reducer<TabsState>;

@@ -33,7 +33,6 @@ export function useYjsCollaboration(
   const hasInitializedRef = useRef(false);
   const hasOptimisticInitRef = useRef(false);
   const firstInitialContentRef = useRef<string | undefined>(undefined);
-  const isFirstMountRef = useRef(true);
   const lastOnlineUsersKeyRef = useRef<string>('');
   const onStatusChangeRef = useRef(onStatusChange);
 

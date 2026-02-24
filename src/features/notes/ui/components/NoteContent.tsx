@@ -1,15 +1,7 @@
-import {
-  type FC,
-  type RefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type FC, type RefObject, useEffect, useRef, useState } from 'react';
 import { useIsDesktop } from 'widgets/hooks';
 import { useAppSelector } from 'widgets/hooks/redux';
 import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
-import { syncScroll } from '../../lib/syncScroll';
 
 import type { Note } from 'shared/model/types/layouts';
 import type { AwarenessUser } from '../../model/useYjsCollaboration';
@@ -107,19 +99,6 @@ export const NoteContent: FC<NoteContentProps> = ({
       }
     }
   }, [payload, isEditing]);
-
-  useLayoutEffect(() => {
-    if (!isEditing) return undefined;
-    const ta = textareaRef.current;
-    const pv = previewRef.current;
-
-    const clean = syncScroll(ta, pv);
-    return () => {
-      try {
-        clean();
-      } catch (_e) {}
-    };
-  }, [isEditing]);
 
   const wasEditing = prevIsEditingRef.current;
   const openingEditor = !wasEditing && isEditing;

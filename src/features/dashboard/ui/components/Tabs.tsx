@@ -85,7 +85,7 @@ export const Tabs = memo(function Tabs({
           {activeTab ? (
             <div
               className={cn(
-                'border-border dark:border-dark-border relative flex max-w-[200px] min-w-[120px] cursor-grab items-center border-r bg-white px-4 py-2 whitespace-nowrap shadow-lg select-none dark:bg-gray-800'
+                'border-border dark:border-dark-border relative flex max-w-50 min-w-30 cursor-grab items-center border-r bg-white px-4 py-2 whitespace-nowrap shadow-lg select-none dark:bg-gray-800'
               )}
             >
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>

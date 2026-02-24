@@ -20,7 +20,6 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
     payload,
     isLoading,
     isEditing,
-    isResizing,
     isDesktop,
     leftWidth,
     min,

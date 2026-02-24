@@ -5,15 +5,17 @@ interface UseDropdownBaseOptions<T> {
   isOpen: boolean;
 }
 
-interface UseDropdownWithPaginationOptions<T>
-  extends UseDropdownBaseOptions<T> {
+interface UseDropdownWithPaginationOptions<
+  T,
+> extends UseDropdownBaseOptions<T> {
   enablePagination: true;
   hasMore?: boolean;
   onLoadMore?: (page: number) => Promise<void> | void;
 }
 
-interface UseDropdownWithoutPaginationOptions<T>
-  extends UseDropdownBaseOptions<T> {
+interface UseDropdownWithoutPaginationOptions<
+  T,
+> extends UseDropdownBaseOptions<T> {
   enablePagination?: false;
 }
 
