@@ -2,7 +2,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks';
-import logo from '../../../../assets/logo.avif';
+import logo from '../../../../assets/logo.png';
 import { MobileMenu } from './MobileMenu';
 
 const PrivateHeaderComponent = () => {

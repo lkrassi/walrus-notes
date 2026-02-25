@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-import logo from '../../../../assets/logo.avif';
+import logo from '../../../../assets/logo.png';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
