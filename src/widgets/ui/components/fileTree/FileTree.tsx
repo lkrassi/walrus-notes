@@ -5,9 +5,9 @@ import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
 import { useAppSelector } from '../../../hooks/redux';
 import { notesApi } from '../../../model';
+import { AllNotesButton } from '../sidebar/AllNotesButton';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
-import { FileTreeMainItem } from './FileTreeMainItem';
 import { SearchInput } from './SearchInput';
 
 interface FileTreeProps {
@@ -213,6 +213,22 @@ export const FileTree = memo(
           <SearchInput onSearchChange={setSearchQuery} />
         </div>
 
+        {!isSearchMode && (
+          <div className={cn('px-2', 'py-1')}>
+            <AllNotesButton
+              onAllNotesClick={() => {
+                const mainLayout = layoutsResponse?.data?.find(
+                  l => l.isMain === true
+                );
+                if (mainLayout) {
+                  onOpenGraph?.(mainLayout.id);
+                }
+              }}
+              isSelected={selectedItemId?.startsWith('graph-')}
+            />
+          </div>
+        )}
+
         <div className={cn('flex-1', 'overflow-y-auto', 'p-2')}>
           {fileTree.length === 0 ? (
             <FileTreeEmpty />
@@ -243,39 +259,6 @@ export const FileTree = memo(
             </div>
           ) : (
             <div className={cn('space-y-1')}>
-              {fileTree
-                .filter(i => i.type === 'layout' && i.isMain === true)
-                .map(item => {
-                  const isSelectedMain =
-                    selectedItemId === item.id ||
-                    selectedItemId === `graph-${item.id}`;
-                  return (
-                    <div key={item.id}>
-                      <FileTreeMainItem
-                        item={item}
-                        level={0}
-                        isSelected={isSelectedMain}
-                        hasSelection={!!selectedItemId}
-                        onItemClick={handleItemClick}
-                      />
-                    </div>
-                  );
-                })}
-
-              {fileTree.some(i => i.type === 'layout' && i.isMain === true) &&
-                fileTree.some(
-                  i => i.type === 'layout' && i.isMain !== true
-                ) && (
-                  <div
-                    className={cn(
-                      'my-2',
-                      'border-t',
-                      'border-gray-200',
-                      'dark:border-gray-700'
-                    )}
-                  />
-                )}
-
               {fileTree
                 .filter(i => i.type === 'layout' && i.isMain !== true)
                 .map(item => renderTreeItem(item))}

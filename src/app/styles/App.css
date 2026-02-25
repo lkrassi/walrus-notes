@@ -69,7 +69,7 @@ h6 {
 @theme {
   --color-bg: #f8fafc;
   --color-text: #0f172a;
-  --color-primary: #677b96;
+  --color-primary: #6b6796;
   --color-primary-dark: #4f46e5;
   --color-primary-gradient: #677b96;
   --color-secondary: #64748b;
@@ -97,7 +97,7 @@ h6 {
 }
 
 .ewq {
-  color: #677b96;
+  color: #6b6796;
 }
 
 a:focus-visible,

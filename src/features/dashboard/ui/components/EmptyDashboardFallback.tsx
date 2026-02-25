@@ -6,7 +6,7 @@ import type { MouseEvent } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
 import { useLocalization } from 'widgets/hooks/useLocalization';
-import { AllNotesCard } from './AllNotesCard';
+import { AllNotesButton } from 'widgets/ui/components/sidebar';
 import { FolderCard } from './FolderCard';
 
 interface EmptyDashboardFallbackProps {
@@ -95,9 +95,11 @@ export const EmptyDashboardFallback = ({
       >
         {mainLayout && (
           <div className={cn('w-full', 'mb-8')}>
-            <AllNotesCard
-              layout={mainLayout}
-              onFolderClick={onFolderClick}
+            <AllNotesButton
+              variant='card'
+              onAllNotesClick={() =>
+                onFolderClick?.(mainLayout.id, mainLayout.title || 'All Notes')
+              }
               itemVariants={itemVariants}
             />
           </div>
