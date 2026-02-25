@@ -9,6 +9,7 @@ export const EditorPanel: FC<EditorPanelProps> = memo(function EditorPanel({
   onPayloadChange,
   isLoading,
   isEditing,
+  isResizing: _isResizing,
   isDesktop,
   leftWidth,
   min,
@@ -51,6 +52,7 @@ export const EditorPanel: FC<EditorPanelProps> = memo(function EditorPanel({
         className={cn(
           'h-full',
           'p-0',
+          'pt-4',
           !isEditing && 'pointer-events-none',
           !isEditing && 'select-none'
         )}

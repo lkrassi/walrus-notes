@@ -160,6 +160,7 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
           disabled={disabled}
           onKeyDown={handleKeyDown}
           rows={6}
+          autoFocus
           className={cn(
             'no-border',
             'rounded-none',

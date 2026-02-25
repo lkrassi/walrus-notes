@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { memo, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { CollaborativeNoteEditor } from '../CollaborativeNoteEditor';
@@ -25,20 +24,7 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
     collaborativeEditorRef,
   }) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={
-          isDesktop
-            ? { width: widthValue, opacity: 1, scale: 1 }
-            : { height: heightValue, opacity: 1, scale: 1 }
-        }
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{
-          width: { duration: 0 },
-          height: { duration: 0 },
-          opacity: { duration: 0.15, ease: 'easeOut' },
-          scale: { duration: 0.15, ease: 'easeOut' },
-        }}
+      <div
         className={cn(
           'h-full',
           'bg-transparent',
@@ -52,9 +38,10 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
                 minWidth: `${min}px`,
                 maxWidth: `${max}px`,
                 height: '100%',
+                width: widthValue,
               }
             : !isDesktop
-              ? { width: '100%' }
+              ? { width: '100%', height: heightValue }
               : undefined
         }
       >
@@ -65,11 +52,11 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
           userName={userName}
           initialContent={initialContent}
           disabled={isLoading}
-          className={cn('h-full')}
+          className={cn('h-full', 'pt-3')}
           onContentChange={onPayloadChange}
           onOnlineUsersChange={onOnlineUsersChange}
         />
-      </motion.div>
+      </div>
     );
   }
 );

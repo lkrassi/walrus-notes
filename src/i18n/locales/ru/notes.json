@@ -88,7 +88,6 @@
   "pleaseSelectMd": "Пожалуйста, выберите markdown-файл",
   "fileTooLarge": "Размер файла не должен превышать 5MB",
   "untitled": "без названия",
-  "collaborativeEditorInitializing": "Инициализация редактора...",
   "connectionLostRetrying": "Потеряно соединение. Попытка восстановления...",
   "connectionRestored": "Соединение восстановлено",
   "connectionFailedReload": "Не удаётся восстановить соединение. Попробуйте перезагрузить страницу.",

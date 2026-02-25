@@ -64,7 +64,7 @@ export const FolderCard = ({
       initial='hidden'
       animate='visible'
     >
-      <motion.button
+      <motion.div
         variants={cardHoverVariants}
         initial='rest'
         whileHover='hover'
@@ -193,7 +193,7 @@ export const FolderCard = ({
             </motion.button>
           </div>
         </div>
-      </motion.button>
+      </motion.div>
     </motion.div>
   );
 };

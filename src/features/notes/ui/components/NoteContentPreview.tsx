@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Suspense, lazy } from 'react';
 import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
@@ -24,18 +23,12 @@ export const NoteContentPreview: FC<Props> = ({
   layoutId,
   note,
   isEditing,
-  enterFromRight = false,
 }) => {
   const { t } = useLocalization();
 
-  const initialX = enterFromRight ? 120 : -120;
   return (
-    <motion.div
+    <div
       key='preview'
-      initial={{ x: initialX, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: 120, opacity: 0 }}
-      transition={{ duration: 0.22 }}
       className={cn('h-full', 'overflow-y-auto', 'p-4', 'bg-transparent')}
     >
       <div className={cn('prose', 'dark:prose-invert', 'max-w-none')}>
@@ -67,6 +60,6 @@ export const NoteContentPreview: FC<Props> = ({
           </p>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };

@@ -14,11 +14,14 @@ export const useNoteEditor = (
   const [title, setTitle] = useState<string>(note.title ?? '');
   const storeDraft = useAppSelector(s => s.drafts?.[note.id] ?? null);
   let initialPayload = note.payload ?? '';
-  if (note.draft && note.draft.length) {
-    initialPayload = note.draft;
-  }
-  if (storeDraft && storeDraft.length) {
-    initialPayload = storeDraft;
+  const ignoreDraftRef = useRef(false);
+  if (!ignoreDraftRef.current) {
+    if (note.draft && note.draft.length) {
+      initialPayload = note.draft;
+    }
+    if (storeDraft && storeDraft.length) {
+      initialPayload = storeDraft;
+    }
   }
 
   const [payload, setPayloadState] = useState<string>(initialPayload);
@@ -57,9 +60,9 @@ export const useNoteEditor = (
   useEffect(() => {
     setTitle(note.title ?? '');
     const incoming =
-      storeDraft && storeDraft.length
+      !ignoreDraftRef.current && storeDraft && storeDraft.length
         ? storeDraft
-        : note.draft && note.draft.length
+        : !ignoreDraftRef.current && note.draft && note.draft.length
           ? note.draft
           : note.payload;
     setPayloadState(prev => {
@@ -79,13 +82,15 @@ export const useNoteEditor = (
       return prev;
     });
     const newOriginal =
-      note.draft && note.draft.length ? note.draft : (note.payload ?? '');
+      !ignoreDraftRef.current && note.draft && note.draft.length
+        ? note.draft
+        : (note.payload ?? '');
     originalPayloadRef.current = newOriginal;
   }, [note.id, note.title, note.payload, note.draft, storeDraft]);
 
   useEffect(() => {
     try {
-      if (storeDraft && storeDraft.length) {
+      if (!ignoreDraftRef.current && storeDraft && storeDraft.length) {
         if (
           lastLocalUpdateRef.current != null &&
           Date.now() - lastLocalUpdateRef.current < 2000
@@ -96,6 +101,10 @@ export const useNoteEditor = (
       }
     } catch (_e) {}
   }, [storeDraft, note.id]);
+
+  useEffect(() => {
+    ignoreDraftRef.current = false;
+  }, [note.id]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -162,6 +171,7 @@ export const useNoteEditor = (
 
   const handleDiscard = async () => {
     try {
+      ignoreDraftRef.current = true;
       setPayload(originalPayloadRef.current);
       try {
         sendUpdateDraft('');

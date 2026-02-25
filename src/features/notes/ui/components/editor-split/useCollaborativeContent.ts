@@ -20,9 +20,8 @@ export const useCollaborativeContent = ({
   if (enableCollaboration && isEditing && noteId) {
     const noteIdChanged = lastNoteIdRef.current !== noteId;
     const editingStateChanged = !lastEditingStateRef.current && isEditing;
-    const shouldInitContent = initialContentRef.current === '' && payload;
 
-    if (noteIdChanged || editingStateChanged || shouldInitContent) {
+    if (noteIdChanged || editingStateChanged) {
       initialContentRef.current = payload;
       lastNoteIdRef.current = noteId;
     }

@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Suspense, lazy, memo, type FC } from 'react';
 import { Loader } from 'shared';
 import { cn } from 'shared/lib/cn';
@@ -17,28 +16,14 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(function PreviewPanel({
   previewRef,
 }) {
   return (
-    <motion.div
-      layout
-      layoutId='preview-panel'
-      initial={false}
-      animate={{
-        x: 0,
-        opacity: 1,
-        transition: {
-          duration: 0.15,
-          ease: 'easeOut',
-        },
-      }}
-      transition={{
-        layout: { duration: 0.15, ease: 'easeOut' },
-      }}
+    <div
       className={cn(
         'flex-1',
         'h-full',
         'min-h-0',
-        'border-border',
-        'dark:border-dark-border',
-        isDesktop ? 'border-l' : 'border-t',
+        isEditing && 'border-border',
+        isEditing && 'dark:border-dark-border',
+        isEditing && (isDesktop ? 'border-l' : 'border-t'),
         'p-4',
         'bg-transparent',
         !isDesktop && 'basis-1/2',
@@ -62,6 +47,6 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(function PreviewPanel({
           showRelated={!isEditing}
         />
       </Suspense>
-    </motion.div>
+    </div>
   );
 });

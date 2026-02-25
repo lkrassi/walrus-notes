@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { getUserColor } from 'shared/lib/colorUtils';
 import { WebsocketProvider } from 'y-websocket';
 import * as Y from 'yjs';
 import { buildYjsWsUrl } from '../lib/yjs/yjsUtils';
@@ -7,7 +6,6 @@ import { buildYjsWsUrl } from '../lib/yjs/yjsUtils';
 export interface UserInfo {
   id: string;
   name: string;
-  color: string;
 }
 
 export interface AwarenessUser {
@@ -69,13 +67,10 @@ export function useYjsCollaboration(
     });
     setProvider(providerInstance);
 
-    const userColor = getUserColor(userId);
-
     providerInstance.awareness.setLocalState({
       user: {
         id: userId,
         name: userName,
-        color: userColor,
       },
     });
 
@@ -95,7 +90,6 @@ export function useYjsCollaboration(
           user: {
             id: userId,
             name: userName,
-            color: userColor,
           },
         });
       }
@@ -132,7 +126,7 @@ export function useYjsCollaboration(
           .map(state => {
             const user = state.user;
             if (!user) return '';
-            return `${user.id}:${user.name}:${user.color}`;
+            return `${user.id}:${user.name}`;
           })
           .filter(Boolean)
           .sort()
@@ -161,12 +155,10 @@ export function useYjsCollaboration(
 
   useEffect(() => {
     if (provider && userId) {
-      const userColor = getUserColor(userId);
       provider.awareness.setLocalState({
         user: {
           id: userId,
           name: userName,
-          color: userColor,
         },
       });
     }

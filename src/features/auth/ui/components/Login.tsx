@@ -121,7 +121,7 @@ export const Login: FC<LoginProps> = () => {
               <Suspense
                 fallback={
                   <div className={cn('flex', 'justify-center', 'p-8')}>
-                    <Loader size='md' text={t('auth:resetPassword.title')} />
+                    <Loader size='md' />
                   </div>
                 }
               >

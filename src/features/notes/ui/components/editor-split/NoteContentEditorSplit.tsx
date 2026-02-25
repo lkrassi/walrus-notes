@@ -1,4 +1,4 @@
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { LayoutGroup } from 'framer-motion';
 import { memo, useRef, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
@@ -65,7 +65,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                 'overflow-hidden'
               )}
             >
-              <AnimatePresence initial={true}>
+              <div>
                 {isEditing && (
                   <CollaborativeEditorPanel
                     key='collaborative-editor'
@@ -88,25 +88,15 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                     collaborativeEditorRef={collaborativeEditorRef}
                   />
                 )}
-              </AnimatePresence>
+              </div>
 
-              <AnimatePresence initial={true}>
-                {isEditing && (
-                  <motion.div
-                    key='divider-collab'
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                  >
-                    <Divider
-                      isEditing={isEditing}
-                      isDesktop={isDesktop}
-                      onPointerDown={onDividerPointerDown}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {isEditing && (
+                <Divider
+                  isEditing={isEditing}
+                  isDesktop={isDesktop}
+                  onPointerDown={onDividerPointerDown}
+                />
+              )}
 
               <PreviewPanel
                 payload={payload}
@@ -136,7 +126,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
               'overflow-hidden'
             )}
           >
-            <AnimatePresence initial={true}>
+            <div>
               {isEditing && (
                 <EditorPanel
                   key='editor'
@@ -154,25 +144,19 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                   textareaRef={textareaRef}
                 />
               )}
-            </AnimatePresence>
+            </div>
 
-            <AnimatePresence initial={true}>
+            <div>
               {isEditing && (
-                <motion.div
-                  key='divider'
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                >
+                <div key='divider'>
                   <Divider
                     isEditing={isEditing}
                     isDesktop={isDesktop}
                     onPointerDown={onDividerPointerDown}
                   />
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
+            </div>
 
             <PreviewPanel
               payload={payload}

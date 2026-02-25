@@ -328,10 +328,7 @@ export const DashboardContent = memo(function DashboardContent({
             <div
               className={cn('flex', 'items-center', 'justify-center', 'h-full')}
             >
-              <Loader
-                size='md'
-                text={t('notes:collaborativeEditorInitializing')}
-              />
+              <Loader size='md' />
             </div>
           }
         >
