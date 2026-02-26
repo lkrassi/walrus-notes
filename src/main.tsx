@@ -7,7 +7,6 @@ import { App } from './App';
 import './app/styles/App.css';
 import './app/styles/markdown.css';
 import './i18n';
-import './widgets/hooks/noteLogger'; // Инициализация логгера
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
