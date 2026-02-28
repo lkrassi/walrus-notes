@@ -22,10 +22,35 @@ export interface TabsState {
   activeTabId: string | null;
 }
 
-const initialState: TabsState = {
-  openTabs: [],
-  activeTabId: null,
+const TABS_STORAGE_KEY = 'dashboard:tabs';
+
+// Load tabs from localStorage
+const loadTabsFromStorage = (): TabsState => {
+  try {
+    const stored = localStorage.getItem(TABS_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as TabsState;
+      // Validate structure
+      if (Array.isArray(parsed.openTabs)) {
+        return parsed;
+      }
+    }
+  } catch (_e) {
+    // ignore
+  }
+  return { openTabs: [], activeTabId: null };
 };
+
+// Save tabs to localStorage
+export const saveTabsToStorage = (state: TabsState) => {
+  try {
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(state));
+  } catch (_e) {
+    // ignore
+  }
+};
+
+const initialState: TabsState = loadTabsFromStorage();
 
 const updateActiveTab = (state: TabsState) => {
   if (

@@ -13,14 +13,17 @@ export const useNoteEditor = (
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState<string>(note.title ?? '');
   const storeDraft = useAppSelector(s => s.drafts?.[note.id] ?? null);
-  let initialPayload = note.payload ?? '';
+  // Always use note.payload as the true original, not draft
+  const originalPayload = note.payload ?? '';
   const ignoreDraftRef = useRef(false);
+
+  // Determine initial editing content: use draft if available, otherwise use original payload
+  let initialPayload = originalPayload;
   if (!ignoreDraftRef.current) {
-    if (note.draft && note.draft.length) {
-      initialPayload = note.draft;
-    }
     if (storeDraft && storeDraft.length) {
       initialPayload = storeDraft;
+    } else if (note.draft && note.draft.length) {
+      initialPayload = note.draft;
     }
   }
 
@@ -42,7 +45,6 @@ export const useNoteEditor = (
     draft: payload,
   });
 
-  const originalPayloadRef = useRef<string>(initialPayload);
   const lastLocalCommitRef = useRef<number | null>(null);
   const lastLocalUpdateRef = useRef<number | null>(null);
   const dispatch = useAppDispatch();
@@ -71,21 +73,16 @@ export const useNoteEditor = (
         if (
           lastLocalCommitRef.current != null &&
           Date.now() - lastLocalCommitRef.current < 5000 &&
-          incomingSafe !== originalPayloadRef.current
+          incomingSafe !== originalPayload
         ) {
           return prev;
         }
       } catch (_e) {}
-      if (prev === originalPayloadRef.current) {
+      if (prev === originalPayload) {
         return incomingSafe;
       }
       return prev;
     });
-    const newOriginal =
-      !ignoreDraftRef.current && note.draft && note.draft.length
-        ? note.draft
-        : (note.payload ?? '');
-    originalPayloadRef.current = newOriginal;
   }, [note.id, note.title, note.payload, note.draft, storeDraft]);
 
   useEffect(() => {
@@ -145,7 +142,6 @@ export const useNoteEditor = (
       } catch (_e) {}
       try {
         setPayloadState(newPayload);
-        originalPayloadRef.current = newPayload;
         try {
           dispatch(removeDraft({ noteId: note.id }));
         } catch (_e) {}
@@ -172,13 +168,21 @@ export const useNoteEditor = (
   const handleDiscard = async () => {
     try {
       ignoreDraftRef.current = true;
-      setPayload(originalPayloadRef.current);
+      setPayload(originalPayload);
       try {
         sendUpdateDraft('');
       } catch (_e) {}
       try {
         dispatch(removeDraft({ noteId: note.id }));
       } catch (_e) {}
+
+      // Update the note to clear the draft from parent component
+      if (onNoteUpdated) {
+        onNoteUpdated({
+          ...note,
+          draft: '',
+        });
+      }
     } catch (_e) {}
     setIsEditing(false);
     return true;
@@ -193,7 +197,7 @@ export const useNoteEditor = (
     isPending,
     isSynced,
     lastSavedAt,
-    hasLocalChanges: payload !== originalPayloadRef.current,
+    hasLocalChanges: payload !== originalPayload,
     hasServerDraft: !!(
       note.draft &&
       note.draft.length &&

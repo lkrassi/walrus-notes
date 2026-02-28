@@ -5,6 +5,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
+import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
 import {
   SortableContext,
   arrayMove,
@@ -58,6 +59,7 @@ export const Tabs = memo(function Tabs({
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        modifiers={[restrictToHorizontalAxis]}
       >
         <SortableContext
           items={visibleTabs.map(t => t.id)}
@@ -85,7 +87,10 @@ export const Tabs = memo(function Tabs({
           {activeTab ? (
             <div
               className={cn(
-                'border-border dark:border-dark-border relative flex max-w-50 min-w-30 cursor-grab items-center border-r bg-white px-4 py-2 whitespace-nowrap shadow-lg select-none dark:bg-gray-800'
+                'border-border dark:border-dark-border relative flex max-w-50 min-w-30 cursor-grab items-center rounded-t-lg border-r px-4 py-2 whitespace-nowrap shadow-lg select-none',
+                activeTab.isActive
+                  ? 'bg-primary text-white'
+                  : 'text-text dark:text-dark-text bg-white dark:bg-gray-800'
               )}
             >
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>

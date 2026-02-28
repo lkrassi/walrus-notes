@@ -18,13 +18,43 @@ export type FileTreeItem = {
   openedFromSidebar?: boolean;
 };
 
+const EXPANDED_ITEMS_KEY = 'fileTree:expandedItems';
+
+// Load expanded items from localStorage
+const loadExpandedItems = (): Set<string> => {
+  try {
+    const stored = localStorage.getItem(EXPANDED_ITEMS_KEY);
+    if (stored) {
+      const arr = JSON.parse(stored) as string[];
+      return new Set(arr);
+    }
+  } catch (_e) {
+    // ignore
+  }
+  return new Set();
+};
+
+// Save expanded items to localStorage
+const saveExpandedItems = (items: Set<string>) => {
+  try {
+    localStorage.setItem(EXPANDED_ITEMS_KEY, JSON.stringify([...items]));
+  } catch (_e) {
+    // ignore
+  }
+};
+
 export const useFileTree = () => {
-  const [state, dispatchFileTree] = useReducer(
-    fileTreeReducer,
-    initialFileTreeState
-  );
+  const [state, dispatchFileTree] = useReducer(fileTreeReducer, {
+    ...initialFileTreeState,
+    expandedItems: loadExpandedItems(),
+  });
 
   const { fileTree, expandedItems } = state;
+
+  // Save expandedItems to localStorage whenever it changes
+  useEffect(() => {
+    saveExpandedItems(expandedItems);
+  }, [expandedItems]);
 
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 

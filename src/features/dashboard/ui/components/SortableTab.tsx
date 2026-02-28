@@ -32,9 +32,7 @@ export const SortableTab = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    boxShadow: isDragging
-      ? '0 10px 25px rgba(0, 0, 0, 0.15)'
-      : '0 1px 3px rgba(0, 0, 0, 0.1)',
+    opacity: isDragging ? 0 : 1,
     flexShrink: 0,
     position: 'relative' as const,
   };

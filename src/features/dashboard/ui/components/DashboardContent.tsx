@@ -293,6 +293,7 @@ export const DashboardContent = memo(function DashboardContent({
             handleNoteUpdated(updatedNote.id, {
               title: updatedNote.title,
               payload: updatedNote.payload,
+              draft: updatedNote.draft,
             })
           }
           onNoteDeleted={() => {

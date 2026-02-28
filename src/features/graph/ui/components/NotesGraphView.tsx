@@ -122,7 +122,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
             <TouchEnabledGraph
               nodes={nodesWithSelection}
               onNodePositionChange={handleTouchNodePositionChange}
-              disabled={!isMobile}
+              disabled={!isMobile || allowNodeDrag === false}
             >
               <div className='relative h-full w-full'>
                 <GraphReactFlowCore
