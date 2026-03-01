@@ -35,7 +35,7 @@ const CustomTransition = forwardRef<
 
   if (!triggerPosition) {
     return (
-      <Zoom ref={ref} {...other} timeout={400}>
+      <Zoom ref={ref} {...other} timeout={150}>
         {children}
       </Zoom>
     );
@@ -48,7 +48,7 @@ const CustomTransition = forwardRef<
     <Zoom
       ref={ref}
       {...other}
-      timeout={300}
+      timeout={150}
       style={{
         transformOrigin: `${triggerCenterX}px ${triggerCenterY}px`,
       }}

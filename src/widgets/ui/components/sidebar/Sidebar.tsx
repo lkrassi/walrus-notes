@@ -17,7 +17,7 @@ import type { FileTreeItem } from 'widgets/hooks/useFileTree';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
 import { parseTabId } from 'widgets/model/utils/tabUtils';
-import logo from '../../../../assets/logo.png';
+import logo from '../../../../assets/logo.avif';
 import { FileTree } from '../fileTree';
 import { MobileMenu } from '../header/MobileMenu';
 

@@ -1,7 +1,27 @@
-import { AuthPage, DashBoardPage, MainPage, NotFoundPage } from 'pages';
-import { ProfilePage } from 'pages/profile/ui/ProfilePage';
+import { lazy, Suspense } from 'react';
+import { Loader } from 'shared/ui/components/Loader';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
+
+const MainPage = lazy(() =>
+  import('pages/main/ui/MainPage').then(m => ({ default: m.MainPage }))
+);
+const AuthPage = lazy(() =>
+  import('pages/auth/ui/AuthPage').then(m => ({ default: m.AuthPage }))
+);
+const DashBoardPage = lazy(() =>
+  import('pages/dashboard/DashBoardPage').then(m => ({
+    default: m.DashBoardPage,
+  }))
+);
+const ProfilePage = lazy(() =>
+  import('pages/profile/ui/ProfilePage').then(m => ({ default: m.ProfilePage }))
+);
+const NotFoundPage = lazy(() =>
+  import('pages/not-found/ui/NotFoundPage').then(m => ({
+    default: m.NotFoundPage,
+  }))
+);
 
 export const AppRoutes = {
   MAIN: '/',
@@ -14,13 +34,19 @@ export const AppRoutes = {
 export const appRoutesConfig = [
   {
     path: AppRoutes.MAIN,
-    element: <MainPage />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <MainPage />
+      </Suspense>
+    ),
   },
   {
     path: AppRoutes.AUTH,
     element: (
       <GuestRoute>
-        <AuthPage />
+        <Suspense fallback={<Loader />}>
+          <AuthPage />
+        </Suspense>
       </GuestRoute>
     ),
   },
@@ -28,7 +54,9 @@ export const appRoutesConfig = [
     path: AppRoutes.DASHBOARD,
     element: (
       <ProtectedRoute>
-        <DashBoardPage />
+        <Suspense fallback={<Loader />}>
+          <DashBoardPage />
+        </Suspense>
       </ProtectedRoute>
     ),
   },
@@ -36,12 +64,18 @@ export const appRoutesConfig = [
     path: AppRoutes.PROFILE,
     element: (
       <ProtectedRoute>
-        <ProfilePage />
+        <Suspense fallback={<Loader />}>
+          <ProfilePage />
+        </Suspense>
       </ProtectedRoute>
     ),
   },
   {
     path: AppRoutes.NOT_FOUND,
-    element: <NotFoundPage />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
   },
 ];
