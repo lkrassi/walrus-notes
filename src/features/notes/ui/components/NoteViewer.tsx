@@ -44,7 +44,6 @@ export const NoteViewer = memo(function NoteViewer({
 
   const autoOpenedRef = useRef(false);
   useEffect(() => {
-    // Reset autoOpened flag when switching notes
     autoOpenedRef.current = false;
   }, [note.id]);
 
@@ -83,6 +82,7 @@ export const NoteViewer = memo(function NoteViewer({
     >
       {' '}
       <NoteHeader
+        noteId={note.id}
         isEditing={isEditing}
         title={title}
         isLoading={isLoading}

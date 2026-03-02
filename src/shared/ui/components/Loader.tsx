@@ -49,13 +49,13 @@ export const Loader: FC<LoaderProps> = ({ size = 'md', className, text }) => {
     duration: 0.5,
     repeat: Infinity,
     repeatType: 'reverse',
-    ease: [0.4, 0.0, 0.2, 1] as any,
+    ease: [0.4, 0.0, 0.2, 1],
   };
 
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-4',
+        'flex min-h-screen flex-col items-center justify-center gap-4',
         className
       )}
     >

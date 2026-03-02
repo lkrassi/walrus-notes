@@ -13,11 +13,9 @@ export const useNoteEditor = (
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState<string>(note.title ?? '');
   const storeDraft = useAppSelector(s => s.drafts?.[note.id] ?? null);
-  // Always use note.payload as the true original, not draft
   const originalPayload = note.payload ?? '';
   const ignoreDraftRef = useRef(false);
 
-  // Determine initial editing content: use draft if available, otherwise use original payload
   let initialPayload = originalPayload;
   if (!ignoreDraftRef.current) {
     if (storeDraft && storeDraft.length) {
@@ -176,7 +174,6 @@ export const useNoteEditor = (
         dispatch(removeDraft({ noteId: note.id }));
       } catch (_e) {}
 
-      // Update the note to clear the draft from parent component
       if (onNoteUpdated) {
         onNoteUpdated({
           ...note,

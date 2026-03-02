@@ -13,6 +13,7 @@ import { NoteActions } from './NoteActions';
 import { NoteTitle } from './NoteTitle';
 
 interface NoteHeaderProps {
+  noteId?: string;
   isEditing: boolean;
   title: string;
   isLoading: boolean;
@@ -34,6 +35,7 @@ interface NoteHeaderProps {
 }
 
 export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
+  noteId,
   isEditing,
   title,
   isLoading,
@@ -131,6 +133,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
       <NoteTitle title={title} onEdit={handleOpenEditTitle} />
 
       <NoteActions
+        noteId={noteId}
         isEditing={isEditing}
         isLoading={isLoading}
         isFullscreen={isFullscreen}

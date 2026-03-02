@@ -17,6 +17,11 @@ const DashBoardPage = lazy(() =>
 const ProfilePage = lazy(() =>
   import('pages/profile/ui/ProfilePage').then(m => ({ default: m.ProfilePage }))
 );
+const ApplyLinkPage = lazy(() =>
+  import('pages/apply/ui/ApplyLinkPage').then(m => ({
+    default: m.ApplyLinkPage,
+  }))
+);
 const NotFoundPage = lazy(() =>
   import('pages/not-found/ui/NotFoundPage').then(m => ({
     default: m.NotFoundPage,
@@ -28,6 +33,7 @@ export const AppRoutes = {
   AUTH: '/auth',
   DASHBOARD: '/dashboard/:layoutId?/:noteId?',
   PROFILE: '/profile',
+  APPLY: '/apply',
   NOT_FOUND: '*',
 };
 
@@ -48,6 +54,14 @@ export const appRoutesConfig = [
           <AuthPage />
         </Suspense>
       </GuestRoute>
+    ),
+  },
+  {
+    path: AppRoutes.APPLY,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ApplyLinkPage />
+      </Suspense>
     ),
   },
   {

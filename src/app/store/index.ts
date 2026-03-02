@@ -2,15 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from 'app/store/api/apiSlice';
 import { draftsReducer } from 'app/store/slices/draftsSlice';
 import { notificationsReducer } from 'app/store/slices/notificationsSlice';
+import { permissionsReducer } from 'app/store/slices/permissionsSlice';
 import { saveTabsToStorage, tabsReducer } from 'app/store/slices/tabsSlice';
 import { userReducer } from 'app/store/slices/userSlice';
 
-// Middleware to save tabs to localStorage
 const tabsPersistenceMiddleware =
   (storeAPI: any) => (next: any) => (action: any) => {
     const result = next(action);
 
-    // Save tabs after any tabs-related action
     if (action.type?.startsWith('tabs/')) {
       const state = storeAPI.getState();
       saveTabsToStorage(state.tabs);
@@ -22,6 +21,7 @@ const tabsPersistenceMiddleware =
 export const store = configureStore({
   reducer: {
     notifications: notificationsReducer,
+    permissions: permissionsReducer,
     user: userReducer,
     tabs: tabsReducer,
     drafts: draftsReducer,

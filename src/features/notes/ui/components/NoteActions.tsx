@@ -1,3 +1,4 @@
+import { useShareLinkModal } from 'features/graph/hooks/useShareLinkModal';
 import {
   CircleQuestionMark,
   Download,
@@ -6,6 +7,7 @@ import {
   Maximize2,
   Minimize2,
   Save,
+  Share2,
   Upload,
   X,
 } from 'lucide-react';
@@ -14,6 +16,7 @@ import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
 
 interface NoteActionsProps {
+  noteId?: string;
   isEditing: boolean;
   isLoading: boolean;
   isFullscreen?: boolean;
@@ -31,6 +34,7 @@ interface NoteActionsProps {
 }
 
 export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
+  noteId,
   isEditing,
   isLoading,
   isFullscreen,
@@ -46,6 +50,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   onToggleFullscreen,
   t,
 }) {
+  const { openShareLinkModal } = useShareLinkModal();
   return (
     <div
       className={cn(
@@ -116,6 +121,17 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
           variant='default'
         >
           <Download className={cn('h-4', 'w-4')} />
+        </Button>
+      )}
+
+      {noteId && !isEditing && (
+        <Button
+          onClick={e => openShareLinkModal(noteId, 'NOTE')(e)}
+          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+          title={t('share:button.tooltip') || 'Share'}
+          variant='default'
+        >
+          <Share2 className={cn('h-4', 'w-4')} />
         </Button>
       )}
 

@@ -1,0 +1,406 @@
+import {
+  resetGeneratedLink,
+  selectLastGeneratedLink,
+  useGenerateLinkMutation,
+} from 'app/store';
+import { Form, Formik } from 'formik';
+import { Check, Copy } from 'lucide-react';
+import { memo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'shared';
+import { cn } from 'shared/lib/cn';
+import { useLocalization, useNotifications } from 'widgets/hooks';
+import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import * as Yup from 'yup';
+
+interface ShareModalProps {
+  targetId: string;
+  kind: 'LAYOUT' | 'NOTE';
+}
+
+const validationSchema = Yup.object().shape({
+  canRead: Yup.boolean(),
+  canWrite: Yup.boolean(),
+  canEdit: Yup.boolean(),
+  expirationOption: Yup.string().required('Выберите срок действия'),
+  customMinutes: Yup.number().when('expirationOption', {
+    is: 'custom',
+    then: schema =>
+      schema
+        .required('Введите количество минут')
+        .min(5, 'Минимум 5 минут')
+        .max(43200, 'Максимум 30 дней (43200 минут)'),
+    otherwise: schema => schema.nullable(),
+  }),
+});
+
+export const ShareModal = memo(function ShareModal({
+  targetId,
+  kind,
+}: ShareModalProps) {
+  const [generateLink, { error }] = useGenerateLinkMutation();
+  const dispatch = useDispatch();
+  const { t } = useLocalization();
+  const { showError } = useNotifications();
+  const { closeModal } = useModalContentContext();
+  const [copied, setCopied] = useState(false);
+
+  const generatedLink = useSelector(selectLastGeneratedLink);
+
+  const isLayout = kind === 'LAYOUT';
+  const modalTitle = isLayout
+    ? t('share:layout.modal.title')
+    : t('share:notes.modal.title');
+
+  const initialValues = {
+    canRead: true,
+    canWrite: false,
+    canEdit: false,
+    expirationOption: '30',
+    customMinutes: '',
+  };
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    let expiredAt: string | null = null;
+
+    let minutes = 0;
+    if (values.expirationOption === 'custom') {
+      minutes = parseInt(values.customMinutes as unknown as string, 10);
+    } else {
+      minutes = parseInt(values.expirationOption, 10);
+    }
+
+    if (minutes > 0) {
+      const now = new Date();
+      const expirationDate = new Date(now.getTime() + minutes * 60000);
+      expiredAt = expirationDate.toISOString();
+    }
+
+    try {
+      await generateLink({
+        targetId,
+        kind,
+        canRead: values.canRead || values.canWrite || values.canEdit,
+        canWrite: values.canWrite,
+        canEdit: values.canEdit,
+        expiredAt,
+      }).unwrap();
+    } catch (_err) {
+      const errorMessage =
+        error && 'status' in error
+          ? t('share:modal.error.generic')
+          : t('share:modal.error.generic');
+      showError(errorMessage);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (generatedLink?.fullUrl) {
+      try {
+        await navigator.clipboard.writeText(generatedLink.fullUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    }
+  };
+
+  const handleClose = () => {
+    dispatch(resetGeneratedLink());
+    closeModal();
+  };
+
+  if (generatedLink) {
+    return (
+      <form className={cn('space-y-6', 'p-6')}>
+        <div className={cn('text-center')}>
+          <p className={cn('muted-text', 'mb-4', 'text-sm')}>
+            {t('share:modal.success.description')}
+          </p>
+
+          <div
+            className={cn(
+              'mb-4 overflow-auto rounded-lg p-3',
+              'border-border dark:border-dark-border border',
+              'bg-gray-100 dark:bg-gray-800'
+            )}
+          >
+            <p
+              className={cn(
+                'font-mono text-xs break-all',
+                'text-text dark:text-dark-text'
+              )}
+            >
+              {generatedLink.fullUrl}
+            </p>
+          </div>
+        </div>
+
+        <div className={cn('flex justify-center gap-3')}>
+          <Button
+            type='button'
+            onClick={handleCopy}
+            variant='submit'
+            className={cn('btn', 'gap-2', 'flex items-center')}
+          >
+            {copied ? (
+              <>
+                <Check className={cn('h-4 w-4')} />
+                {t('share:modal.success.copied')}
+              </>
+            ) : (
+              <>
+                <Copy className={cn('h-4 w-4')} />
+                {t('share:modal.success.copy')}
+              </>
+            )}
+          </Button>
+          <Button
+            type='button'
+            onClick={handleClose}
+            variant='escape'
+            className={cn('btn')}
+          >
+            {t('share:modal.cancel')}
+          </Button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ values, errors, touched, setFieldValue, isSubmitting }) => (
+        <Form className={cn('space-y-6', 'p-6')}>
+          <h2
+            className={cn(
+              'mb-6 text-xl font-bold',
+              'text-text dark:text-dark-text'
+            )}
+          >
+            {modalTitle}
+          </h2>
+
+          <div>
+            <label
+              className={cn(
+                'mb-3 block text-sm font-medium',
+                'text-text dark:text-dark-text'
+              )}
+            >
+              {t('share:modal.permissions.label')}
+            </label>
+            <div className={cn('space-y-3')}>
+              <label className={cn('flex cursor-pointer items-center gap-3')}>
+                <input
+                  type='checkbox'
+                  checked={values.canRead}
+                  onChange={e => setFieldValue('canRead', e.target.checked)}
+                  disabled={values.canWrite || values.canEdit}
+                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                />
+                <span
+                  className={cn('text-sm', 'text-text dark:text-dark-text')}
+                >
+                  {t('share:modal.permissions.read')}
+                </span>
+              </label>
+
+              <label className={cn('flex cursor-pointer items-center gap-3')}>
+                <input
+                  type='checkbox'
+                  checked={values.canWrite}
+                  onChange={e => {
+                    setFieldValue('canWrite', e.target.checked);
+                    if (e.target.checked) {
+                      setFieldValue('canRead', true);
+                    }
+                  }}
+                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                />
+                <span
+                  className={cn('text-sm', 'text-text dark:text-dark-text')}
+                >
+                  {t('share:modal.permissions.write')}
+                </span>
+              </label>
+
+              <label className={cn('flex cursor-pointer items-center gap-3')}>
+                <input
+                  type='checkbox'
+                  checked={values.canEdit}
+                  onChange={e => {
+                    setFieldValue('canEdit', e.target.checked);
+                    if (e.target.checked) {
+                      setFieldValue('canRead', true);
+                    }
+                  }}
+                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                />
+                <span
+                  className={cn('text-sm', 'text-text dark:text-dark-text')}
+                >
+                  {t('share:modal.permissions.edit')}
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label
+              className={cn(
+                'mb-3 block text-sm font-medium',
+                'text-text dark:text-dark-text'
+              )}
+            >
+              {t('share:modal.expiration.label')}
+            </label>
+
+            <div className={cn('space-y-3')}>
+              <div className='flex gap-x-5'>
+                <label className={cn('flex cursor-pointer items-center gap-3')}>
+                  <input
+                    type='radio'
+                    name='expirationOption'
+                    value='5'
+                    checked={values.expirationOption === '5'}
+                    onChange={e =>
+                      setFieldValue('expirationOption', e.target.value)
+                    }
+                    className={cn('h-4 w-4 cursor-pointer')}
+                  />
+                  <span
+                    className={cn('text-sm', 'text-text dark:text-dark-text')}
+                  >
+                    {t('share:modal.expiration.options.fiveMinutes')}
+                  </span>
+                </label>
+
+                <label className={cn('flex cursor-pointer items-center gap-3')}>
+                  <input
+                    type='radio'
+                    name='expirationOption'
+                    value='30'
+                    checked={values.expirationOption === '30'}
+                    onChange={e =>
+                      setFieldValue('expirationOption', e.target.value)
+                    }
+                    className={cn('h-4 w-4 cursor-pointer')}
+                  />
+                  <span
+                    className={cn('text-sm', 'text-text dark:text-dark-text')}
+                  >
+                    {t('share:modal.expiration.options.thirtyMinutes')}
+                  </span>
+                </label>
+
+                <label className={cn('flex cursor-pointer items-center gap-3')}>
+                  <input
+                    type='radio'
+                    name='expirationOption'
+                    value='60'
+                    checked={values.expirationOption === '60'}
+                    onChange={e =>
+                      setFieldValue('expirationOption', e.target.value)
+                    }
+                    className={cn('h-4 w-4 cursor-pointer')}
+                  />
+                  <span
+                    className={cn('text-sm', 'text-text dark:text-dark-text')}
+                  >
+                    {t('share:modal.expiration.options.oneHour')}
+                  </span>
+                </label>
+
+                <label className={cn('flex cursor-pointer items-center gap-3')}>
+                  <input
+                    type='radio'
+                    name='expirationOption'
+                    value='custom'
+                    checked={values.expirationOption === 'custom'}
+                    onChange={e =>
+                      setFieldValue('expirationOption', e.target.value)
+                    }
+                    className={cn('h-4 w-4 cursor-pointer')}
+                  />
+                  <span
+                    className={cn('text-sm', 'text-text dark:text-dark-text')}
+                  >
+                    {t('share:modal.expiration.options.custom')}
+                  </span>
+                </label>
+              </div>
+
+              {values.expirationOption === 'custom' && (
+                <div className={cn('ml-7')}>
+                  <input
+                    type='number'
+                    value={values.customMinutes}
+                    onChange={e =>
+                      setFieldValue('customMinutes', e.target.value)
+                    }
+                    placeholder={t('share:modal.expiration.customPlaceholder')}
+                    className={cn(
+                      'form-input w-full rounded-md',
+                      touched.customMinutes && errors.customMinutes
+                        ? 'border-red-500'
+                        : ''
+                    )}
+                    min='5'
+                    max='43200'
+                  />
+                  {touched.customMinutes && errors.customMinutes && (
+                    <p className={cn('mt-1 text-xs text-red-500')}>
+                      {errors.customMinutes}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {errors.expirationOption && (
+                <p className={cn('text-xs text-red-500')}>
+                  {errors.expirationOption}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className={cn('flex justify-center gap-3')}>
+            <Button
+              type='button'
+              onClick={handleClose}
+              variant='escape'
+              className={cn('btn')}
+              disabled={isSubmitting}
+            >
+              {t('share:modal.cancel')}
+            </Button>
+            <Button
+              type='submit'
+              variant={
+                isSubmitting ||
+                (!values.canRead && !values.canWrite && !values.canEdit)
+                  ? 'disabled'
+                  : 'submit'
+              }
+              className={cn('btn')}
+              disabled={
+                isSubmitting ||
+                (!values.canRead && !values.canWrite && !values.canEdit)
+              }
+            >
+              {isSubmitting
+                ? t('share:modal.submitting')
+                : t('share:modal.submit')}
+            </Button>
+          </div>
+        </Form>
+      )}
+    </Formik>
+  );
+});

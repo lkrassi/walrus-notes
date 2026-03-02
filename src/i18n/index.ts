@@ -11,6 +11,7 @@ import enMain from './locales/en/main.json';
 import enNotes from './locales/en/notes.json';
 import enProfile from './locales/en/profile.json';
 import enSettings from './locales/en/settings.json';
+import enShare from './locales/en/share.json';
 import ruAuth from './locales/ru/auth.json';
 import ruCommon from './locales/ru/common.json';
 import ruDashboard from './locales/ru/dashboard.json';
@@ -20,6 +21,7 @@ import ruMain from './locales/ru/main.json';
 import ruNotes from './locales/ru/notes.json';
 import ruProfile from './locales/ru/profile.json';
 import ruSettings from './locales/ru/settings.json';
+import ruShare from './locales/ru/share.json';
 
 const resources = {
   en: {
@@ -32,6 +34,7 @@ const resources = {
     notes: enNotes,
     profile: enProfile,
     settings: enSettings,
+    share: enShare,
   },
   ru: {
     common: ruCommon,
@@ -43,6 +46,7 @@ const resources = {
     notes: ruNotes,
     profile: ruProfile,
     settings: ruSettings,
+    share: ruShare,
   },
 };
 

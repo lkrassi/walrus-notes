@@ -5,7 +5,10 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from '@dnd-kit/modifiers';
 import {
   SortableContext,
   arrayMove,
@@ -59,7 +62,7 @@ export const Tabs = memo(function Tabs({
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        modifiers={[restrictToHorizontalAxis]}
+        modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
       >
         <SortableContext
           items={visibleTabs.map(t => t.id)}

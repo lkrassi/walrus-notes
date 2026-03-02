@@ -1,0 +1,64 @@
+{
+  "button": {
+    "tooltip": "Share"
+  },
+  "layout": {
+    "modal": {
+      "title": "Configure Folder Access"
+    }
+  },
+  "notes": {
+    "modal": {
+      "title": "Configure Note Access"
+    }
+  },
+  "modal": {
+    "permissions": {
+      "label": "Access Level",
+      "read": "Read",
+      "write": "Write",
+      "edit": "Edit"
+    },
+    "expiration": {
+      "label": "Expiration",
+      "placeholder": "Select date and time",
+      "unlimited": "Unlimited",
+      "custom": "Enter minutes",
+      "customPlaceholder": "Enter minutes (5-43200)",
+      "options": {
+        "fiveMinutes": "5 minutes",
+        "thirtyMinutes": "30 minutes",
+        "oneHour": "1 hour",
+        "custom": "Enter minutes"
+      },
+      "validation": {
+        "minDate": "Minimum duration: 5 minutes from now",
+        "maxDate": "Maximum duration: 30 days from now"
+      }
+    },
+    "submit": "Create Link",
+    "submitting": "Creating...",
+    "cancel": "Cancel",
+    "success": {
+      "title": "Link Created",
+      "description": "Copy the link and send it to anyone you want to give access to",
+      "copy": "Copy",
+      "copied": "Copied!"
+    },
+    "error": {
+      "generic": "Failed to create link. Please try later",
+      "bad_kind": "Cannot create a link for this type of element",
+      "premissions_not_enough": "You don't have enough permissions to grant this access level"
+    }
+  },
+  "apply": {
+    "loading": "Processing link...",
+    "success": "Access granted successfully!",
+    "goToDashboard": "Go to Dashboard",
+    "error": {
+      "already_exists": "This link has already been used",
+      "invalid": "Invalid link",
+      "generic": "Error applying link. Please try later"
+    }
+  }
+}

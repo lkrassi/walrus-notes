@@ -20,7 +20,6 @@ export type FileTreeItem = {
 
 const EXPANDED_ITEMS_KEY = 'fileTree:expandedItems';
 
-// Load expanded items from localStorage
 const loadExpandedItems = (): Set<string> => {
   try {
     const stored = localStorage.getItem(EXPANDED_ITEMS_KEY);
@@ -28,19 +27,14 @@ const loadExpandedItems = (): Set<string> => {
       const arr = JSON.parse(stored) as string[];
       return new Set(arr);
     }
-  } catch (_e) {
-    // ignore
-  }
+  } catch (_e) {}
   return new Set();
 };
 
-// Save expanded items to localStorage
 const saveExpandedItems = (items: Set<string>) => {
   try {
     localStorage.setItem(EXPANDED_ITEMS_KEY, JSON.stringify([...items]));
-  } catch (_e) {
-    // ignore
-  }
+  } catch (_e) {}
 };
 
 export const useFileTree = () => {
@@ -51,7 +45,6 @@ export const useFileTree = () => {
 
   const { fileTree, expandedItems } = state;
 
-  // Save expandedItems to localStorage whenever it changes
   useEffect(() => {
     saveExpandedItems(expandedItems);
   }, [expandedItems]);
