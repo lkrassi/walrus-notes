@@ -1,5 +1,7 @@
 import {
   forwardRef,
+  useCallback,
+  useEffect,
   useImperativeHandle,
   useRef,
   type KeyboardEventHandler,
@@ -8,6 +10,8 @@ import { Textarea } from 'shared';
 import { cn } from 'shared/lib/cn';
 import type * as Y from 'yjs';
 import { useYjsTextareaBinding } from '../../lib/yjs/useYjsTextareaBinding';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import { RemoteCursorsLayer } from './remote-cursors/RemoteCursorsLayer';
 
 export interface YjsTextareaHandle {
   insertText: (text: string) => void;
@@ -20,6 +24,9 @@ interface YjsTextareaProps {
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
+  onCursorChange?: (selectionStart: number, selectionEnd: number) => void;
+  onlineUsers?: Map<number, AwarenessUser>;
+  currentUserId: string;
 }
 
 export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
@@ -30,10 +37,15 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
       disabled = false,
       className,
       onContentChange,
+      onCursorChange,
+      onlineUsers,
+      currentUserId,
     },
     ref
   ) => {
+    const isPresenceDebug = import.meta.env.DEV;
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const cursorRafRef = useRef<number | null>(null);
 
     useYjsTextareaBinding({
       textareaRef,
@@ -69,6 +81,36 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
       [ytext]
     );
 
+    const publishCursor = useCallback(() => {
+      if (!onCursorChange || !textareaRef.current) {
+        return;
+      }
+
+      const { selectionStart, selectionEnd } = textareaRef.current;
+      onCursorChange(selectionStart ?? 0, selectionEnd ?? 0);
+    }, [isPresenceDebug, onCursorChange]);
+
+    const scheduleCursorPublish = useCallback(() => {
+      if (cursorRafRef.current !== null) {
+        return;
+      }
+
+      cursorRafRef.current = requestAnimationFrame(() => {
+        cursorRafRef.current = null;
+        publishCursor();
+      });
+    }, [publishCursor]);
+
+    useEffect(() => {
+      scheduleCursorPublish();
+      return () => {
+        if (cursorRafRef.current !== null) {
+          cancelAnimationFrame(cursorRafRef.current);
+          cursorRafRef.current = null;
+        }
+      };
+    }, [scheduleCursorPublish]);
+
     const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = e => {
       const el = e.currentTarget as HTMLTextAreaElement;
       const { value, selectionStart, selectionEnd } = el;
@@ -93,6 +135,7 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
             requestAnimationFrame(() => {
               el.setSelectionRange(pos, pos);
               el.dispatchEvent(new Event('input', { bubbles: true }));
+              scheduleCursorPublish();
             });
           }
         } else {
@@ -105,6 +148,7 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
           requestAnimationFrame(() => {
             el.setSelectionRange(newPos, newPos);
             el.dispatchEvent(new Event('input', { bubbles: true }));
+            scheduleCursorPublish();
           });
         }
         return;
@@ -128,6 +172,7 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
           requestAnimationFrame(() => {
             el.setSelectionRange(pos, pos);
             el.dispatchEvent(new Event('input', { bubbles: true }));
+            scheduleCursorPublish();
           });
           return;
         }
@@ -147,11 +192,14 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
           requestAnimationFrame(() => {
             el.setSelectionRange(pos, pos);
             el.dispatchEvent(new Event('input', { bubbles: true }));
+            scheduleCursorPublish();
           });
           return;
         }
       }
     };
+
+    const awarenessUsers = onlineUsers ? Array.from(onlineUsers.values()) : [];
 
     return (
       <div className={cn('relative', 'h-full', className)}>
@@ -159,6 +207,12 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
           ref={textareaRef}
           disabled={disabled}
           onKeyDown={handleKeyDown}
+          onSelect={scheduleCursorPublish}
+          onClick={scheduleCursorPublish}
+          onKeyUp={scheduleCursorPublish}
+          onMouseUp={scheduleCursorPublish}
+          onFocus={scheduleCursorPublish}
+          onInput={scheduleCursorPublish}
           rows={6}
           autoFocus
           className={cn(
@@ -168,6 +222,8 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
             'resize-none',
             'h-full',
             'w-full',
+            'relative',
+            'z-10',
             'px-4',
             'pt-12.5',
             'pb-4',
@@ -177,6 +233,12 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
             'leading-7'
           )}
           aria-label='Collaborative markdown editor'
+        />
+
+        <RemoteCursorsLayer
+          textareaRef={textareaRef}
+          users={awarenessUsers}
+          currentUserId={currentUserId}
         />
       </div>
     );

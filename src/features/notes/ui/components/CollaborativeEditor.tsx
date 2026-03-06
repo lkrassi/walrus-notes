@@ -1,6 +1,7 @@
 import { type FC, useRef } from 'react';
 import { cn } from 'shared/lib/cn';
 import type * as Y from 'yjs';
+import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import { YjsTextarea, type YjsTextareaHandle } from './YjsTextarea';
 
 interface CollaborativeEditorProps {
@@ -9,6 +10,9 @@ interface CollaborativeEditorProps {
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
+  onCursorChange?: (selectionStart: number, selectionEnd: number) => void;
+  onlineUsers?: Map<number, AwarenessUser>;
+  currentUserId: string;
 }
 
 export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
@@ -17,6 +21,9 @@ export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
   disabled = false,
   className,
   onContentChange,
+  onCursorChange,
+  onlineUsers,
+  currentUserId,
 }) => {
   const editorRef = useRef<YjsTextareaHandle>(null);
 
@@ -36,6 +43,9 @@ export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
         fallbackContent={fallbackContent}
         disabled={disabled}
         onContentChange={onContentChange}
+        onCursorChange={onCursorChange}
+        onlineUsers={onlineUsers}
+        currentUserId={currentUserId}
         className='h-full'
       />
     </div>

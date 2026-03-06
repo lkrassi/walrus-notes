@@ -67,7 +67,7 @@ export const CollaborativeNoteEditor = memo(
         [showError, t]
       );
 
-      const { ytext, onlineUsers } = useYjsCollaboration(
+      const { ytext, onlineUsers, updateCursorAwareness } = useYjsCollaboration(
         noteId,
         userId,
         userName,
@@ -117,6 +117,9 @@ export const CollaborativeNoteEditor = memo(
               disabled={disabled}
               className={cn('h-full')}
               onContentChange={onContentChange}
+              onCursorChange={updateCursorAwareness}
+              onlineUsers={onlineUsers}
+              currentUserId={userId}
             />
           </div>
         </div>

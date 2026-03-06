@@ -100,9 +100,7 @@ export const ShareModal = memo(function ShareModal({
         await navigator.clipboard.writeText(generatedLink.fullUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error('Failed to copy:', err);
-      }
+      } catch (_e) {}
     }
   };
 

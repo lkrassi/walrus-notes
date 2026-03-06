@@ -41,3 +41,16 @@ export function buildYjsWsUrl(baseUrl?: string): string {
 
   return finalUrl;
 }
+
+export function getUserColorById(userId: string): string {
+  const source = userId || 'anonymous';
+  let hash = 0;
+
+  for (let i = 0; i < source.length; i += 1) {
+    hash = (hash << 5) - hash + source.charCodeAt(i);
+    hash |= 0;
+  }
+
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 78%, 58%)`;
+}

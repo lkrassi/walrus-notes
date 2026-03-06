@@ -33,9 +33,6 @@ export const useYjsTextareaBinding = ({
       const hasTextareaValue = textareaRef.current.value.length > 0;
 
       if (initialContent.length === 0 && hasFallback && hasTextareaValue) {
-        console.info('[YjsTextareaBinding] skip empty ytext sync', {
-          fallbackLength: fallbackContent.length,
-        });
         return;
       }
 
@@ -176,12 +173,7 @@ export const useYjsTextareaBinding = ({
             }
           }
         }
-      } catch (e) {
-        console.warn(
-          '[YjsTextareaBinding] Ошибка вычисления позиции курсора:',
-          e
-        );
-      }
+      } catch (_e) {}
 
       textarea.value = newContent;
       lastRemoteContentRef.current = newContent;
@@ -195,9 +187,7 @@ export const useYjsTextareaBinding = ({
         const clampedEnd = Math.max(0, Math.min(newSelectionEnd, maxLength));
 
         textarea.setSelectionRange(clampedStart, clampedEnd);
-      } catch (e) {
-        console.warn('[YjsTextareaBinding] Ошибка восстановления курсора:', e);
-      }
+      } catch (_e) {}
 
       if (onContentChangeRef.current) {
         onContentChangeRef.current(newContent);

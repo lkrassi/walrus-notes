@@ -123,7 +123,7 @@ export const AuthPageSkeleton = () => {
             <Skeleton className='mx-auto mb-6 h-10 w-64 max-w-full' />
             <Skeleton className='mb-4 h-14 w-full' />
             <Skeleton className='mb-4 h-14 w-full' />
-            <Skeleton className='mb-8 h-4 w-28' />
+            <div className='my-15'></div>
             <Skeleton className='h-12 w-full rounded-xl' />
             <Skeleton className='mx-auto mt-5 h-5 w-36' />
           </div>
