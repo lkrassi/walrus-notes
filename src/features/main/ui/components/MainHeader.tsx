@@ -1,8 +1,8 @@
-import { useGetUserProfileQuery } from 'app/store/api';
-import { setUserProfile } from 'app/store/slices/userSlice';
+import { useGetUserProfileQuery } from '@/entities';
+import { setUserProfile } from '@/entities/user';
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
-import { PrivateHeader } from 'widgets/ui';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
+import { PrivateHeader } from '@/widgets/ui';
 
 export const MainHeader = () => {
   const dispatch = useAppDispatch();

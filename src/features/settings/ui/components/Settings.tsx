@@ -1,9 +1,17 @@
-import { PhotoCamera } from '@mui/icons-material';
 import {
   useChangeProfilePictureMutation,
   useGetUserProfileQuery,
-} from 'app/store/api';
-import { setUserProfile } from 'app/store/slices/userSlice';
+} from '@/entities';
+import { setUserProfile } from '@/entities/user';
+import { ImageViewerModal } from '@/features/profile/ui/components/ImageViewerModal';
+import { settingsSections } from '@/features/settings/models/variants';
+import { cn } from '@/shared/lib/cn';
+import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
+import { useLocalization } from '@/widgets/hooks';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { PrivateHeader } from '@/widgets/ui';
+import { PhotoCamera } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import {
   useCallback,
@@ -12,15 +20,8 @@ import {
   type ComponentType,
   type FC,
   type ReactElement,
+  type MouseEvent as ReactMouseEvent,
 } from 'react';
-import { cn } from 'shared/lib/cn';
-import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
-import { useLocalization } from 'widgets/hooks';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { PrivateHeader } from 'widgets/ui';
-import { ImageViewerModal } from '../../../profile/ui/components/ImageViewerModal';
-import { settingsSections } from '../../models/variants';
 
 export const Settings: FC = () => {
   const { t } = useLocalization();
@@ -150,7 +151,9 @@ export const Settings: FC = () => {
                         (e.key === 'Enter' || e.key === ' ')
                       ) {
                         e.preventDefault();
-                        handleOpenImage(e as any);
+                        handleOpenImage(
+                          e as unknown as ReactMouseEvent<HTMLElement>
+                        );
                       }
                     }}
                   >

@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
 
 interface NoteDragOverlayProps {
   note: Note | null;

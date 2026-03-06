@@ -1,7 +1,6 @@
+import { MoveNodeCommand, type useGraphHistory } from '@/entities/graph/model';
 import { useCallback, useRef, type MouseEvent, type RefObject } from 'react';
 import type { Edge, Node, NodeChange } from 'reactflow';
-import { MoveNodeCommand } from '../commands';
-import type { useGraphHistory } from './useGraphHistory';
 
 type GraphHistory = ReturnType<typeof useGraphHistory>;
 
@@ -126,7 +125,7 @@ export const useGraphDragHandlers = ({
           }
         }
       } catch (_e) {
-        onNodeDragStop?.(_event as unknown as any, node);
+        onNodeDragStop?.(_event, node);
       } finally {
         isProcessingRef.current = false;
       }

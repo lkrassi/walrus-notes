@@ -5,7 +5,7 @@ import {
   type KeyboardEventHandler,
 } from 'react';
 import { Textarea } from 'shared';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 
 interface MarkdownEditorProps {
   value: string;

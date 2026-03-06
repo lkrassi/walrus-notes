@@ -1,33 +1,32 @@
-import type { DashboardTab } from 'app/store/slices/tabsSlice';
+import type { DashboardTab } from '@/entities';
 import {
   closeTab,
   openTab,
   reorderTabs,
   switchTab,
   updateTabNote,
-} from 'app/store/slices/tabsSlice';
-import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
-import { Tabs } from 'features/main/ui/components/Tabs';
-import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
-import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
+} from '@/entities';
+import { CreateLayoutForm } from '@/features/layout/ui/components/CreateLayoutForm';
+import { CreateNoteForm, NoteViewer } from '@/features/notes';
+import { Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import type { FileTreeItem } from '@/widgets/hooks';
+import { useIsMobile } from '@/widgets/hooks';
+import { useAppDispatch, useTabs } from '@/widgets/hooks/redux';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
+import type { TabType } from '@/widgets/model/utils/tabUtils';
+import { createTabId } from '@/widgets/model/utils/tabUtils';
+import { useModalContext } from '@/widgets/ui/components/modal/ModalProvider';
 import { FileText } from 'lucide-react';
 import { lazy, memo, Suspense, useCallback } from 'react';
-import { Skeleton } from 'shared';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import type { FileTreeItem } from 'widgets/hooks';
-import { useIsMobile } from 'widgets/hooks';
-import { useAppDispatch, useTabs } from 'widgets/hooks/redux';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import type { TabType } from 'widgets/model/utils/tabUtils';
-import { createTabId } from 'widgets/model/utils/tabUtils';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { CreateChoiceModal } from './CreateChoiceModal';
 import { EmptyMainFallback } from './EmptyMainFallback';
 import { FolderSelectModal } from './FolderSelectModal';
+import { Tabs } from './Tabs';
 const NotesGraph = lazy(() =>
-  import('features/graph/ui/components/NotesGraph').then(m => ({
+  import('@/features/graph/ui/components/NotesGraph').then(m => ({
     default: m.NotesGraph,
   }))
 );

@@ -1,12 +1,12 @@
-import { useGetMyLayoutsQuery } from 'app/store/api';
+import { useGetMyLayoutsQuery } from '@/entities';
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import type { MouseEvent } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Layout } from 'shared/model/types/layouts';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { AllNotesButton } from 'widgets/ui/components/sidebar';
+import { cn } from '@/shared/lib/cn';
+import type { Layout } from '@/shared/model/types/layouts';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
+import { AllNotesButton } from '@/widgets/ui/components/sidebar';
 import { FolderCard } from './FolderCard';
 
 interface EmptyMainFallbackProps {

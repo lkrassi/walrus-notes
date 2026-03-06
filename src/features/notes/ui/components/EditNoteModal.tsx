@@ -6,9 +6,9 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { Button, Input } from 'shared';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import { useLocalization } from 'widgets';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface Props {
   title?: string;

@@ -1,11 +1,11 @@
+import type { UseGraphHistoryReturn } from '@/entities/graph/model';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { memo, type DragEvent, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { useDndSensors } from 'shared/lib/useDndSensors';
-import type { Note } from 'shared/model/types/layouts';
-import { useIsMobile } from 'widgets/hooks';
-import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
+import { useDndSensors } from '@/shared/lib/useDndSensors';
+import type { Note } from '@/shared/model/types/layouts';
+import { useIsMobile } from '@/widgets/hooks';
 import { CoordinateOverlay } from './CoordinateOverlay';
 import { GraphContainer } from './GraphContainer';
 import { GraphDropZone } from './GraphDropZone';

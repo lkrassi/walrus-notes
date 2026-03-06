@@ -6,11 +6,11 @@ import {
   useLazyGetUserProfileQuery,
   useUpdatePermissionMutation,
   type PermissionItem,
-} from 'app/store';
+} from '@/entities';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization, useNotifications } from '@/widgets/hooks';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
 import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';
 import { SharedPermissionCard } from './components/SharedPermissionCard';
 import type { EditablePermissionState } from './types';

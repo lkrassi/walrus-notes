@@ -1,25 +1,25 @@
-import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
-import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
-import { ProfileButton } from 'features/profile';
-import { Plus, ShieldCheck } from 'lucide-react';
-import { forwardRef, useImperativeHandle, type Ref } from 'react';
-import { Link } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
+import logo from '@/assets/logo.avif';
+import { closeLayoutTabs, closeTabsByItemId } from '@/entities';
+import { CreateLayoutForm } from '@/features/layout/ui/components/CreateLayoutForm';
+import { ProfileButton } from '@/features/profile';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
 import {
   useFileTree,
   useIsMobile,
   useLocalization,
   useSidebar,
-} from 'widgets/hooks';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import type { FileTreeItem } from 'widgets/hooks/useFileTree';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useResizableSidebar } from 'widgets/hooks/useResizableSidebar';
-import { parseTabId } from 'widgets/model/utils/tabUtils';
-import logo from '../../../../assets/logo.avif';
-import { FileTree } from '../fileTree';
-import { MobileMenu } from '../header/MobileMenu';
+} from '@/widgets/hooks';
+import { useAppDispatch } from '@/widgets/hooks/redux';
+import type { FileTreeItem } from '@/widgets/hooks/useFileTree';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { useResizableSidebar } from '@/widgets/hooks/useResizableSidebar';
+import { parseTabId } from '@/widgets/model/utils/tabUtils';
+import { FileTree } from '@/widgets/ui/components/fileTree';
+import { MobileMenu } from '@/widgets/ui/components/header/MobileMenu';
+import { Plus, ShieldCheck } from 'lucide-react';
+import { forwardRef, useImperativeHandle, type Ref } from 'react';
+import { Link } from 'react-router-dom';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;

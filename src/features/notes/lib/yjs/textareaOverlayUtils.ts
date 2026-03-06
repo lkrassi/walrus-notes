@@ -52,8 +52,10 @@ const createMirror = (textarea: HTMLTextAreaElement) => {
   mirror.style.whiteSpace = 'pre-wrap';
   mirror.style.wordWrap = 'break-word';
 
+  const mirrorStyle = mirror.style as unknown as Record<string, string>;
+  const computedStyle = computed as unknown as Record<string, string>;
   for (const prop of COPY_STYLE_PROPS) {
-    mirror.style[prop as any] = computed[prop];
+    mirrorStyle[prop] = computedStyle[prop];
   }
 
   mirror.style.width = `${textarea.clientWidth}px`;

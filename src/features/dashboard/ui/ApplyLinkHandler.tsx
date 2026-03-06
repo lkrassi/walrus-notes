@@ -1,8 +1,8 @@
-import { useApplyLinkMutation } from 'app/store';
+import { useApplyLinkMutation } from '@/entities';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useLocalization } from 'widgets/hooks';
-import { useNotifications } from 'widgets/hooks/useNotifications';
+import { useLocalization } from '@/widgets/hooks';
+import { useNotifications } from '@/widgets/hooks/useNotifications';
 
 export const ApplyLinkHandler = () => {
   const [searchParams] = useSearchParams();

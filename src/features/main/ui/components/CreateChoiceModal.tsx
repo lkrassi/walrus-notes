@@ -1,8 +1,8 @@
 import { FileText } from 'lucide-react';
-import { cn } from 'shared/lib/cn';
-import { FolderIcon } from 'shared/ui/icons/FolderIcon';
-import { useLocalization } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { cn } from '@/shared/lib/cn';
+import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
+import { useLocalization } from '@/widgets/hooks';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface CreateChoiceModalProps {
   onCreateFolder: () => void;

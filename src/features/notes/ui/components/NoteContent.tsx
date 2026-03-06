@@ -1,10 +1,10 @@
 import { type FC, type RefObject, useEffect, useRef, useState } from 'react';
-import { useIsDesktop } from 'widgets/hooks';
-import { useAppSelector } from 'widgets/hooks/redux';
-import { useResizableSplit } from 'widgets/hooks/useResizableSplit';
+import { useIsDesktop } from '@/widgets/hooks';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import { useResizableSplit } from '@/widgets/hooks/useResizableSplit';
 
-import type { Note } from 'shared/model/types/layouts';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import type { AwarenessUser } from '@/shared/lib/collaboration';
+import type { Note } from '@/shared/model/types/layouts';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 
 import { NoteContentEditorSplit } from './editor-split';

@@ -1,10 +1,10 @@
 import { LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'shared';
-import { logout } from 'shared/api/logout';
-import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import { useAppDispatch } from 'widgets/hooks/redux';
+import { logout } from '@/shared/api/logout';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks';
+import { useAppDispatch } from '@/widgets/hooks/redux';
 
 export const LogoutButton = () => {
   const { t } = useLocalization();

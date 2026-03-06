@@ -1,4 +1,4 @@
-import { useUpdateLayoutMutation } from 'app/store/api';
+import { useUpdateLayoutMutation } from '@/entities';
 import { useEffect, useRef, useState, type FC, type FormEvent } from 'react';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';

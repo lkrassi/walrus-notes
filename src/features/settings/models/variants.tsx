@@ -1,3 +1,9 @@
+import { ExportDataButton } from '@/features/settings/ui/components/ExportDataButton';
+import { ImportDataButton } from '@/features/settings/ui/components/ImportDataButton';
+import { OpenPermissionsDashboardButton } from '@/features/settings/ui/components/OpenPermissionsDashboardButton';
+import { LanguageSwitcher } from '@/widgets/ui/components/LanguageSwitcher';
+import { LogoutButton } from '@/widgets/ui/components/logout/LogoutButton';
+import { ThemeSwitcher } from '@/widgets/ui/components/theme/ThemeSwitcher';
 import {
   Download,
   Languages,
@@ -6,12 +12,6 @@ import {
   ShieldCheck,
   Upload,
 } from 'lucide-react';
-import { LanguageSwitcher } from 'widgets/ui/components/LanguageSwitcher';
-import { LogoutButton } from 'widgets/ui/components/logout/LogoutButton';
-import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
-import { ExportDataButton } from '../ui/components/ExportDataButton';
-import { ImportDataButton } from '../ui/components/ImportDataButton';
-import { OpenPermissionsDashboardButton } from '../ui/components/OpenPermissionsDashboardButton';
 
 export const settingsSections = [
   // {

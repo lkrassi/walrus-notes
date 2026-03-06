@@ -1,5 +1,5 @@
 import { memo, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 
 interface SelectionHighlightProps {
   left: number;

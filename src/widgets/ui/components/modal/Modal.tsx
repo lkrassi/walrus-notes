@@ -7,8 +7,8 @@ import Zoom from '@mui/material/Zoom';
 import type { TransitionProps } from '@mui/material/transitions';
 import { X } from 'lucide-react';
 import { forwardRef, useMemo, type FC, type ReactElement } from 'react';
-import { useLocalization } from 'widgets/hooks';
-import type { ModalState } from 'widgets/hooks/useModal';
+import { useLocalization } from '@/widgets/hooks';
+import type { ModalState } from '@/widgets/hooks/useModal';
 import { ModalContentContext } from './ModalContentContext';
 
 interface ModalProps {

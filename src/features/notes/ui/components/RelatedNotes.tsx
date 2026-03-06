@@ -1,10 +1,10 @@
-import { openTab, switchTab } from 'app/store/slices/tabsSlice';
+import { openTab, switchTab } from '@/entities';
 import { memo, useCallback, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import type { FileTreeItem } from 'widgets/hooks/useFileTree';
-import { createTabId } from 'widgets/model/utils/tabUtils';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { useAppDispatch } from '@/widgets/hooks/redux';
+import type { FileTreeItem } from '@/widgets/hooks/useFileTree';
+import { createTabId } from '@/widgets/model/utils/tabUtils';
 import { LinkedNotesList } from './LinkedNotesList';
 
 interface RelatedNotesProps {

@@ -1,12 +1,12 @@
-import type { Notification } from 'app/store/slices/notificationsSlice';
+import type { Notification } from '@/entities';
 import {
   addNotification,
   clearAllNotifications,
   removeNotification,
-} from 'app/store/slices/notificationsSlice';
+} from '@/entities';
 import { useCallback, useRef } from 'react';
-import { normalizeMessage } from 'shared/model/utils/normalizeMessage';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { normalizeMessage } from '@/shared/model/utils/normalizeMessage';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
 
 export const useNotifications = () => {
   const dispatch = useAppDispatch();

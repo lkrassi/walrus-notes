@@ -8,8 +8,8 @@ import {
   type FC,
   type ReactNode,
 } from 'react';
-import { cn } from 'shared/lib/cn';
-import { ThemeContext } from 'widgets/ui/ThemeProvider';
+import { cn } from '@/shared/lib/cn';
+import { ThemeContext } from '@/widgets/ui/ThemeProvider';
 
 interface CodeHighlighterProps {
   children: ReactNode;

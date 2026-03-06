@@ -1,9 +1,8 @@
-import { useUpdateNoteMutation } from 'app/store/api';
-import { removeDraft } from 'app/store/slices/draftsSlice';
-import { useDraftSync } from 'features/notes/model/useDraftSync';
+import { removeDraft, useUpdateNoteMutation } from '@/entities';
+import { useDraftSync } from '@/features/notes';
+import type { Note } from '@/shared/model/types/layouts';
+import { useNotifications } from '@/widgets';
 import { useEffect, useRef, useState } from 'react';
-import type { Note } from 'shared/model/types/layouts';
-import { useNotifications } from 'widgets';
 import { useAppDispatch, useAppSelector } from './redux';
 
 export const useNoteEditor = (

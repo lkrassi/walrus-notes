@@ -1,6 +1,6 @@
+import type { UseGraphHistoryReturn } from '@/entities/graph/model';
 import { type FC } from 'react';
 import { Controls, Panel, useReactFlow } from 'reactflow';
-import type { UseGraphHistoryReturn } from '../../model/hooks/useGraphHistory';
 import { GraphUndoRedoControls } from './GraphUndoRedoControls';
 
 interface GraphControlsProps {

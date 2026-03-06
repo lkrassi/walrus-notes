@@ -1,7 +1,7 @@
 import Snackbar from '@mui/material/Snackbar';
 import { useEffect, type FC } from 'react';
-import { useNotifications } from 'widgets/hooks';
-import { Notification } from 'widgets/ui/components/notifications/Notification';
+import { useNotifications } from '@/widgets/hooks';
+import { Notification } from '@/widgets/ui/components/notifications/Notification';
 
 export const NotificationsContainer: FC = () => {
   const { notifications, hideNotification } = useNotifications();

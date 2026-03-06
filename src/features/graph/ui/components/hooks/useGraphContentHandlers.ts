@@ -1,14 +1,14 @@
+import type { UseGraphHistoryReturn } from '@/entities/graph/model';
+import { useGraphConnectionHandlers } from '@/features/graph/model/hooks/useGraphConnectionHandlers';
+import { useGraphConnections } from '@/features/graph/model/hooks/useGraphConnections';
+import { useGraphDragHandlers } from '@/features/graph/model/hooks/useGraphDragHandlers';
+import { useGraphHandlers } from '@/features/graph/model/hooks/useGraphHandlers';
+import { useGraphSelectionHandlers } from '@/features/graph/model/hooks/useGraphSelectionHandlers';
+import { useGraphSyncHandlers } from '@/features/graph/model/hooks/useGraphSyncHandlers';
+import { useEdgeDeleteEvents } from '@/features/graph/ui/components/useEdgeDeleteEvents';
+import type { Note } from '@/shared/model/types/layouts';
 import { useCallback, useEffect, type MouseEvent, type RefObject } from 'react';
 import type { Edge, EdgeChange, Node, NodeChange } from 'reactflow';
-import type { Note } from 'shared/model/types/layouts';
-import { useGraphConnectionHandlers } from '../../../model/hooks/useGraphConnectionHandlers';
-import { useGraphConnections } from '../../../model/hooks/useGraphConnections';
-import { useGraphDragHandlers } from '../../../model/hooks/useGraphDragHandlers';
-import { useGraphHandlers } from '../../../model/hooks/useGraphHandlers';
-import type { UseGraphHistoryReturn } from '../../../model/hooks/useGraphHistory';
-import { useGraphSelectionHandlers } from '../../../model/hooks/useGraphSelectionHandlers';
-import { useGraphSyncHandlers } from '../../../model/hooks/useGraphSyncHandlers';
-import { useEdgeDeleteEvents } from '../useEdgeDeleteEvents';
 
 interface UseGraphContentHandlersProps {
   layoutId: string;

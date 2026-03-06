@@ -1,6 +1,6 @@
 import { memo, type DragEvent, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
 
 interface LinkedNoteItemProps {
   note: Note;

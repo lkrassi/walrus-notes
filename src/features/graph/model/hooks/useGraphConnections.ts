@@ -1,4 +1,4 @@
-import { useCreateNoteLinkMutation } from 'app/store/api';
+import { useCreateNoteLinkMutation } from '@/entities';
 import { useCallback, useMemo, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
 

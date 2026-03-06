@@ -1,10 +1,10 @@
-import { useUploadFileMutation } from 'app/store/api';
+import { useUploadFileMutation } from '@/shared/api';
+import type { AwarenessUser } from '@/shared/lib/collaboration';
 import { memo, useCallback, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { ImageUploadModal } from 'shared/ui/components/ImageUploader';
+import { cn } from '@/shared/lib/cn';
+import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
 import { useLocalization } from 'widgets';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 import { EditNoteModal } from './EditNoteModal';
 import { MarkdownHelp } from './MarkdownHelp';

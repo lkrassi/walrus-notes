@@ -1,5 +1,4 @@
-import { useDeleteLayoutMutation } from 'app/store/api';
-import { closeLayoutTabs } from 'app/store/slices/tabsSlice';
+import { closeLayoutTabs, useDeleteLayoutMutation } from '@/entities';
 import { Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { Button } from 'shared';

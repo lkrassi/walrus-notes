@@ -6,8 +6,8 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, useEffect, useRef, useState } from 'react';
 import { Button } from 'shared';
-import { useLocalization } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui';
+import { useLocalization } from '@/widgets/hooks';
+import { useModalContentContext } from '@/widgets/ui';
 import * as Yup from 'yup';
 
 interface ForgotPasswordEmailModalProps {

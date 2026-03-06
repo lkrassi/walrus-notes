@@ -1,22 +1,31 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { apiSlice } from 'app/store/api/apiSlice';
-import { draftsReducer } from 'app/store/slices/draftsSlice';
-import { notificationsReducer } from 'app/store/slices/notificationsSlice';
-import { permissionsReducer } from 'app/store/slices/permissionsSlice';
-import { saveTabsToStorage, tabsReducer } from 'app/store/slices/tabsSlice';
-import { userReducer } from 'app/store/slices/userSlice';
+import {
+  draftsReducer,
+  notificationsReducer,
+  permissionsReducer,
+  saveTabsToStorage,
+  tabsReducer,
+  userReducer,
+} from '@/entities';
+import { apiSlice } from '@/shared/api';
+import {
+  configureStore,
+  type Middleware,
+  type UnknownAction,
+} from '@reduxjs/toolkit';
 
-const tabsPersistenceMiddleware =
-  (storeAPI: any) => (next: any) => (action: any) => {
-    const result = next(action);
+const tabsPersistenceMiddleware: Middleware = storeAPI => next => action => {
+  const result = next(action);
+  const typedAction = action as UnknownAction;
 
-    if (action.type?.startsWith('tabs/')) {
-      const state = storeAPI.getState();
-      saveTabsToStorage(state.tabs);
-    }
+  if (typedAction.type?.startsWith('tabs/')) {
+    const state = storeAPI.getState() as {
+      tabs: Parameters<typeof saveTabsToStorage>[0];
+    };
+    saveTabsToStorage(state.tabs);
+  }
 
-    return result;
-  };
+  return result;
+};
 
 export const store = configureStore({
   reducer: {
@@ -39,6 +48,3 @@ export type AppDispatch = typeof store.dispatch;
 
 export type NotificationsState = RootState['notifications'];
 export type UserProfileState = RootState['user'];
-
-export * from 'app/store/api';
-export * from 'app/store/slices';

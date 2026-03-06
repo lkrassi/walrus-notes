@@ -1,6 +1,6 @@
 import { type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { PrivateHeader } from 'widgets/ui';
+import { cn } from '@/shared/lib/cn';
+import { PrivateHeader } from '@/widgets/ui';
 import { PermissionsDashboardContent } from './permissions';
 
 export const DashBoard: FC = () => {

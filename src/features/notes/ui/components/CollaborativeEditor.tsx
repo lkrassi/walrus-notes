@@ -1,7 +1,7 @@
+import type { AwarenessUser } from '@/shared/lib/collaboration';
 import { type FC, useRef } from 'react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import type * as Y from 'yjs';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
 import { YjsTextarea, type YjsTextareaHandle } from './YjsTextarea';
 
 interface CollaborativeEditorProps {

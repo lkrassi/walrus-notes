@@ -1,8 +1,8 @@
+import { useLinkedNotes } from '@/features/notes/lib/useLinkedNotes';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
 import { useCallback, useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useLinkedNotes } from '../../lib/useLinkedNotes';
 import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {

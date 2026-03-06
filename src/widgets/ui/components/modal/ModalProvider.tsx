@@ -10,7 +10,7 @@ import {
   useModal,
   type ModalOptions,
   type ModalState,
-} from 'widgets/hooks/useModal';
+} from '@/widgets/hooks/useModal';
 const Modal = lazy(() => import('./Modal').then(m => ({ default: m.Modal })));
 
 interface ModalContextType {

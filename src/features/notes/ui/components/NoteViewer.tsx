@@ -1,10 +1,10 @@
+import type { AwarenessUser } from '@/shared/lib/collaboration';
 import { memo, useEffect, useRef, useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import { useAppSelector } from 'widgets/hooks/redux';
-import { useExportNote } from 'widgets/hooks/useExportNote';
-import { useNoteEditor } from 'widgets/hooks/useNoteEditor';
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import { useExportNote } from '@/widgets/hooks/useExportNote';
+import { useNoteEditor } from '@/widgets/hooks/useNoteEditor';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';

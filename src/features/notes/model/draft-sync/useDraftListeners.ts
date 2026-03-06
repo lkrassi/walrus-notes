@@ -1,18 +1,21 @@
-import { store } from 'app/store';
-import { layoutApi } from 'app/store/api/layoutApi';
-import { notesApi } from 'app/store/api/notesApi';
-import { removeDraft, setDraft } from 'app/store/slices/draftsSlice';
-import { updateTabNote } from 'app/store/slices/tabsSlice';
+import {
+  layoutApi,
+  notesApi,
+  removeDraft,
+  setDraft,
+  updateTabNote,
+} from '@/entities';
+import { store, type AppDispatch } from 'app/store';
 import { useEffect } from 'react';
-import type { CommitDraftPayload, UpdateDraftPayload } from 'shared/model/ws';
-import type { DraftRefs } from './types';
+import type { CommitDraftPayload, UpdateDraftPayload } from '@/shared/model/ws';
+import type { DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftListenersOpts {
-  ws: any;
+  ws: DraftWebSocketClient | null | undefined;
   noteId: string | null | undefined;
   refs: DraftRefs;
   lastCommitAt: number | null;
-  dispatch: any;
+  dispatch: AppDispatch;
   setIsSaving: (value: boolean) => void;
   setLastSavedAt: (value: string | null) => void;
   setLastCommitAt: (value: number | null) => void;

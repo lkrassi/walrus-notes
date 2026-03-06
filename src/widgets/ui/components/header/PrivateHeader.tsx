@@ -1,8 +1,8 @@
-﻿import { memo } from 'react';
+﻿import logo from '@/assets/logo.avif';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks';
+import { memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import logo from '../../../../assets/logo.avif';
 import { MobileMenu } from './MobileMenu';
 
 const PrivateHeaderComponent = () => {

@@ -2,15 +2,15 @@ import {
   resetGeneratedLink,
   selectLastGeneratedLink,
   useGenerateLinkMutation,
-} from 'app/store';
+} from '@/entities';
 import { Form, Formik } from 'formik';
 import { Check, Copy } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'shared';
-import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization, useNotifications } from '@/widgets/hooks';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 import * as Yup from 'yup';
 
 interface ShareModalProps {

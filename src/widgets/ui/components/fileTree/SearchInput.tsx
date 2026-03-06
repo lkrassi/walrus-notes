@@ -1,8 +1,8 @@
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks';
+import { useDebounced } from '@/widgets/hooks/useDebounced';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import { useDebounced } from 'widgets/hooks/useDebounced';
-import { useLocalization } from '../../../hooks';
 
 type SearchInputProps = {
   onSearchChange: (value: string) => void;

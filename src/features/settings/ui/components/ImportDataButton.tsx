@@ -1,4 +1,4 @@
-import { useImportLayoutMutation } from 'app/store/api';
+import { useImportLayoutMutation } from '@/entities';
 import {
   useRef,
   useState,
@@ -6,11 +6,11 @@ import {
   type DragEvent,
   type FC,
 } from 'react';
-import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui';
-import { useLocalization } from 'widgets/hooks';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useNotifications } from 'widgets/hooks/useNotifications';
+import { cn } from '@/shared/lib/cn';
+import { Button } from '@/shared/ui';
+import { useLocalization } from '@/widgets/hooks';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { useNotifications } from '@/widgets/hooks/useNotifications';
 
 export const ImportDataButton: FC = () => {
   const { t } = useLocalization();

@@ -1,7 +1,7 @@
 import { Folder } from 'lucide-react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 
-import { useLocalization } from 'widgets/hooks';
+import { useLocalization } from '@/widgets/hooks';
 
 export const FileTreeEmpty = () => {
   const { t } = useLocalization();

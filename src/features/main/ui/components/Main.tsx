@@ -1,15 +1,15 @@
-import { openTab, switchTab } from 'app/store/slices/tabsSlice';
-import { useDashboardNavigation } from 'features/main/hooks';
+import { openTab, switchTab } from '@/entities';
+import { useDashboardNavigation } from '@/features/main/hooks';
 import { useEffect, useRef } from 'react';
-import type { Note } from 'shared/model';
-import type { FileTreeItem } from 'widgets/hooks';
-import { useAppDispatch, useAppSelector, useTabs } from 'widgets/hooks/redux';
-import { WebSocketProvider } from 'widgets/providers/WebSocketProvider';
-import { Sidebar } from 'widgets/ui';
-import { MainHeader } from './MainHeader';
+import type { Note } from '@/shared/model';
+import type { FileTreeItem } from '@/widgets/hooks';
+import { useAppDispatch, useAppSelector, useTabs } from '@/widgets/hooks/redux';
+import { WebSocketProvider } from '@/widgets/providers/WebSocketProvider';
+import { Sidebar } from '@/widgets/ui';
 import { MainContent } from './MainContent';
+import { MainHeader } from './MainHeader';
 
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 
 export const Main = () => {
   const dispatch = useAppDispatch();

@@ -1,7 +1,7 @@
 import { createContext, useContext, type FC, type ReactNode } from 'react';
-import { buildWsUrl } from 'shared/config/ws';
-import { useAppSelector } from 'widgets/hooks/redux';
-import { useWebSocket } from 'widgets/hooks/useWebSocket';
+import { buildWsUrl } from '@/shared/config/ws';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import { useWebSocket } from '@/widgets/hooks/useWebSocket';
 
 type WSContextValue = ReturnType<typeof useWebSocket> | null;
 

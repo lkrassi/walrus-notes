@@ -1,3 +1,6 @@
+import type { TabsProps } from '@/features/main/model/types/tabsProps';
+import { cn } from '@/shared/lib/cn';
+import { useDndSensors } from '@/shared/lib/useDndSensors';
 import {
   DndContext,
   DragOverlay,
@@ -16,9 +19,6 @@ import {
 } from '@dnd-kit/sortable';
 import { FileText, Folder, Network } from 'lucide-react';
 import { memo, useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import { useDndSensors } from 'shared/lib/useDndSensors';
-import type { TabsProps } from '../../model/types/tabsProps';
 import { SortableTab } from './SortableTab';
 
 export const Tabs = memo(function Tabs({

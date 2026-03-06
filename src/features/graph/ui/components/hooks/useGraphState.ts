@@ -1,8 +1,8 @@
+import { useGraphHistory } from '@/entities/graph/model';
+import { useGraphInitialization } from '@/features/graph/model/hooks/useGraphInitialization';
 import { useState } from 'react';
 import type { Edge, Node } from 'reactflow';
 import { useEdgesState, useNodesState, useReactFlow } from 'reactflow';
-import { useGraphHistory } from '../../../model/hooks/useGraphHistory';
-import { useGraphInitialization } from '../../../model/hooks/useGraphInitialization';
 
 interface UseGraphStateProps {
   layoutId: string;

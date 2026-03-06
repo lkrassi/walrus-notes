@@ -1,4 +1,8 @@
 import {
+  type AwarenessUser,
+  useYjsCollaboration,
+} from '@/shared/lib/collaboration';
+import {
   forwardRef,
   memo,
   useCallback,
@@ -6,14 +10,11 @@ import {
   useImperativeHandle,
   useState,
 } from 'react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import { useLocalization } from 'widgets';
-import { useNotifications } from 'widgets/hooks';
+import { useNotifications } from '@/widgets/hooks';
 import type * as Y from 'yjs';
-import { useYjsCollaboration } from '../../model/useYjsCollaboration';
 import { CollaborativeEditor } from './CollaborativeEditor';
-
-import type { AwarenessUser } from '../../model/useYjsCollaboration';
 
 export interface CollaborativeNoteEditorHandle {
   insertText: (text: string) => void;

@@ -1,7 +1,7 @@
+import { MarkdownEditor } from '@/features/notes/ui/components/MarkdownEditor';
+import { cn } from '@/shared/lib/cn';
 import { motion } from 'framer-motion';
 import { memo, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { MarkdownEditor } from '../MarkdownEditor';
 import type { EditorPanelProps } from './types';
 
 export const EditorPanel: FC<EditorPanelProps> = memo(function EditorPanel({

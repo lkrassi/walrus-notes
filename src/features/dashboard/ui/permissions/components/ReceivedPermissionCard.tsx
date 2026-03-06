@@ -1,14 +1,14 @@
-import type { PermissionItem } from 'app/store';
-import { Shield } from 'lucide-react';
-import { type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { EditablePermissionState } from '../types';
+import type { PermissionItem } from '@/entities';
+import type { EditablePermissionState } from '@/features/dashboard/ui/permissions/types';
 import {
   createFriendlyTargetName,
   createFriendlyUserName,
   initialFromPermission,
   kindLabelKey,
-} from '../utils';
+} from '@/features/dashboard/ui/permissions/utils';
+import { cn } from '@/shared/lib/cn';
+import { Shield } from 'lucide-react';
+import { type FC } from 'react';
 import { PermissionAvatar } from './PermissionAvatar';
 import { RightsBadges } from './RightsBadges';
 

@@ -1,14 +1,15 @@
-import { removeDraft, setDraft } from 'app/store/slices/draftsSlice';
+import { removeDraft, setDraft } from '@/entities';
+import type { AppDispatch } from 'app/store';
 import { useCallback } from 'react';
-import { makeUpdateDraft } from 'shared/model/ws';
-import type { DraftRefs } from './types';
+import { makeUpdateDraft } from '@/shared/model/ws';
+import type { DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftSenderOpts {
   noteId: string | null | undefined;
-  ws: any;
+  ws: DraftWebSocketClient | null | undefined;
   refs: DraftRefs;
   lastCommitAt: number | null;
-  dispatch: any;
+  dispatch: AppDispatch;
   setIsSaving: (value: boolean) => void;
 }
 

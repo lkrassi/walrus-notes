@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { WSEvent, WSEventName } from 'shared/model/ws';
+import type { WSEvent, WSEventName } from '@/shared/model/ws';
 
 type Listener = (payload: unknown, raw?: WSEvent) => void;
 

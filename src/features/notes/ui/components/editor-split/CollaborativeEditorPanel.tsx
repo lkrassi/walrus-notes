@@ -1,6 +1,6 @@
+import { CollaborativeNoteEditor } from '@/features/notes/ui/components/CollaborativeNoteEditor';
+import { cn } from '@/shared/lib/cn';
 import { memo, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { CollaborativeNoteEditor } from '../CollaborativeNoteEditor';
 import type { CollaborativeEditorPanelProps } from './types';
 
 export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(

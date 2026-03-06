@@ -1,4 +1,4 @@
-import { useChangeProfilePictureMutation } from 'app/store/api';
+import { useChangeProfilePictureMutation } from '@/entities';
 import { useRef, useState, type ChangeEvent, type FC } from 'react';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';

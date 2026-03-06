@@ -1,5 +1,5 @@
 import { memo, type FC, type MouseEvent } from 'react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 
 interface NoteTitleProps {
   title: string;

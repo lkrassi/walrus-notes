@@ -1,6 +1,6 @@
+import { cn } from '@/shared/lib/cn';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, type FC, type ReactNode } from 'react';
-import { cn } from '../../../../shared/lib/cn';
 
 export type DropdownContentState = 'loading' | 'content' | 'empty' | 'error';
 

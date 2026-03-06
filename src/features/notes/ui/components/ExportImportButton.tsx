@@ -1,10 +1,10 @@
 import { Download, Upload } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
 import { Button } from 'shared';
-import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import { useModalActions } from 'widgets/hooks/useModalActions';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks';
+import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 import { MdImportModal } from './MdImportModal';
 
 interface Props {

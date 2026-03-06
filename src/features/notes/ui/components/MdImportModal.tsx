@@ -7,9 +7,9 @@ import {
   type FC,
 } from 'react';
 import { Button } from 'shared';
-import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization, useNotifications } from '@/widgets/hooks';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 type Props = {
   onImported: (content: string) => void;

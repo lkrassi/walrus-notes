@@ -1,4 +1,4 @@
-import type { WSEvent } from 'shared/model/ws';
+import type { WSEvent, WSEventName } from '@/shared/model/ws';
 
 export interface UseDraftSyncOpts {
   noteId: string | null | undefined;
@@ -23,6 +23,15 @@ export interface UseDraftSyncReturn {
     listener: (payload: unknown, raw?: unknown) => void
   ) => () => void;
   sendUpdateDraft: (value: string) => boolean;
+}
+
+export interface DraftWebSocketClient {
+  send: (eventObj: WSEvent) => boolean;
+  subscribe: (
+    eventName: WSEventName,
+    listener: (payload: unknown, raw?: WSEvent) => void
+  ) => () => void;
+  onOpen?: (cb: () => void) => () => void;
 }
 
 export interface DraftRefs {

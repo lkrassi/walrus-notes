@@ -1,10 +1,10 @@
-import { useExportLayoutMutation } from 'app/store/api';
+import { useExportLayoutMutation } from '@/entities';
 import { useCallback, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui';
-import { useLocalization } from 'widgets/hooks';
-import { useAppSelector } from 'widgets/hooks/redux';
-import { useNotifications } from 'widgets/hooks/useNotifications';
+import { cn } from '@/shared/lib/cn';
+import { Button } from '@/shared/ui';
+import { useLocalization } from '@/widgets/hooks';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import { useNotifications } from '@/widgets/hooks/useNotifications';
 
 export const ExportDataButton: FC = () => {
   const { t } = useLocalization();

@@ -1,0 +1,107 @@
+import type {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+} from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: `https://${import.meta.env.VITE_BASE_URL}/wn/api/v1`,
+  prepareHeaders: (headers, { getState }) => {
+    const state = getState() as { user: { accessToken: string | null } };
+    const token = state.user.accessToken;
+
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`);
+    }
+    headers.set('X-Request-Id', crypto.randomUUID());
+    return headers;
+  },
+});
+
+const clearUserProfileAction = () => ({
+  type: 'user/clearUserProfile',
+});
+
+const setTokensAction = (payload: {
+  accessToken: string;
+  refreshToken: string;
+}) => ({
+  type: 'user/setTokens',
+  payload,
+});
+
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
+
+  if (result.error?.status === 401) {
+    const state = api.getState() as {
+      user: { accessToken: string | null; refreshToken: string | null };
+    };
+    const accessToken = state.user.accessToken;
+    const refreshToken = state.user.refreshToken;
+
+    if (accessToken && refreshToken) {
+      try {
+        const refreshResult = await baseQuery(
+          {
+            url: '/auth/refresh',
+            method: 'POST',
+            body: { accessToken, refreshToken },
+          },
+          api,
+          extraOptions
+        );
+
+        if (
+          refreshResult.data &&
+          typeof refreshResult.data === 'object' &&
+          'data' in (refreshResult.data as Record<string, unknown>)
+        ) {
+          const inner = (refreshResult.data as Record<string, unknown>)['data'];
+          if (inner && typeof inner === 'object') {
+            const innerObj = inner as Record<string, unknown>;
+            const accessTok = innerObj['accessToken'];
+            const refreshTok = innerObj['refreshToken'];
+
+            if (
+              typeof accessTok === 'string' &&
+              typeof refreshTok === 'string'
+            ) {
+              api.dispatch(
+                setTokensAction({
+                  accessToken: accessTok,
+                  refreshToken: refreshTok,
+                })
+              );
+              result = await baseQuery(args, api, extraOptions);
+            } else {
+              api.dispatch(clearUserProfileAction());
+            }
+          } else {
+            api.dispatch(clearUserProfileAction());
+          }
+        } else {
+          api.dispatch(clearUserProfileAction());
+        }
+      } catch {
+        api.dispatch(clearUserProfileAction());
+      }
+    } else {
+      api.dispatch(clearUserProfileAction());
+    }
+  }
+
+  return result;
+};
+
+export const apiSlice = createApi({
+  reducerPath: 'api',
+  baseQuery: baseQueryWithReauth,
+  tagTypes: ['Layouts', 'Notes', 'Profile', 'Permissions'],
+  endpoints: () => ({}),
+});

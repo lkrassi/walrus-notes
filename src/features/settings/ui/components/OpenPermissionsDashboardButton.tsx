@@ -1,8 +1,8 @@
 import { type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui';
-import { useLocalization } from 'widgets/hooks';
+import { cn } from '@/shared/lib/cn';
+import { Button } from '@/shared/ui';
+import { useLocalization } from '@/widgets/hooks';
 
 export const OpenPermissionsDashboardButton: FC = () => {
   const navigate = useNavigate();

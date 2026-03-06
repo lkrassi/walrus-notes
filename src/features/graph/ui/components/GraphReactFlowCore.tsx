@@ -1,8 +1,8 @@
-import type { UseGraphHistoryReturn } from 'features/graph/model/hooks/useGraphHistory';
+import type { UseGraphHistoryReturn } from '@/entities/graph/model';
 import { memo, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow from 'reactflow';
-import { useIsMobile } from 'widgets/hooks';
+import { useIsMobile } from '@/widgets/hooks';
 import { GraphBackground } from './GraphBackground';
 import { GraphControls } from './GraphControls';
 import { GraphMiniMap } from './GraphMiniMap';

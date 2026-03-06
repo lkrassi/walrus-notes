@@ -1,12 +1,12 @@
-import { useGetMyLayoutsQuery } from 'app/store/api';
+import { useGetMyLayoutsQuery } from '@/entities';
 import { useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Layout } from 'shared/model/types/layouts';
-import { Button } from 'shared/ui';
-import { Skeleton } from 'shared/ui/components/Skeleton';
-import { FolderIcon } from 'shared/ui/icons/FolderIcon';
-import { useLocalization } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { cn } from '@/shared/lib/cn';
+import type { Layout } from '@/shared/model/types/layouts';
+import { Button } from '@/shared/ui';
+import { Skeleton } from '@/shared/ui/components/Skeleton';
+import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
+import { useLocalization } from '@/widgets/hooks';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface FolderSelectModalProps {
   onFolderSelected: (layoutId: string) => void;

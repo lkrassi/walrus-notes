@@ -1,6 +1,6 @@
-import { useGetMyLayoutsQuery } from 'app/store/api';
+import { useGetMyLayoutsQuery } from '@/entities';
 import { useCallback, useEffect, useReducer } from 'react';
-import type { Layout, Note } from 'shared/model/types/layouts';
+import type { Layout, Note } from '@/shared/model/types/layouts';
 import { fileTreeReducer, initialFileTreeState } from './fileTreeReducer';
 
 export type FileTreeItem = {

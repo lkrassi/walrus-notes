@@ -1,8 +1,8 @@
+import { CodeBlock } from '@/features/notes/ui/components/markdown/CodeBlock';
+import { PreBlock } from '@/features/notes/ui/components/markdown/PreBlock';
+import { SafeImage } from '@/features/notes/ui/components/markdown/SafeImage';
+import { SafeLink } from '@/features/notes/ui/components/markdown/SafeLink';
 import type { Components } from 'react-markdown';
-import { CodeBlock } from '../ui/components/markdown/CodeBlock';
-import { PreBlock } from '../ui/components/markdown/PreBlock';
-import { SafeImage } from '../ui/components/markdown/SafeImage';
-import { SafeLink } from '../ui/components/markdown/SafeLink';
 
 export const markdownComponents: Partial<Components> = {
   code: CodeBlock,

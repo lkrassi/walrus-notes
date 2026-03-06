@@ -1,5 +1,5 @@
+import { CodeHighlighter } from '@/features/notes/ui/components/CodeHighlighter';
 import { memo, type FC, type HTMLAttributes, type ReactNode } from 'react';
-import { CodeHighlighter } from '../CodeHighlighter';
 
 export const PreBlock: FC<HTMLAttributes<HTMLPreElement>> = memo(
   function PreBlock(props) {

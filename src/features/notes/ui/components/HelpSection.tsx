@@ -1,7 +1,7 @@
+import type { HelpSectionData } from '@/features/notes/lib/markdownHelpData';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks';
 import { memo, type FC } from 'react';
-import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import type { HelpSectionData } from '../../lib/markdownHelpData';
 
 interface HelpSectionProps {
   section: HelpSectionData;

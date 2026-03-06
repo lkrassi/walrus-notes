@@ -1,4 +1,4 @@
-import { useCreateNoteMutation } from 'app/store/api';
+import { useCreateNoteMutation } from '@/entities';
 import {
   memo,
   useCallback,
@@ -8,10 +8,10 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { Button, Input, Textarea } from 'shared';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
 import { useLocalization, useNotifications } from 'widgets';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
+import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface CreateNoteFormProps {
   layoutId: string;

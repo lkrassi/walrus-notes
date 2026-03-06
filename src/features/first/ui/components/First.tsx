@@ -1,10 +1,3 @@
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui/components/Button';
-import { useIsMobile } from 'widgets/hooks';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { PublicHeader } from 'widgets/ui';
 import {
   containerVariants,
   containerVariantsMobile,
@@ -13,7 +6,14 @@ import {
   features,
   itemVariants,
   itemVariantsMobile,
-} from '../../models';
+} from '@/features/first/models';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { cn } from 'shared/lib/cn';
+import { Button } from 'shared/ui/components/Button';
+import { useIsMobile } from 'widgets/hooks';
+import { useLocalization } from 'widgets/hooks/useLocalization';
+import { PublicHeader } from 'widgets/ui';
 import { BackgroundIcons } from './BackgroundIcons';
 
 export const First = () => {

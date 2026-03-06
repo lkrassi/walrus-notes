@@ -1,9 +1,9 @@
-import { useGetUserProfileQuery } from 'app/store/api';
+import { useGetUserProfileQuery } from '@/entities';
 import {
   clearUserProfile,
   setUserProfile,
   syncAuthFromStorage,
-} from 'app/store/slices/userSlice';
+} from '@/entities/user';
 import { useEffect, type ReactNode } from 'react';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 

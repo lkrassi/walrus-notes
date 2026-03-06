@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import { makeCommitDraft } from 'shared/model/ws';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
-import { useDebounced } from 'widgets/hooks/useDebounced';
-import { useWebSocket } from 'widgets/hooks/useWebSocket';
-import { useWSContext } from 'widgets/providers/WebSocketProvider';
+import { makeCommitDraft } from '@/shared/model/ws';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
+import { useDebounced } from '@/widgets/hooks/useDebounced';
+import { useWebSocket } from '@/widgets/hooks/useWebSocket';
+import { useWSContext } from '@/widgets/providers/WebSocketProvider';
 import type { UseDraftSyncOpts, UseDraftSyncReturn } from './types';
 import { useDraftListeners } from './useDraftListeners';
 import { useDraftSender } from './useDraftSender';

@@ -1,11 +1,11 @@
+import { useGetUnposedNotesQuery } from '@/entities';
 import { useDraggable } from '@dnd-kit/core';
-import { useGetUnposedNotesQuery } from 'app/store/api';
 import { useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import { Dropdown, DropdownTrigger } from 'shared/ui/components/Dropdown';
-import { useDropdown } from 'widgets/hooks/useDropdown';
-import { DropdownContent } from 'widgets/ui/components/dropdown/DropdownContent';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { Dropdown, DropdownTrigger } from '@/shared/ui/components/Dropdown';
+import { useDropdown } from '@/widgets/hooks/useDropdown';
+import { DropdownContent } from '@/widgets/ui/components/dropdown/DropdownContent';
 
 interface UnposedNotesListProps {
   layoutId: string;

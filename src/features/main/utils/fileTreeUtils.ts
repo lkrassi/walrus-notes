@@ -1,4 +1,4 @@
-import type { FileTreeItem } from 'widgets/hooks';
+import type { FileTreeItem } from '@/widgets/hooks';
 
 export const findItemById = (
   items: FileTreeItem[],

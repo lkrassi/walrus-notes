@@ -1,11 +1,14 @@
-import { useGetMyLayoutsQuery, useLazySearchNotesQuery } from 'app/store/api';
+import {
+  notesApi,
+  useGetMyLayoutsQuery,
+  useLazySearchNotesQuery,
+} from '@/entities';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
+import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import type { FileTreeItem as FileTreeItemType } from 'widgets/hooks/useFileTree';
-import { useAppSelector } from '../../../hooks/redux';
-import { notesApi } from '../../../model';
-import { AllNotesButton } from '../sidebar/AllNotesButton';
 import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
 import { SearchInput } from './SearchInput';

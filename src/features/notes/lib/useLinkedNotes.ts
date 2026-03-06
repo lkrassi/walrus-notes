@@ -1,7 +1,7 @@
+import { notesApi, useGetNotesQuery } from '@/entities';
 import type { RootState } from 'app/store';
-import { notesApi, useGetNotesQuery } from 'app/store/api';
 import { useMemo } from 'react';
-import { useAppSelector } from 'widgets/hooks/redux';
+import { useAppSelector } from '@/widgets/hooks/redux';
 
 interface UseLinkedNotesProps {
   layoutId?: string | null;

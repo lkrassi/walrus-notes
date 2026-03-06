@@ -1,7 +1,7 @@
+import type { CollaborativeNoteEditorHandle } from '@/features/notes/ui/components/CollaborativeNoteEditor';
+import type { AwarenessUser } from '@/shared/lib/collaboration';
+import type { Note } from '@/shared/model/types/layouts';
 import type { PointerEventHandler, RefObject } from 'react';
-import type { Note } from 'shared/model/types/layouts';
-import type { AwarenessUser } from '../../../model/useYjsCollaboration';
-import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
 
 export interface EditorSplitProps {
   payload: string;

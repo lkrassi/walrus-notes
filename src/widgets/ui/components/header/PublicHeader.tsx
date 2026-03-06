@@ -1,10 +1,10 @@
+import logo from '@/assets/logo.avif';
+import { cn } from '@/shared/lib/cn';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
+import { LanguageSwitcher } from '@/widgets/ui/components/LanguageSwitcher';
+import { ThemeSwitcher } from '@/widgets/ui/components/theme/ThemeSwitcher';
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import logo from '../../../../assets/logo.avif';
-import { LanguageSwitcher } from '../LanguageSwitcher';
-import { ThemeSwitcher } from '../theme/ThemeSwitcher';
 
 const PublicHeaderComponent = () => {
   const { t } = useLocalization();

@@ -1,17 +1,17 @@
+import { useConfirmCodeMutation } from '@/entities';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useConfirmCodeMutation } from 'app/store/api';
 import {
+  type ClipboardEvent,
   type FC,
   type KeyboardEvent,
-  type ClipboardEvent,
   useEffect,
   useRef,
   useState,
 } from 'react';
 import { Button } from 'shared';
-import { useLocalization, useNotifications } from 'widgets/hooks';
+import { useLocalization, useNotifications } from '@/widgets/hooks';
 
 interface ConfirmCodeModalProps {
   email: string;

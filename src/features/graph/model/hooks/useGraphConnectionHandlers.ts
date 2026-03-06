@@ -1,15 +1,15 @@
 import {
   useCreateNoteLinkMutation,
   useDeleteNoteLinkMutation,
-} from 'app/store/api';
-import { useCallback, useState, type RefObject } from 'react';
-import type { Connection, Edge, Node } from 'reactflow';
+} from '@/entities';
 import {
   CreateEdgeCommand,
   DeleteEdgeCommand,
   MoveEdgeCommand,
-} from '../commands';
-import type { useGraphHistory } from './useGraphHistory';
+  type useGraphHistory,
+} from '@/entities/graph/model';
+import { useCallback, useState, type RefObject } from 'react';
+import type { Connection, Edge, Node } from 'reactflow';
 
 type GraphHistory = ReturnType<typeof useGraphHistory>;
 

@@ -1,3 +1,4 @@
+import { useRegisterMutation, useSendConfirmCodeMutation } from '@/entities';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -5,18 +6,17 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useRegisterMutation, useSendConfirmCodeMutation } from 'app/store/api';
-import { usePasswordVisibility } from 'features/auth/hooks';
-import { createAuthValidationSchemas } from 'features/auth/model/validationSchemas';
+import { usePasswordVisibility } from '@/features/auth/hooks';
+import { createAuthValidationSchemas } from '@/features/auth/model/validationSchemas';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, Suspense, lazy } from 'react';
 import { Button, Skeleton } from 'shared';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import { useNotifications } from 'widgets';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { useMobileForm } from 'widgets/hooks/useMobileForm';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
+import { useMobileForm } from '@/widgets/hooks/useMobileForm';
+import { useModalContext } from '@/widgets/ui/components/modal/ModalProvider';
 const ConfirmCodeModal = lazy(() =>
   import('features/auth/ui/components/ConfirmCodeModal').then(m => ({
     default: m.ConfirmCodeModal,

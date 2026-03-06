@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { FileTreeItem } from 'widgets/hooks';
+import type { FileTreeItem } from '@/widgets/hooks';
 
 export interface DashboardTab {
   id: string;

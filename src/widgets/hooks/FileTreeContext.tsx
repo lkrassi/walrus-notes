@@ -1,4 +1,4 @@
-import { useGetMyLayoutsQuery } from 'app/store/api';
+import { useGetMyLayoutsQuery } from '@/entities';
 import {
   createContext,
   useContext,
@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { Layout, Note } from 'shared/model/types/layouts';
+import type { Layout, Note } from '@/shared/model/types/layouts';
 import {
   fileTreeReducer,
   initialFileTreeState,

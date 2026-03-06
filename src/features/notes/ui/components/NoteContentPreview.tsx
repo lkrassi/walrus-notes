@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Skeleton } from 'shared';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import { useLocalization } from 'widgets';
 
 const MarkdownPreview = lazy(() =>
@@ -8,7 +8,7 @@ const MarkdownPreview = lazy(() =>
 );
 
 import { type FC } from 'react';
-import type { Note } from 'shared/model/types/layouts';
+import type { Note } from '@/shared/model/types/layouts';
 
 interface Props {
   payload: string;

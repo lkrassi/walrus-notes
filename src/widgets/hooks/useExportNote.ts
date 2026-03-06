@@ -1,4 +1,4 @@
-import { useLocalization } from 'widgets/hooks';
+import { useLocalization } from '@/widgets/hooks';
 
 export const useExportNote = () => {
   const { t } = useLocalization();

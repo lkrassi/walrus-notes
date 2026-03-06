@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { cn } from 'shared/lib/cn';
+import { cn } from '@/shared/lib/cn';
 import type { EditablePermissionState } from '../types';
 import { rightsList } from '../utils';
 

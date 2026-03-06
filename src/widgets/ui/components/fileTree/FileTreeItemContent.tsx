@@ -1,3 +1,11 @@
+import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
+import { cn } from '@/shared/lib/cn';
+import type { Note } from '@/shared/model/types/layouts';
+import { useLocalization } from '@/widgets/hooks';
+import { useAppSelector } from '@/widgets/hooks/redux';
+import { useDropdown } from '@/widgets/hooks/useDropdown';
+import type { FileTreeItem as UseFileTreeItem } from '@/widgets/hooks/useFileTree';
+import { DropdownContent } from '@/widgets/ui/components/dropdown/DropdownContent';
 import {
   useCallback,
   useEffect,
@@ -5,18 +13,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { cn } from 'shared/lib/cn';
-import type { Note } from 'shared/model/types/layouts';
-import type { FileTreeItem as UseFileTreeItem } from 'widgets/hooks/useFileTree';
-import { useLocalization } from '../../../hooks';
-import { useAppSelector } from '../../../hooks/redux';
-import { useDropdown } from '../../../hooks/useDropdown';
-import {
-  notesApi,
-  useGetNotesQuery,
-  useLazyGetNotesQuery,
-} from '../../../model';
-import { DropdownContent } from '../dropdown/DropdownContent';
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;

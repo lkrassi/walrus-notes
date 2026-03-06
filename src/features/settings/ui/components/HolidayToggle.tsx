@@ -1,7 +1,7 @@
-// import { cn } from 'shared/lib/cn';
-// import { Button } from 'shared/ui/components/Button';
-// import { useLocalization } from 'widgets/hooks';
-// import { useModalActions } from 'widgets/hooks/useModalActions';
+// import { cn } from '@/shared/lib/cn';
+// import { Button } from '@/shared/ui/components/Button';
+// import { useLocalization } from '@/widgets/hooks';
+// import { useModalActions } from '@/widgets/hooks/useModalActions';
 // import { HolidaySettingsModal } from './HolidaySettingsModal';
 
 // export const HolidayToggle = () => {
