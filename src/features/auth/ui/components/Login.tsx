@@ -13,7 +13,7 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { Suspense, lazy, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Loader } from 'shared';
+import { Button, Skeleton } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 import { useAppDispatch } from 'widgets/hooks/redux';
@@ -118,8 +118,11 @@ export const Login: FC<LoginProps> = () => {
             openModal(
               <Suspense
                 fallback={
-                  <div className={cn('flex', 'justify-center', 'p-8')}>
-                    <Loader size='md' />
+                  <div className={cn('space-y-4', 'p-6')}>
+                    <Skeleton className='mx-auto h-7 w-48 max-w-full' />
+                    <Skeleton className='h-12 w-full rounded-xl' />
+                    <Skeleton className='h-12 w-full rounded-xl' />
+                    <Skeleton className='h-11 w-full rounded-xl' />
                   </div>
                 }
               >

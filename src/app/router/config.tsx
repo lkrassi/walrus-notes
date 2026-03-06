@@ -1,7 +1,14 @@
 import { lazy, Suspense } from 'react';
-import { Loader } from 'shared/ui/components/Loader';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
+import {
+  ApplyPageSkeleton,
+  AuthPageSkeleton,
+  DashboardPageSkeleton,
+  MainPageSkeleton,
+  NotFoundPageSkeleton,
+  SettingsPageSkeleton,
+} from './RouteSkeletons';
 
 const MainPage = lazy(() =>
   import('pages/main/ui/MainPage').then(m => ({ default: m.MainPage }))
@@ -41,7 +48,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.MAIN,
     element: (
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<MainPageSkeleton />}>
         <MainPage />
       </Suspense>
     ),
@@ -50,7 +57,7 @@ export const appRoutesConfig = [
     path: AppRoutes.AUTH,
     element: (
       <GuestRoute>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<AuthPageSkeleton />}>
           <AuthPage />
         </Suspense>
       </GuestRoute>
@@ -59,7 +66,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.APPLY,
     element: (
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<ApplyPageSkeleton />}>
         <ApplyLinkPage />
       </Suspense>
     ),
@@ -68,7 +75,7 @@ export const appRoutesConfig = [
     path: AppRoutes.DASHBOARD,
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<DashboardPageSkeleton />}>
           <DashBoardPage />
         </Suspense>
       </ProtectedRoute>
@@ -78,7 +85,7 @@ export const appRoutesConfig = [
     path: AppRoutes.PROFILE,
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<SettingsPageSkeleton />}>
           <ProfilePage />
         </Suspense>
       </ProtectedRoute>
@@ -87,7 +94,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.NOT_FOUND,
     element: (
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<NotFoundPageSkeleton />}>
         <NotFoundPage />
       </Suspense>
     ),

@@ -1,9 +1,9 @@
 import { useGetMyLayoutsQuery } from 'app/store/api';
-import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Layout } from 'shared/model/types/layouts';
 import { Button } from 'shared/ui';
+import { Skeleton } from 'shared/ui/components/Skeleton';
 import { FolderIcon } from 'shared/ui/icons/FolderIcon';
 import { useLocalization } from 'widgets/hooks';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
@@ -40,8 +40,15 @@ export const FolderSelectModal = ({
 
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center p-8'>
-        <Loader2 className='text-primary h-8 w-8 animate-spin' />
+      <div className='space-y-4 p-6'>
+        <Skeleton className='mx-auto h-7 w-48 max-w-full' />
+        <Skeleton className='h-12 w-full rounded-xl' />
+        <Skeleton className='h-12 w-full rounded-xl' />
+        <Skeleton className='h-12 w-full rounded-xl' />
+        <div className='flex justify-center gap-3 pt-2'>
+          <Skeleton className='h-10 w-28 rounded-lg' />
+          <Skeleton className='h-10 w-32 rounded-lg' />
+        </div>
       </div>
     );
   }

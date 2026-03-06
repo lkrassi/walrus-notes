@@ -12,7 +12,7 @@ import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { FileText } from 'lucide-react';
 import { lazy, memo, Suspense, useCallback } from 'react';
-import { Loader } from 'shared';
+import { Skeleton } from 'shared';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
 import type { FileTreeItem } from 'widgets/hooks';
@@ -327,9 +327,16 @@ export const DashboardContent = memo(function DashboardContent({
         <Suspense
           fallback={
             <div
-              className={cn('flex', 'items-center', 'justify-center', 'h-full')}
+              className={cn(
+                'h-full',
+                'border-border dark:border-dark-border',
+                'space-y-3 rounded-xl border p-4'
+              )}
             >
-              <Loader size='md' />
+              <Skeleton className='h-7 w-2/5' />
+              <Skeleton className='h-4 w-full' />
+              <Skeleton className='h-4 w-3/4' />
+              <Skeleton className='h-[60%] w-full rounded-xl' />
             </div>
           }
         >

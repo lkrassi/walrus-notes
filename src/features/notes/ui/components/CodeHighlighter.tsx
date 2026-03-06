@@ -15,6 +15,27 @@ interface CodeHighlighterProps {
   children: ReactNode;
   className?: string;
 }
+
+const prismLoaders: Record<string, () => Promise<unknown>> = {
+  tsx: async () => {
+    await import('prismjs/components/prism-tsx');
+    await import('prismjs/components/prism-jsx');
+    await import('prismjs/components/prism-typescript');
+  },
+  jsx: () => import('prismjs/components/prism-jsx'),
+  javascript: () => import('prismjs/components/prism-javascript'),
+  typescript: () => import('prismjs/components/prism-typescript'),
+  python: () => import('prismjs/components/prism-python'),
+  json: () => import('prismjs/components/prism-json'),
+  bash: () => import('prismjs/components/prism-bash'),
+  css: () => import('prismjs/components/prism-css'),
+  markup: () => import('prismjs/components/prism-markup'),
+  markdown: () => import('prismjs/components/prism-markdown'),
+  c: () => import('prismjs/components/prism-c'),
+  cpp: () => import('prismjs/components/prism-cpp'),
+  java: () => import('prismjs/components/prism-java'),
+};
+
 export const CodeHighlighter: FC<CodeHighlighterProps> = ({
   children,
   className,
@@ -56,10 +77,9 @@ export const CodeHighlighter: FC<CodeHighlighterProps> = ({
       try {
         if (language && language in langMap) {
           const name = langMap[language] || language;
-          await import(`prismjs/components/prism-${name}`);
-          if (name === 'tsx') {
-            await import('prismjs/components/prism-jsx');
-            await import('prismjs/components/prism-typescript');
+          const loader = prismLoaders[name];
+          if (loader) {
+            await loader();
           }
         }
       } catch (_e) {}

@@ -1,8 +1,9 @@
 import { useApplyLinkMutation } from 'app/store';
-import { AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
+import { Skeleton } from 'shared/ui/components/Skeleton';
 import { useLocalization } from 'widgets/hooks';
 
 export const ApplyLinkPage = () => {
@@ -76,18 +77,9 @@ export const ApplyLinkPage = () => {
       >
         {status === 'loading' && (
           <>
-            <Loader
-              className={cn('text-primary mb-4 h-12 w-12 animate-spin')}
-            />
-            <p
-              className={cn(
-                'text-sm',
-                'text-text dark:text-dark-text',
-                'text-center'
-              )}
-            >
-              {t('apply.loading') || 'Processing link...'}
-            </p>
+            <Skeleton className='mb-4 h-12 w-12 rounded-full' />
+            <Skeleton className='mb-2 h-5 w-44 max-w-full' />
+            <Skeleton className='h-4 w-56 max-w-full' />
           </>
         )}
 

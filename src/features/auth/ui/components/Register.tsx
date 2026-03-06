@@ -11,7 +11,7 @@ import { createAuthValidationSchemas } from 'features/auth/model/validationSchem
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, Suspense, lazy } from 'react';
-import { Button, Loader } from 'shared';
+import { Button, Skeleton } from 'shared';
 import { cn } from 'shared/lib/cn';
 import { useNotifications } from 'widgets';
 import { useLocalization } from 'widgets/hooks/useLocalization';
@@ -66,8 +66,11 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
         openModal(
           <Suspense
             fallback={
-              <div className={cn('flex', 'justify-center', 'p-8')}>
-                <Loader size='md' text={t('auth:confirmCode.title')} />
+              <div className={cn('space-y-4', 'p-6')}>
+                <Skeleton className='mx-auto h-7 w-56 max-w-full' />
+                <Skeleton className='h-12 w-full rounded-xl' />
+                <Skeleton className='h-12 w-full rounded-xl' />
+                <Skeleton className='h-11 w-full rounded-xl' />
               </div>
             }
           >

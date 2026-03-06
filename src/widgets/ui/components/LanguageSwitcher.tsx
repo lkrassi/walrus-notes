@@ -6,9 +6,9 @@ import { useLocalization } from 'widgets/hooks/useLocalization';
 import { useModalActions } from 'widgets/hooks/useModalActions';
 import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
-import { RussianFlagIcon } from 'public/RussianFlagIcon';
-import { UKFlagIcon } from 'public/UKFlagIcon';
 import type { FC } from 'react';
+import { RussianFlagIcon } from 'shared/ui/icons/RussianFlagIcon';
+import { UKFlagIcon } from 'shared/ui/icons/UKFlagIcon';
 
 const LANGUAGES = [
   {
