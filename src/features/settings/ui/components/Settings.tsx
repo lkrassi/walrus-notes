@@ -124,120 +124,122 @@ export const Settings: FC = () => {
       <PrivateHeader />
 
       <main className={cn('container mx-auto px-4 py-8')}>
-        <div className='mx-auto max-w-4xl'>
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28 }}
-            className={cn('card mb-6 p-6', 'max-sm:rounded-lg max-sm:p-4')}
-          >
-            <div className='flex items-center gap-4'>
-              <div className='relative'>
-                <div
-                  className={cn(
-                    'flex h-16 w-16 items-center justify-center overflow-hidden rounded-full',
-                    'max-sm:h-12 max-sm:w-12',
-                    'cursor-pointer transition-opacity hover:opacity-80',
-                    { 'cursor-default hover:opacity-100': !profile?.imgUrl }
-                  )}
-                  onClick={profile?.imgUrl ? handleOpenImage : undefined}
-                  role={profile?.imgUrl ? 'button' : undefined}
-                  tabIndex={profile?.imgUrl ? 0 : undefined}
-                  onKeyDown={e => {
-                    if (
-                      profile?.imgUrl &&
-                      (e.key === 'Enter' || e.key === ' ')
-                    ) {
-                      e.preventDefault();
-                      handleOpenImage(e as any);
-                    }
-                  }}
-                >
-                  {renderAvatar()}
-                </div>
-
-                <button
-                  onClick={handleChangePhoto}
-                  className={cn(
-                    'absolute right-0 bottom-0',
-                    'h-6 w-6 rounded-full',
-                    'bg-primary dark:bg-dark-primary',
-                    'flex items-center justify-center text-white',
-                    'transition-opacity hover:opacity-90'
-                  )}
-                  title={t('profile:changePhoto')}
-                  aria-label={t('profile:changePhoto')}
-                >
-                  <PhotoCamera className='h-3.5 w-3.5' />
-                </button>
-              </div>
-
-              <div className='flex-1'>
-                <h2
-                  className={cn(
-                    'text-text dark:text-dark-text text-xl font-bold',
-                    'max-sm:text-lg'
-                  )}
-                >
-                  {profile?.username || t('profile:noUsername')}
-                </h2>
-                <p
-                  className={cn(
-                    'text-secondary dark:text-dark-secondary text-sm',
-                    'max-sm:text-xs'
-                  )}
-                >
-                  {profile?.email || t('profile:noEmail')}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <div className='space-y-4 max-sm:space-y-3'>
-            {settingsSections.map((section, idx) => (
-              <motion.div
-                key={section.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.26, delay: idx * 0.04 }}
-                className={cn(
-                  'card p-6 transition-shadow duration-200 hover:shadow-md',
-                  'max-sm:rounded-lg max-sm:p-4'
-                )}
-              >
-                <div className='flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3'>
-                  <div className='flex flex-1 items-center gap-4 max-sm:w-full'>
-                    <div
-                      className={cn(
-                        'rounded-lg p-2 max-sm:rounded-md max-sm:p-1.5',
-                        'bg-primary/10 dark:bg-dark-primary/10',
-                        'text-primary dark:text-dark-primary'
-                      )}
-                    >
-                      {renderSectionIcon(section.icon)}
-                    </div>
-
-                    <div className='flex-1 max-sm:flex-initial'>
-                      <h3 className='section-title'>
-                        {t(`settings:sections.${section.id}.title`)}
-                      </h3>
-                      <p className={cn('muted-text text-sm max-sm:text-xs')}>
-                        {t(`settings:sections.${section.id}.description`)}
-                      </p>
-                    </div>
-                  </div>
-
+        <div className='mx-auto max-w-7xl'>
+          <div className='grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]'>
+            <motion.aside
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28 }}
+              className={cn('card p-6', 'max-sm:rounded-lg max-sm:p-4')}
+            >
+              <div className='flex items-center gap-x-10'>
+                <div className='relative'>
                   <div
                     className={cn(
-                      'settings-action',
-                      'max-sm:flex max-sm:w-full max-sm:justify-end'
+                      'flex h-16 w-16 items-center justify-center overflow-hidden rounded-full',
+                      'max-sm:h-12 max-sm:w-12',
+                      'cursor-pointer transition-opacity hover:opacity-80',
+                      { 'cursor-default hover:opacity-100': !profile?.imgUrl }
+                    )}
+                    onClick={profile?.imgUrl ? handleOpenImage : undefined}
+                    role={profile?.imgUrl ? 'button' : undefined}
+                    tabIndex={profile?.imgUrl ? 0 : undefined}
+                    onKeyDown={e => {
+                      if (
+                        profile?.imgUrl &&
+                        (e.key === 'Enter' || e.key === ' ')
+                      ) {
+                        e.preventDefault();
+                        handleOpenImage(e as any);
+                      }
+                    }}
+                  >
+                    {renderAvatar()}
+                  </div>
+
+                  <button
+                    onClick={handleChangePhoto}
+                    className={cn(
+                      'absolute right-0 bottom-0',
+                      'h-6 w-6 rounded-full',
+                      'bg-primary dark:bg-dark-primary',
+                      'flex items-center justify-center text-white',
+                      'transition-opacity hover:opacity-90'
+                    )}
+                    title={t('profile:changePhoto')}
+                    aria-label={t('profile:changePhoto')}
+                  >
+                    <PhotoCamera className='h-3.5 w-3.5' />
+                  </button>
+                </div>
+
+                <div className='flex-1 lg:w-full'>
+                  <h2
+                    className={cn(
+                      'text-text dark:text-dark-text text-xl font-bold',
+                      'max-sm:text-lg'
                     )}
                   >
-                    {section.action}
-                  </div>
+                    {profile?.username || t('profile:noUsername')}
+                  </h2>
+                  <p
+                    className={cn(
+                      'text-secondary dark:text-dark-secondary text-sm',
+                      'max-sm:text-xs'
+                    )}
+                  >
+                    {profile?.email || t('profile:noEmail')}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.aside>
+
+            <div className='grid grid-cols-1 gap-4 max-sm:gap-3 md:grid-cols-2'>
+              {settingsSections.map((section, idx) => (
+                <motion.div
+                  key={section.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.26, delay: idx * 0.04 }}
+                  className={cn(
+                    'card flex h-full p-6 transition-shadow duration-200 hover:shadow-md',
+                    'max-sm:rounded-lg max-sm:p-4'
+                  )}
+                >
+                  <div className='flex w-full items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3'>
+                    <div className='flex flex-1 items-center gap-4 max-sm:w-full'>
+                      <div
+                        className={cn(
+                          'rounded-lg p-2 max-sm:rounded-md max-sm:p-1.5',
+                          'bg-primary/10 dark:bg-dark-primary/10',
+                          'text-primary dark:text-dark-primary'
+                        )}
+                      >
+                        {renderSectionIcon(section.icon)}
+                      </div>
+
+                      <div className='flex-1 max-sm:flex-initial'>
+                        <h3 className='section-title'>
+                          {t(`settings:sections.${section.id}.title`)}
+                        </h3>
+                        <p className={cn('muted-text text-sm max-sm:text-xs')}>
+                          {t(`settings:sections.${section.id}.description`)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className={cn(
+                        'settings-action',
+                        'max-sm:flex max-sm:w-full max-sm:justify-end'
+                      )}
+                    >
+                      {section.action}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </main>

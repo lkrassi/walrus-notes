@@ -60,7 +60,7 @@ const PrivateHeaderSkeleton = ({
   );
 };
 
-export const MainPageSkeleton = () => {
+export const FirstPageSkeleton = () => {
   return (
     <div className={cn('bg-bg dark:bg-dark-bg', 'min-h-screen')}>
       <PublicHeaderSkeleton />
@@ -154,7 +154,7 @@ export const ApplyPageSkeleton = () => {
   );
 };
 
-export const DashboardPageSkeleton = () => {
+export const MainPageSkeleton = () => {
   return (
     <div className={cn('bg-bg dark:bg-dark-bg', 'flex h-screen flex-col')}>
       <PrivateHeaderSkeleton showMobileMenu />
@@ -245,6 +245,80 @@ export const DashboardPageSkeleton = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+export const DashboardPageSkeleton = () => {
+  return (
+    <div className={cn('bg-bg dark:bg-dark-bg min-h-screen')}>
+      <PrivateHeaderSkeleton showMobileMenu />
+
+      <main className={cn('mx-auto w-full max-w-6xl p-4 md:p-8')}>
+        <div className={cn('grid gap-6 xl:grid-cols-2')}>
+          {Array.from({ length: 2 }).map((_, columnIndex) => (
+            <section
+              key={columnIndex}
+              className={cn(
+                'border-border dark:border-dark-border dark:bg-dark-bg rounded-2xl border bg-white p-4 md:p-5'
+              )}
+            >
+              <Skeleton className='mb-4 h-6 w-52 max-w-full' />
+
+              <div className={cn('space-y-3')}>
+                {Array.from({ length: 3 }).map((__, cardIndex) => (
+                  <div
+                    key={cardIndex}
+                    className={cn(
+                      'border-border dark:border-dark-border dark:bg-dark-bg/60 rounded-xl border bg-white/80 p-4'
+                    )}
+                  >
+                    <div
+                      className={cn('mb-3 flex items-center justify-between')}
+                    >
+                      <Skeleton className='h-5 w-24' />
+                      {columnIndex === 1 && (
+                        <Skeleton className='h-6 w-16 rounded-md' />
+                      )}
+                    </div>
+
+                    <div
+                      className={cn(
+                        'mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40'
+                      )}
+                    >
+                      <Skeleton className='mb-2 h-3 w-24' />
+                      <Skeleton className='h-4 w-full' />
+                    </div>
+
+                    <div className={cn('mb-3 flex min-h-7 flex-wrap gap-2')}>
+                      <Skeleton className='h-6 w-20 rounded-full' />
+                      <Skeleton className='h-6 w-24 rounded-full' />
+                    </div>
+
+                    {columnIndex === 1 && (
+                      <>
+                        <div
+                          className={cn(
+                            'grid grid-cols-1 gap-2 sm:grid-cols-3'
+                          )}
+                        >
+                          <Skeleton className='h-10 w-full rounded-lg' />
+                          <Skeleton className='h-10 w-full rounded-lg' />
+                          <Skeleton className='h-10 w-full rounded-lg' />
+                        </div>
+                        <div className={cn('mt-3 flex justify-end')}>
+                          <Skeleton className='h-8 w-20 rounded-md' />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </main>
     </div>
   );
 };

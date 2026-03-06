@@ -72,10 +72,10 @@ export const AllNotesButton = ({
                   'mb-1'
                 )}
               >
-                {t('dashboard:allNotes') || 'Общий граф'}
+                {t('main:allNotes') || 'Общий граф'}
               </h3>
               <p className={cn('text-white/80', 'text-sm')}>
-                {t('dashboard:allNotesDescription')}
+                {t('main:allNotesDescription')}
               </p>
             </div>
           </div>
@@ -112,12 +112,10 @@ export const AllNotesButton = ({
               'dark:hover:bg-gray-800'
             )
       )}
-      title={t('dashboard:allNotes')}
+      title={t('main:allNotes')}
     >
       <Network className='h-4 w-4 shrink-0' />
-      <span className='truncate font-medium'>
-        {t('dashboard:allNotes') || 'All Notes Graph'}
-      </span>
+      <span className='truncate font-medium'>{t('main:allNotes')}</span>
     </button>
   );
 };

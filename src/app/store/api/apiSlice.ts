@@ -91,6 +91,6 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Layouts', 'Notes', 'Profile'],
+  tagTypes: ['Layouts', 'Notes', 'Profile', 'Permissions'],
   endpoints: () => ({}),
 });

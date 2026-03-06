@@ -2,14 +2,7 @@ import { useShareLinkModal } from 'features/graph/hooks/useShareLinkModal';
 import { DeleteLayoutForm } from 'features/layout/ui/components/DeleteLayoutForm';
 import { UpdateLayoutForm } from 'features/layout/ui/components/UpdateLayoutForm';
 import { CreateNoteForm } from 'features/notes';
-import {
-  ChevronDown,
-  FileText,
-  Pencil,
-  Plus,
-  Share2,
-  Trash2,
-} from 'lucide-react';
+import { ChevronDown, FileText, Pencil, Share2, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'shared/lib/cn';
 import type { Note } from 'shared/model/types/layouts';
@@ -47,7 +40,7 @@ export const FileTreeItemHeader = ({
   const [_isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   const paddingLeft = 20 + level * 16;
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
@@ -149,165 +142,236 @@ export const FileTreeItemHeader = ({
   );
 
   return (
-    <div
-      className={cn(
-        'relative',
-        'flex',
-        'w-full',
-        'cursor-pointer',
-        'items-center',
-        'gap-2',
-        'rounded-lg',
-        'py-2',
-        'transition-opacity',
-        'duration-150',
-        'text-text',
-        'dark:text-dark-text'
-      )}
-      style={{
-        paddingLeft: `${paddingLeft}px`,
-        paddingRight: '12px',
-        ...(hasSelection &&
-        !isSelected &&
-        (item.type === 'layout' || item.type === 'note')
-          ? { opacity: 0.5 }
-          : {}),
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onFocus={handleMouseEnter}
-      onBlur={handleMouseLeave}
-      onClick={handleItemClick}
-    >
-      {item.type === 'layout' && item.isMain !== true && (
-        <button
-          type='button'
-          onClick={e => {
-            e.stopPropagation();
-            toggleExpanded?.(item.id);
-          }}
-          className={cn(
-            'flex',
-            'h-4',
-            'w-4',
-            'items-center',
-            'justify-center',
-            'transition-transform',
-            'duration-200'
-          )}
-        >
-          <ChevronDown
+    <div className={cn('w-full')}>
+      <div
+        className={cn(
+          'relative',
+          'flex',
+          'w-full',
+          'cursor-pointer',
+          'items-center',
+          'gap-2',
+          'rounded-lg',
+          'py-2',
+          'transition-opacity',
+          'duration-150',
+          'text-text',
+          'dark:text-dark-text'
+        )}
+        style={{
+          paddingLeft: `${paddingLeft}px`,
+          paddingRight: '12px',
+          ...(hasSelection &&
+          !isSelected &&
+          (item.type === 'layout' || item.type === 'note')
+            ? { opacity: 0.5 }
+            : {}),
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={handleMouseEnter}
+        onBlur={handleMouseLeave}
+        onClick={handleItemClick}
+      >
+        {item.type === 'layout' && item.isMain !== true && (
+          <button
+            type='button'
+            onClick={e => {
+              e.stopPropagation();
+              toggleExpanded?.(item.id);
+            }}
             className={cn(
+              'flex',
               'h-4',
               'w-4',
-              'transform',
+              'items-center',
+              'justify-center',
               'transition-transform',
-              'duration-200',
-              isExpanded ? 'rotate-0' : '-rotate-90',
-              'text-black',
-              'dark:text-white'
+              'duration-200'
             )}
-          />
-        </button>
-      )}
-
-      {item.type === 'note' && <div className={cn('h-4', 'w-4')} />}
-
-      <div>
-        {item.type === 'layout' ? (
-          isExpanded ? (
-            <div
+          >
+            <ChevronDown
               className={cn(
-                'h-6',
-                'w-6',
-                'flex',
-                'items-center',
-                'justify-center',
-                'rounded-full',
-                isSelected && !item.color
-                  ? 'bg-primary dark:bg-primary-dark text-white'
-                  : ''
+                'h-4',
+                'w-4',
+                'transform',
+                'transition-transform',
+                'duration-200',
+                isExpanded ? 'rotate-0' : '-rotate-90',
+                'text-black',
+                'dark:text-white'
               )}
-            >
-              <FolderOpenIcon
-                className={cn('h-6', 'w-6')}
-                fillColor={item.color}
-              />
-            </div>
-          ) : (
-            <div
-              className={cn(
-                'h-6',
-                'w-6',
-                'flex',
-                'items-center',
-                'justify-center',
-                'rounded-full',
-                isSelected && !item.color
-                  ? 'bg-primary dark:bg-primary-dark text-white'
-                  : ''
-              )}
-            >
-              <FolderIcon className={cn('h-6', 'w-6')} fillColor={item.color} />
-            </div>
-          )
-        ) : (
-          <FileText className={cn('h-4', 'w-4')} />
+            />
+          </button>
         )}
-      </div>
 
-      <span
-        title={item.title}
-        className={cn(
-          'flex-1',
-          'min-w-0',
-          'truncate',
-          'text-sm',
-          'font-medium'
-        )}
-      >
-        {item.title}
-        {item.type === 'note' &&
-          (() => {
-            const noteWithMatch = (
-              item as unknown as {
-                note?: Note & {
-                  _match?: {
-                    field: 'title' | 'payload';
-                    snippet: string;
-                    query: string;
-                  };
-                };
-              }
-            ).note;
-            const match = noteWithMatch?._match;
-            if (!match) return null;
-            return (
+        {item.type === 'note' && <div className={cn('h-4', 'w-4')} />}
+
+        <div>
+          {item.type === 'layout' ? (
+            isExpanded ? (
               <div
                 className={cn(
-                  'text-xs',
-                  'mt-0.5',
-                  'text-gray-500',
-                  'dark:text-gray-400',
-                  'truncate'
+                  'h-6',
+                  'w-6',
+                  'flex',
+                  'items-center',
+                  'justify-center',
+                  'rounded-full',
+                  isSelected && !item.color
+                    ? 'bg-primary dark:bg-primary-dark text-white'
+                    : ''
                 )}
               >
-                <span className={cn('align-middle')}>
-                  {renderHighlighted(match.snippet, match.query)}
-                </span>
+                <FolderOpenIcon
+                  className={cn('h-6', 'w-6')}
+                  fillColor={item.color}
+                />
               </div>
-            );
-          })()}
-      </span>
+            ) : (
+              <div
+                className={cn(
+                  'h-6',
+                  'w-6',
+                  'flex',
+                  'items-center',
+                  'justify-center',
+                  'rounded-full',
+                  isSelected && !item.color
+                    ? 'bg-primary dark:bg-primary-dark text-white'
+                    : ''
+                )}
+              >
+                <FolderIcon
+                  className={cn('h-6', 'w-6')}
+                  fillColor={item.color}
+                />
+              </div>
+            )
+          ) : (
+            <FileText className={cn('h-4', 'w-4')} />
+          )}
+        </div>
 
-      <div className={cn('flex', 'items-center', 'gap-1')}>
-        {item.type === 'layout' && (
-          <>
-            {item.isMain !== true && isSelected && (
+        <span
+          title={item.title}
+          className={cn(
+            'flex-1',
+            'min-w-0',
+            'truncate',
+            'text-sm',
+            'font-medium'
+          )}
+        >
+          {item.title}
+          {item.type === 'note' &&
+            (() => {
+              const noteWithMatch = (
+                item as unknown as {
+                  note?: Note & {
+                    _match?: {
+                      field: 'title' | 'payload';
+                      snippet: string;
+                      query: string;
+                    };
+                  };
+                }
+              ).note;
+              const match = noteWithMatch?._match;
+              if (!match) return null;
+              return (
+                <div
+                  className={cn(
+                    'text-xs',
+                    'mt-0.5',
+                    'text-gray-500',
+                    'dark:text-gray-400',
+                    'truncate'
+                  )}
+                >
+                  <span className={cn('align-middle')}>
+                    {renderHighlighted(match.snippet, match.query)}
+                  </span>
+                </div>
+              );
+            })()}
+        </span>
+
+        <div className={cn('flex', 'items-center', 'gap-1')}>
+          {item.type === 'layout' && (
+            <>
+              {item.isMain !== true && isSelected && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    openShareLinkModal(item.id, 'LAYOUT')(e);
+                  }}
+                  className={cn(
+                    'transition-opacity',
+                    'duration-150',
+                    'opacity-100',
+                    isMobile
+                      ? 'text-gray-600 dark:text-white'
+                      : isSelected
+                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                  )}
+                  title={t('share:button.tooltip') || 'Share'}
+                >
+                  <Share2 className={cn('h-4', 'w-4')} />
+                </button>
+              )}
+              {item.isMain !== true && isSelected && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleUpdateLayout(e);
+                  }}
+                  className={cn(
+                    'transition-opacity',
+                    'duration-150',
+                    'opacity-100',
+                    isMobile
+                      ? 'text-gray-600 dark:text-white'
+                      : isSelected
+                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                  )}
+                  title={t('layout:edit') || 'Edit'}
+                >
+                  <Pencil className={cn('h-4', 'w-4')} />
+                </button>
+              )}
+              {item.isMain !== true && isSelected && (
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDeleteLayout(e);
+                  }}
+                  className={cn(
+                    'transition-opacity',
+                    'duration-150',
+                    'opacity-100',
+                    isMobile
+                      ? 'text-gray-600 dark:text-white'
+                      : isSelected
+                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                  )}
+                  title={t('layout:deleteLayout')}
+                >
+                  <Trash2 className={cn('h-4', 'w-4')} />
+                </button>
+              )}
+            </>
+          )}
+
+          {item.type === 'note' && item.isMain !== true && isSelected && (
+            <>
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  openShareLinkModal(item.id, 'LAYOUT')(e);
+                  handleDeleteNote(e);
                 }}
                 className={cn(
                   'transition-opacity',
@@ -319,101 +383,42 @@ export const FileTreeItemHeader = ({
                       ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                       : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                 )}
-                title={t('share:button.tooltip') || 'Share'}
-              >
-                <Share2 className={cn('h-4', 'w-4')} />
-              </button>
-            )}
-            {item.isMain !== true && isSelected && (
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleCreateNote(e);
-                }}
-                className={cn(
-                  'transition-opacity',
-                  'duration-150',
-                  'opacity-100',
-                  isMobile
-                    ? 'text-gray-600 dark:text-white'
-                    : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                )}
-                title={t('fileTree:createNote')}
-              >
-                <Plus className={cn('h-4', 'w-4')} />
-              </button>
-            )}
-            {item.isMain !== true && isSelected && (
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleUpdateLayout(e);
-                }}
-                className={cn(
-                  'transition-opacity',
-                  'duration-150',
-                  'opacity-100',
-                  isMobile
-                    ? 'text-gray-600 dark:text-white'
-                    : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                )}
-                title={t('layout:edit') || 'Edit'}
-              >
-                <Pencil className={cn('h-4', 'w-4')} />
-              </button>
-            )}
-            {item.isMain !== true && isSelected && (
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  handleDeleteLayout(e);
-                }}
-                className={cn(
-                  'transition-opacity',
-                  'duration-150',
-                  'opacity-100',
-                  isMobile
-                    ? 'text-gray-600 dark:text-white'
-                    : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                )}
-                title={t('layout:deleteLayout')}
+                title={t('notes:deleteNote')}
               >
                 <Trash2 className={cn('h-4', 'w-4')} />
               </button>
-            )}
-          </>
-        )}
+            </>
+          )}
+        </div>
+      </div>
 
-        {item.type === 'note' && item.isMain !== true && isSelected && (
-          <>
+      {item.type === 'layout' &&
+        item.isMain !== true &&
+        isSelected &&
+        isExpanded && (
+          <div
+            style={{
+              paddingLeft: `${paddingLeft + 40}px`,
+              paddingRight: '12px',
+            }}
+            className={cn('pb-1')}
+          >
             <button
+              type='button'
               onClick={e => {
                 e.stopPropagation();
-                handleDeleteNote(e);
+                handleCreateNote(e);
               }}
               className={cn(
-                'transition-opacity',
-                'duration-150',
-                'opacity-100',
-                isMobile
-                  ? 'text-gray-600 dark:text-white'
-                  : isSelected
-                    ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                    : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                'text-primary dark:text-dark-primary text-sm font-medium',
+                'transition-opacity duration-150 hover:opacity-80'
               )}
-              title={t('notes:deleteNote')}
+              title={t('fileTree:addMore')}
             >
-              <Trash2 className={cn('h-4', 'w-4')} />
+              {t('fileTree:addMore')}
             </button>
-          </>
+          </div>
         )}
-      </div>
     </div>
   );
 };

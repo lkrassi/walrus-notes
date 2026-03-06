@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
 import { PrivateHeader } from 'widgets/ui';
 
-export const DashboardHeader = () => {
+export const MainHeader = () => {
   const dispatch = useAppDispatch();
   const { profile } = useAppSelector(state => state.user);
 

@@ -1,3 +1,4 @@
 export { Auth } from './auth/ui/components/Auth';
 export { DashBoard } from './dashboard';
-export { Main } from './main/ui/components/Main';
+export { First } from './first/ui/components/First';
+export { Main } from './main';

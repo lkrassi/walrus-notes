@@ -1,17 +1,23 @@
-import { ApplyLinkHandler } from 'features/share/ui/ApplyLinkHandler';
+import { ApplyLinkHandler } from 'features/dashboard/ui/ApplyLinkHandler';
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 import {
   AuthPageSkeleton,
-  DashboardPageSkeleton,
   MainPageSkeleton,
+  FirstPageSkeleton,
   NotFoundPageSkeleton,
+  DashboardPageSkeleton,
   SettingsPageSkeleton,
 } from './RouteSkeletons';
 
+const FirstPage = lazy(() =>
+  import('pages/first/ui/FirstPage').then(m => ({ default: m.FirstPage }))
+);
 const MainPage = lazy(() =>
-  import('pages/main/ui/MainPage').then(m => ({ default: m.MainPage }))
+  import('pages/main/ui/MainPage').then(m => ({
+    default: m.MainPage,
+  }))
 );
 const AuthPage = lazy(() =>
   import('pages/auth/ui/AuthPage').then(m => ({ default: m.AuthPage }))
@@ -31,9 +37,10 @@ const NotFoundPage = lazy(() =>
 );
 
 export const AppRoutes = {
-  MAIN: '/',
+  FIRST: '/',
   AUTH: '/auth',
-  DASHBOARD: '/dashboard/:layoutId?/:noteId?',
+  MAIN: '/main/:layoutId?/:noteId?',
+  DASHBOARD: '/dashboard',
   PROFILE: '/profile',
   APPLY: '/apply',
   NOT_FOUND: '*',
@@ -41,10 +48,10 @@ export const AppRoutes = {
 
 export const appRoutesConfig = [
   {
-    path: AppRoutes.MAIN,
+    path: AppRoutes.FIRST,
     element: (
-      <Suspense fallback={<MainPageSkeleton />}>
-        <MainPage />
+      <Suspense fallback={<FirstPageSkeleton />}>
+        <FirstPage />
       </Suspense>
     ),
   },
@@ -64,6 +71,16 @@ export const appRoutesConfig = [
       <Suspense fallback={null}>
         <ApplyLinkHandler />
       </Suspense>
+    ),
+  },
+  {
+    path: AppRoutes.MAIN,
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<MainPageSkeleton />}>
+          <MainPage />
+        </Suspense>
+      </ProtectedRoute>
     ),
   },
   {

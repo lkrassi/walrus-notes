@@ -128,9 +128,7 @@ export const FolderCard = ({
                 )}
               >
                 {notesCount}{' '}
-                {notesCount === 1
-                  ? t('dashboard:note') || 'заметка'
-                  : t('dashboard:notes') || 'заметок'}
+                {notesCount === 1 ? t('main:note') : t('main:notes')}
               </p>
             )}
           </div>

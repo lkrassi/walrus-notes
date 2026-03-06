@@ -65,5 +65,8 @@ export const profileApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetUserProfileQuery, useChangeProfilePictureMutation } =
-  profileApi;
+export const {
+  useGetUserProfileQuery,
+  useLazyGetUserProfileQuery,
+  useChangeProfilePictureMutation,
+} = profileApi;

@@ -66,10 +66,10 @@ export const FolderSelectModal = ({
             strokeColor='currentColor'
           />
           <h3 className='text-text dark:text-dark-text mb-2 text-lg font-medium'>
-            {t('dashboard:noFoldersAvailable') || 'Нет доступных папок'}
+            {t('main:noFoldersAvailable') || 'Нет доступных папок'}
           </h3>
           <p className='text-secondary dark:text-dark-secondary text-sm'>
-            {t('dashboard:createFolderFirst') || 'Сначала создайте папку'}
+            {t('main:createFolderFirst') || 'Сначала создайте папку'}
           </p>
         </div>
         <div className='flex justify-center'>
@@ -84,7 +84,7 @@ export const FolderSelectModal = ({
   return (
     <div className='space-y-4 p-6'>
       <h3 className='text-text dark:text-dark-text mb-4 text-center text-lg font-semibold'>
-        {t('dashboard:selectFolder') || 'Выберите папку'}
+        {t('main:selectFolder') || 'Выберите папку'}
       </h3>
 
       <div className='max-h-96 space-y-2 overflow-y-auto'>

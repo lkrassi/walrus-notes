@@ -11,7 +11,8 @@
   "navigation": {
     "home": "Home",
     "about": "About",
-    "contact": "Contact"
+    "contact": "Contact",
+    "dashboard": "Access Dashboard"
   },
   "theme": {
     "switchToLight": "Switch to light theme",

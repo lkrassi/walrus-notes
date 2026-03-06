@@ -6,8 +6,8 @@ import {
   switchTab,
   updateTabNote,
 } from 'app/store/slices/tabsSlice';
-import { Tabs } from 'features/dashboard/ui/components/Tabs';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
+import { Tabs } from 'features/main/ui/components/Tabs';
 import { CreateNoteForm } from 'features/notes/ui/components/CreateNoteForm';
 import { NoteViewer } from 'features/notes/ui/components/NoteViewer';
 import { FileText } from 'lucide-react';
@@ -24,7 +24,7 @@ import type { TabType } from 'widgets/model/utils/tabUtils';
 import { createTabId } from 'widgets/model/utils/tabUtils';
 import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { CreateChoiceModal } from './CreateChoiceModal';
-import { EmptyDashboardFallback } from './EmptyDashboardFallback';
+import { EmptyMainFallback } from './EmptyMainFallback';
 import { FolderSelectModal } from './FolderSelectModal';
 const NotesGraph = lazy(() =>
   import('features/graph/ui/components/NotesGraph').then(m => ({
@@ -32,14 +32,14 @@ const NotesGraph = lazy(() =>
   }))
 );
 
-interface DashboardContentProps {
+interface MainContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
   onItemSelect?: (item: FileTreeItem) => void;
 }
 
-export const DashboardContent = memo(function DashboardContent({
+export const MainContent = memo(function DashboardContent({
   onNoteOpen,
-}: DashboardContentProps) {
+}: MainContentProps) {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const { openTabs } = useTabs();
@@ -219,7 +219,7 @@ export const DashboardContent = memo(function DashboardContent({
   const renderContent = () => {
     if (!activeTab) {
       return isMobile ? (
-        <EmptyDashboardFallback
+        <EmptyMainFallback
           onFolderClick={handleFolderClickFromGallery}
           onCreateClick={handleOnCreateClick}
         />
@@ -256,10 +256,10 @@ export const DashboardContent = memo(function DashboardContent({
                 'font-semibold'
               )}
             >
-              {t('dashboard:selectFileOrFolder')}
+              {t('main:selectFileOrFolder')}
             </h3>
             <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
-              {t('dashboard:selectItemDescription')}
+              {t('main:selectItemDescription')}
             </p>
           </div>
         </div>

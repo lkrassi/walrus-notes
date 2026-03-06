@@ -40,8 +40,7 @@ export const CreateChoiceModal = ({
           'md:mb-4'
         )}
       >
-        {t('dashboard:folderOrNote') ||
-          'Выберите, что создать папку или заметку?'}
+        {t('main:folderOrNote')}
       </h3>
 
       <button
@@ -109,7 +108,7 @@ export const CreateChoiceModal = ({
               'mb-1'
             )}
           >
-            {t('dashboard:createFolder') || 'Создать папку'}
+            {t('main:createFolder') || 'Создать папку'}
           </h4>
           <p
             className={cn(
@@ -120,7 +119,7 @@ export const CreateChoiceModal = ({
               'line-clamp-2'
             )}
           >
-            {t('dashboard:createFolderDescription') ||
+            {t('main:createFolderDescription') ||
               'Новая папка для организации заметок'}
           </p>
         </div>
@@ -191,7 +190,7 @@ export const CreateChoiceModal = ({
               'mb-1'
             )}
           >
-            {t('dashboard:createNote') || 'Создать заметку'}
+            {t('main:createNote') || 'Создать заметку'}
           </h4>
           <p
             className={cn(
@@ -202,7 +201,7 @@ export const CreateChoiceModal = ({
               'line-clamp-2'
             )}
           >
-            {t('dashboard:createNoteDescription') ||
+            {t('main:createNoteDescription') ||
               'Новая заметка в выбранной папке'}
           </p>
         </div>

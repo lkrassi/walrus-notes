@@ -45,6 +45,10 @@
       "title": "Import",
       "description": "Restore layouts and notes from a backup file"
     },
+    "permissionsDashboard": {
+      "title": "Access dashboard",
+      "description": "Open permissions management"
+    },
     "logout": {
       "title": "Logout",
       "description": "Sign out from your account"

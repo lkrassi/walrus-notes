@@ -1,155 +1,132 @@
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { openTab, switchTab } from 'app/store/slices/tabsSlice';
+import { useDashboardNavigation } from 'features/main/hooks';
+import { useEffect, useRef } from 'react';
+import type { Note } from 'shared/model';
+import type { FileTreeItem } from 'widgets/hooks';
+import { useAppDispatch, useAppSelector, useTabs } from 'widgets/hooks/redux';
+import { WebSocketProvider } from 'widgets/providers/WebSocketProvider';
+import { Sidebar } from 'widgets/ui';
+import { MainHeader } from './MainHeader';
+import { MainContent } from './MainContent';
+
 import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui/components/Button';
-import { useIsMobile } from 'widgets/hooks';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { PublicHeader } from 'widgets/ui';
-import {
-  containerVariants,
-  containerVariantsMobile,
-  featureVariants,
-  featureVariantsMobile,
-  features,
-  itemVariants,
-  itemVariantsMobile,
-} from '../../models';
-import { BackgroundIcons } from './BackgroundIcons';
 
 export const Main = () => {
-  const navigate = useNavigate();
-  const { t } = useLocalization();
-  const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
+  const { openTabs, activeTabId } = useTabs();
+  const sidebarRef = useRef<{
+    updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
+  }>(null);
 
-  const featureKeys = [
-    'visualThinking',
-    'fastOrganization',
-    'smartConnections',
-    'secureStorage',
-    'collaboration',
-  ];
+  const { updateUrlForTab } = useDashboardNavigation({
+    openTabs,
+  });
 
-  const localizedFeatures = features.map((feature, index) => ({
-    ...feature,
-    title: t(`main:features.${featureKeys[index]}`),
-    description: t(`main:features.${featureKeys[index]}Desc`),
-  }));
+  useEffect(() => {
+    if (activeTabId) {
+      updateUrlForTab(activeTabId);
+    }
+  }, [activeTabId, updateUrlForTab]);
+
+  const handleItemSelect = (item: FileTreeItem) => {
+    const tabId = `${item.type}::${item.id}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    const activeTab = openTabs.find(tab => tab.isActive) ?? null;
+    let hasUnsaved = false;
+    if (activeTab && activeTab.item.type === 'note' && activeTab.item.note) {
+      const note = activeTab.item.note;
+      const noteId = note.id;
+      const storeDraft = drafts[noteId];
+      const hasUnsavedLocal =
+        typeof storeDraft === 'string' &&
+        storeDraft.length > 0 &&
+        storeDraft !== (note.payload ?? '');
+      const hasServerDraft = !!(
+        note.draft &&
+        note.draft.length &&
+        note.draft !== note.payload
+      );
+      hasUnsaved = hasUnsavedLocal || hasServerDraft;
+    }
+
+    if (!hasUnsaved) {
+      if (existingTab) {
+        dispatch(switchTab(tabId));
+      } else {
+        dispatch(openTab({ ...item, openedFromSidebar: true }));
+        dispatch(switchTab(tabId));
+      }
+      return;
+    }
+
+    const deferredAction = () => {
+      if (existingTab) {
+        dispatch(switchTab(tabId));
+      } else {
+        dispatch(openTab({ ...item, openedFromSidebar: false }));
+        dispatch(switchTab(tabId));
+      }
+    };
+
+    confirmIfUnsaved(deferredAction);
+  };
+
+  const handleNoteOpenFromGraph = (noteData: {
+    noteId: string;
+    note: Note;
+  }) => {
+    const noteItem: FileTreeItem = {
+      id: noteData.noteId,
+      type: 'note',
+      title: noteData.note.title,
+      parentId: noteData.note.layoutId,
+      note: noteData.note,
+      isMain: false,
+    };
+
+    handleItemSelect(noteItem);
+  };
+
+  const drafts = useAppSelector(s => s.drafts ?? {});
+
+  const confirmIfUnsaved = (action: () => void) => {
+    const activeTab = openTabs.find(tab => tab.isActive) ?? null;
+    if (!activeTab) {
+      action();
+      return;
+    }
+
+    if (activeTab.item.type !== 'note') {
+      action();
+      return;
+    }
+
+    const note = activeTab.item.note;
+    if (!note) {
+      action();
+      return;
+    }
+
+    action();
+    return;
+  };
 
   return (
-    <>
-      <PublicHeader />
-      <div
-        className={cn('flex', 'min-h-[80vh]', 'items-center', 'justify-center')}
-      >
-        <motion.div
-          className={cn('mx-40', 'max-lg:m-10')}
-          variants={isMobile ? containerVariantsMobile : containerVariants}
-          initial='hidden'
-          animate='visible'
-        >
-          <div
-            className={cn(
-              'flex',
-              'flex-col',
-              'items-start',
-              'gap-12',
-              'lg:flex-row',
-              'lg:items-center',
-              'lg:gap-16'
-            )}
-          >
-            <div className={cn('flex-1', 'text-left')}>
-              <motion.h1
-                variants={isMobile ? itemVariantsMobile : itemVariants}
-                className={cn('hero-h1')}
-              >
-                {t('main:title.line1')}
-                <br />
-                <span className={cn('text-primary')}>
-                  {t('main:title.line2')}
-                </span>
-              </motion.h1>
-              <motion.p
-                variants={isMobile ? itemVariantsMobile : itemVariants}
-                className={cn(
-                  'muted-text',
-                  'mb-8',
-                  'text-xl',
-                  'leading-relaxed',
-                  'max-lg:w-full',
-                  'max-lg:text-center'
-                )}
-              >
-                {t('main:subtitle')}
-              </motion.p>
-              <motion.div
-                variants={isMobile ? itemVariantsMobile : itemVariants}
-                className={cn(
-                  'flex',
-                  'flex-col',
-                  'gap-4',
-                  'sm:flex-row',
-                  'sm:items-center'
-                )}
-              >
-                <Button
-                  onClick={() => {
-                    navigate('/auth');
-                  }}
-                  className={cn('px-8', 'py-4', 'text-lg', 'font-semibold')}
-                >
-                  {t('main:cta.primary')}
-                </Button>
-              </motion.div>
-            </div>
-
-            <div className={cn('flex-1')}>
-              <motion.div
-                variants={
-                  isMobile ? containerVariantsMobile : containerVariants
-                }
-                className={cn('grid', 'grid-cols-1', 'gap-4', 'sm:grid-cols-2')}
-              >
-                {localizedFeatures.map((feature, index) => (
-                  <motion.div
-                    key={featureKeys[index]}
-                    variants={
-                      isMobile ? featureVariantsMobile : featureVariants
-                    }
-                    className={cn('feature-card')}
-                  >
-                    <div
-                      className={cn(
-                        'bg-primary/10',
-                        'text-primary',
-                        'dark:bg-dark-primary/10',
-                        'dark:text-dark-primary',
-                        'mb-3',
-                        'inline-flex',
-                        'h-10',
-                        'w-10',
-                        'items-center',
-                        'justify-center',
-                        'rounded-lg'
-                      )}
-                    >
-                      <feature.icon className={cn('h-5', 'w-5')} />
-                    </div>
-                    <h3 className={cn('feature-title')}>{feature.title}</h3>
-                    <p
-                      className={cn('muted-text', 'text-xs', 'leading-relaxed')}
-                    >
-                      {feature.description}
-                    </p>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
+    <WebSocketProvider>
+      <div className={cn('flex', 'h-screen', 'flex-col')}>
+        <MainHeader />
+        <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
+          <Sidebar
+            ref={sidebarRef}
+            onItemSelect={handleItemSelect}
+            selectedItemId={activeTabId || undefined}
+          />
+          <MainContent
+            onNoteOpen={handleNoteOpenFromGraph}
+            onItemSelect={handleItemSelect}
+          />
+        </div>
       </div>
-
-      {!isMobile && <BackgroundIcons />}
-    </>
+    </WebSocketProvider>
   );
 };

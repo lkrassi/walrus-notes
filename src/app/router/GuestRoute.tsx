@@ -11,9 +11,5 @@ export const GuestRoute = ({ children }: GuestRouteProps) => {
   const { accessToken, refreshToken } = useAppSelector(state => state.user);
   const isAuthenticated = !!(accessToken && refreshToken);
 
-  return !isAuthenticated ? (
-    children
-  ) : (
-    <Navigate to={AppRoutes.DASHBOARD} replace />
-  );
+  return !isAuthenticated ? children : <Navigate to={AppRoutes.MAIN} replace />;
 };

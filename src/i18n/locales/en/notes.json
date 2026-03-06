@@ -53,6 +53,7 @@
   "unsavedConfirmTitle": "Are you sure you want to leave?",
   "unsavedConfirmDescription": "This note has unsaved changes. If you leave now, your changes will be lost.",
   "unsavedConfirmButton": "Leave",
+  "unsavedCancelButton": "Stay",
   "paragraphsAndBreaks": "Paragraphs and Line Breaks",
   "paragraphsDescription": "To divide text into paragraphs, leave an empty line between them.",
   "paragraphsExample": "First paragraph\n\nSecond paragraph\nContinuation of second paragraph",

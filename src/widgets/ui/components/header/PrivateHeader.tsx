@@ -36,7 +36,7 @@ const PrivateHeaderComponent = () => {
         <div className={cn('flex', 'items-center')}>
           {!isProfilePage && <MobileMenu />}
           <Link
-            to='/dashboard'
+            to='/main'
             className={cn('flex', 'items-center')}
             aria-label={t('common:header.goToHomepage')}
           >

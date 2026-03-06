@@ -1,7 +1,7 @@
 import { closeLayoutTabs, closeTabsByItemId } from 'app/store/slices/tabsSlice';
 import { CreateLayoutForm } from 'features/layout/ui/components/CreateLayoutForm';
 import { ProfileButton } from 'features/profile';
-import { Plus } from 'lucide-react';
+import { Plus, ShieldCheck } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
@@ -155,7 +155,7 @@ const SidebarComponent = (
             <MobileMenu iconClassName={cn('h-6', 'w-6')} />
 
             <Link
-              to='/dashboard'
+              to='/main'
               className={cn('flex', 'items-center', 'md:gap-3')}
               aria-label={t('common:header.goToHomepage')}
             >
@@ -238,6 +238,16 @@ const SidebarComponent = (
             'mt-auto'
           )}
         >
+          <Link
+            to='/dashboard'
+            className={cn(
+              'border-border dark:border-dark-border mb-3 flex items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
+              'text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-800'
+            )}
+          >
+            <ShieldCheck className={cn('h-4 w-4')} />
+            {t('common:navigation.dashboard')}
+          </Link>
           <ProfileButton />
         </div>
 

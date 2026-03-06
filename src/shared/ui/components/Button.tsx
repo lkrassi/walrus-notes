@@ -1,5 +1,5 @@
 import MuiButton from '@mui/material/Button';
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import {
   forwardRef,
   memo,
@@ -27,15 +27,10 @@ const StyledButton = styled(MuiButton, {
 })<{ buttonVariant: ButtonVariant }>(({ theme, buttonVariant }) => {
   const getVariantStyles = () => {
     const mode = theme.palette.mode;
-    const opacity = mode === 'dark' ? 0.75 : 0.9;
     const isDisabledVariant = buttonVariant === 'disabled';
 
     const mutedBg =
       mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200];
-    const mutedShadow = alpha(
-      mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[500],
-      mode === 'dark' ? 0.4 : 0.25
-    );
 
     const baseColor = isDisabledVariant
       ? mutedBg
@@ -47,37 +42,27 @@ const StyledButton = styled(MuiButton, {
             ? theme.palette.success.main
             : theme.palette.action.disabledBackground;
 
-    const shadowColor = isDisabledVariant
-      ? mutedShadow
-      : alpha(baseColor, opacity);
-    const disabledShadow = alpha(
-      theme.palette.mode === 'dark'
-        ? theme.palette.grey[700]
-        : theme.palette.grey[400],
-      opacity
-    );
-
     return {
       backgroundColor: baseColor,
-      boxShadow: `0 8px 0 0 ${shadowColor}`,
+      boxShadow: 'none',
       '&:hover': {
         backgroundColor: baseColor,
-        boxShadow: `0 8px 0 0 ${shadowColor}`,
+        boxShadow: 'none',
         filter: isDisabledVariant ? 'none' : 'brightness(1.05)',
       },
       '&:active': {
-        boxShadow: '0 0 0 0',
-        transform: 'translateY(6px)',
+        boxShadow: 'none',
+        transform: 'none',
       },
       color: isDisabledVariant ? theme.palette.text.primary : '#ffffff',
       '&.Mui-disabled': {
         backgroundColor: theme.palette.action.disabledBackground,
         color: theme.palette.action.disabled,
         cursor: 'not-allowed',
-        boxShadow: `0 8px 0 0 ${disabledShadow}`,
+        boxShadow: 'none',
         '&:active': {
-          boxShadow: `0 8px 0 0 ${disabledShadow}`,
-          transform: 'translateY(0)',
+          boxShadow: 'none',
+          transform: 'none',
         },
       },
     };
@@ -88,8 +73,8 @@ const StyledButton = styled(MuiButton, {
     fontSize: '1rem',
     fontWeight: 600,
     cursor: 'pointer',
-    transition: 'all 0.2s',
-    transform: 'translateY(0)',
+    transition: 'background-color 0.2s, filter 0.2s, color 0.2s',
+    transform: 'none',
     borderRadius: '0.375rem',
     textTransform: 'none',
     padding: '4px 16px',

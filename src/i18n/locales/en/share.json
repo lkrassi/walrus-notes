@@ -61,5 +61,53 @@
         "generic": "Error applying link. Please try later"
       }
     }
+  },
+  "permissionsDashboard": {
+    "title": "Access dashboard",
+    "subtitle": "Manage granted and received permissions",
+    "updating": "Updating...",
+    "receivedTitle": "Received permissions",
+    "sharedTitle": "Shared permissions",
+    "emptyReceived": "No received permissions yet",
+    "emptyShared": "No shared permissions yet",
+    "receivedFrom": "Access granted by",
+    "targetLabel": "Access target",
+    "target": "Target",
+    "fromUser": "From user",
+    "flags": "Permissions",
+    "targetType": {
+      "layout": "Folder",
+      "note": "Note",
+      "unknown": "Item"
+    },
+    "user": {
+      "unknown": "User"
+    },
+    "rights": {
+      "none": "No access",
+      "read": "Read only",
+      "write": "Can edit content",
+      "edit": "Full access"
+    },
+    "flagsLabel": {
+      "read": "Read",
+      "write": "Write",
+      "edit": "Edit"
+    },
+    "kind": {
+      "layout": "Layout",
+      "note": "Note",
+      "unknown": "Unknown"
+    },
+    "actions": {
+      "update": "Save",
+      "delete": "Delete"
+    },
+    "notifications": {
+      "updated": "Permissions updated",
+      "deleted": "Permission removed",
+      "updateError": "Failed to update permission",
+      "deleteError": "Failed to delete permission"
+    }
   }
 }

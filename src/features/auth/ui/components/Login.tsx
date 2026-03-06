@@ -80,7 +80,7 @@ export const Login: FC<LoginProps> = () => {
       );
 
       localStorage.setItem('userId', response.data.userId);
-      navigate('/dashboard');
+      navigate('/main');
     } catch {
       showError(t('auth:login.error'));
     }

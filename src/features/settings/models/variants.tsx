@@ -1,9 +1,17 @@
-import { Download, Languages, LogOut, Moon, Upload } from 'lucide-react';
+import {
+  Download,
+  Languages,
+  LogOut,
+  Moon,
+  ShieldCheck,
+  Upload,
+} from 'lucide-react';
 import { LanguageSwitcher } from 'widgets/ui/components/LanguageSwitcher';
 import { LogoutButton } from 'widgets/ui/components/logout/LogoutButton';
 import { ThemeSwitcher } from 'widgets/ui/components/theme/ThemeSwitcher';
 import { ExportDataButton } from '../ui/components/ExportDataButton';
 import { ImportDataButton } from '../ui/components/ImportDataButton';
+import { OpenPermissionsDashboardButton } from '../ui/components/OpenPermissionsDashboardButton';
 
 export const settingsSections = [
   // {
@@ -54,6 +62,13 @@ export const settingsSections = [
     icon: Upload,
     description: 'Импортировать данные аккаунта',
     action: <ImportDataButton />,
+  },
+  {
+    id: 'permissionsDashboard',
+    title: 'Дашборд доступов',
+    icon: ShieldCheck,
+    description: 'Перейти в управление правами доступа',
+    action: <OpenPermissionsDashboardButton />,
   },
   {
     id: 'logout',

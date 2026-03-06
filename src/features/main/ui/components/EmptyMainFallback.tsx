@@ -9,15 +9,15 @@ import { useLocalization } from 'widgets/hooks/useLocalization';
 import { AllNotesButton } from 'widgets/ui/components/sidebar';
 import { FolderCard } from './FolderCard';
 
-interface EmptyDashboardFallbackProps {
+interface EmptyMainFallbackProps {
   onFolderClick?: (layoutId: string, title: string) => void;
   onCreateClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const EmptyDashboardFallback = ({
+export const EmptyMainFallback = ({
   onFolderClick,
   onCreateClick,
-}: EmptyDashboardFallbackProps) => {
+}: EmptyMainFallbackProps) => {
   const { t } = useLocalization();
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
 
@@ -143,7 +143,7 @@ export const EmptyDashboardFallback = ({
                   'mb-3'
                 )}
               >
-                {t('dashboard:noFolders') || 'Нет папок'}
+                {t('main:noFolders') || 'Нет папок'}
               </h2>
 
               <p
@@ -154,7 +154,7 @@ export const EmptyDashboardFallback = ({
                   'text-sm'
                 )}
               >
-                {t('dashboard:createFolderDescription') ||
+                {t('main:createFolderDescription') ||
                   'Создайте свою первую папку, чтобы начать организовывать заметки'}
               </p>
             </motion.div>
@@ -174,7 +174,7 @@ export const EmptyDashboardFallback = ({
                   'mb-2'
                 )}
               >
-                {t('dashboard:myFolders') || 'Мои папки'}
+                {t('main:myFolders') || 'Мои папки'}
               </h2>
               <p
                 className={cn(
@@ -185,8 +185,8 @@ export const EmptyDashboardFallback = ({
               >
                 {regularLayouts.length}{' '}
                 {regularLayouts.length === 1
-                  ? t('dashboard:folder') || 'папка'
-                  : t('dashboard:folders') || 'папок'}{' '}
+                  ? t('main:folder')
+                  : t('main:folders')}
               </p>
             </motion.div>
 

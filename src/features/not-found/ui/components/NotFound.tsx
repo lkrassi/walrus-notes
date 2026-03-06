@@ -97,7 +97,7 @@ export const NotFound = () => {
               'sm:flex-row'
             )}
           >
-            <Link to='/dashboard'>
+            <Link to='/main'>
               <Button variant='default' className={cn('w-60', 'px-8', 'py-3')}>
                 {t('common:notFound.goHome')}
               </Button>
