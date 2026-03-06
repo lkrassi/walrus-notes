@@ -7,6 +7,7 @@ import { cn } from 'shared/lib/cn';
 
 import { SidebarProvider } from 'widgets/hooks/sidebarContext';
 import { ModalProvider } from 'widgets/ui/components/modal/ModalProvider';
+import { NotificationsContainer } from 'widgets/ui/components/notifications/NotificationsContainer';
 
 export const App = () => {
   return (
@@ -25,6 +26,7 @@ export const App = () => {
                     />
                   ))}
                 </Routes>
+                <NotificationsContainer />
               </ModalProvider>
             </SidebarProvider>
           </AuthSyncProvider>

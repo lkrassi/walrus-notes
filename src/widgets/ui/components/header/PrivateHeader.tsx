@@ -43,7 +43,7 @@ const PrivateHeaderComponent = () => {
             <img
               src={logo}
               alt={t('common:header.logoAlt')}
-              className={cn('h-24', 'w-24', 'md:h-28', 'md:w-28')}
+              className={cn('h-16', 'w-16', 'md:h-22', 'md:w-22')}
               loading='lazy'
             />
             <div className={cn('flex', 'items-baseline', 'gap-1')}>

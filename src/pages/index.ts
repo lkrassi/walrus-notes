@@ -1,4 +1,3 @@
-export { ApplyLinkPage } from './apply/ui/ApplyLinkPage';
 export { AuthPage } from './auth/ui/AuthPage';
 export { DashBoardPage } from './dashboard/DashBoardPage';
 export { MainPage } from './main/ui/MainPage';

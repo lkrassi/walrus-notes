@@ -1,8 +1,8 @@
+import { ApplyLinkHandler } from 'features/share/ui/ApplyLinkHandler';
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 import {
-  ApplyPageSkeleton,
   AuthPageSkeleton,
   DashboardPageSkeleton,
   MainPageSkeleton,
@@ -23,11 +23,6 @@ const DashBoardPage = lazy(() =>
 );
 const ProfilePage = lazy(() =>
   import('pages/profile/ui/ProfilePage').then(m => ({ default: m.ProfilePage }))
-);
-const ApplyLinkPage = lazy(() =>
-  import('pages/apply/ui/ApplyLinkPage').then(m => ({
-    default: m.ApplyLinkPage,
-  }))
 );
 const NotFoundPage = lazy(() =>
   import('pages/not-found/ui/NotFoundPage').then(m => ({
@@ -66,8 +61,8 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.APPLY,
     element: (
-      <Suspense fallback={<ApplyPageSkeleton />}>
-        <ApplyLinkPage />
+      <Suspense fallback={null}>
+        <ApplyLinkHandler />
       </Suspense>
     ),
   },

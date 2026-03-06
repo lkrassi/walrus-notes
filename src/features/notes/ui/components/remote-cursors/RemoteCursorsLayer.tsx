@@ -46,7 +46,6 @@ interface OverlayState {
 
 export const RemoteCursorsLayer: FC<RemoteCursorsLayerProps> = memo(
   function RemoteCursorsLayer({ textareaRef, users, currentUserId }) {
-    const isPresenceDebug = import.meta.env.DEV;
     const [overlay, setOverlay] = useState<OverlayState>({
       cursors: [],
       selections: [],
@@ -126,14 +125,6 @@ export const RemoteCursorsLayer: FC<RemoteCursorsLayerProps> = memo(
         }
 
         setOverlay({ cursors, selections });
-
-        if (isPresenceDebug) {
-          const usersSummary = remoteUsers.map(state => ({
-            clientId: state.clientId,
-            userId: state.user?.id,
-            hasCursor: Boolean(state.cursor),
-          }));
-        }
       };
 
       const requestRecalc = () => {
@@ -158,13 +149,7 @@ export const RemoteCursorsLayer: FC<RemoteCursorsLayerProps> = memo(
           cancelAnimationFrame(rafId);
         }
       };
-    }, [
-      currentUserId,
-      isPresenceDebug,
-      remoteUsers,
-      textareaRef,
-      users.length,
-    ]);
+    }, [remoteUsers, textareaRef]);
 
     if (!remoteUsers.length) {
       return null;

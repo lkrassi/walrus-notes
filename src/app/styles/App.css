@@ -43,7 +43,7 @@ button {
 }
 
 h1 {
-  @apply text-xl leading-tight font-bold max-sm:text-xl md:text-2xl lg:text-3xl;
+  @apply text-xl leading-tight font-bold max-sm:text-xl md:text-xl lg:text-2xl;
 }
 
 h2 {

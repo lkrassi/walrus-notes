@@ -4,7 +4,7 @@ import { Skeleton } from 'shared/ui/components/Skeleton';
 const BrandSkeleton = () => {
   return (
     <div className={cn('flex', 'items-center', 'gap-2')}>
-      <Skeleton className='h-24 w-24 rounded-full md:h-28 md:w-28' />
+      <Skeleton className='h-16 w-16 rounded-full md:h-22 md:w-22' />
       <div className={cn('flex', 'items-baseline', 'gap-2')}>
         <Skeleton className='h-7 w-20' />
         <Skeleton className='h-7 w-16' />

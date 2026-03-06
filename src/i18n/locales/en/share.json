@@ -52,13 +52,14 @@
     }
   },
   "apply": {
-    "loading": "Processing link...",
-    "success": "Access granted successfully!",
-    "goToDashboard": "Go to Dashboard",
-    "error": {
-      "already_exists": "This link has already been used",
-      "invalid": "Invalid link",
-      "generic": "Error applying link. Please try later"
+    "notifications": {
+      "granted_layout": "You have been granted access to folder (ID: {{targetId}})",
+      "granted_note": "You have been granted access to note (ID: {{targetId}})",
+      "error": {
+        "already_exists": "This link has already been used",
+        "invalid": "Invalid link",
+        "generic": "Error applying link. Please try later"
+      }
     }
   }
 }
