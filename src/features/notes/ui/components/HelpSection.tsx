@@ -1,7 +1,7 @@
 import type { HelpSectionData } from '@/features/notes/lib/markdownHelpData';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization } from '@/widgets/hooks';
+import { cn } from '@/shared/lib';
 import { memo, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface HelpSectionProps {
   section: HelpSectionData;
@@ -10,7 +10,7 @@ interface HelpSectionProps {
 export const HelpSection: FC<HelpSectionProps> = memo(function HelpSection({
   section,
 }) {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
 
   return (
     <section>

@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { Suspense, lazy, memo, type FC } from 'react';
 import { Skeleton } from 'shared';
 import type { PreviewPanelProps } from './types';

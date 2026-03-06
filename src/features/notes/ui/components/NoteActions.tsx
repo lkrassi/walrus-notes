@@ -1,4 +1,5 @@
-import { useShareLinkModal } from '@/features/graph/hooks/useShareLinkModal';
+import { useShareLinkModal } from '@/features/graph';
+import { cn } from '@/shared/lib';
 import {
   CircleQuestionMark,
   Download,
@@ -13,7 +14,6 @@ import {
 } from 'lucide-react';
 import { memo, type FC, type MouseEvent } from 'react';
 import { Button } from 'shared';
-import { cn } from '@/shared/lib/cn';
 
 interface NoteActionsProps {
   noteId?: string;

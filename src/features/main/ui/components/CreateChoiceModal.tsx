@@ -1,8 +1,8 @@
-import { FileText } from 'lucide-react';
-import { cn } from '@/shared/lib/cn';
+import { useModalContentContext } from '@/app/providers/modal';
+import { cn } from '@/shared/lib';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
-import { useLocalization } from '@/widgets/hooks';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
+import { FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface CreateChoiceModalProps {
   onCreateFolder: () => void;
@@ -13,7 +13,7 @@ export const CreateChoiceModal = ({
   onCreateFolder,
   onCreateNote,
 }: CreateChoiceModalProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { closeModal } = useModalContentContext();
 
   const handleFolderClick = () => {

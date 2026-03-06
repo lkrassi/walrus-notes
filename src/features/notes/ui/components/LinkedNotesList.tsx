@@ -1,8 +1,8 @@
 import { useLinkedNotes } from '@/features/notes/lib/useLinkedNotes';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {
@@ -18,7 +18,7 @@ export const LinkedNotesList = ({
   linkedOutIds = [],
   onNoteSelect,
 }: LinkedNotesListProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const [isExpandedIn, setIsExpandedIn] = useState(false);
   const [isExpandedOut, setIsExpandedOut] = useState(false);
 

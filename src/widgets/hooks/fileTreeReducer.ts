@@ -1,4 +1,4 @@
-import type { Layout, Note } from '@/shared/model/types/layouts';
+import type { Layout, Note } from '@/shared/model';
 import type { FileTreeItem } from './useFileTree';
 
 export type FileTreeState = {

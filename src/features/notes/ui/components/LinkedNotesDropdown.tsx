@@ -1,9 +1,9 @@
-import { memo, type FC } from 'react';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import { useDropdown } from '@/shared/lib/hooks';
+import type { Note } from '@/shared/model';
 import { Dropdown, DropdownTrigger } from '@/shared/ui/components/Dropdown';
-import { useDropdown } from '@/widgets/hooks/useDropdown';
-import { DropdownContent } from '@/widgets/ui/components/dropdown/DropdownContent';
+import { DropdownContent } from '@/shared/ui/components/dropdown/DropdownContent';
+import { memo, type FC } from 'react';
 import { LinkedNoteItem } from './LinkedNoteItem';
 
 interface LinkedNotesDropdownProps {

@@ -1,14 +1,14 @@
+import { useNotifications } from '@/app/providers/notifications';
 import { useApplyLinkMutation } from '@/entities';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useLocalization } from '@/widgets/hooks';
-import { useNotifications } from '@/widgets/hooks/useNotifications';
 
 export const ApplyLinkHandler = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [applyLink] = useApplyLinkMutation();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError, showSuccess } = useNotifications();
   const linkId = searchParams.get('linkId');
   const startedRef = useRef(false);

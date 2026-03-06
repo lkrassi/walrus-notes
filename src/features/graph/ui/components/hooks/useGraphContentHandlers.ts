@@ -6,7 +6,7 @@ import { useGraphHandlers } from '@/features/graph/model/hooks/useGraphHandlers'
 import { useGraphSelectionHandlers } from '@/features/graph/model/hooks/useGraphSelectionHandlers';
 import { useGraphSyncHandlers } from '@/features/graph/model/hooks/useGraphSyncHandlers';
 import { useEdgeDeleteEvents } from '@/features/graph/ui/components/useEdgeDeleteEvents';
-import type { Note } from '@/shared/model/types/layouts';
+import type { Note } from '@/shared/model';
 import { useCallback, useEffect, type MouseEvent, type RefObject } from 'react';
 import type { Edge, EdgeChange, Node, NodeChange } from 'reactflow';
 

@@ -1,4 +1,8 @@
+import { useModalActions } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import { useImportLayoutMutation } from '@/entities';
+import { cn } from '@/shared/lib';
+import { Button } from '@/shared/ui';
 import {
   useRef,
   useState,
@@ -6,14 +10,10 @@ import {
   type DragEvent,
   type FC,
 } from 'react';
-import { cn } from '@/shared/lib/cn';
-import { Button } from '@/shared/ui';
-import { useLocalization } from '@/widgets/hooks';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import { useNotifications } from '@/widgets/hooks/useNotifications';
+import { useTranslation } from 'react-i18next';
 
 export const ImportDataButton: FC = () => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError, showSuccess } = useNotifications();
   const [importLayout, { isLoading }] = useImportLayoutMutation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);

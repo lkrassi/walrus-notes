@@ -1,3 +1,5 @@
+import { ThemeContext } from '@/app/providers/theme';
+import { cn } from '@/shared/lib';
 import Highlight, { defaultProps, type Language } from 'prism-react-renderer';
 import duotoneDark from 'prism-react-renderer/themes/duotoneDark';
 import duotoneLight from 'prism-react-renderer/themes/duotoneLight';
@@ -8,8 +10,6 @@ import {
   type FC,
   type ReactNode,
 } from 'react';
-import { cn } from '@/shared/lib/cn';
-import { ThemeContext } from '@/widgets/ui/ThemeProvider';
 
 interface CodeHighlighterProps {
   children: ReactNode;

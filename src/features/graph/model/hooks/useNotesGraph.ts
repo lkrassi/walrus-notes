@@ -3,9 +3,9 @@ import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
 } from '@/entities';
+import type { Note } from '@/shared/model';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface UseNotesGraphProps {
   layoutId: string;

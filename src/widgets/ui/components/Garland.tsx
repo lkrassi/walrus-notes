@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { useIsMobile } from '@/widgets/hooks';
 import './garland.css';
 

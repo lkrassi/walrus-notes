@@ -1,1 +1,1 @@
-export * from '@/entities/graph/model/utils/graphUtils';
+export * from '@/entities/graph';

@@ -1,1 +1,1 @@
-export { PermissionsDashboardContent } from './PermissionsDashboardContent';
+export { DashboardContent } from './DashboardContent';

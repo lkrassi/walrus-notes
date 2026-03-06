@@ -1,12 +1,13 @@
+import type { AppDispatch, RootState } from '@/app/store';
 import { useGetUserProfileQuery } from '@/entities';
 import { setUserProfile } from '@/entities/user';
+import { PrivateHeader } from '@/shared/ui/components/header/PrivateHeader';
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
-import { PrivateHeader } from '@/widgets/ui';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const MainHeader = () => {
-  const dispatch = useAppDispatch();
-  const { profile } = useAppSelector(state => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const { profile } = useSelector((state: RootState) => state.user);
 
   const userId = profile?.id || '';
   const { data: userProfileResponse } = useGetUserProfileQuery(userId, {

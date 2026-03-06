@@ -1,14 +1,15 @@
+import { useNotifications } from '@/app/providers/notifications';
+import type { RootState } from '@/app/store';
 import { useExportLayoutMutation } from '@/entities';
-import { useCallback, type FC } from 'react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { Button } from '@/shared/ui';
-import { useLocalization } from '@/widgets/hooks';
-import { useAppSelector } from '@/widgets/hooks/redux';
-import { useNotifications } from '@/widgets/hooks/useNotifications';
+import { useCallback, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 export const ExportDataButton: FC = () => {
-  const { t } = useLocalization();
-  const { profile } = useAppSelector(state => state.user);
+  const { t } = useTranslation();
+  const profile = useSelector((state: RootState) => state.user.profile);
   const { showError, showSuccess } = useNotifications();
   const [exportLayout, { isLoading }] = useExportLayoutMutation();
 

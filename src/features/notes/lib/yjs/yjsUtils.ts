@@ -1,1 +1,1 @@
-export { buildYjsWsUrl, getUserColorById } from '@/shared/lib/collaboration';
+export { buildYjsWsUrl, getUserColorById } from '@/shared/lib';

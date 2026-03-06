@@ -2,8 +2,8 @@ import {
   getCaretOverlayPosition,
   getSelectionOverlayRects,
 } from '@/features/notes/lib/yjs/textareaOverlayUtils';
-import { cn } from '@/shared/lib/cn';
-import type { AwarenessUser } from '@/shared/lib/collaboration';
+import type { AwarenessUser } from '@/shared/lib';
+import { cn } from '@/shared/lib';
 import {
   memo,
   useEffect,

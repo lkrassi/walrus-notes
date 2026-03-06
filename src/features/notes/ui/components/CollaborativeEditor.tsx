@@ -1,6 +1,6 @@
-import type { AwarenessUser } from '@/shared/lib/collaboration';
+import type { AwarenessUser } from '@/shared/lib';
+import { cn } from '@/shared/lib';
 import { type FC, useRef } from 'react';
-import { cn } from '@/shared/lib/cn';
 import type * as Y from 'yjs';
 import { YjsTextarea, type YjsTextareaHandle } from './YjsTextarea';
 

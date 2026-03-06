@@ -1,16 +1,15 @@
+import { useModalActions } from '@/app/providers/modal';
+import type { AppDispatch, RootState } from '@/app/store';
 import {
   useChangeProfilePictureMutation,
   useGetUserProfileQuery,
 } from '@/entities';
 import { setUserProfile } from '@/entities/user';
-import { ImageViewerModal } from '@/features/profile/ui/components/ImageViewerModal';
+import { ImageViewerModal } from '@/features/profile';
 import { settingsSections } from '@/features/settings/models/variants';
-import { cn } from '@/shared/lib/cn';
+import logo from '@/shared/assets/logo.avif';
+import { cn } from '@/shared/lib';
 import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
-import { useLocalization } from '@/widgets/hooks';
-import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import { PrivateHeader } from '@/widgets/ui';
 import { PhotoCamera } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import {
@@ -22,11 +21,63 @@ import {
   type ReactElement,
   type MouseEvent as ReactMouseEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+const SettingsHeader = () => {
+  const { t } = useTranslation();
+
+  return (
+    <header
+      className={cn(
+        'dark:bg-dark-bg',
+        'border-border',
+        'dark:border-dark-border',
+        'flex',
+        'flex-col',
+        'gap-3',
+        'border-b',
+        'max-md:py-5',
+        'md:px-5'
+      )}
+    >
+      <div
+        className={cn(
+          'flex',
+          'items-center',
+          'justify-between',
+          'px-4',
+          'md:px-0'
+        )}
+      >
+        <div className={cn('flex', 'items-center')}>
+          <Link
+            to='/main'
+            className={cn('flex', 'items-center')}
+            aria-label={t('common:header.goToHomepage')}
+          >
+            <img
+              src={logo}
+              alt={t('common:header.logoAlt')}
+              className={cn('h-16', 'w-16', 'md:h-22', 'md:w-22')}
+              loading='lazy'
+            />
+            <div className={cn('flex', 'items-baseline', 'gap-1')}>
+              <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
+              <h1 className={cn('text-primary')}>Notes</h1>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+};
 
 export const Settings: FC = () => {
-  const { t } = useLocalization();
-  const { profile } = useAppSelector(state => state.user);
-  const dispatch = useAppDispatch();
+  const { t } = useTranslation();
+  const profile = useSelector((state: RootState) => state.user.profile);
+  const dispatch = useDispatch<AppDispatch>();
   const { openModalFromTrigger } = useModalActions();
   const [avatarVersion, setAvatarVersion] = useState<number | undefined>(
     undefined
@@ -122,7 +173,7 @@ export const Settings: FC = () => {
 
   return (
     <div className={cn('bg-bg dark:bg-dark-bg min-h-screen')}>
-      <PrivateHeader />
+      <SettingsHeader />
 
       <main className={cn('container mx-auto px-4 py-8')}>
         <div className='mx-auto max-w-7xl'>

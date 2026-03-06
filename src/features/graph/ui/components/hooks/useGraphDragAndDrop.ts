@@ -1,6 +1,6 @@
+import type { Note } from '@/shared/model';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useCallback, useRef, useState } from 'react';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface UseGraphDragAndDropProps {
   onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;

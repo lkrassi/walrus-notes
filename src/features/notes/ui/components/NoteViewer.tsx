@@ -1,10 +1,10 @@
-import type { AwarenessUser } from '@/shared/lib/collaboration';
+import type { UserProfileState } from '@/entities';
+import { useExportNote, useNoteEditor } from '@/features/notes/model';
+import type { AwarenessUser } from '@/shared/lib';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { memo, useEffect, useRef, useState } from 'react';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import { useAppSelector } from '@/widgets/hooks/redux';
-import { useExportNote } from '@/widgets/hooks/useExportNote';
-import { useNoteEditor } from '@/widgets/hooks/useNoteEditor';
+import { useSelector } from 'react-redux';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
@@ -60,7 +60,9 @@ export const NoteViewer = memo(function NoteViewer({
     new Map()
   );
 
-  const profile = useAppSelector(state => state.user.profile);
+  const profile = useSelector(
+    (state: { user: UserProfileState }) => state.user.profile
+  );
   const currentUserId = profile?.id || '';
 
   const toggleFullscreen = () => {

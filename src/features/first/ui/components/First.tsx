@@ -7,18 +7,18 @@ import {
   itemVariants,
   itemVariantsMobile,
 } from '@/features/first/models';
+import { useIsMobile } from '@/shared/lib/hooks';
+import { PublicHeader } from '@/shared/ui/components/header/PublicHeader';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
-import { useIsMobile } from 'widgets/hooks';
-import { useLocalization } from 'widgets/hooks/useLocalization';
-import { PublicHeader } from 'widgets/ui';
 import { BackgroundIcons } from './BackgroundIcons';
 
 export const First = () => {
   const navigate = useNavigate();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   const featureKeys = [

@@ -1,14 +1,13 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 
 import { Button } from 'shared';
 
+import { useModalActions, useModalContentContext } from '@/app/providers/modal';
 import { useLocalization } from '@/widgets/hooks/useLocalization';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
-import type { FC } from 'react';
 import { RussianFlagIcon } from '@/shared/ui/icons/RussianFlagIcon';
 import { UKFlagIcon } from '@/shared/ui/icons/UKFlagIcon';
+import type { FC } from 'react';
 
 const LANGUAGES = [
   {

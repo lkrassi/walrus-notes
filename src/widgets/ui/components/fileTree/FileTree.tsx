@@ -3,8 +3,8 @@ import {
   useGetMyLayoutsQuery,
   useLazySearchNotesQuery,
 } from '@/entities';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { useAppSelector } from '@/widgets/hooks/redux';
 import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
 import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';

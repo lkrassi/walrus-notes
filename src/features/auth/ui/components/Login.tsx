@@ -1,5 +1,12 @@
+import { useModalActions, useModalContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
+import type { AppDispatch } from '@/app/store';
 import { useForgotPasswordMutation, useLoginMutation } from '@/entities';
 import { setTokens, setUserProfile } from '@/entities/user';
+import { usePasswordVisibility } from '@/features/auth/hooks';
+import { createAuthValidationSchemas } from '@/features/auth/model/validationSchemas';
+import { cn } from '@/shared/lib';
+import { useMobileForm } from '@/shared/lib/hooks';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -7,20 +14,13 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { usePasswordVisibility } from '@/features/auth/hooks';
-import { createAuthValidationSchemas } from '@/features/auth/model/validationSchemas';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { Suspense, lazy, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Skeleton } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useNotifications } from 'widgets';
-import { useAppDispatch } from '@/widgets/hooks/redux';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
-import { useMobileForm } from '@/widgets/hooks/useMobileForm';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import { useModalContext } from '@/widgets/ui/components/modal/ModalProvider';
 const ForgotPasswordEmailModal = lazy(() =>
   import('features/auth/ui/components/ForgotPasswordEmailModal').then(m => ({
     default: m.ForgotPasswordEmailModal,
@@ -37,14 +37,14 @@ type LoginProps = {
 };
 
 export const Login: FC<LoginProps> = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { showError, showSuccess } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
   const [forgotPassword] = useForgotPasswordMutation();
 
   const navigate = useNavigate();
   const passwordVisibility = usePasswordVisibility();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { openModal, closeModal } = useModalContext();
   const { openModalFromTrigger } = useModalActions();
 

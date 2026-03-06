@@ -1,9 +1,10 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import { useCreateLayoutMutation } from '@/entities';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 import { ColorSelector } from './ColorSelector';
 
 interface CreateLayoutFormProps {
@@ -13,7 +14,7 @@ interface CreateLayoutFormProps {
 export const CreateLayoutForm = ({
   onLayoutCreated,
 }: CreateLayoutFormProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const DEFAULT_COLOR = '#3b82f6';
   const [color, setColor] = useState<string | undefined>(DEFAULT_COLOR);

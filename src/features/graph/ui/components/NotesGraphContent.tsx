@@ -1,6 +1,6 @@
 import { useGraphSelection } from '@/features/graph/model/hooks/useGraphSelection';
 import { useNotesGraph } from '@/features/graph/model/hooks/useNotesGraph';
-import type { Note } from '@/shared/model/types/layouts';
+import type { Note } from '@/shared/model';
 import { memo } from 'react';
 import { useGraphContentHandlers } from './hooks/useGraphContentHandlers';
 import { useGraphState } from './hooks/useGraphState';

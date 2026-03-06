@@ -1,8 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import type { FileTreeItem } from '@/widgets/hooks';
+
+type DashboardNavItem = {
+  id: string;
+  type: 'layout' | 'note' | 'graph';
+  parentId?: string;
+  layoutId?: string;
+};
 
 interface UseDashboardNavigationProps {
-  openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;
+  openTabs: Array<{ id: string; item: DashboardNavItem; isActive: boolean }>;
 }
 
 export const useDashboardNavigation = ({
@@ -17,7 +23,7 @@ export const useDashboardNavigation = ({
     updateUrlForItem(activeTab.item);
   };
 
-  const updateUrlForItem = (item: FileTreeItem) => {
+  const updateUrlForItem = (item: DashboardNavItem) => {
     let newPath = '/main';
 
     if (item.type === 'layout') {

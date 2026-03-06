@@ -1,8 +1,8 @@
+import { useModalContext } from '@/app/providers/modal';
 import { memo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets';
-import { useModalContext } from 'widgets/ui/components/modal/ModalProvider';
 import { DeleteLayoutForm } from './DeleteLayoutForm';
 
 interface DeleteLayoutProps {
@@ -20,7 +20,7 @@ const DeleteLayoutComponent = ({
   variant = 'default',
   className = '',
 }: DeleteLayoutProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { openModal } = useModalContext();
 
   const handleDeleteLayout = useCallback(() => {

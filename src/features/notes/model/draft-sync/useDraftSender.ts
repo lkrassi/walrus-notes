@@ -1,7 +1,7 @@
 import { removeDraft, setDraft } from '@/entities';
+import { makeUpdateDraft } from '@/shared/model';
 import type { AppDispatch } from 'app/store';
 import { useCallback } from 'react';
-import { makeUpdateDraft } from '@/shared/model/ws';
 import type { DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftSenderOpts {

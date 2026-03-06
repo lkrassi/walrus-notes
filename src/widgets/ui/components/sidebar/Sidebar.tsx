@@ -1,9 +1,10 @@
-import logo from '@/assets/logo.avif';
+import { useModalActions } from '@/app/providers/modal';
 import { closeLayoutTabs, closeTabsByItemId } from '@/entities';
 import { CreateLayoutForm } from '@/features/layout/ui/components/CreateLayoutForm';
 import { ProfileButton } from '@/features/profile';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import logo from '@/shared/assets/logo.avif';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import {
   useFileTree,
   useIsMobile,
@@ -12,7 +13,6 @@ import {
 } from '@/widgets/hooks';
 import { useAppDispatch } from '@/widgets/hooks/redux';
 import type { FileTreeItem } from '@/widgets/hooks/useFileTree';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
 import { useResizableSidebar } from '@/widgets/hooks/useResizableSidebar';
 import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';

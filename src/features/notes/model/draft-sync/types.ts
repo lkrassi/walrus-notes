@@ -1,4 +1,4 @@
-import type { WSEvent, WSEventName } from '@/shared/model/ws';
+import type { WSEvent, WSEventName } from '@/shared/model';
 
 export interface UseDraftSyncOpts {
   noteId: string | null | undefined;

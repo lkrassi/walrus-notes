@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from 'react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 
 interface GraphContainerProps {
   children: ReactNode;

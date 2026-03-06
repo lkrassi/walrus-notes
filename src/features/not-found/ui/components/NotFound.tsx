@@ -1,11 +1,11 @@
+import { PublicHeader } from '@/shared/ui/components/header/PublicHeader';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets/hooks';
-import { PublicHeader } from 'widgets/ui';
 
 export const NotFound = () => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
 
   return (
     <div className={cn('flex', 'min-h-screen', 'flex-col')}>

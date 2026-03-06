@@ -1,6 +1,6 @@
+import { useModalContext } from '@/app/providers/modal';
+import type { ModalOptions } from '@/app/providers/modal/useModal';
 import { useCallback, type ReactNode } from 'react';
-import type { ModalOptions } from '@/widgets/hooks/useModal';
-import { useModalContext } from '@/widgets/ui/components/modal/ModalProvider';
 
 export const useAnimatedModal = () => {
   const { openModal } = useModalContext();

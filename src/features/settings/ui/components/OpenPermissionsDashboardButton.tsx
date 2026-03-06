@@ -1,12 +1,12 @@
-import { type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { Button } from '@/shared/ui';
-import { useLocalization } from '@/widgets/hooks';
+import { type FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export const OpenPermissionsDashboardButton: FC = () => {
   const navigate = useNavigate();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
 
   const handleOpen = () => {
     navigate('/dashboard');

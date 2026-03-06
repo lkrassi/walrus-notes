@@ -1,5 +1,5 @@
+import type { ModalOptions, ModalState } from '@/app/providers/modal';
 import { createContext, type ReactNode } from 'react';
-import type { ModalOptions, ModalState } from '@/widgets/hooks/useModal';
 
 export interface ModalContextType {
   openModal: (content: ReactNode, options?: ModalOptions) => void;

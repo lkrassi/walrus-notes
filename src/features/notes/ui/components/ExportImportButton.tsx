@@ -1,10 +1,9 @@
+import { useModalActions, useModalContentContext } from '@/app/providers/modal';
+import { cn } from '@/shared/lib';
 import { Download, Upload } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization } from '@/widgets/hooks';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 import { MdImportModal } from './MdImportModal';
 
 interface Props {
@@ -18,7 +17,7 @@ export const ExportImportButton: FC<Props> = ({
   onImport,
   disabled,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
 
   const ModalContent: FC<{

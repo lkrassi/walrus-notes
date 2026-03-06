@@ -1,10 +1,8 @@
 import { openTab, switchTab } from '@/entities';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { memo, useCallback, type FC } from 'react';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import { useAppDispatch } from '@/widgets/hooks/redux';
-import type { FileTreeItem } from '@/widgets/hooks/useFileTree';
-import { createTabId } from '@/widgets/model/utils/tabUtils';
+import { useDispatch } from 'react-redux';
 import { LinkedNotesList } from './LinkedNotesList';
 
 interface RelatedNotesProps {
@@ -16,7 +14,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
   note,
   layoutId,
 }) {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const effectiveLayoutId = layoutId || note?.layoutId || '';
   const linkedOutIds =
     note?.linkedWithOut ??
@@ -27,7 +25,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
   const handleNoteSelect = useCallback(
     (selected: Note) => {
       try {
-        const item: FileTreeItem = {
+        const item = {
           id: selected.id,
           type: 'note',
           title: selected.title,
@@ -36,7 +34,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
           note: selected,
         };
         dispatch(openTab(item));
-        dispatch(switchTab(createTabId('note', selected.id)));
+        dispatch(switchTab(`note::${selected.id}`));
       } catch (_e) {}
     },
     [dispatch, note.layoutId]

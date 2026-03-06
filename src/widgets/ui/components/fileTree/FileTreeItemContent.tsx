@@ -1,6 +1,6 @@
 import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { useLocalization } from '@/widgets/hooks';
 import { useAppSelector } from '@/widgets/hooks/redux';
 import { useDropdown } from '@/widgets/hooks/useDropdown';

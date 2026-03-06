@@ -1,11 +1,16 @@
+export {
+  Modal,
+  ModalContentContext,
+  useModalContentContext,
+  useModalContext,
+} from '@/app/providers/modal';
+export {
+  Notification,
+  NotificationsContainer,
+} from '@/app/providers/notifications';
 export * from './components/fileTree';
 export * from './components/header/MobileMenu';
 export * from './components/header/PrivateHeader';
 export * from './components/header/PublicHeader';
-export * from './components/modal';
-export * from './components/modal/ModalContentContext';
-export * from './components/modal/ModalProvider';
-export * from './components/notifications/Notification';
-export * from './components/notifications/NotificationsContainer';
 export * from './components/sidebar';
 export * from './components/theme/ThemeSwitcher';

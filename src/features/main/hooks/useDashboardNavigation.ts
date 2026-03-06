@@ -1,5 +1,5 @@
+import type { FileTreeItem } from '@/shared/model';
 import { useNavigate } from 'react-router-dom';
-import type { FileTreeItem } from '@/widgets/hooks';
 
 interface UseDashboardNavigationProps {
   openTabs: Array<{ id: string; item: FileTreeItem; isActive: boolean }>;

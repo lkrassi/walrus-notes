@@ -2,8 +2,8 @@ import {
   allowedMarkdownElements,
   markdownComponents,
 } from '@/features/notes/lib/markdownConfig';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { forwardRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';

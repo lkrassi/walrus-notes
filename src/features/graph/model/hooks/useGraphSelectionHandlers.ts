@@ -1,7 +1,7 @@
+import type { Note } from '@/shared/model';
 import type { DragEvent, MouseEvent, RefObject } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface UseGraphSelectionHandlersProps {
   nodes: Node[];

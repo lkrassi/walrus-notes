@@ -1,3 +1,4 @@
+import { useNotifications } from '@/app/providers/notifications';
 import { useConfirmCodeMutation } from '@/entities';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -10,8 +11,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
-import { useLocalization, useNotifications } from '@/widgets/hooks';
 
 interface ConfirmCodeModalProps {
   email: string;
@@ -22,7 +23,7 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   email,
   onSuccess,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError } = useNotifications();
   const [confirmCode] = useConfirmCodeMutation();
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);

@@ -1,6 +1,6 @@
+import type { Note } from '@/shared/model';
 import { useCallback, type DragEvent, type MouseEvent } from 'react';
 import type { Node, NodeChange, OnNodesChange } from 'reactflow';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface UseGraphHandlersProps {
   updatePositionCallback: (

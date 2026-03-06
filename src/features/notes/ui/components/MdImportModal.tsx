@@ -1,3 +1,6 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
+import { cn } from '@/shared/lib';
 import {
   useCallback,
   useRef,
@@ -6,10 +9,8 @@ import {
   type DragEvent,
   type FC,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization, useNotifications } from '@/widgets/hooks';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 type Props = {
   onImported: (content: string) => void;
@@ -23,7 +24,7 @@ export const MdImportModal: FC<Props> = ({
   maxSizeBytes = 5 * 1024 * 1024,
 }) => {
   const { closeModal } = useModalContentContext();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError, showSuccess } = useNotifications();
 
   const fileRef = useRef<HTMLInputElement | null>(null);

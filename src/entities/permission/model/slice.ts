@@ -1,5 +1,5 @@
-import { shareApi } from '@/entities/permission/api/shareApi';
 import { createSlice } from '@reduxjs/toolkit';
+import { shareApi } from '../api';
 
 export interface PermissionsState {
   lastGeneratedLink: {
@@ -41,7 +41,4 @@ export const selectLastGeneratedLink = (state: {
   permissions: PermissionsState;
 }) => state.permissions.lastGeneratedLink;
 
-export {
-  useApplyLinkMutation,
-  useGenerateLinkMutation,
-} from '@/entities/permission/api/shareApi';
+export { useApplyLinkMutation, useGenerateLinkMutation } from '../api';

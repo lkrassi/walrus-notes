@@ -1,5 +1,5 @@
-﻿import logo from '@/assets/logo.avif';
-import { cn } from '@/shared/lib/cn';
+﻿import logo from '@/shared/assets/logo.avif';
+import { cn } from '@/shared/lib';
 import { useLocalization } from '@/widgets/hooks';
 import { memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';

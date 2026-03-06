@@ -1,3 +1,5 @@
+import { useModalActions, useModalContext } from '@/app/providers/modal';
+import type { AppDispatch, RootState } from '@/app/store';
 import type { DashboardTab } from '@/entities';
 import {
   closeTab,
@@ -6,21 +8,16 @@ import {
   switchTab,
   updateTabNote,
 } from '@/entities';
-import { CreateLayoutForm } from '@/features/layout/ui/components/CreateLayoutForm';
+import { CreateLayoutForm } from '@/features/layout';
 import { CreateNoteForm, NoteViewer } from '@/features/notes';
 import { Skeleton } from '@/shared';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import type { FileTreeItem } from '@/widgets/hooks';
-import { useIsMobile } from '@/widgets/hooks';
-import { useAppDispatch, useTabs } from '@/widgets/hooks/redux';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
-import type { TabType } from '@/widgets/model/utils/tabUtils';
-import { createTabId } from '@/widgets/model/utils/tabUtils';
-import { useModalContext } from '@/widgets/ui/components/modal/ModalProvider';
+import { cn } from '@/shared/lib';
+import { useIsMobile } from '@/shared/lib/hooks';
+import { createTabId, type FileTreeItem, type Note } from '@/shared/model';
 import { FileText } from 'lucide-react';
 import { lazy, memo, Suspense, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { CreateChoiceModal } from './CreateChoiceModal';
 import { EmptyMainFallback } from './EmptyMainFallback';
 import { FolderSelectModal } from './FolderSelectModal';
@@ -39,9 +36,9 @@ interface MainContentProps {
 export const MainContent = memo(function DashboardContent({
   onNoteOpen,
 }: MainContentProps) {
-  const { t } = useLocalization();
-  const dispatch = useAppDispatch();
-  const { openTabs } = useTabs();
+  const { t } = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { openTabs } = useSelector((state: RootState) => state.tabs);
   const { openModal } = useModalContext();
   const { openModalFromTrigger } = useModalActions();
 
@@ -103,7 +100,7 @@ export const MainContent = memo(function DashboardContent({
 
   const handleItemSelect = useCallback(
     (item: FileTreeItem) => {
-      const tabId = createTabId(item.type as unknown as TabType, item.id);
+      const tabId = createTabId(item.type, item.id);
       const existingTab = openTabs.find(tab => tab.id === tabId);
 
       if (existingTab) {

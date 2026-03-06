@@ -1,3 +1,4 @@
+import type { AppDispatch, RootState } from '@/app/store';
 import { useGetUserProfileQuery } from '@/entities';
 import {
   clearUserProfile,
@@ -5,12 +6,12 @@ import {
   syncAuthFromStorage,
 } from '@/entities/user';
 import { useEffect, type ReactNode } from 'react';
-import { useAppDispatch, useAppSelector } from 'widgets/hooks/redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const AuthSyncProvider = ({ children }: { children: ReactNode }) => {
-  const dispatch = useAppDispatch();
-  const { accessToken, refreshToken, profile } = useAppSelector(
-    state => state.user
+  const dispatch = useDispatch<AppDispatch>();
+  const { accessToken, refreshToken, profile } = useSelector(
+    (state: RootState) => state.user
   );
   const storedUserId =
     typeof window !== 'undefined' ? localStorage.getItem('userId') : null;

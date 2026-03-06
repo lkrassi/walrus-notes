@@ -1,13 +1,12 @@
+import { ModalProvider } from '@/app/providers/modal';
+import { NotificationsContainer } from '@/app/providers/notifications';
+import { SidebarProvider } from '@/app/providers/sidebar';
 import { AuthSyncProvider } from 'app/providers/AuthSyncProvider';
 import { appRoutesConfig } from 'app/router/config';
 import { store } from 'app/store';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
-
-import { SidebarProvider } from 'widgets/hooks/sidebarContext';
-import { ModalProvider } from 'widgets/ui/components/modal/ModalProvider';
-import { NotificationsContainer } from 'widgets/ui/components/notifications/NotificationsContainer';
 
 export const App = () => {
   return (

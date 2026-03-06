@@ -1,11 +1,13 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
+import type { AppDispatch } from '@/app/store';
 import { closeLayoutTabs, useDeleteLayoutMutation } from '@/entities';
 import { Trash2 } from 'lucide-react';
 import type { FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { Button } from 'shared';
 import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useAppDispatch } from 'widgets/hooks/redux';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 interface DeleteLayoutFormProps {
   layoutId: string;
@@ -18,10 +20,10 @@ export const DeleteLayoutForm = ({
   layoutTitle,
   onLayoutDeleted,
 }: DeleteLayoutFormProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [deleteLayout, { isLoading }] = useDeleteLayoutMutation();
 
   const handleSubmit = async (e: FormEvent) => {

@@ -1,5 +1,5 @@
 import { CollaborativeNoteEditor } from '@/features/notes/ui/components/CollaborativeNoteEditor';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { memo, type FC } from 'react';
 import type { CollaborativeEditorPanelProps } from './types';
 

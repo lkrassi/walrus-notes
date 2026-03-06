@@ -1,9 +1,10 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import { useUpdateLayoutMutation } from '@/entities';
 import { useEffect, useRef, useState, type FC, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from 'shared';
 import { cn } from 'shared/lib/cn';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 import { ColorSelector } from './ColorSelector';
 
 interface UpdateLayoutFormProps {
@@ -22,7 +23,7 @@ export const UpdateLayoutForm: FC<UpdateLayoutFormProps> = ({
   layoutColor = undefined,
   onLayoutUpdated,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [updateLayout, { isLoading }] = useUpdateLayoutMutation();

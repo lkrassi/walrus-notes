@@ -1,14 +1,14 @@
+import { cn } from '@/shared/lib';
 import { Suspense, lazy } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Skeleton } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization } from 'widgets';
 
 const MarkdownPreview = lazy(() =>
   import('./MarkdownPreview').then(m => ({ default: m.MarkdownPreview }))
 );
 
+import type { Note } from '@/shared/model';
 import { type FC } from 'react';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface Props {
   payload: string;
@@ -24,7 +24,7 @@ export const NoteContentPreview: FC<Props> = ({
   note,
   isEditing,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
 
   return (
     <div

@@ -1,3 +1,5 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { cn } from '@/shared/lib';
 import {
   useEffect,
   useRef,
@@ -5,10 +7,8 @@ import {
   type FC,
   type SyntheticEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization } from 'widgets';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface Props {
   title?: string;
@@ -17,7 +17,7 @@ interface Props {
 
 export const EditNoteModal: FC<Props> = ({ title = '', onSaved }) => {
   const { closeModal } = useModalContentContext();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const [value, setValue] = useState(title);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

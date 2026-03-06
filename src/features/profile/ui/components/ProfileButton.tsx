@@ -1,12 +1,13 @@
+import type { RootState } from '@/app/store';
 import { type FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { cn } from 'shared/lib/cn';
-import { useLocalization } from 'widgets';
-import { useAppSelector } from 'widgets/hooks/redux';
 
 export const ProfileButton: FC = () => {
-  const { profile } = useAppSelector(state => state.user);
-  const { t } = useLocalization();
+  const { profile } = useSelector((state: RootState) => state.user);
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleOpenProfile = () => {

@@ -1,4 +1,4 @@
-@import '../../assets/fonts/fonts.css';
+@import '../../shared/assets/fonts/fonts.css';
 @import 'tailwindcss';
 @import './components.css';
 @import './scrollbar.css';

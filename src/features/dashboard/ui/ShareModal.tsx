@@ -1,16 +1,17 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import {
   resetGeneratedLink,
   selectLastGeneratedLink,
   useGenerateLinkMutation,
 } from '@/entities';
+import { cn } from '@/shared/lib';
 import { Form, Formik } from 'formik';
 import { Check, Copy } from 'lucide-react';
 import { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization, useNotifications } from '@/widgets/hooks';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 import * as Yup from 'yup';
 
 interface ShareModalProps {
@@ -40,7 +41,7 @@ export const ShareModal = memo(function ShareModal({
 }: ShareModalProps) {
   const [generateLink, { error }] = useGenerateLinkMutation();
   const dispatch = useDispatch();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [copied, setCopied] = useState(false);

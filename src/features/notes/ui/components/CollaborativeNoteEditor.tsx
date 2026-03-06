@@ -1,7 +1,5 @@
-import {
-  type AwarenessUser,
-  useYjsCollaboration,
-} from '@/shared/lib/collaboration';
+import { useNotifications } from '@/app/providers/notifications';
+import { type AwarenessUser, cn, useYjsCollaboration } from '@/shared/lib';
 import {
   forwardRef,
   memo,
@@ -10,9 +8,7 @@ import {
   useImperativeHandle,
   useState,
 } from 'react';
-import { cn } from '@/shared/lib/cn';
-import { useLocalization } from 'widgets';
-import { useNotifications } from '@/widgets/hooks';
+import { useTranslation } from 'react-i18next';
 import type * as Y from 'yjs';
 import { CollaborativeEditor } from './CollaborativeEditor';
 
@@ -48,7 +44,7 @@ export const CollaborativeNoteEditor = memo(
       ref
     ) {
       const { showError } = useNotifications();
-      const { t } = useLocalization();
+      const { t } = useTranslation();
       const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
       const handleStatusChange = useCallback(

@@ -1,6 +1,5 @@
 import type { TabsProps } from '@/features/main/model/types/tabsProps';
-import { cn } from '@/shared/lib/cn';
-import { useDndSensors } from '@/shared/lib/useDndSensors';
+import { cn, useDndSensors } from '@/shared/lib';
 import {
   DndContext,
   DragOverlay,

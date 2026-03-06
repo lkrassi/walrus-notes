@@ -1,7 +1,7 @@
 import { notesApi, useGetNotesQuery } from '@/entities';
 import type { RootState } from 'app/store';
 import { useMemo } from 'react';
-import { useAppSelector } from '@/widgets/hooks/redux';
+import { useSelector } from 'react-redux';
 
 interface UseLinkedNotesProps {
   layoutId?: string | null;
@@ -24,7 +24,7 @@ export const useLinkedNotes = ({
     { skip: shouldSkip }
   );
 
-  const cachedNotes = useAppSelector(
+  const cachedNotes = useSelector(
     state =>
       notesApi.endpoints.getNotes.select({ layoutId: layoutId || '', page: 1 })(
         state as RootState

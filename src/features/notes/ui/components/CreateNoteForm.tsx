@@ -1,4 +1,8 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import { useCreateNoteMutation } from '@/entities';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import {
   memo,
   useCallback,
@@ -7,11 +11,8 @@ import {
   useState,
   type SyntheticEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Textarea } from 'shared';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import { useLocalization, useNotifications } from 'widgets';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
 
 interface CreateNoteFormProps {
   layoutId: string;
@@ -23,7 +24,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
   layoutId,
   onNoteCreated,
 }: CreateNoteFormProps) {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [payload, setPayload] = useState('');
   const { showError } = useNotifications();

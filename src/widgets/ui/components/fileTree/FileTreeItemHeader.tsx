@@ -1,14 +1,14 @@
+import { useModalActions } from '@/app/providers/modal';
 import { useShareLinkModal } from '@/features/graph/hooks/useShareLinkModal';
 import { DeleteLayoutForm } from '@/features/layout/ui/components/DeleteLayoutForm';
 import { UpdateLayoutForm } from '@/features/layout/ui/components/UpdateLayoutForm';
 import { CreateNoteForm } from '@/features/notes';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import type { Note } from '@/shared/model';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization } from '@/widgets/hooks';
 import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
 import { ChevronDown, FileText, Pencil, Share2, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';

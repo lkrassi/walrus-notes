@@ -5,9 +5,9 @@ import {
   setDraft,
   updateTabNote,
 } from '@/entities';
+import type { CommitDraftPayload, UpdateDraftPayload } from '@/shared/model';
 import { store, type AppDispatch } from 'app/store';
 import { useEffect } from 'react';
-import type { CommitDraftPayload, UpdateDraftPayload } from '@/shared/model/ws';
 import type { DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftListenersOpts {

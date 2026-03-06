@@ -1,5 +1,5 @@
 import type { CollaborativeNoteEditorHandle } from '@/features/notes/ui/components/CollaborativeNoteEditor';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { LayoutGroup } from 'framer-motion';
 import { memo, useRef, type FC } from 'react';
 import { CollaborativeEditorPanel } from './CollaborativeEditorPanel';

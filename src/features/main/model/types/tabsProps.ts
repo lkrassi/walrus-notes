@@ -1,4 +1,4 @@
-import type { FileTreeItem } from 'widgets';
+import type { FileTreeItem } from '@/shared/model';
 
 interface Tab {
   id: string;

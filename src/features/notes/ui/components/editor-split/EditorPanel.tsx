@@ -1,5 +1,5 @@
 import { MarkdownEditor } from '@/features/notes/ui/components/MarkdownEditor';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { motion } from 'framer-motion';
 import { memo, type FC } from 'react';
 import type { EditorPanelProps } from './types';

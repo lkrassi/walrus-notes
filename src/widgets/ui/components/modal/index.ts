@@ -1,1 +1,6 @@
-export { Modal } from './Modal';
+export {
+  Modal,
+  ModalContentContext,
+  useModalContentContext,
+  useModalContext,
+} from '@/app/providers/modal';

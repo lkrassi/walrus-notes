@@ -1,6 +1,6 @@
+import type { Note } from '@/shared/model';
 import { useCallback, useEffect } from 'react';
 import type { Node } from 'reactflow';
-import type { Note } from '@/shared/model/types/layouts';
 
 interface UseGraphSyncHandlersProps {
   nodes: Node[];

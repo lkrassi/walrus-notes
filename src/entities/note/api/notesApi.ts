@@ -1,5 +1,5 @@
-import { layoutApi } from '@/entities/layout/api/layoutApi';
-import { updateTabNote } from '@/entities/tab/model/slice';
+import { layoutApi } from '@/entities/layout';
+import { updateTabNote } from '@/entities/tab';
 import { apiSlice } from '@/shared/api';
 import type { RootState } from 'app/store';
 import type { Layout, Note } from 'shared/model/types/layouts';

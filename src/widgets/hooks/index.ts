@@ -1,5 +1,7 @@
+export { useModal, useModalActions } from '@/app/providers/modal';
+export { useNotifications } from '@/app/providers/notifications';
+export { SidebarProvider, useSidebar } from '@/app/providers/sidebar';
 export { useAppDispatch, useAppSelector, useUser } from './redux';
-export { SidebarProvider, useSidebar } from './sidebarContext';
 export {
   useDeviceType,
   useIsDesktop,
@@ -16,6 +18,4 @@ export {
   useLocalStorageObject,
   useLocalStorageString,
 } from './useLocalStorage';
-export { useModal } from './useModal';
-export { useNotifications } from './useNotifications';
 export { useTheme } from './useTheme';

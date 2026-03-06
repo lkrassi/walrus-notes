@@ -1,3 +1,5 @@
+import { useModalContentContext } from '@/app/providers/modal';
+import { useNotifications } from '@/app/providers/notifications';
 import {
   useCallback,
   useRef,
@@ -6,10 +8,9 @@ import {
   type DragEvent,
   type FC,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from 'shared/lib/cn';
 import { Button } from 'shared/ui/components/Button';
-import { useLocalization, useNotifications } from 'widgets/hooks';
-import { useModalContentContext } from 'widgets/ui/components/modal/ModalContentContext';
 
 type UploadFn = (file: File) => Promise<string>;
 
@@ -27,7 +28,7 @@ export const ImageUploadModal: FC<Props> = ({
   maxSizeBytes = 5 * 1024 * 1024,
 }) => {
   const { closeModal } = useModalContentContext();
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError, showSuccess } = useNotifications();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);

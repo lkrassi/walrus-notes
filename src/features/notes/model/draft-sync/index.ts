@@ -1,9 +1,9 @@
+import { useWSContext } from '@/app/providers/websocket';
+import type { AppDispatch, RootState } from '@/app/store';
+import { useDebounced, useWebSocket } from '@/shared/lib/hooks';
+import { makeCommitDraft } from '@/shared/model';
 import { useCallback, useEffect } from 'react';
-import { makeCommitDraft } from '@/shared/model/ws';
-import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
-import { useDebounced } from '@/widgets/hooks/useDebounced';
-import { useWebSocket } from '@/widgets/hooks/useWebSocket';
-import { useWSContext } from '@/widgets/providers/WebSocketProvider';
+import { useDispatch, useSelector } from 'react-redux';
 import type { UseDraftSyncOpts, UseDraftSyncReturn } from './types';
 import { useDraftListeners } from './useDraftListeners';
 import { useDraftSender } from './useDraftSender';
@@ -21,8 +21,8 @@ export const useDraftSync = ({
   const debounced = useDebounced(draft, debounceMs);
   const ctx = useWSContext();
   const ws = ctx ?? useWebSocket({ url: serverUrl, userId });
-  const dispatch = useAppDispatch();
-  const storedDraft = useAppSelector(state =>
+  const dispatch = useDispatch<AppDispatch>();
+  const storedDraft = useSelector((state: RootState) =>
     noteId ? (state.drafts?.[noteId] ?? null) : null
   );
 

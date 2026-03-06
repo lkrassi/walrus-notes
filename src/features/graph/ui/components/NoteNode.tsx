@@ -1,9 +1,9 @@
+import { cn } from '@/shared/lib';
+import { useIsMobile } from '@/shared/lib/hooks';
+import type { Note } from '@/shared/model';
 import { motion } from 'framer-motion';
 import { memo, useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { cn } from '@/shared/lib/cn';
-import type { Note } from '@/shared/model/types/layouts';
-import { useIsMobile } from '@/widgets/hooks';
 
 interface NoteNodeProps {
   data: {

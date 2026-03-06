@@ -1,12 +1,12 @@
+import { useModalContentContext } from '@/app/providers/modal';
 import { useGetMyLayoutsQuery } from '@/entities';
-import { useState } from 'react';
-import { cn } from '@/shared/lib/cn';
-import type { Layout } from '@/shared/model/types/layouts';
+import { cn } from '@/shared/lib';
+import type { Layout } from '@/shared/model';
 import { Button } from '@/shared/ui';
 import { Skeleton } from '@/shared/ui/components/Skeleton';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
-import { useLocalization } from '@/widgets/hooks';
-import { useModalContentContext } from '@/widgets/ui/components/modal/ModalContentContext';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FolderSelectModalProps {
   onFolderSelected: (layoutId: string) => void;
@@ -15,7 +15,7 @@ interface FolderSelectModalProps {
 export const FolderSelectModal = ({
   onFolderSelected,
 }: FolderSelectModalProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { closeModal } = useModalContentContext();
   const { data: layoutsResponse, isLoading } = useGetMyLayoutsQuery();
   const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);

@@ -66,10 +66,10 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      'import/no-cycle': ['warn', { ignoreExternal: true }],
+      'import/no-cycle': ['error', { ignoreExternal: true }],
       'import/no-relative-parent-imports': 'error',
       'import/no-restricted-paths': [
-        'warn',
+        'error',
         {
           zones: [
             {
@@ -104,7 +104,7 @@ export default [
         },
       ],
       'boundaries/element-types': [
-        'warn',
+        'error',
         {
           default: 'disallow',
           rules: [
@@ -170,11 +170,29 @@ export default [
   },
 
   {
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['widgets', 'widgets/*', '@/widgets', '@/widgets/*'],
+              message:
+                'Features must not import widgets. Use app/providers, shared, entities, or feature public APIs.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
     files: [
       'eslint.config.ts',
       'vite.config.ts',
       'server/**/*.ts',
-      'src/types/**/*.d.ts',
+      'src/shared/types/**/*.d.ts',
     ],
     rules: {
       'import/no-default-export': 'off',

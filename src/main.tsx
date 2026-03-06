@@ -1,12 +1,12 @@
+import { ThemeProvider } from '@/app/providers/theme';
 import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from 'widgets/ui/ThemeProvider';
 
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
+import '@/shared/config/i18n';
 import './app/styles/App.css';
 import './app/styles/markdown.css';
-import './i18n';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

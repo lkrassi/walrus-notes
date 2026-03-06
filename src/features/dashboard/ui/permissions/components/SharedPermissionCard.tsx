@@ -4,7 +4,7 @@ import {
   createFriendlyTargetName,
   kindLabelKey,
 } from '@/features/dashboard/ui/permissions/utils';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { Shield, Trash2 } from 'lucide-react';
 import { type FC } from 'react';
 import { RightsBadges } from './RightsBadges';

@@ -1,3 +1,4 @@
+import { useModalContentContext } from '@/app/providers/modal';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
@@ -5,9 +6,8 @@ import Typography from '@mui/material/Typography';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
-import { useLocalization } from '@/widgets/hooks';
-import { useModalContentContext } from '@/widgets/ui';
 import * as Yup from 'yup';
 
 interface ForgotPasswordEmailModalProps {
@@ -17,7 +17,7 @@ interface ForgotPasswordEmailModalProps {
 export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
   onSubmit,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { closeModal } = useModalContentContext();
   const emailFieldRef = useRef<HTMLInputElement>(null);

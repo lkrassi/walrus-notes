@@ -1,6 +1,6 @@
 import { useTabMiddleClickClose } from '@/features/main/hooks/useTabMiddleClickClose';
 import type { TabsProps } from '@/features/main/model/types/tabsProps';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';

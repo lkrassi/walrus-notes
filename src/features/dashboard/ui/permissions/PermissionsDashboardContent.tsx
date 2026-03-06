@@ -1,3 +1,4 @@
+import { useNotifications } from '@/app/providers/notifications';
 import {
   useDeletePermissionMutation,
   useGetMyLayoutsQuery,
@@ -8,9 +9,9 @@ import {
   type PermissionItem,
 } from '@/entities';
 import { cn } from '@/shared/lib/cn';
-import { useLocalization, useNotifications } from '@/widgets/hooks';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';
 import { SharedPermissionCard } from './components/SharedPermissionCard';
 import type { EditablePermissionState } from './types';
@@ -22,7 +23,7 @@ interface ResolvedUserInfo {
 }
 
 export const PermissionsDashboardContent: FC = () => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError, showSuccess } = useNotifications();
   const { data } = useGetPermissionsDashboardQuery();
   const { data: layoutsResponse } = useGetMyLayoutsQuery();

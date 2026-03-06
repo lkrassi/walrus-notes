@@ -1,10 +1,10 @@
+import { useModalActions } from '@/app/providers/modal';
 import { useUploadFileMutation } from '@/shared/api';
-import type { AwarenessUser } from '@/shared/lib/collaboration';
-import { memo, useCallback, type FC } from 'react';
-import { cn } from '@/shared/lib/cn';
+import type { AwarenessUser } from '@/shared/lib';
+import { cn } from '@/shared/lib';
 import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
-import { useLocalization } from 'widgets';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { memo, useCallback, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
 import { EditNoteModal } from './EditNoteModal';
 import { MarkdownHelp } from './MarkdownHelp';
@@ -53,7 +53,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   onImport,
   onToggleFullscreen,
 }) {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
   const [uploadFile] = useUploadFileMutation();
 

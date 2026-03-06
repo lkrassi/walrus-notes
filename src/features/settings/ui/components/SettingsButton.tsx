@@ -1,14 +1,14 @@
+import { cn } from '@/shared/lib';
+import { Button } from '@/shared/ui/components/Button';
 import { Settings } from 'lucide-react';
 import { type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/shared/lib/cn';
-import { Button } from '@/shared/ui/components/Button';
-import { useLocalization } from 'widgets';
 
 export const SettingsButton: FC = () => {
   const navigate = useNavigate();
 
-  const { t } = useLocalization();
+  const { t } = useTranslation();
 
   const handleOpenSettings = () => {
     navigate('/profile');

@@ -1,3 +1,4 @@
+import { useNotifications } from '@/app/providers/notifications';
 import { useConfirmCodeMutation } from '@/entities';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
@@ -17,8 +18,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'shared';
-import { useLocalization, useNotifications } from '@/widgets/hooks';
 import * as Yup from 'yup';
 
 interface ResetPasswordModalProps {
@@ -30,7 +31,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   email,
   onSuccess,
 }) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { showError } = useNotifications();
   const [confirmCode] = useConfirmCodeMutation();
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);

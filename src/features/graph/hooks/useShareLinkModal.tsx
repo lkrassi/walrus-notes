@@ -1,6 +1,6 @@
+import { useModalActions } from '@/app/providers/modal';
 import { ShareModal } from '@/features/dashboard';
 import { useCallback } from 'react';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
 
 export const useShareLinkModal = () => {
   const { openModalFromTrigger } = useModalActions();

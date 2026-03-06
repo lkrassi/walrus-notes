@@ -6,7 +6,7 @@ import {
   initialFromPermission,
   kindLabelKey,
 } from '@/features/dashboard/ui/permissions/utils';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 import { Shield } from 'lucide-react';
 import { type FC } from 'react';
 import { PermissionAvatar } from './PermissionAvatar';

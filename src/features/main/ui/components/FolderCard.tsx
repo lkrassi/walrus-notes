@@ -1,14 +1,13 @@
+import { useModalActions } from '@/app/providers/modal';
 import { useGetNotesQuery } from '@/entities';
-import { DeleteLayoutForm } from '@/features/layout/ui/components/DeleteLayoutForm';
-import { UpdateLayoutForm } from '@/features/layout/ui/components/UpdateLayoutForm';
+import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
+import { cn } from '@/shared/lib';
+import type { Layout } from '@/shared/model';
+import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Network, Pencil, Trash2 } from 'lucide-react';
-import { cn } from '@/shared/lib/cn';
-import type { Layout } from '@/shared/model/types/layouts';
-import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
-import { useModalActions } from '@/widgets/hooks/useModalActions';
+import { useTranslation } from 'react-i18next';
 
 interface FolderCardProps {
   layout: Layout;
@@ -23,7 +22,7 @@ export const FolderCard = ({
   itemVariants,
   cardHoverVariants,
 }: FolderCardProps) => {
-  const { t } = useLocalization();
+  const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
   const { data: notesResponse } = useGetNotesQuery({
     layoutId: layout.id,
