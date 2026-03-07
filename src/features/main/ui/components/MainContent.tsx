@@ -1,5 +1,3 @@
-import { useModalActions, useModalContext } from '@/app/providers/modal';
-import type { AppDispatch, RootState } from '@/app/store';
 import type { DashboardTab } from '@/entities';
 import {
   closeTab,
@@ -9,9 +7,10 @@ import {
   updateTabNote,
 } from '@/entities';
 import { CreateLayoutForm } from '@/features/layout';
-import { CreateNoteForm, NoteViewer } from '@/features/notes';
+import { CreateNoteForm } from '@/features/notes/ui/components/CreateNoteForm';
+import { NoteViewer } from '@/features/notes/ui/components/NoteViewer';
 import { Skeleton } from '@/shared';
-import { cn } from '@/shared/lib';
+import { cn, useModalActions, useModalContext } from '@/shared/lib';
 import { useIsMobile } from '@/shared/lib/hooks';
 import { createTabId, type FileTreeItem, type Note } from '@/shared/model';
 import { FileText } from 'lucide-react';
@@ -28,6 +27,12 @@ const NotesGraph = lazy(() =>
   }))
 );
 
+type RootStateLike = {
+  tabs: {
+    openTabs: DashboardTab[];
+  };
+};
+
 interface MainContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
   onItemSelect?: (item: FileTreeItem) => void;
@@ -37,8 +42,8 @@ export const MainContent = memo(function DashboardContent({
   onNoteOpen,
 }: MainContentProps) {
   const { t } = useTranslation();
-  const dispatch = useDispatch<AppDispatch>();
-  const { openTabs } = useSelector((state: RootState) => state.tabs);
+  const dispatch = useDispatch();
+  const { openTabs } = useSelector((state: RootStateLike) => state.tabs);
   const { openModal } = useModalContext();
   const { openModalFromTrigger } = useModalActions();
 
