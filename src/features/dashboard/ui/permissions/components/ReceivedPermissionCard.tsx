@@ -1,11 +1,11 @@
 import type { PermissionItem } from '@/entities';
-import type { EditablePermissionState } from '@/features/dashboard/ui/permissions/types';
 import {
   createFriendlyTargetName,
   createFriendlyUserName,
   initialFromPermission,
   kindLabelKey,
-} from '@/features/dashboard/ui/permissions/utils';
+} from '../../../lib/utils';
+import type { EditablePermissionState } from '../../../model';
 import { cn } from '@/shared/lib';
 import { Shield } from 'lucide-react';
 import { type FC } from 'react';

@@ -1,12 +1,9 @@
 import type { PermissionItem } from '@/entities';
-import type { EditablePermissionState } from '@/features/dashboard/ui/permissions/types';
-import {
-  createFriendlyTargetName,
-  kindLabelKey,
-} from '@/features/dashboard/ui/permissions/utils';
 import { cn } from '@/shared/lib';
 import { Shield, Trash2 } from 'lucide-react';
 import { type FC } from 'react';
+import { createFriendlyTargetName, kindLabelKey } from '../../../lib/utils';
+import type { EditablePermissionState } from '../../../model';
 import { RightsBadges } from './RightsBadges';
 
 interface SharedPermissionCardProps {

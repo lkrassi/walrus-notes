@@ -1,3 +1,3 @@
-export * from './ui/ApplyLinkHandler';
-export * from './ui/DashBoard';
-export * from './ui/ShareModal';
+export { ApplyLinkHandler } from './ui/ApplyLinkHandler';
+export { DashBoard } from './ui/DashBoard';
+export { ShareModal } from './ui/ShareModal';

@@ -8,14 +8,14 @@ import {
   type PermissionItem,
 } from '@/entities';
 import { cn } from '@/shared/lib';
-import { useNotifications } from '@/app/providers/notifications';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from '@/widgets/hooks';
+import { initialFromPermission } from '../../lib/utils';
+import type { EditablePermissionState } from '../../model';
 import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';
 import { SharedPermissionCard } from './components/SharedPermissionCard';
-import type { EditablePermissionState } from './types';
-import { initialFromPermission } from './utils';
 
 interface ResolvedUserInfo {
   username?: string;
