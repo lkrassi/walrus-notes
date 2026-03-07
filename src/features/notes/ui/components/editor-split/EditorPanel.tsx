@@ -1,4 +1,4 @@
-import { MarkdownEditor } from '@/features/notes/ui/components/MarkdownEditor';
+import { MarkdownEditor } from '../MarkdownEditor';
 import { cn } from '@/shared/lib';
 import { motion } from 'framer-motion';
 import { memo, type FC } from 'react';

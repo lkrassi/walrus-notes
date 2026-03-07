@@ -1,4 +1,4 @@
-import type { HelpSectionData } from '@/features/notes/lib/markdownHelpData';
+import type { HelpSectionData } from '../../lib/markdownHelpData';
 import { cn } from '@/shared/lib';
 import { memo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';

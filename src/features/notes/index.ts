@@ -1,2 +1,1 @@
-export * from './model';
-export * from './ui';
+export { CreateNoteForm, NoteViewer } from './ui/components';

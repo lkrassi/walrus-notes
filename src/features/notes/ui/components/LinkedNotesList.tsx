@@ -1,4 +1,4 @@
-import { useLinkedNotes } from '@/features/notes/lib/useLinkedNotes';
+import { useLinkedNotes } from '../../lib/hooks';
 import { cn } from '@/shared/lib';
 import type { Note } from '@/shared/model';
 import { useCallback, useState } from 'react';

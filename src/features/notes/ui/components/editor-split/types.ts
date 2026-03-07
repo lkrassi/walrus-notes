@@ -1,4 +1,4 @@
-import type { CollaborativeNoteEditorHandle } from '@/features/notes/ui/components/CollaborativeNoteEditor';
+import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
 import type { AwarenessUser } from '@/shared/lib';
 import type { Note } from '@/shared/model';
 import type { PointerEventHandler, RefObject } from 'react';

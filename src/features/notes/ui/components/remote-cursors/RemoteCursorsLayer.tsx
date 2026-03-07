@@ -1,7 +1,7 @@
 import {
   getCaretOverlayPosition,
   getSelectionOverlayRects,
-} from '@/features/notes/lib/yjs/textareaOverlayUtils';
+} from '../../../lib/yjs/textareaOverlayUtils';
 import type { AwarenessUser } from '@/shared/lib';
 import { cn } from '@/shared/lib';
 import {

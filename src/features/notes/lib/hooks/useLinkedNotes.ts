@@ -1,7 +1,10 @@
 import { notesApi, useGetNotesQuery } from '@/entities';
-import type { RootState } from 'app/store';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+
+type RootStateLike = {
+  api: unknown;
+};
 
 interface UseLinkedNotesProps {
   layoutId?: string | null;
@@ -27,7 +30,7 @@ export const useLinkedNotes = ({
   const cachedNotes = useSelector(
     state =>
       notesApi.endpoints.getNotes.select({ layoutId: layoutId || '', page: 1 })(
-        state as RootState
+        state as RootStateLike
       )?.data?.data
   );
 

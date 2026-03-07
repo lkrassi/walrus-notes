@@ -1,4 +1,4 @@
-import { markdownHelpSections } from '@/features/notes/lib/markdownHelpData';
+import { markdownHelpSections } from '../../lib/markdownHelpData';
 import { cn } from '@/shared/lib';
 import { type FC } from 'react';
 import { HelpSection } from './HelpSection';

@@ -1,4 +1,4 @@
-import type { CollaborativeNoteEditorHandle } from '@/features/notes/ui/components/CollaborativeNoteEditor';
+import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
 import { cn } from '@/shared/lib';
 import { LayoutGroup } from 'framer-motion';
 import { memo, useRef, type FC } from 'react';
@@ -7,8 +7,10 @@ import { Divider } from './Divider';
 import { EditorPanel } from './EditorPanel';
 import { PreviewPanel } from './PreviewPanel';
 import type { EditorSplitProps } from './types';
-import { useCollaborativeContent } from './useCollaborativeContent';
-import { useEditorDimensions } from './useEditorDimensions';
+import {
+  useCollaborativeContent,
+  useEditorDimensions,
+} from '../../../lib/hooks';
 
 export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
   function NoteContentEditorSplit({

@@ -1,10 +1,10 @@
 import { cn } from '@/shared/lib';
 import { Suspense, lazy, memo, type FC } from 'react';
-import { Skeleton } from 'shared';
+import { Skeleton } from '@/shared';
 import type { PreviewPanelProps } from './types';
 
 const MarkdownPreview = lazy(() =>
-  import('@/features/notes/ui/components/MarkdownPreview').then(m => ({
+  import('../MarkdownPreview').then(m => ({
     default: m.MarkdownPreview,
   }))
 );

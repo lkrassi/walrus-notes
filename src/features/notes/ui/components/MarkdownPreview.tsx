@@ -1,7 +1,7 @@
 import {
   allowedMarkdownElements,
   markdownComponents,
-} from '@/features/notes/lib/markdownConfig';
+} from '../../lib/markdownConfig';
 import { cn } from '@/shared/lib';
 import type { Note } from '@/shared/model';
 import { forwardRef } from 'react';

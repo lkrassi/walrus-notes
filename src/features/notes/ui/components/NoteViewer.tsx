@@ -1,10 +1,11 @@
 import type { UserProfileState } from '@/entities';
-import { useExportNote, useNoteEditor } from '@/features/notes/model';
+import { useExportNote } from '../../lib/hooks';
 import type { AwarenessUser } from '@/shared/lib';
 import { cn } from '@/shared/lib';
 import type { Note } from '@/shared/model';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNoteEditor } from '../../model/useNoteEditor';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';

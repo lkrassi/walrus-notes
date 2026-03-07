@@ -1,4 +1,4 @@
-import { useYjsTextareaBinding } from '@/features/notes/lib/yjs/useYjsTextareaBinding';
+import { useYjsTextareaBinding } from '../../lib/yjs/useYjsTextareaBinding';
 import type { AwarenessUser } from '@/shared/lib';
 import { cn } from '@/shared/lib';
 import {
@@ -9,7 +9,7 @@ import {
   useRef,
   type KeyboardEventHandler,
 } from 'react';
-import { Textarea } from 'shared';
+import { Textarea } from '@/shared';
 import type * as Y from 'yjs';
 import { RemoteCursorsLayer } from './remote-cursors/RemoteCursorsLayer';
 
