@@ -1,5 +1,5 @@
-import { useModalActions } from '@/app/providers/modal';
 import { ShareModal } from '@/features/dashboard';
+import { useModalActions } from '@/shared/lib';
 import { useCallback } from 'react';
 
 export const useShareLinkModal = () => {

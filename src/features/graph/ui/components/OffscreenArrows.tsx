@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import type { Node } from 'reactflow';
-import { useOffscreenArrows } from './hooks/useOffscreenArrows';
+import { useOffscreenArrows } from '../../lib/hooks';
 
 interface OffscreenArrowsProps {
   nodes: Node[];

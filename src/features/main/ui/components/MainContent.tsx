@@ -22,7 +22,7 @@ import { EmptyMainFallback } from './EmptyMainFallback';
 import { FolderSelectModal } from './FolderSelectModal';
 import { Tabs } from './Tabs';
 const NotesGraph = lazy(() =>
-  import('@/features/graph/ui/components/NotesGraph').then(m => ({
+  import('@/features/graph').then(m => ({
     default: m.NotesGraph,
   }))
 );

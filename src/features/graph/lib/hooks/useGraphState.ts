@@ -1,5 +1,5 @@
-import { useGraphHistory } from '@/entities/graph/model';
-import { useGraphInitialization } from '@/features/graph/model/hooks/useGraphInitialization';
+import { useGraphHistory } from '@/entities/graph';
+import { useGraphInitialization } from '../../model/hooks/useGraphInitialization';
 import { useState } from 'react';
 import type { Edge, Node } from 'reactflow';
 import { useEdgesState, useNodesState, useReactFlow } from 'reactflow';

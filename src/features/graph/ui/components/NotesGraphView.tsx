@@ -1,4 +1,4 @@
-import type { UseGraphHistoryReturn } from '@/entities/graph/model';
+import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { useDndSensors } from '@/shared/lib';
 import { useIsMobile } from '@/shared/lib/hooks';
 import type { Note } from '@/shared/model';
@@ -10,9 +10,11 @@ import { CoordinateOverlay } from './CoordinateOverlay';
 import { GraphContainer } from './GraphContainer';
 import { GraphDropZone } from './GraphDropZone';
 import { GraphReactFlowCore } from './GraphReactFlowCore';
-import { useGraphDragAndDrop } from './hooks/useGraphDragAndDrop';
-import { useGraphNodeInteractions } from './hooks/useGraphNodeInteractions';
-import { useGraphViewport } from './hooks/useGraphViewport';
+import {
+  useGraphDragAndDrop,
+  useGraphNodeInteractions,
+  useGraphViewport,
+} from '../../lib/hooks';
 import { NoteDragOverlay } from './NoteDragOverlay';
 import { TouchEnabledGraph } from './TouchEnabledGraph';
 import { UnposedNotesList } from './UnposedNotesList';
