@@ -1,11 +1,11 @@
-import { useTabMiddleClickClose } from '@/features/main/hooks/useTabMiddleClickClose';
-import type { TabsProps } from '@/features/main/model/types/tabsProps';
 import { cn } from '@/shared/lib';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import { FileText, Folder, Network, X } from 'lucide-react';
 import type { MouseEvent } from 'react';
+import { useTabMiddleClickClose } from '../../lib/hooks';
+import type { TabsProps } from '../../model/types/tabsProps';
 
 export const SortableTab = ({
   tab,

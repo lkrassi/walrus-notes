@@ -1,20 +1,25 @@
-import { WebSocketProvider } from '@/app/providers/websocket';
-import type { AppDispatch, RootState } from '@/app/store';
 import { openTab, switchTab } from '@/entities';
-import { useDashboardNavigation } from '@/features/main/hooks';
+import { WebSocketProvider, cn } from '@/shared/lib';
 import type { FileTreeItem, Note } from '@/shared/model';
-import { Sidebar } from '@/shared/ui/components/sidebar/Sidebar';
+import { Sidebar } from '@/widgets';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDashboardNavigation } from '../../lib/hooks';
 import { MainContent } from './MainContent';
 import { MainHeader } from './MainHeader';
 
-import { cn } from '@/shared/lib';
+type RootStateLike = {
+  tabs: {
+    openTabs: Array<{ id: string; isActive?: boolean; item: FileTreeItem }>;
+    activeTabId: string | null;
+  };
+  drafts?: Record<string, string>;
+};
 
 export const Main = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const { openTabs, activeTabId } = useSelector(
-    (state: RootState) => state.tabs
+    (state: RootStateLike) => state.tabs
   );
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
@@ -89,7 +94,7 @@ export const Main = () => {
     handleItemSelect(noteItem);
   };
 
-  const drafts = useSelector((state: RootState) => state.drafts ?? {});
+  const drafts = useSelector((state: RootStateLike) => state.drafts ?? {});
 
   const confirmIfUnsaved = (action: () => void) => {
     const activeTab = openTabs.find(tab => tab.isActive) ?? null;

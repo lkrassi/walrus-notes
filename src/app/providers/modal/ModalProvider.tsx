@@ -1,29 +1,6 @@
-import {
-  useModal,
-  type ModalOptions,
-  type ModalState,
-} from '@/app/providers/modal/useModal';
-import {
-  createContext,
-  lazy,
-  Suspense,
-  useContext,
-  type FC,
-  type ReactNode,
-} from 'react';
-
-const Modal = lazy(() =>
-  import('@/app/providers/modal/Modal').then(m => ({ default: m.Modal }))
-);
-
-interface ModalContextType {
-  openModal: (content: ReactNode, options?: ModalOptions) => void;
-  closeModal: () => void;
-  updateModalContent: (content: ReactNode) => void;
-  modalState: ModalState;
-}
-
-const ModalContext = createContext<ModalContextType | undefined>(undefined);
+import { ModalContext, useModal } from '@/shared/lib/modal';
+import { Modal } from './Modal';
+import { type FC, type ReactNode } from 'react';
 
 interface ModalProviderProps {
   children: ReactNode;
@@ -42,17 +19,7 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
       }}
     >
       {children}
-      <Suspense fallback={null}>
-        <Modal modalState={modalState} onClose={closeModal} />
-      </Suspense>
+      <Modal modalState={modalState} onClose={closeModal} />
     </ModalContext.Provider>
   );
-};
-
-export const useModalContext = () => {
-  const context = useContext(ModalContext);
-  if (!context) {
-    throw new Error('useModalContext must be used within a ModalProvider');
-  }
-  return context;
 };

@@ -1,4 +1,5 @@
 import type { FileTreeItem } from '@/shared/model';
+import type { Note } from '@/shared/model';
 import { useCallback, useState } from 'react';
 
 export interface DashboardTab {
@@ -134,10 +135,7 @@ export const useDashboardTabs = () => {
   }, []);
 
   const updateTabNote = useCallback(
-    (
-      noteId: string,
-      updates: Partial<import('shared/model/types/layouts').Note>
-    ) => {
+    (noteId: string, updates: Partial<Note>) => {
       setOpenTabs(prev =>
         prev.map(tab => {
           const { type, id } = parseTabId(tab.id);

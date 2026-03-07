@@ -1,4 +1,4 @@
-export { DashboardHeader } from './DashboardHeader';
-export { DashBoard } from './Main';
-export { DashboardContent } from './MainContent';
+export { Main } from './Main';
+export { MainContent } from './MainContent';
+export { MainHeader } from './MainHeader';
 export { Tabs } from './Tabs';

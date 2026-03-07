@@ -1,4 +1,4 @@
-import type { TabsProps } from '@/features/main/model/types/tabsProps';
+import type { TabsProps } from '../../model/types/tabsProps';
 import { cn, useDndSensors } from '@/shared/lib';
 import {
   DndContext,
