@@ -1,9 +1,8 @@
-import { ExportDataButton } from '@/features/settings/ui/components/ExportDataButton';
-import { ImportDataButton } from '@/features/settings/ui/components/ImportDataButton';
-import { LanguageSwitcher } from '@/features/settings/ui/components/LanguageSwitcher';
-import { LogoutButton } from '@/features/settings/ui/components/LogoutButton';
-import { OpenPermissionsDashboardButton } from '@/features/settings/ui/components/OpenPermissionsDashboardButton';
-import { ThemeSwitcher } from '@/features/settings/ui/components/ThemeSwitcher';
+import { LogoutButton } from '@/features/auth';
+import { ExportDataButton } from '../ui/components/ExportDataButton';
+import { ImportDataButton } from '../ui/components/ImportDataButton';
+import { OpenPermissionsDashboardButton } from '../ui/components/OpenPermissionsDashboardButton';
+import { LanguageSwitcher, ThemeSwitcher } from '@/widgets/ui';
 import {
   Download,
   Languages,

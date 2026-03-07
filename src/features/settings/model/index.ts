@@ -1,0 +1,1 @@
+export { settingsSections } from './variants';

@@ -1,15 +1,13 @@
-import { useModalActions } from '@/app/providers/modal';
-import type { AppDispatch, RootState } from '@/app/store';
 import {
   useChangeProfilePictureMutation,
   useGetUserProfileQuery,
 } from '@/entities';
 import { setUserProfile } from '@/entities/user';
 import { ImageViewerModal } from '@/features/profile';
-import { settingsSections } from '@/features/settings/models/variants';
+import { settingsSections } from '../../model';
 import logo from '@/shared/assets/logo.avif';
-import { cn } from '@/shared/lib';
-import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
+import { cn, useModalActions } from '@/shared/lib';
+import { ImageUploadModal } from '@/widgets/ui';
 import { PhotoCamera } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import {
@@ -24,6 +22,17 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
+type RootStateLike = {
+  user: {
+    profile?: {
+      id?: string;
+      username?: string;
+      email?: string;
+      imgUrl?: string;
+    } | null;
+  };
+};
 
 const SettingsHeader = () => {
   const { t } = useTranslation();
@@ -76,8 +85,8 @@ const SettingsHeader = () => {
 
 export const Settings: FC = () => {
   const { t } = useTranslation();
-  const profile = useSelector((state: RootState) => state.user.profile);
-  const dispatch = useDispatch<AppDispatch>();
+  const profile = useSelector((state: RootStateLike) => state.user.profile);
+  const dispatch = useDispatch();
   const { openModalFromTrigger } = useModalActions();
   const [avatarVersion, setAvatarVersion] = useState<number | undefined>(
     undefined
