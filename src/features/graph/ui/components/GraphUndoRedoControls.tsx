@@ -1,4 +1,4 @@
-import type { UseGraphHistoryReturn } from '@/entities/graph/model';
+import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { Redo as RedoIcon, Undo as UndoIcon } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
