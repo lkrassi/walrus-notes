@@ -13,6 +13,7 @@ const PrivateHeaderComponent = () => {
   return (
     <header
       className={cn(
+        'bg-bg',
         'dark:bg-dark-bg',
         'border-border',
         'dark:border-dark-border',

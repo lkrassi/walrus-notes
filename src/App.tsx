@@ -12,7 +12,13 @@ import { Route, Routes } from 'react-router-dom';
 export const App = () => {
   return (
     <>
-      <div className={cn('min-h-screen', 'relative')}>
+      <div
+        className={cn(
+          'bg-bg text-text dark:bg-dark-bg dark:text-dark-text',
+          'min-h-screen',
+          'relative'
+        )}
+      >
         <Provider store={store}>
           <AuthSyncProvider>
             <SidebarProvider>

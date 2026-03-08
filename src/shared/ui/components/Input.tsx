@@ -1,6 +1,6 @@
-import TextField from '@mui/material/TextField';
-import { forwardRef } from 'react';
+import { cn } from '@/shared/lib/core';
 import type { InputProps } from '@/shared/model/inputProps';
+import { forwardRef } from 'react';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -28,34 +28,32 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const isError = variant === 'error';
 
     return (
-      <TextField
-        inputRef={ref}
-        fullWidth
+      <input
+        ref={ref}
         type={type}
         value={value}
-        onChange={onChange}
-        onBlur={onBlur}
+        onChange={onChange as never}
+        onBlur={onBlur as never}
         placeholder={placeholder}
         disabled={disabled}
-        error={isError}
-        className={className}
+        className={cn(
+          'w-full rounded-md border px-3 py-2 text-base transition-all duration-200 outline-none',
+          'border-border text-text placeholder-input-placeholder bg-bg',
+          'dark:border-dark-border dark:text-dark-text dark:placeholder-dark-input-placeholder dark:bg-dark-bg',
+          ring
+            ? 'focus:ring-primary dark:focus:ring-dark-primary focus:border-transparent focus:ring-2'
+            : 'focus:border-primary dark:focus:border-dark-primary',
+          isError && 'border-red-500 focus:ring-red-500 dark:border-red-400',
+          className
+        )}
         autoFocus={autoFocus}
         required={required}
         name={name}
         id={id}
-        inputProps={{
-          maxLength,
-          minLength,
-          'aria-label': ariaLabel,
-          'aria-describedby': ariaDescribedBy,
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '&.Mui-focused fieldset': {
-              borderWidth: ring ? '2px' : '1px',
-            },
-          },
-        }}
+        maxLength={maxLength}
+        minLength={minLength}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
       />
     );
   }

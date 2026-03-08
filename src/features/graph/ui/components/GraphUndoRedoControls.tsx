@@ -1,8 +1,7 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
-import { Redo as RedoIcon, Undo as UndoIcon } from '@mui/icons-material';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+import { cn } from '@/shared/lib/core';
+import { Tooltip } from '@/shared/ui';
+import { Redo2, Undo2 } from 'lucide-react';
 import { type FC, useEffect } from 'react';
 
 interface GraphUndoRedoControlsProps {
@@ -57,54 +56,54 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
     return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [undo, redo, canUndo, canRedo]);
 
-  const buttonSize = 'small';
   const direction = isHorizontal ? 'row' : 'column';
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: direction,
-        gap: 0.5,
-      }}
+    <div
+      className={cn(
+        'flex gap-1',
+        direction === 'row' ? 'flex-row' : 'flex-col'
+      )}
     >
       <Tooltip
         title={`Undo${undoDescription ? `: ${undoDescription}` : ''} (Ctrl+Z)`}
         placement={isHorizontal ? 'bottom' : 'right'}
       >
-        <span>
-          <IconButton
-            size={buttonSize}
-            onClick={undo}
-            disabled={!canUndo}
-            sx={{
-              color: canUndo ? 'primary.main' : 'action.disabled',
-              '&:hover': canUndo ? { backgroundColor: 'primary.light' } : {},
-            }}
-          >
-            <UndoIcon fontSize='small' />
-          </IconButton>
-        </span>
+        <button
+          type='button'
+          onClick={undo}
+          disabled={!canUndo}
+          className={cn(
+            'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+            canUndo
+              ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
+              : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
+          )}
+          aria-label='Undo'
+        >
+          <Undo2 size={16} />
+        </button>
       </Tooltip>
 
       <Tooltip
         title={`Redo${redoDescription ? `: ${redoDescription}` : ''} (Ctrl+Y)`}
         placement={isHorizontal ? 'bottom' : 'right'}
       >
-        <span>
-          <IconButton
-            size={buttonSize}
-            onClick={redo}
-            disabled={!canRedo}
-            sx={{
-              color: canRedo ? 'primary.main' : 'action.disabled',
-              '&:hover': canRedo ? { backgroundColor: 'primary.light' } : {},
-            }}
-          >
-            <RedoIcon fontSize='small' />
-          </IconButton>
-        </span>
+        <button
+          type='button'
+          onClick={redo}
+          disabled={!canRedo}
+          className={cn(
+            'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+            canRedo
+              ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
+              : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
+          )}
+          aria-label='Redo'
+        >
+          <Redo2 size={16} />
+        </button>
       </Tooltip>
-    </Box>
+    </div>
   );
 };

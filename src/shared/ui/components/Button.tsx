@@ -1,5 +1,4 @@
-import MuiButton from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
+import { cn } from '@/shared/lib/core';
 import {
   forwardRef,
   memo,
@@ -22,65 +21,33 @@ export type ButtonProps = {
   title?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
 
-const StyledButton = styled(MuiButton, {
-  shouldForwardProp: prop => prop !== 'buttonVariant',
-})<{ buttonVariant: ButtonVariant }>(({ theme, buttonVariant }) => {
-  const getVariantStyles = () => {
-    const mode = theme.palette.mode;
-    const isDisabledVariant = buttonVariant === 'disabled';
-
-    const mutedBg =
-      mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[200];
-
-    const baseColor = isDisabledVariant
-      ? mutedBg
-      : buttonVariant === 'default'
-        ? theme.palette.primary.main
-        : buttonVariant === 'escape'
-          ? theme.palette.error.main
-          : buttonVariant === 'submit'
-            ? theme.palette.success.main
-            : theme.palette.action.disabledBackground;
-
-    return {
-      backgroundColor: baseColor,
-      boxShadow: 'none',
-      '&:hover': {
-        backgroundColor: baseColor,
-        boxShadow: 'none',
-        filter: isDisabledVariant ? 'none' : 'brightness(1.05)',
-      },
-      '&:active': {
-        boxShadow: 'none',
-        transform: 'none',
-      },
-      color: isDisabledVariant ? theme.palette.text.primary : '#ffffff',
-      '&.Mui-disabled': {
-        backgroundColor: theme.palette.action.disabledBackground,
-        color: theme.palette.action.disabled,
-        cursor: 'not-allowed',
-        boxShadow: 'none',
-        '&:active': {
-          boxShadow: 'none',
-          transform: 'none',
-        },
-      },
-    };
-  };
-
-  return {
-    position: 'relative',
-    fontSize: '1rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s, filter 0.2s, color 0.2s',
-    transform: 'none',
-    borderRadius: '0.375rem',
-    textTransform: 'none',
-    padding: '4px 16px',
-    ...getVariantStyles(),
-  };
-});
+const variantClasses: Record<ButtonVariant, string> = {
+  default: cn(
+    'bg-btn',
+    'text-white',
+    'hover:brightness-105',
+    'dark:bg-dark-btn',
+    'dark:text-white'
+  ),
+  disabled: cn(
+    'bg-btn-disabled',
+    'text-text',
+    'dark:bg-dark-btn-disabled',
+    'dark:text-dark-text'
+  ),
+  escape: cn(
+    'bg-btn-cancel',
+    'text-white',
+    'hover:brightness-105',
+    'dark:bg-dark-btn-cancel'
+  ),
+  submit: cn(
+    'bg-btn-submit',
+    'text-white',
+    'hover:brightness-105',
+    'dark:bg-dark-btn-submit'
+  ),
+};
 
 export const Button = memo(
   forwardRef<HTMLButtonElement, ButtonProps>(
@@ -116,18 +83,22 @@ export const Button = memo(
       };
 
       return (
-        <StyledButton
+        <button
           ref={ref}
           type={type}
           disabled={disabled}
-          buttonVariant={variant}
-          className={className}
+          className={cn(
+            'relative rounded-md px-4 py-1 text-base font-semibold transition-all duration-200',
+            'disabled:cursor-not-allowed disabled:brightness-90',
+            variantClasses[variant],
+            className
+          )}
           onClick={handleClick}
           title={title}
           {...restProps}
         >
           {children}
-        </StyledButton>
+        </button>
       );
     }
   )

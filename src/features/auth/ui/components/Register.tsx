@@ -1,18 +1,12 @@
 import { useRegisterMutation, useSendConfirmCodeMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { Button, Skeleton } from '@/shared';
+import { Button, Input, Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { useModalContext } from '@/shared/lib/react';
 import { useMobileForm } from '@/shared/lib/react/hooks';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
+import { Eye, EyeOff } from 'lucide-react';
 import { type FC, Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePasswordVisibility } from '../../lib/hooks';
@@ -169,136 +163,109 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
     >
       {({ isSubmitting: formikSubmitting, isValid, dirty }) => (
         <Form ref={formRef}>
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: 448,
-              mx: 'auto',
-              p: 4,
-              borderRadius: 2,
-              backdropFilter: 'blur(20px)',
-              backgroundColor: theme =>
-                theme.palette.mode === 'dark'
-                  ? 'rgba(17, 24, 39, 0.7)'
-                  : 'rgba(255, 255, 255, 0.7)',
-              border: theme =>
-                theme.palette.mode === 'dark'
-                  ? '1px solid rgba(255, 255, 255, 0.1)'
-                  : '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: theme =>
-                theme.palette.mode === 'dark'
-                  ? '0 8px 32px rgba(0, 0, 0, 0.6)'
-                  : '0 8px 32px rgba(0, 0, 0, 0.1)',
-            }}
+          <div
+            className={cn(
+              'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
+              'mx-auto w-full max-w-md rounded-lg border p-4 shadow-2xl backdrop-blur-xl'
+            )}
           >
-            <Typography
-              variant='h4'
-              component='h2'
-              sx={{
-                mb: 3,
-                fontWeight: 700,
-                textAlign: 'center',
-                color: theme =>
-                  theme.palette.mode === 'dark'
-                    ? theme.palette.grey[100]
-                    : theme.palette.text.primary,
-              }}
+            <h2
+              className={cn(
+                'text-text mb-3 text-center text-2xl font-bold',
+                'dark:text-dark-text'
+              )}
             >
               {t('auth:register.title')}
-            </Typography>
+            </h2>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div className='flex flex-col gap-3'>
               <Field name='email'>
                 {({ field, meta }: FieldProps<string>) => (
-                  <TextField
-                    {...field}
-                    label={t('auth:register.email')}
-                    type='email'
-                    placeholder={t('auth:login.emailPlaceholder')}
-                    inputMode='email'
-                    autoComplete='email'
-                    required
-                    fullWidth
-                    error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error ? meta.error : ' '}
-                    disabled={formikSubmitting || isSubmitting}
-                    sx={{
-                      '& .MuiFormHelperText-root': {
-                        height: '1.25rem',
-                        margin: '4px 14px 0 14px',
-                      },
-                    }}
-                  />
+                  <div className='space-y-1'>
+                    <label className='tw-label'>
+                      {t('auth:register.email')}
+                    </label>
+                    <Input
+                      {...field}
+                      type='email'
+                      placeholder={t('auth:login.emailPlaceholder')}
+                      autoComplete='email'
+                      required
+                      disabled={formikSubmitting || isSubmitting}
+                      aria-invalid={meta.touched && Boolean(meta.error)}
+                      className='form-input'
+                    />
+                    <p className='min-h-5 text-xs text-red-500'>
+                      {meta.touched && meta.error ? meta.error : ' '}
+                    </p>
+                  </div>
                 )}
               </Field>
 
               <Field name='username'>
                 {({ field, meta }: FieldProps<string>) => (
-                  <TextField
-                    {...field}
-                    label={t('auth:register.username')}
-                    type='text'
-                    placeholder={t('auth:register.usernamePlaceholder')}
-                    autoComplete='username'
-                    required
-                    fullWidth
-                    error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error ? meta.error : ' '}
-                    disabled={formikSubmitting || isSubmitting}
-                    sx={{
-                      '& .MuiFormHelperText-root': {
-                        height: '1.25rem',
-                        margin: '4px 14px 0 14px',
-                      },
-                    }}
-                  />
+                  <div className='space-y-1'>
+                    <label className='tw-label'>
+                      {t('auth:register.username')}
+                    </label>
+                    <Input
+                      {...field}
+                      type='text'
+                      placeholder={t('auth:register.usernamePlaceholder')}
+                      autoComplete='username'
+                      required
+                      disabled={formikSubmitting || isSubmitting}
+                      aria-invalid={meta.touched && Boolean(meta.error)}
+                      className='form-input'
+                    />
+                    <p className='min-h-5 text-xs text-red-500'>
+                      {meta.touched && meta.error ? meta.error : ' '}
+                    </p>
+                  </div>
                 )}
               </Field>
 
               <Field name='password'>
                 {({ field, meta }: FieldProps<string>) => (
-                  <TextField
-                    {...field}
-                    label={t('auth:register.password')}
-                    type={passwordVisibility.isVisible ? 'text' : 'password'}
-                    placeholder={t('auth:login.passwordPlaceholder')}
-                    autoComplete='current-password'
-                    required
-                    fullWidth
-                    error={meta.touched && Boolean(meta.error)}
-                    helperText={meta.touched && meta.error ? meta.error : ' '}
-                    disabled={formikSubmitting || isSubmitting}
-                    sx={{
-                      '& .MuiFormHelperText-root': {
-                        height: '1.25rem',
-                        margin: '4px 14px 0 14px',
-                      },
-                    }}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position='end'>
-                            <IconButton
-                              onClick={passwordVisibility.toggleVisibility}
-                              edge='end'
-                              aria-label={
-                                passwordVisibility.isVisible
-                                  ? t('common:password.hide')
-                                  : t('common:password.show')
-                              }
-                              disabled={formikSubmitting || isSubmitting}
-                            >
-                              {passwordVisibility.isVisible ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
+                  <div className='space-y-1'>
+                    <label className='tw-label'>
+                      {t('auth:register.password')}
+                    </label>
+                    <div className='relative'>
+                      <Input
+                        {...field}
+                        type={
+                          passwordVisibility.isVisible ? 'text' : 'password'
+                        }
+                        placeholder={t('auth:login.passwordPlaceholder')}
+                        autoComplete='current-password'
+                        required
+                        disabled={formikSubmitting || isSubmitting}
+                        aria-invalid={meta.touched && Boolean(meta.error)}
+                        className='form-input pr-10'
+                      />
+                      <button
+                        type='button'
+                        onClick={passwordVisibility.toggleVisibility}
+                        className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                        aria-label={
+                          passwordVisibility.isVisible
+                            ? t('common:password.hide')
+                            : t('common:password.show')
+                        }
+                        disabled={formikSubmitting || isSubmitting}
+                      >
+                        {passwordVisibility.isVisible ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                    <p className='min-h-5 text-xs text-red-500'>
+                      {meta.touched && meta.error ? meta.error : ' '}
+                    </p>
+                  </div>
                 )}
               </Field>
 
@@ -310,25 +277,16 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 style={{ width: '100%', padding: '12px 32px' }}
               >
                 {formikSubmitting || isSubmitting ? (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <CircularProgress
-                      size={20}
-                      sx={{ mr: 1, color: 'inherit' }}
-                    />
+                  <span className='inline-flex items-center justify-center gap-2'>
+                    <span className='h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white' />
                     {t('auth:register.submitting')}
-                  </Box>
+                  </span>
                 ) : (
                   t('auth:register.submit')
                 )}
               </Button>
-            </Box>
-          </Box>
+            </div>
+          </div>
         </Form>
       )}
     </Formik>

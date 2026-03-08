@@ -1,10 +1,10 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ReactElement } from 'react';
 import type { ModalOptions, ModalState } from './useModal';
 
 export interface ModalContextType {
-  openModal: (content: ReactNode, options?: ModalOptions) => void;
+  openModal: (content: ReactElement, options?: ModalOptions) => void;
   closeModal: () => void;
-  updateModalContent: (content: ReactNode) => void;
+  updateModalContent: (content: ReactElement) => void;
   modalState: ModalState;
 }
 

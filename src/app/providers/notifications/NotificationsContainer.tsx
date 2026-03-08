@@ -1,7 +1,7 @@
 import { Notification } from '@/app/providers/notifications/Notification';
 import { useNotifications } from '@/app/providers/notifications/useNotifications';
-import Snackbar from '@mui/material/Snackbar';
-import { useEffect, type FC } from 'react';
+import { Transition } from '@headlessui/react';
+import { Fragment, useEffect, type FC } from 'react';
 
 export const NotificationsContainer: FC = () => {
   const { notifications, hideNotification } = useNotifications();
@@ -28,27 +28,32 @@ export const NotificationsContainer: FC = () => {
     return null;
   }
 
-  const latestNotification = notifications[notifications.length - 1];
-
   return (
-    <Snackbar
-      open={!!latestNotification}
-      autoHideDuration={latestNotification?.duration || 5000}
-      onClose={() => hideNotification(latestNotification.id)}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      sx={{
-        '& .MuiSnackbarContent-root': {
-          backgroundColor: 'transparent',
-          boxShadow: 'none',
-          padding: 0,
-        },
-      }}
+    <div
+      className='pointer-events-none fixed right-4 bottom-4 z-250 flex max-h-[60vh] w-[min(420px,calc(100vw-2rem))] flex-col-reverse gap-2 overflow-hidden'
+      aria-live='polite'
     >
-      <div>
-        {latestNotification && (
-          <Notification notification={latestNotification} />
-        )}
-      </div>
-    </Snackbar>
+      {notifications.map(notification => (
+        <Transition
+          key={notification.id}
+          as={Fragment}
+          appear
+          show
+          enter='transform transition duration-200 ease-out'
+          enterFrom='translate-y-2 opacity-0 scale-95'
+          enterTo='translate-y-0 opacity-100 scale-100'
+          leave='transform transition duration-150 ease-in'
+          leaveFrom='translate-y-0 opacity-100 scale-100'
+          leaveTo='translate-y-2 opacity-0 scale-95'
+        >
+          <div className='pointer-events-auto'>
+            <Notification
+              notification={notification}
+              onClose={id => hideNotification(id)}
+            />
+          </div>
+        </Transition>
+      ))}
+    </div>
   );
 };

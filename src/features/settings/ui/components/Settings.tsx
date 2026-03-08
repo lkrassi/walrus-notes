@@ -1,7 +1,7 @@
 import { logoImage as logo } from '@/shared/assets';
 import { cn } from '@/shared/lib/core';
-import { PhotoCamera } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { Camera } from 'lucide-react';
 import {
   useCallback,
   type FC,
@@ -173,7 +173,7 @@ export const Settings: FC = () => {
                     title={t('profile:changePhoto')}
                     aria-label={t('profile:changePhoto')}
                   >
-                    <PhotoCamera className='h-3.5 w-3.5' />
+                    <Camera className='h-3.5 w-3.5' />
                   </button>
                 </div>
 

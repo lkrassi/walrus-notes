@@ -1,4 +1,4 @@
-import { useCallback, type MouseEvent, type ReactNode } from 'react';
+import { useCallback, type MouseEvent, type ReactElement } from 'react';
 import { useModalContext } from './modalContext';
 import type { ModalOptions } from './useModal';
 
@@ -6,7 +6,7 @@ export const useModalActions = () => {
   const { openModal } = useModalContext();
 
   const openModalFromTrigger = useCallback(
-    (content: ReactNode, options: ModalOptions) => {
+    (content: ReactElement, options: ModalOptions) => {
       return (event: MouseEvent<HTMLElement>) => {
         const buttonRect = event.currentTarget.getBoundingClientRect();
 

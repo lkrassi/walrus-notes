@@ -18,6 +18,8 @@ export {
 } from './hooks';
 export type { DeviceType } from './hooks';
 export {
+  MODAL_PANEL_BASE_CLASS,
+  MODAL_SIZE_MAP,
   ModalContentContext,
   ModalContext,
   useModal,

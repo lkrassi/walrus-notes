@@ -1,9 +1,7 @@
 import { useConfirmCodeMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { Button } from '@/shared';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { Button, Input } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import {
   type ClipboardEvent,
   type FC,
@@ -97,74 +95,43 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   }, []);
 
   return (
-    <Box
-      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
-    >
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+    <div className='flex w-full flex-col gap-3'>
+      <div className='text-center'>
+        <p className='text-secondary dark:text-dark-secondary text-sm'>
           {t('auth:confirmCode.description') ||
             'Код подтверждения отправлен на'}
           <br />
-          <Typography
-            component='span'
-            sx={{ fontWeight: 600, color: 'text.primary' }}
-          >
+          <span className='text-text dark:text-dark-text font-semibold'>
             {email}
-          </Typography>
-        </Typography>
-      </Box>
+          </span>
+        </p>
+      </div>
 
-      <Box
-        sx={{
-          display: 'flex',
-          gap: 1,
-          justifyContent: 'center',
-          mx: 'auto',
-          width: '100%',
-          maxWidth: '320px',
-        }}
-      >
+      <div className='mx-auto flex w-full max-w-[320px] justify-center gap-1'>
         {code.map((digit, index) => (
-          <TextField
+          <Input
             key={index}
-            inputRef={el => {
+            ref={el => {
               inputRefs.current[index] = el;
             }}
             type='text'
-            slotProps={{
-              htmlInput: {
-                inputMode: 'numeric',
-                maxLength: 1,
-                style: {
-                  textAlign: 'center',
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  padding: '12px 0',
-                },
-              },
-            }}
+            inputMode='numeric'
+            maxLength={1}
             value={digit}
             autoFocus={index === 0}
-            onChange={e => handleInputChange(index, e.target.value)}
+            onChange={e =>
+              handleInputChange(index, (e.target as HTMLInputElement).value)
+            }
             onKeyDown={e => handleKeyDown(index, e)}
             onPaste={handlePaste}
             disabled={isLoading}
-            sx={{
-              width: '48px',
-              '& .MuiOutlinedInput-root': {
-                '&.Mui-focused fieldset': {
-                  borderColor: 'primary.main',
-                  borderWidth: 2,
-                },
-                '& fieldset': {
-                  borderWidth: digit ? 2 : 1,
-                  borderColor: digit ? 'primary.main' : undefined,
-                },
-              },
-            }}
+            className={cn(
+              'h-12 w-12 px-0 text-center text-lg font-semibold',
+              digit ? 'border-primary dark:border-dark-primary' : ''
+            )}
           />
         ))}
-      </Box>
+      </div>
 
       <Button
         onClick={handleSubmit}
@@ -178,6 +145,6 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
           ? t('auth:confirmCode.loading')
           : t('auth:confirmCode.submit')}
       </Button>
-    </Box>
+    </div>
   );
 };

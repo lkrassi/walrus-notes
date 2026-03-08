@@ -1,9 +1,5 @@
-import { Button } from '@/shared';
+import { Button, Input } from '@/shared';
 import { useModalContentContext } from '@/shared/lib/react';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, useEffect, useRef, useState } from 'react';
@@ -45,19 +41,11 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
   };
 
   return (
-    <Box
-      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
-    >
-      <Typography
-        variant='body2'
-        sx={{
-          textAlign: 'center',
-          color: 'text.secondary',
-        }}
-      >
+    <div className='flex w-full flex-col gap-3'>
+      <p className='text-secondary dark:text-dark-secondary text-center text-sm'>
         {t('auth:forgotPasswordEmail.description') ||
           'Введите адрес электронной почты для восстановления пароля'}
-      </Typography>
+      </p>
 
       <Formik
         initialValues={{ email: '' }}
@@ -73,34 +61,27 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
           >
             <Field name='email'>
               {({ field, meta }: FieldProps<string>) => (
-                <TextField
-                  {...field}
-                  inputRef={emailFieldRef}
-                  label={t('auth:login.email')}
-                  type='email'
-                  placeholder={t('auth:login.emailPlaceholder')}
-                  required
-                  fullWidth
-                  error={meta.touched && Boolean(meta.error)}
-                  helperText={meta.touched && meta.error ? meta.error : ' '}
-                  disabled={isSubmitting}
-                  autoComplete='email'
-                  slotProps={{
-                    htmlInput: {
-                      inputMode: 'email',
-                    },
-                  }}
-                  sx={{
-                    '& .MuiFormHelperText-root': {
-                      height: '1.25rem',
-                      margin: '4px 14px 0 14px',
-                    },
-                  }}
-                />
+                <div className='space-y-1'>
+                  <label className='tw-label'>{t('auth:login.email')}</label>
+                  <Input
+                    {...field}
+                    ref={emailFieldRef}
+                    type='email'
+                    placeholder={t('auth:login.emailPlaceholder')}
+                    required
+                    disabled={isSubmitting}
+                    autoComplete='email'
+                    className='form-input'
+                    aria-invalid={meta.touched && Boolean(meta.error)}
+                  />
+                  <p className='min-h-5 text-xs text-red-500'>
+                    {meta.touched && meta.error ? meta.error : ' '}
+                  </p>
+                </div>
               )}
             </Field>
 
-            <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
+            <div className='flex justify-center gap-1.5'>
               <Button
                 type='button'
                 onClick={closeModal}
@@ -117,18 +98,18 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
                 disabled={isSubmitting || !isValid || !dirty}
               >
                 {isSubmitting ? (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CircularProgress size={16} color='inherit' />
+                  <span className='inline-flex items-center gap-1'>
+                    <span className='h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white' />
                     {t('auth:forgotPasswordEmail.sending') || 'Отправка...'}
-                  </Box>
+                  </span>
                 ) : (
                   t('auth:forgotPasswordEmail.submit') || 'Отправить код'
                 )}
               </Button>
-            </Box>
+            </div>
           </Form>
         )}
       </Formik>
-    </Box>
+    </div>
   );
 };

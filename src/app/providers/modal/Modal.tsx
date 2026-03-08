@@ -1,13 +1,13 @@
-import { ModalContentContext, type ModalState } from '@/shared/lib/react';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Zoom from '@mui/material/Zoom';
-import type { TransitionProps } from '@mui/material/transitions';
+import {
+  MODAL_PANEL_BASE_CLASS,
+  MODAL_SIZE_MAP,
+  ModalContentContext,
+  type ModalState,
+} from '@/shared/lib/react';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { forwardRef, useMemo, type FC, type ReactElement } from 'react';
+import { useEffect, type FC, type MouseEvent as ReactMouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModalProps {
@@ -15,160 +15,159 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const SIZE_MAP = {
-  sm: 'sm' as const,
-  md: 'sm' as const,
-  lg: 'md' as const,
-  xl: 'lg' as const,
-  full: 'xl' as const,
-};
-
-const CustomTransition = forwardRef<
-  unknown,
-  TransitionProps & {
-    children: ReactElement;
-    triggerPosition?: { x: number; y: number; width: number; height: number };
-  }
->(function CustomTransition(props, ref) {
-  const { triggerPosition, children, ...other } = props;
-
-  if (!triggerPosition) {
-    return (
-      <Zoom ref={ref} {...other} timeout={150}>
-        {children}
-      </Zoom>
-    );
-  }
-
-  const triggerCenterX = triggerPosition.x + triggerPosition.width / 2;
-  const triggerCenterY = triggerPosition.y + triggerPosition.height / 2;
-
-  return (
-    <Zoom
-      ref={ref}
-      {...other}
-      timeout={150}
-      style={{
-        transformOrigin: `${triggerCenterX}px ${triggerCenterY}px`,
-      }}
-    >
-      {children}
-    </Zoom>
-  );
-});
-
 export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
   const { t } = useTranslation();
   const { isOpen, content, options } = modalState;
 
-  const handleClose = (_event: object, reason?: string) => {
-    if (reason === 'backdropClick' && !options.closeOnOverlayClick) {
+  useEffect(() => {
+    if (!isOpen || !content) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && options.closeOnEscape !== false) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [content, isOpen, onClose, options.closeOnEscape]);
+
+  const handleClose = () => {
+    if (!options.closeOnOverlayClick) {
       return;
     }
     onClose();
+  };
+
+  const handleContainerClick = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      handleClose();
+    }
   };
 
   if (!content) {
     return null;
   }
 
-  const maxWidth = SIZE_MAP[options.size || 'md'];
+  const maxWidth = MODAL_SIZE_MAP[options.size || 'md'];
+  const viewportCenterX =
+    typeof window === 'undefined' ? 0 : window.innerWidth / 2;
+  const viewportCenterY =
+    typeof window === 'undefined' ? 0 : window.innerHeight / 2;
 
-  const TransitionComponent = useMemo(() => {
-    const Component = forwardRef<
-      unknown,
-      TransitionProps & { children: ReactElement }
-    >((props, ref) => (
-      <CustomTransition
-        {...props}
-        ref={ref}
-        triggerPosition={options.triggerPosition}
-      />
-    ));
-    return Component;
-  }, [options.triggerPosition]);
+  const animationOffset = options.triggerPosition
+    ? {
+        x: options.triggerPosition.x - viewportCenterX,
+        y: options.triggerPosition.y - viewportCenterY,
+      }
+    : {
+        x: 0,
+        y: 0,
+      };
+
+  const panelInitial = options.triggerPosition
+    ? {
+        scale: 0.2,
+        x: animationOffset.x,
+        y: animationOffset.y,
+        opacity: 0,
+      }
+    : {
+        scale: 0.95,
+        x: 0,
+        y: 0,
+        opacity: 0,
+      };
+
+  const panelExit = options.triggerPosition
+    ? {
+        scale: 0.2,
+        x: animationOffset.x,
+        y: animationOffset.y,
+        opacity: 0,
+      }
+    : {
+        scale: 0.95,
+        x: 0,
+        y: 0,
+        opacity: 0,
+      };
 
   return (
-    <Dialog
-      open={isOpen}
-      onClose={handleClose}
-      maxWidth={maxWidth}
-      fullWidth
-      disableEscapeKeyDown={!options.closeOnEscape}
-      slots={{
-        transition: TransitionComponent,
-      }}
-      slotProps={{
-        backdrop: {
-          sx: {
-            backdropFilter: 'blur(8px)',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        },
-        paper: {
-          sx: {
-            borderRadius: '12px',
-            maxHeight: '90vh',
-            backgroundColor: theme =>
-              theme.palette.mode === 'dark'
-                ? 'rgba(17, 24, 39, 0.7)'
-                : 'rgba(255, 255, 255, 0.7)',
-          },
-          className: options.className,
-        },
-      }}
-    >
-      {(options.title || options.showCloseButton) && (
-        <DialogTitle
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            pr: options.showCloseButton ? 1 : 3,
-          }}
+    <AnimatePresence>
+      {isOpen && (
+        <Dialog
+          static
+          as='div'
+          open={isOpen}
+          className='relative z-200'
+          onClose={() => {}}
         >
-          {options.title && <span>{options.title}</span>}
-          {options.showCloseButton && (
-            <IconButton
-              aria-label={t('common:modal.close')}
-              onClick={onClose}
-              size='small'
-              sx={{ ml: 'auto' }}
+          <motion.div
+            key='modal-overlay'
+            className='fixed inset-0 bg-black/50 backdrop-blur-sm'
+            onClick={handleClose}
+            aria-hidden='true'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1, ease: 'easeOut' }}
+          />
+
+          <div
+            className='fixed inset-0 flex items-center justify-center p-4'
+            onClick={handleContainerClick}
+          >
+            <motion.div
+              className={`w-full ${maxWidth}`}
+              initial={panelInitial}
+              animate={{ scale: 1, x: 0, y: 0, opacity: 1 }}
+              exit={panelExit}
+              transition={{ duration: 0.16, ease: 'easeOut' }}
             >
-              <X size={20} />
-            </IconButton>
-          )}
-        </DialogTitle>
+              <DialogPanel
+                className={`${MODAL_PANEL_BASE_CLASS} ${options.className || ''}`}
+              >
+                {(options.title || options.showCloseButton) && (
+                  <div className='flex items-center justify-between px-6 py-4'>
+                    {options.title && (
+                      <DialogTitle className='text-lg font-semibold'>
+                        {options.title}
+                      </DialogTitle>
+                    )}
+                    {options.showCloseButton && (
+                      <button
+                        aria-label={t('common:modal.close')}
+                        onClick={onClose}
+                        className='text-text dark:text-dark-text ml-auto rounded-md p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10'
+                      >
+                        <X size={20} />
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {(options.title || options.showCloseButton) && (
+                  <div className='bg-border dark:bg-dark-border h-px w-full' />
+                )}
+
+                <div
+                  className='flex flex-col gap-2 overflow-auto p-6 max-sm:p-0'
+                  style={{
+                    padding: options.mobileContentPadding,
+                  }}
+                >
+                  <ModalContentContext.Provider value={{ closeModal: onClose }}>
+                    {content}
+                  </ModalContentContext.Provider>
+                </div>
+              </DialogPanel>
+            </motion.div>
+          </div>
+        </Dialog>
       )}
-
-      {(options.title || options.showCloseButton) && <Divider />}
-
-      <DialogContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          overflow: 'auto',
-          padding: '24px',
-          '@media (max-width: 600px)': {
-            padding: options.mobileContentPadding || '0',
-          },
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
-            borderRadius: '4px',
-          },
-        }}
-      >
-        <ModalContentContext.Provider value={{ closeModal: onClose }}>
-          {content}
-        </ModalContentContext.Provider>
-      </DialogContent>
-    </Dialog>
+    </AnimatePresence>
   );
 };

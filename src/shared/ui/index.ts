@@ -8,3 +8,4 @@ export { Input } from './components/Input';
 export { Skeleton } from './components/Skeleton';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps } from './components/Textarea';
+export { Tooltip } from './components/Tooltip';

@@ -1,3 +1,4 @@
+export { MODAL_PANEL_BASE_CLASS, MODAL_SIZE_MAP } from './constants';
 export {
   ModalContentContext,
   useModalContentContext,

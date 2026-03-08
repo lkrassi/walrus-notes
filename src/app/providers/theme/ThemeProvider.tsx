@@ -1,7 +1,5 @@
 import { createAppTheme } from '@/app/theme/theme';
 import { ThemeContext } from '@/shared/lib/react';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
 
 interface ThemeProviderProps {
@@ -56,12 +54,13 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  useEffect(() => {
+    document.body.style.fontFamily = muiTheme.typography.fontFamily;
+  }, [muiTheme.typography.fontFamily]);
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <MuiThemeProvider theme={muiTheme}>
-        <CssBaseline />
-        {children}
-      </MuiThemeProvider>
+      {children}
     </ThemeContext.Provider>
   );
 };

@@ -1,9 +1,11 @@
 import { cn } from '@/shared/lib/core';
-import Popover from '@mui/material/Popover';
 import { ChevronDown } from 'lucide-react';
 import {
   cloneElement,
   isValidElement,
+  useCallback,
+  useEffect,
+  useRef,
   useState,
   type MouseEvent,
   type ReactElement,
@@ -33,22 +35,16 @@ export const Dropdown = ({
   disabled = false,
   showArrow = true,
 }: DropdownProps) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [internalIsOpen, setInternalIsOpen] = useState(false);
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
-  const handleToggle = (event: MouseEvent<HTMLElement>) => {
+  const handleToggle = (_event: MouseEvent<HTMLElement>) => {
     if (disabled) return;
 
     const newState = !isOpen;
-
-    if (newState) {
-      setAnchorEl(event.currentTarget);
-    } else {
-      setAnchorEl(null);
-    }
 
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(newState);
@@ -56,41 +52,52 @@ export const Dropdown = ({
     onOpenChange?.(newState);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleClose = useCallback(() => {
     if (controlledIsOpen === undefined) {
       setInternalIsOpen(false);
     }
     onOpenChange?.(false);
-  };
+  }, [controlledIsOpen, onOpenChange]);
 
-  const getAnchorOrigin = () => {
+  useEffect(() => {
+    const onClickOutside = (event: MouseEvent | globalThis.MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!rootRef.current || !target) {
+        return;
+      }
+
+      if (!rootRef.current.contains(target)) {
+        handleClose();
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('mousedown', onClickOutside as never);
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside as never);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [handleClose]);
+
+  const getPositionClasses = () => {
     switch (position) {
       case 'top':
-        return { vertical: 'top' as const, horizontal: 'center' as const };
+        return 'bottom-full left-1/2 mb-1 -translate-x-1/2';
       case 'bottom':
-        return { vertical: 'bottom' as const, horizontal: 'center' as const };
+        return 'top-full left-1/2 mt-1 -translate-x-1/2';
       case 'left':
-        return { vertical: 'center' as const, horizontal: 'left' as const };
+        return 'right-full top-1/2 mr-1 -translate-y-1/2';
       case 'right':
-        return { vertical: 'center' as const, horizontal: 'right' as const };
+        return 'left-full top-1/2 ml-1 -translate-y-1/2';
       default:
-        return { vertical: 'bottom' as const, horizontal: 'center' as const };
-    }
-  };
-
-  const getTransformOrigin = () => {
-    switch (position) {
-      case 'top':
-        return { vertical: 'bottom' as const, horizontal: 'center' as const };
-      case 'bottom':
-        return { vertical: 'top' as const, horizontal: 'center' as const };
-      case 'left':
-        return { vertical: 'center' as const, horizontal: 'right' as const };
-      case 'right':
-        return { vertical: 'center' as const, horizontal: 'left' as const };
-      default:
-        return { vertical: 'top' as const, horizontal: 'center' as const };
+        return 'top-full left-1/2 mt-1 -translate-x-1/2';
     }
   };
 
@@ -104,7 +111,7 @@ export const Dropdown = ({
   };
 
   return (
-    <div className={cn('relative', className)}>
+    <div ref={rootRef} className={cn('relative', className)}>
       <div
         onClick={handleToggle}
         className={cn('cursor-pointer', disabled ? 'cursor-not-allowed' : '')}
@@ -112,31 +119,18 @@ export const Dropdown = ({
         {renderTrigger()}
       </div>
 
-      <Popover
-        open={isOpen && anchorEl !== null}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={getAnchorOrigin()}
-        transformOrigin={getTransformOrigin()}
-        slotProps={{
-          paper: {
-            className: cn(
-              'rounded-lg shadow-lg backdrop-blur-sm',
-              contentClassName
-            ),
-            sx: {
-              marginTop: position === 'bottom' ? '4px' : undefined,
-              marginBottom: position === 'top' ? '4px' : undefined,
-              marginLeft: position === 'right' ? '4px' : undefined,
-              marginRight: position === 'left' ? '4px' : undefined,
-              minWidth: anchorEl?.offsetWidth || 'auto',
-              width: anchorEl?.offsetWidth || 'auto',
-            },
-          },
-        }}
-      >
-        {children}
-      </Popover>
+      {isOpen && (
+        <div
+          className={cn(
+            'absolute z-50 rounded-lg shadow-lg backdrop-blur-sm',
+            'border-border dark:border-dark-border bg-bg/95 dark:bg-dark-bg/95 border',
+            getPositionClasses(),
+            contentClassName
+          )}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 };
@@ -178,7 +172,7 @@ export const DropdownTrigger = ({
             className={cn(
               'h-3',
               'w-3',
-              'text-gray-500',
+              'text-secondary dark:text-dark-secondary',
               'transition-transform',
               'duration-200',
               isOpen ? 'rotate-0' : '-rotate-90'

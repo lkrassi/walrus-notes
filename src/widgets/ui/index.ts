@@ -1,11 +1,4 @@
 export {
-  Modal,
-  ModalContentContext,
-  ModalProvider,
-  useModalContentContext,
-  useModalContext,
-} from '@/widgets/ui/components/modal';
-export {
   FileTree,
   FileTreeEmpty,
   FileTreeItem,

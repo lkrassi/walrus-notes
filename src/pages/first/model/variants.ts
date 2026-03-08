@@ -1,11 +1,5 @@
-import {
-  AutoAwesome,
-  FlashOn,
-  People,
-  Psychology,
-  Security,
-} from '@mui/icons-material';
 import { type Variants } from 'framer-motion';
+import { Brain, ShieldCheck, Sparkles, Users, Zap } from 'lucide-react';
 
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -76,22 +70,22 @@ export const featureVariantsMobile: Variants = {
 export const features = [
   {
     key: 'visualThinking',
-    icon: Psychology,
+    icon: Brain,
   },
   {
     key: 'fastOrganization',
-    icon: FlashOn,
+    icon: Zap,
   },
   {
     key: 'smartConnections',
-    icon: AutoAwesome,
+    icon: Sparkles,
   },
   {
     key: 'secureStorage',
-    icon: Security,
+    icon: ShieldCheck,
   },
   {
     key: 'collaboration',
-    icon: People,
+    icon: Users,
   },
 ];

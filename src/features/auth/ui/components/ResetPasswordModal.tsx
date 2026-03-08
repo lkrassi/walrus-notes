@@ -1,16 +1,11 @@
 import { useConfirmCodeMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { Button } from '@/shared';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import { Button, Input } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import 'features/auth/model/validationSchemas';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
+import { Eye, EyeOff } from 'lucide-react';
 import {
   type ClipboardEvent,
   type FC,
@@ -140,93 +135,49 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   }, []);
 
   return (
-    <Box
-      sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}
-    >
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography
-          variant='body2'
-          sx={{
-            color: theme =>
-              theme.palette.mode === 'dark'
-                ? theme.palette.grey[400]
-                : theme.palette.text.secondary,
-          }}
-        >
+    <div className='flex w-full flex-col gap-3'>
+      <div className='text-center'>
+        <p className='text-secondary dark:text-dark-secondary text-sm'>
           {t('auth:resetPassword.description') ||
             'Код подтверждения отправлен на'}
           <br />
-          <Typography
-            component='span'
-            sx={{
-              fontWeight: 600,
-              color: theme =>
-                theme.palette.mode === 'dark'
-                  ? theme.palette.grey[100]
-                  : theme.palette.text.primary,
-            }}
-          >
+          <span className='text-text dark:text-dark-text font-semibold'>
             {email}
-          </Typography>
-        </Typography>
-      </Box>
+          </span>
+        </p>
+      </div>
 
-      <Box
-        sx={{
-          display: 'flex',
-          gap: 1,
-          justifyContent: 'center',
-          mx: 'auto',
-          width: '100%',
-          maxWidth: 320,
-        }}
-      >
+      <div className='mx-auto flex w-full max-w-[320px] justify-center gap-1'>
         {code.map((digit, index) => (
-          <TextField
+          <Input
             key={index}
-            inputRef={el => {
+            ref={el => {
               inputRefs.current[index] = el;
             }}
             type='text'
             inputMode='numeric'
             value={digit}
             autoFocus={index === 0}
-            onChange={e => handleInputChange(index, e.target.value)}
+            onChange={e =>
+              handleInputChange(index, (e.target as HTMLInputElement).value)
+            }
             onKeyDown={e => handleKeyDown(index, e)}
             onPaste={handlePaste}
             disabled={isLoading}
-            slotProps={{
-              htmlInput: {
-                maxLength: 1,
-                style: { textAlign: 'center' },
-              },
-            }}
-            sx={{
-              width: 48,
-              '& .MuiOutlinedInput-root': {
-                height: 48,
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                '& input': {
-                  textAlign: 'center',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: error ? 'error.main' : 'primary.main',
-                  borderWidth: 2,
-                },
-                '& fieldset': {
-                  borderWidth: 2,
-                  borderColor: error
-                    ? 'error.main'
-                    : digit
-                      ? 'primary.main'
-                      : undefined,
-                },
-              },
-            }}
+            maxLength={1}
+            className={cn(
+              'h-12 w-12 px-0 text-center text-lg font-semibold',
+              error
+                ? 'border-red-500 dark:border-red-400'
+                : digit
+                  ? 'border-primary dark:border-dark-primary'
+                  : ''
+            )}
           />
         ))}
-      </Box>
+      </div>
+
+      {error && <p className='text-center text-sm text-red-500'>{error}</p>}
 
       <Formik
         initialValues={{ newPassword: '' }}
@@ -261,50 +212,45 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
           >
             <Field name='newPassword'>
               {({ field, meta }: FieldProps<string>) => (
-                <TextField
-                  {...field}
-                  label={
-                    t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'
-                  }
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder={
-                    t('auth:login.passwordPlaceholder') ||
-                    'Введите новый пароль'
-                  }
-                  required
-                  fullWidth
-                  error={meta.touched && Boolean(meta.error)}
-                  helperText={meta.touched && meta.error ? meta.error : ' '}
-                  disabled={isLoading}
-                  sx={{
-                    '& .MuiFormHelperText-root': {
-                      height: '1.25rem',
-                      margin: '4px 14px 0 14px',
-                    },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge='end'
-                          aria-label={
-                            showPassword
-                              ? t('common:password.hide')
-                              : t('common:password.show')
-                          }
-                          disabled={isLoading}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+                <div className='space-y-1'>
+                  <label className='tw-label'>
+                    {t('auth:resetPassword.newPasswordLabel') || 'Новый пароль'}
+                  </label>
+                  <div className='relative'>
+                    <Input
+                      {...field}
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder={
+                        t('auth:login.passwordPlaceholder') ||
+                        'Введите новый пароль'
+                      }
+                      required
+                      disabled={isLoading}
+                      aria-invalid={meta.touched && Boolean(meta.error)}
+                      className='form-input pr-10'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => setShowPassword(!showPassword)}
+                      className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                      aria-label={
+                        showPassword
+                          ? t('common:password.hide')
+                          : t('common:password.show')
+                      }
+                      disabled={isLoading}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className='min-h-5 text-xs text-red-500'>
+                    {meta.touched && meta.error ? meta.error : ' '}
+                  </p>
+                </div>
               )}
             </Field>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <div className='flex justify-center'>
               <Button
                 type='submit'
                 variant={
@@ -318,15 +264,15 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
                 style={{ width: '100%', padding: '12px 32px' }}
               >
                 {isLoading ? (
-                  <CircularProgress size={24} sx={{ color: 'inherit' }} />
+                  <span className='h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white' />
                 ) : (
                   t('auth:confirmCode.submit')
                 )}
               </Button>
-            </Box>
+            </div>
           </Form>
         )}
       </Formik>
-    </Box>
+    </div>
   );
 };
