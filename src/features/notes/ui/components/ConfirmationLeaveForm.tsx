@@ -1,9 +1,9 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { cn } from '@/shared/lib';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
 import { DoorOpen } from 'lucide-react';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 
 export const ConfirmationLeaveForm: FC<{ onConfirm?: () => void }> = ({
   onConfirm,

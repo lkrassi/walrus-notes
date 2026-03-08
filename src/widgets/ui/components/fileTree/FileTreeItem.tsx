@@ -1,5 +1,5 @@
-import type { Note } from '@/shared/model';
-import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
 import type { ReactNode } from 'react';
 import { FileTreeItemContent } from './FileTreeItemContent';
 import { FileTreeItemHeader } from './FileTreeItemHeader';

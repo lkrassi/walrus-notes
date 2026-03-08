@@ -1,8 +1,18 @@
-import type { WSEvent, WSEventName } from '@/shared/model';
+import type { Layout } from '@/entities/layout';
+import type { WSEvent, WSEventName } from '@/shared/lib/core';
+
+export type DraftPhase =
+  | 'IDLE'
+  | 'EDITING'
+  | 'PENDING_UPDATE'
+  | 'AWAITING_ACK'
+  | 'COMMITTING';
 
 export interface UseDraftSyncOpts {
   noteId: string | null | undefined;
   userId: string;
+  // Legacy transport config kept for API compatibility.
+  // Realtime transport is sourced from WebSocketProvider context.
   serverUrl?: string;
   draft: string;
   debounceMs?: number;
@@ -12,6 +22,7 @@ export interface UseDraftSyncOpts {
 
 export interface UseDraftSyncReturn {
   commitDraft: (value?: string) => boolean;
+  draftPhase: DraftPhase;
   isConnected: boolean;
   isSaving: boolean;
   isPending: boolean;
@@ -23,6 +34,13 @@ export interface UseDraftSyncReturn {
     listener: (payload: unknown, raw?: unknown) => void
   ) => () => void;
   sendUpdateDraft: (value: string) => boolean;
+}
+
+export interface UseDraftSyncDeps {
+  ws: DraftWebSocketClient | null | undefined;
+  storedDraft: string | null;
+  layouts: Layout[];
+  dispatch: (action: unknown) => unknown;
 }
 
 export interface DraftWebSocketClient {
@@ -46,6 +64,11 @@ export interface DraftRefs {
   sendingRef: React.MutableRefObject<boolean>;
   awaitingCommitRef: React.MutableRefObject<boolean>;
   awaitingCommitPayloadRef: React.MutableRefObject<string | null>;
+  pendingCommitPayloadRef: React.MutableRefObject<string | null>;
+  commitRetryCountRef: React.MutableRefObject<number>;
+  commitRetryTimerRef: React.MutableRefObject<ReturnType<
+    typeof setTimeout
+  > | null>;
   lastCommittedPayloadRef: React.MutableRefObject<string | null>;
   draftRef: React.MutableRefObject<string>;
 }

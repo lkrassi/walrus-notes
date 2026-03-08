@@ -1,4 +1,4 @@
-import { useResizableBase } from './useResizableBase';
+import { useResizableBase } from '@/shared/lib/react/hooks';
 
 const STORAGE_KEY = 'wn.sidebar.width';
 const DEFAULT = 320;

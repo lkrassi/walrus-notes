@@ -1,5 +1,9 @@
-import { useNotifications } from '@/app/providers/notifications';
-import { type AwarenessUser, cn, useYjsCollaboration } from '@/shared/lib';
+import { useNotifications } from '@/entities/notification';
+import { cn } from '@/shared/lib/core';
+import {
+  type AwarenessUser,
+  useYjsCollaboration,
+} from '@/shared/lib/react/collaboration';
 import {
   forwardRef,
   memo,

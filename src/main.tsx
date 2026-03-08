@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
-import '@/shared/config/i18n';
+import '@/shared/config';
 import './app/styles/App.css';
 import './app/styles/markdown.css';
 

@@ -1,9 +1,5 @@
-import {
-  getCaretOverlayPosition,
-  getSelectionOverlayRects,
-} from '../../../lib/yjs/textareaOverlayUtils';
-import type { AwarenessUser } from '@/shared/lib';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
+import type { AwarenessUser } from '@/shared/lib/react/collaboration';
 import {
   memo,
   useEffect,
@@ -12,6 +8,10 @@ import {
   type FC,
   type RefObject,
 } from 'react';
+import {
+  getCaretOverlayPosition,
+  getSelectionOverlayRects,
+} from '../../../lib/yjs/textareaOverlayUtils';
 import { Cursor } from './Cursor';
 import { SelectionHighlight } from './SelectionHighlight';
 

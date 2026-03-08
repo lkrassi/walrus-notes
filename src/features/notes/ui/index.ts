@@ -1,1 +1,1 @@
-export * from './components';
+export { CreateNoteForm, NoteViewer } from './components';

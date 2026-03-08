@@ -1,0 +1,32 @@
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
+import { WebSocketProvider } from '@/shared/lib/react/websocket';
+import { Sidebar } from '@/widgets';
+import { useRef } from 'react';
+import { useMainWorkspace } from '../../model';
+import { MainContent } from './MainContent';
+import { MainHeader } from './MainHeader';
+
+export const Main = () => {
+  const { userId, activeTabId, handleItemSelect, handleNoteOpenFromGraph } =
+    useMainWorkspace();
+  const sidebarRef = useRef<{
+    updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
+  }>(null);
+
+  return (
+    <WebSocketProvider userId={userId}>
+      <div className={cn('flex', 'h-screen', 'flex-col')}>
+        <MainHeader />
+        <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
+          <Sidebar
+            ref={sidebarRef}
+            onItemSelect={handleItemSelect}
+            selectedItemId={activeTabId || undefined}
+          />
+          <MainContent onNoteOpen={handleNoteOpenFromGraph} />
+        </div>
+      </div>
+    </WebSocketProvider>
+  );
+};

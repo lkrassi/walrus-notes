@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { type FC } from 'react';
 
 interface ImageViewerModalProps {

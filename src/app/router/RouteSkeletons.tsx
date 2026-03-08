@@ -1,5 +1,5 @@
-import { cn } from 'shared/lib/cn';
-import { Skeleton } from 'shared/ui/components/Skeleton';
+import { cn } from '@/shared/lib/core';
+import { Skeleton } from '@/shared/ui';
 
 const BrandSkeleton = () => {
   return (
@@ -368,7 +368,7 @@ export const SettingsPageSkeleton = () => {
   );
 };
 
-export const NotFoundPageSkeleton = () => {
+export const UnavailablePageSkeleton = () => {
   return (
     <div className={cn('bg-bg dark:bg-dark-bg', 'min-h-screen')}>
       <PublicHeaderSkeleton />

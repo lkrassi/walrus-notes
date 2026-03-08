@@ -1,9 +1,12 @@
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 
-import { Button } from 'shared';
+import { Button } from '@/shared';
 
-import { useModalActions, useModalContentContext } from '@/app/providers/modal';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
+import {
+  useLocalization,
+  useModalActions,
+  useModalContentContext,
+} from '@/widgets/hooks';
 
 import { RussianFlagIcon } from '@/shared/ui/icons/RussianFlagIcon';
 import { UKFlagIcon } from '@/shared/ui/icons/UKFlagIcon';

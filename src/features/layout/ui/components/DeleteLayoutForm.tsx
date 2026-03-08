@@ -1,13 +1,8 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
-import type { AppDispatch } from '@/app/store';
-import { closeLayoutTabs, useDeleteLayoutMutation } from '@/entities';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import { Trash2 } from 'lucide-react';
-import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { Button } from 'shared';
-import { cn } from 'shared/lib/cn';
+import { useDeleteLayoutForm } from '../../model';
 
 interface DeleteLayoutFormProps {
   layoutId: string;
@@ -21,30 +16,10 @@ export const DeleteLayoutForm = ({
   onLayoutDeleted,
 }: DeleteLayoutFormProps) => {
   const { t } = useTranslation();
-  const { showError } = useNotifications();
-  const { closeModal } = useModalContentContext();
-  const dispatch = useDispatch<AppDispatch>();
-  const [deleteLayout, { isLoading }] = useDeleteLayoutMutation();
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await deleteLayout({
-        layoutId,
-      }).unwrap();
-
-      dispatch(closeLayoutTabs(layoutId));
-
-      if (onLayoutDeleted) {
-        onLayoutDeleted(layoutId);
-      }
-
-      closeModal();
-    } catch {
-      showError(t('layout:layoutDeletionError'));
-    }
-  };
+  const { handleSubmit, closeModal, isLoading } = useDeleteLayoutForm({
+    layoutId,
+    onLayoutDeleted,
+  });
 
   return (
     <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>

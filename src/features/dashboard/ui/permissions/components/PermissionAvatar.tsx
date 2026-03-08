@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/core';
 import { type FC, useMemo, useState } from 'react';
-import { cn } from '@/shared/lib';
 
 interface PermissionAvatarProps {
   name: string;

@@ -1,26 +1,31 @@
 import {
-  layoutApi,
+  type CommitDraftPayload,
+  type UpdateDraftPayload,
   notesApi,
   removeDraft,
   setDraft,
   updateTabNote,
 } from '@/entities';
-import type { CommitDraftPayload, UpdateDraftPayload } from '@/shared/model';
-import { store, type AppDispatch } from 'app/store';
+import type { Layout } from '@/entities/layout';
 import { useEffect } from 'react';
-import type { DraftRefs, DraftWebSocketClient } from './types';
+import { createDraftWsSnapshot, logDraftWs } from './log';
+import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftListenersOpts {
   ws: DraftWebSocketClient | null | undefined;
   noteId: string | null | undefined;
   refs: DraftRefs;
   lastCommitAt: number | null;
-  dispatch: AppDispatch;
+  layouts: Layout[];
+  dispatch: (action: unknown) => unknown;
   setIsSaving: (value: boolean) => void;
+  setDraftPhase: (value: DraftPhase) => void;
   setLastSavedAt: (value: string | null) => void;
   setLastCommitAt: (value: number | null) => void;
   onRemoteDraft?: (newDraft: string) => void;
   onRemoteCommit?: () => void;
+  onCommitRetryRequired?: (reason: string) => void;
+  onCommitRetryResolved?: () => void;
 }
 
 export const useDraftListeners = ({
@@ -28,12 +33,16 @@ export const useDraftListeners = ({
   noteId,
   refs,
   lastCommitAt,
+  layouts,
   dispatch,
   setIsSaving,
+  setDraftPhase,
   setLastSavedAt,
   setLastCommitAt,
   onRemoteDraft,
   onRemoteCommit,
+  onCommitRetryRequired,
+  onCommitRetryResolved,
 }: UseDraftListenersOpts) => {
   useEffect(() => {
     if (!ws || !noteId) {
@@ -54,6 +63,12 @@ export const useDraftListeners = ({
           if (!data || data.noteId !== noteId) {
             return;
           }
+          logDraftWs(
+            'RECV',
+            'UPDATE_DRAFT_REQUEST',
+            { noteId },
+            createDraftWsSnapshot(refs, { noteId, reason: 'remote-update' })
+          );
           const nd = data.newDraft ?? '';
 
           if (
@@ -97,6 +112,15 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
+          logDraftWs(
+            'RECV',
+            'UPDATE_DRAFT_RESPONSE',
+            {
+              noteId,
+              status: !!data.status,
+            },
+            createDraftWsSnapshot(refs, { noteId, reason: 'update-ack' })
+          );
 
           if (data.status) {
             const acked = refs.awaitingAckRef.current;
@@ -106,9 +130,11 @@ export const useDraftListeners = ({
             refs.awaitingAckRef.current = null;
             refs.pendingRef.current = null;
             setIsSaving(false);
+            setDraftPhase('IDLE');
             setLastSavedAt(new Date().toISOString());
           } else {
             setIsSaving(false);
+            setDraftPhase('PENDING_UPDATE');
           }
         } catch (_e) {}
       }) ?? (() => {});
@@ -120,6 +146,12 @@ export const useDraftListeners = ({
           if (!data || data.noteId !== noteId) {
             return;
           }
+          logDraftWs(
+            'RECV',
+            'COMMIT_DRAFT_REQUEST',
+            { noteId },
+            createDraftWsSnapshot(refs, { noteId, reason: 'remote-commit' })
+          );
 
           try {
             dispatch(removeDraft({ noteId }));
@@ -135,8 +167,22 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
+          logDraftWs(
+            'RECV',
+            'COMMIT_DRAFT_RESPONSE',
+            {
+              noteId,
+              status: !!data.status,
+            },
+            createDraftWsSnapshot(refs, {
+              noteId,
+              reason: 'commit-ack',
+            })
+          );
 
           if (data.status) {
+            onCommitRetryResolved?.();
+
             const confirmed =
               refs.awaitingAckRef.current ??
               refs.awaitingCommitPayloadRef.current ??
@@ -173,11 +219,6 @@ export const useDraftListeners = ({
 
             try {
               if (confirmed != null) {
-                const state = store.getState();
-                const layoutsCache =
-                  layoutApi.endpoints.getMyLayouts.select()(state);
-                const layouts = layoutsCache.data?.data || [];
-
                 for (const l of layouts) {
                   try {
                     dispatch(
@@ -252,12 +293,17 @@ export const useDraftListeners = ({
             refs.awaitingCommitPayloadRef.current = null;
             setLastCommitAt(Date.now());
             setIsSaving(false);
+            setDraftPhase('IDLE');
             setLastSavedAt(new Date().toISOString());
 
             if (onRemoteCommit) onRemoteCommit();
           } else {
+            refs.pendingCommitPayloadRef.current =
+              refs.awaitingCommitPayloadRef.current;
             refs.awaitingCommitRef.current = false;
             setIsSaving(false);
+            setDraftPhase('PENDING_UPDATE');
+            onCommitRetryRequired?.('commit-response-error');
           }
         } catch (_e) {}
       }) ?? (() => {});
@@ -283,9 +329,12 @@ export const useDraftListeners = ({
     lastCommitAt,
     dispatch,
     setIsSaving,
+    setDraftPhase,
     setLastSavedAt,
     setLastCommitAt,
     onRemoteDraft,
     onRemoteCommit,
+    onCommitRetryRequired,
+    onCommitRetryResolved,
   ]);
 };

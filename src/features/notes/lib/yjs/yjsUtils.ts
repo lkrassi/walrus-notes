@@ -1,1 +1,1 @@
-export { buildYjsWsUrl, getUserColorById } from '@/shared/lib';
+export { buildYjsWsUrl, getUserColorById } from '@/shared/lib/core';

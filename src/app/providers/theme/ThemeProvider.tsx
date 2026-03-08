@@ -1,24 +1,8 @@
+import { createAppTheme } from '@/app/theme/theme';
+import { ThemeContext } from '@/shared/lib/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { createAppTheme } from 'app/theme/theme';
-import {
-  createContext,
-  useEffect,
-  useMemo,
-  useState,
-  type FC,
-  type ReactNode,
-} from 'react';
-
-type ThemeContextType = {
-  theme: string;
-  toggleTheme: () => void;
-};
-
-export const ThemeContext = createContext<ThemeContextType>({
-  theme: 'dark',
-  toggleTheme: () => {},
-});
+import { useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;

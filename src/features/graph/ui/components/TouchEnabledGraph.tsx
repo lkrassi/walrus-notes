@@ -1,4 +1,4 @@
-import { useDndSensors } from '@/shared/lib';
+import { useDndSensors } from '@/shared/lib/react/hooks';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { useCallback, type ReactNode } from 'react';
 import type { Node } from 'reactflow';

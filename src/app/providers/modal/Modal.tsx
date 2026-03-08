@@ -1,5 +1,4 @@
-import { ModalContentContext } from '@/app/providers/modal/ModalContentContext';
-import type { ModalState } from '@/app/providers/modal/useModal';
+import { ModalContentContext, type ModalState } from '@/shared/lib/react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';

@@ -1,15 +1,15 @@
-import { ThemeContext } from '@/app/providers/theme';
-import { Login } from '@/features/auth/ui/components/Login';
-import { Register } from '@/features/auth/ui/components/Register';
-import logo from '@/shared/assets/logo.avif';
-import { cn } from '@/shared/lib';
+import { Button } from '@/shared';
+import { logoImage as logo } from '@/shared/assets';
+import { cn } from '@/shared/lib/core';
+import { ThemeContext } from '@/shared/lib/react';
 import { RussianFlagIcon } from '@/shared/ui/icons/RussianFlagIcon';
 import { UKFlagIcon } from '@/shared/ui/icons/UKFlagIcon';
 import { Moon, Sun } from 'lucide-react';
 import { type FC, useCallback, useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Button } from 'shared';
+import { Login } from './Login';
+import { Register } from './Register';
 
 const LANGUAGES = [
   {

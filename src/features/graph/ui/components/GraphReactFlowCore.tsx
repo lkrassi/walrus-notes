@@ -1,5 +1,5 @@
-import type { UseGraphHistoryReturn } from '@/entities/graph/model';
-import { useIsMobile } from '@/shared/lib/hooks';
+import type { UseGraphHistoryReturn } from '@/entities/graph';
+import { useIsMobile } from '@/shared/lib/react/hooks';
 import { memo, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow from 'reactflow';

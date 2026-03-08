@@ -7,11 +7,11 @@ import {
   useUpdatePermissionMutation,
   type PermissionItem,
 } from '@/entities';
-import { cn } from '@/shared/lib';
+import { useNotifications } from '@/entities/notification';
+import { cn } from '@/shared/lib/core';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNotifications } from '@/widgets/hooks';
 import { initialFromPermission } from '../../lib/utils';
 import type { EditablePermissionState } from '../../model';
 import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';

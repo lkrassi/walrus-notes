@@ -1,15 +1,23 @@
-export { useModal, useModalActions } from '@/app/providers/modal';
-export { useNotifications } from '@/app/providers/notifications';
-export { SidebarProvider, useSidebar } from '@/app/providers/sidebar';
-export { useAppDispatch, useAppSelector, useUser } from './redux';
+export type { FileTreeItem } from '@/entities/tab';
+export {
+  useModal,
+  useModalActions,
+  useModalContentContext,
+  useModalContext,
+} from '@/shared/lib/react';
 export {
   useDeviceType,
+  useDropdown,
   useIsDesktop,
   useIsMobile,
   useIsTablet,
-} from './useDeviceType';
+  useMobileForm,
+  useResizableBase,
+  useResizableSplit,
+} from '@/shared/lib/react/hooks';
+export { useAppDispatch, useAppSelector, useUser } from './redux';
+export { SidebarProvider, useSidebar } from './sidebarContext';
 export { useFileTree } from './useFileTree';
-export type { FileTreeItem } from './useFileTree';
 export { useLocalization } from './useLocalization';
 export {
   useLocalStorage,
@@ -18,4 +26,4 @@ export {
   useLocalStorageObject,
   useLocalStorageString,
 } from './useLocalStorage';
-export { useTheme } from './useTheme';
+export { useNotifications } from './useNotifications';

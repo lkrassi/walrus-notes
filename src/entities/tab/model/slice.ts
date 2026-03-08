@@ -1,10 +1,11 @@
-import type { FileTreeItem, Note } from '@/shared/model';
-import { createTabId, parseTabId, type TabType } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import {
   createSlice,
   type PayloadAction,
   type Reducer,
 } from '@reduxjs/toolkit';
+import { createTabId, parseTabId, type TabType } from '../lib/tabUtils';
+import type { FileTreeItem } from './types';
 
 export interface DashboardTab {
   id: string;

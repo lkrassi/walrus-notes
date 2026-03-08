@@ -1,7 +1,7 @@
 import { useDeleteNoteLinkMutation } from '@/entities';
+import { cn } from '@/shared/lib/core';
 import { memo, useCallback } from 'react';
 import { BaseEdge, useReactFlow, type EdgeProps } from 'reactflow';
-import { cn } from '@/shared/lib';
 import { EDGE_COLORS, EDGE_INTERACTION } from './constants';
 import { EdgeDeleteButton } from './EdgeDeleteButton';
 import type { MultiColorStepEdgeData } from './types';

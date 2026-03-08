@@ -1,7 +1,7 @@
-import { useModalActions } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
 import { useImportLayoutMutation } from '@/entities';
-import { cn } from '@/shared/lib';
+import { useNotifications } from '@/entities/notification';
+import { cn } from '@/shared/lib/core';
+import { useModalActions } from '@/shared/lib/react';
 import { Button } from '@/shared/ui';
 import {
   useRef,

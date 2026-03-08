@@ -1,11 +1,11 @@
+import { Textarea } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import {
   forwardRef,
   useImperativeHandle,
   useRef,
   type KeyboardEventHandler,
 } from 'react';
-import { Textarea } from 'shared';
-import { cn } from '@/shared/lib';
 
 interface MarkdownEditorProps {
   value: string;

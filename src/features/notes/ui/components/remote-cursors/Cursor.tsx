@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/core';
 import { memo, type FC } from 'react';
-import { cn } from '@/shared/lib';
 
 interface CursorProps {
   left: number;

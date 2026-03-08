@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
 import { memo, type DragEvent, type FC } from 'react';
 
 interface LinkedNoteItemProps {

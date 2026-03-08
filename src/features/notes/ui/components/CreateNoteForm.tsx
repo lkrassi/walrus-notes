@@ -1,8 +1,9 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
 import { useCreateNoteMutation } from '@/entities';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import { useNotifications } from '@/entities/notification';
+import { Button, Input, Textarea } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
 import {
   memo,
   useCallback,
@@ -12,7 +13,6 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Textarea } from 'shared';
 
 interface CreateNoteFormProps {
   layoutId: string;

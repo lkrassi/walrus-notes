@@ -1,5 +1,5 @@
-import logo from '@/shared/assets/logo.avif';
-import { cn } from '@/shared/lib';
+import { logoImage as logo } from '@/shared/assets';
+import { cn } from '@/shared/lib/core';
 import { useLocalization } from '@/widgets/hooks/useLocalization';
 import { LanguageSwitcher } from '@/widgets/ui/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/widgets/ui/components/theme/ThemeSwitcher';

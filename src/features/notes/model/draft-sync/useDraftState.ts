@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import type { DraftRefs } from './types';
+import type { DraftPhase, DraftRefs } from './types';
 
 export const useDraftState = (draft: string) => {
+  const [draftPhase, setDraftPhaseState] = useState<DraftPhase>('IDLE');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [lastCommitAt, setLastCommitAt] = useState<number | null>(null);
@@ -17,6 +18,11 @@ export const useDraftState = (draft: string) => {
   const sendingRef = useRef(false);
   const awaitingCommitRef = useRef(false);
   const awaitingCommitPayloadRef = useRef<string | null>(null);
+  const pendingCommitPayloadRef = useRef<string | null>(null);
+  const commitRetryCountRef = useRef(0);
+  const commitRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const lastCommittedPayloadRef = useRef<string | null>(null);
   const draftRef = useRef(draft);
 
@@ -48,11 +54,20 @@ export const useDraftState = (draft: string) => {
     sendingRef,
     awaitingCommitRef,
     awaitingCommitPayloadRef,
+    pendingCommitPayloadRef,
+    commitRetryCountRef,
+    commitRetryTimerRef,
     lastCommittedPayloadRef,
     draftRef,
   });
 
+  const setDraftPhase = (next: DraftPhase) => {
+    setDraftPhaseState(prev => (prev === next ? prev : next));
+  };
+
   return {
+    draftPhase,
+    setDraftPhase,
     isSaving,
     setIsSaving,
     lastSavedAt,

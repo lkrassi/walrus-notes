@@ -1,5 +1,6 @@
 import { useGetMyLayoutsQuery } from '@/entities';
-import type { Layout, Note } from '@/shared/model';
+import type { Layout } from '@/entities/layout';
+import type { Note } from '@/entities/note';
 import {
   createContext,
   useContext,

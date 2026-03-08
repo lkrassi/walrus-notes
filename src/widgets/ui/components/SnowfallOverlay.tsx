@@ -1,5 +1,4 @@
 // import Snowfall from 'react-snowfall';
-// import cn from '@/shared/lib';
 
 // export const SnowfallOverlay = () => {
 //   const { enabled, settings } = useHolidaySettings();

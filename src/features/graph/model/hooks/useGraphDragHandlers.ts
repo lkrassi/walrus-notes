@@ -1,4 +1,4 @@
-import { MoveNodeCommand, type useGraphHistory } from '@/entities/graph/model';
+import { MoveNodeCommand, type useGraphHistory } from '@/entities/graph';
 import { useCallback, useRef, type MouseEvent, type RefObject } from 'react';
 import type { Edge, Node, NodeChange } from 'reactflow';
 

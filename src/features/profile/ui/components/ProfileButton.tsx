@@ -1,12 +1,11 @@
-import type { RootState } from '@/app/store';
+import { useUser } from '@/entities';
+import { cn } from '@/shared/lib/core';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { cn } from 'shared/lib/cn';
 
 export const ProfileButton: FC = () => {
-  const { profile } = useSelector((state: RootState) => state.user);
+  const { profile } = useUser();
   const { t } = useTranslation();
   const navigate = useNavigate();
 

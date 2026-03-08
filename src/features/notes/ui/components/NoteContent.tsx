@@ -1,10 +1,9 @@
-import type { UserProfileState } from '@/entities';
-import { useIsDesktop, useResizableSplit } from '@/shared/lib/hooks';
+import { useUser } from '@/entities';
+import { useIsDesktop, useResizableSplit } from '@/shared/lib/react/hooks';
 import { type FC, type RefObject, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 
-import type { AwarenessUser } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import type { AwarenessUser } from '@/shared/lib/react/collaboration';
 import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
 
 import { NoteContentEditorSplit } from './editor-split';
@@ -64,10 +63,7 @@ export const NoteContent: FC<NoteContentProps> = ({
   const [_onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
     new Map()
   );
-  const profile = useSelector(
-    (state: { user: UserProfileState }) => state.user.profile
-  );
-  const userId = profile?.id || '';
+  const { profile, userId } = useUser();
   const userName = profile?.username || 'Anonymous';
   const { leftWidth, onDividerPointerDown, min, max, isResizing } =
     useResizableSplit({

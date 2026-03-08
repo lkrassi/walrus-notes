@@ -1,9 +1,9 @@
-import { useModalActions, useModalContentContext } from '@/app/providers/modal';
-import { cn } from '@/shared/lib';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalActions, useModalContentContext } from '@/shared/lib/react';
 import { Download, Upload } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 import { MdImportModal } from './MdImportModal';
 
 interface Props {

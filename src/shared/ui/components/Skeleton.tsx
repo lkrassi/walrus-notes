@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/core';
 import { type FC } from 'react';
-import { cn } from 'shared/lib/cn';
 
 interface SkeletonProps {
   className?: string;

@@ -1,6 +1,6 @@
-import { ModalContext, useModal } from '@/shared/lib/modal';
-import { Modal } from './Modal';
+import { ModalContext, useModal } from '@/shared/lib/react';
 import { type FC, type ReactNode } from 'react';
+import { Modal } from './Modal';
 
 interface ModalProviderProps {
   children: ReactNode;

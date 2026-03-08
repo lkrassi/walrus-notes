@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, type FC, type ReactNode } from 'react';
 

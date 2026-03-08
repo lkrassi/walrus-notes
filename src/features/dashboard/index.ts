@@ -1,3 +1,4 @@
+export { useShareLink } from './model';
 export { ApplyLinkHandler } from './ui/ApplyLinkHandler';
-export { DashBoard } from './ui/DashBoard';
+export { Dashboard } from './ui/Dashboard';
 export { ShareModal } from './ui/ShareModal';

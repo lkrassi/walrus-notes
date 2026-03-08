@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib';
-import { Button } from '@/shared/ui/components/Button';
+import { cn } from '@/shared/lib/core';
+import { Button } from '@/shared/ui';
 import { Settings } from 'lucide-react';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';

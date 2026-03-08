@@ -1,22 +1,8 @@
 import { useGetMyLayoutsQuery } from '@/entities';
-import type { Layout, Note } from '@/shared/model';
+import type { Layout } from '@/entities/layout';
+import type { Note } from '@/entities/note';
 import { useCallback, useEffect, useReducer } from 'react';
 import { fileTreeReducer, initialFileTreeState } from './fileTreeReducer';
-
-export type FileTreeItem = {
-  id: string;
-  type: 'layout' | 'note' | 'graph';
-  title: string;
-  isMain: boolean;
-  color?: string;
-  children?: FileTreeItem[];
-  parentId?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  note?: Note;
-  layoutId?: string;
-  openedFromSidebar?: boolean;
-};
 
 const EXPANDED_ITEMS_KEY = 'fileTree:expandedItems';
 

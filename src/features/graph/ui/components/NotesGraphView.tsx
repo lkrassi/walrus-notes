@@ -1,20 +1,19 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
-import { useDndSensors } from '@/shared/lib';
-import { useIsMobile } from '@/shared/lib/hooks';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import { useDndSensors, useIsMobile } from '@/shared/lib/react/hooks';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { memo, type DragEvent, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { CoordinateOverlay } from './CoordinateOverlay';
-import { GraphContainer } from './GraphContainer';
-import { GraphDropZone } from './GraphDropZone';
-import { GraphReactFlowCore } from './GraphReactFlowCore';
 import {
   useGraphDragAndDrop,
   useGraphNodeInteractions,
   useGraphViewport,
 } from '../../lib/hooks';
+import { CoordinateOverlay } from './CoordinateOverlay';
+import { GraphContainer } from './GraphContainer';
+import { GraphDropZone } from './GraphDropZone';
+import { GraphReactFlowCore } from './GraphReactFlowCore';
 import { NoteDragOverlay } from './NoteDragOverlay';
 import { TouchEnabledGraph } from './TouchEnabledGraph';
 import { UnposedNotesList } from './UnposedNotesList';

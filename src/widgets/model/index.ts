@@ -1,1 +1,1 @@
-export * from 'app/store';
+export {};

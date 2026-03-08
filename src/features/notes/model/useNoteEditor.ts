@@ -1,13 +1,21 @@
-import type { AppDispatch, RootState } from '@/app/store';
 import {
   addNotification,
   removeDraft,
   useUpdateNoteMutation,
 } from '@/entities';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDraftSync } from './useDraftSync';
+
+type RootStateLike = {
+  drafts?: Record<string, string>;
+  user: {
+    profile?: {
+      id?: string;
+    } | null;
+  };
+};
 
 export const useNoteEditor = (
   note: Note,
@@ -15,10 +23,12 @@ export const useNoteEditor = (
 ) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState<string>(note.title ?? '');
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
 
-  const storeDraft = useSelector((s: RootState) => s.drafts?.[note.id] ?? null);
-  const userId = useSelector((s: RootState) => s.user.profile?.id ?? '');
+  const storeDraft = useSelector(
+    (s: RootStateLike) => s.drafts?.[note.id] ?? null
+  );
+  const userId = useSelector((s: RootStateLike) => s.user.profile?.id ?? '');
 
   const originalPayload = note.payload ?? '';
   const ignoreDraftRef = useRef(false);

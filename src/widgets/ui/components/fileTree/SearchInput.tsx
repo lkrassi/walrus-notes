@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib';
-import { useDebounced } from '@/shared/lib/hooks';
+import { cn } from '@/shared/lib/core';
+import { useDebounced } from '@/shared/lib/react/hooks';
 import { useLocalization } from '@/widgets/hooks';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';

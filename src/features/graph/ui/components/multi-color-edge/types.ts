@@ -3,13 +3,7 @@ export interface MultiColorStepEdgeData {
   isSelected?: boolean;
   edgeColor?: string;
 }
-
-export interface EdgeDeleteEventDetail {
-  edgeId: string;
-  source: string;
-  target: string;
-  newTarget?: string | null;
-}
+export type { EdgeDeleteEventDetail } from '../../../model/types';
 
 export interface NodeFlowInfo {
   center: { x: number; y: number };

@@ -1,8 +1,8 @@
-import { useModalContext } from '@/app/providers/modal';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContext } from '@/shared/lib/react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
-import { cn } from 'shared/lib/cn';
 import { DeleteLayoutForm } from './DeleteLayoutForm';
 
 interface DeleteLayoutProps {

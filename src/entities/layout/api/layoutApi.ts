@@ -1,5 +1,5 @@
 import { apiSlice } from '@/shared/api';
-import type { Layout } from 'shared/model/types/layouts';
+import type { Layout } from '@/entities/layout';
 
 interface GetMyLayoutsResponse {
   data: Layout[];

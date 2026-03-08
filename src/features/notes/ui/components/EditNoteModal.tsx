@@ -1,5 +1,6 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { cn } from '@/shared/lib';
+import { Button, Input } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
 import {
   useEffect,
   useRef,
@@ -8,7 +9,6 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Input } from 'shared';
 
 interface Props {
   title?: string;

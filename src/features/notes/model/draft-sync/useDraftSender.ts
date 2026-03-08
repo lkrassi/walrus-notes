@@ -1,16 +1,16 @@
-import { removeDraft, setDraft } from '@/entities';
-import { makeUpdateDraft } from '@/shared/model';
-import type { AppDispatch } from 'app/store';
+import { makeUpdateDraft, removeDraft, setDraft } from '@/entities';
 import { useCallback } from 'react';
-import type { DraftRefs, DraftWebSocketClient } from './types';
+import { createDraftWsSnapshot, logDraftWs } from './log';
+import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftSenderOpts {
   noteId: string | null | undefined;
   ws: DraftWebSocketClient | null | undefined;
   refs: DraftRefs;
   lastCommitAt: number | null;
-  dispatch: AppDispatch;
+  dispatch: (action: unknown) => unknown;
   setIsSaving: (value: boolean) => void;
+  setDraftPhase: (value: DraftPhase) => void;
 }
 
 export const useDraftSender = ({
@@ -20,6 +20,7 @@ export const useDraftSender = ({
   lastCommitAt,
   dispatch,
   setIsSaving,
+  setDraftPhase,
 }: UseDraftSenderOpts) => {
   const send = useCallback(
     (value: string) => {
@@ -36,6 +37,7 @@ export const useDraftSender = ({
           try {
             dispatch(removeDraft({ noteId }));
           } catch (_e) {}
+          setDraftPhase('IDLE');
           return false;
         }
       } catch (_e) {}
@@ -52,6 +54,7 @@ export const useDraftSender = ({
 
       if (refs.awaitingCommitRef.current) {
         refs.pendingRef.current = value;
+        setDraftPhase('PENDING_UPDATE');
         try {
           dispatch(setDraft({ noteId, text: value }));
         } catch (_e) {}
@@ -64,10 +67,23 @@ export const useDraftSender = ({
 
         const event = makeUpdateDraft(noteId, value);
         const ok = ws.send(event);
+        logDraftWs(
+          'SEND',
+          'UPDATE_DRAFT_REQUEST',
+          {
+            noteId,
+            status: ok ? 'sent' : 'buffered',
+          },
+          createDraftWsSnapshot(refs, {
+            noteId,
+            isConnected: true,
+          })
+        );
 
         if (ok) {
           refs.awaitingAckRef.current = value;
           refs.pendingRef.current = null;
+          setDraftPhase('AWAITING_ACK');
           try {
             dispatch(setDraft({ noteId, text: value }));
           } catch (_e) {}
@@ -76,6 +92,7 @@ export const useDraftSender = ({
         }
 
         refs.pendingRef.current = value;
+        setDraftPhase('PENDING_UPDATE');
         try {
           dispatch(setDraft({ noteId, text: value }));
         } catch (_e) {}
@@ -85,9 +102,23 @@ export const useDraftSender = ({
             const toSend = refs.pendingRef.current;
             if (toSend != null) {
               const res = ws.send(makeUpdateDraft(noteId, toSend));
+              logDraftWs(
+                'RECONNECT',
+                'UPDATE_DRAFT_REQUEST',
+                {
+                  noteId,
+                  status: res ? 'resent' : 'failed',
+                },
+                createDraftWsSnapshot(refs, {
+                  noteId,
+                  reason: 'on-open-resend',
+                  isConnected: true,
+                })
+              );
               if (res) {
                 refs.awaitingAckRef.current = toSend;
                 refs.pendingRef.current = null;
+                setDraftPhase('AWAITING_ACK');
                 try {
                   dispatch(setDraft({ noteId, text: toSend }));
                 } catch (_e) {}
@@ -112,7 +143,7 @@ export const useDraftSender = ({
         return false;
       }
     },
-    [ws, noteId, lastCommitAt, refs, dispatch, setIsSaving]
+    [ws, noteId, lastCommitAt, refs, dispatch, setIsSaving, setDraftPhase]
   );
 
   return send;

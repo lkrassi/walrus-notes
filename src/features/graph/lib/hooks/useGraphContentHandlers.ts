@@ -1,4 +1,7 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
+import type { Note } from '@/entities/note';
+import { useCallback, useEffect, type MouseEvent, type RefObject } from 'react';
+import type { Edge, EdgeChange, Node, NodeChange } from 'reactflow';
 import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
@@ -6,9 +9,6 @@ import { useGraphHandlers } from '../../model/hooks/useGraphHandlers';
 import { useGraphSelectionHandlers } from '../../model/hooks/useGraphSelectionHandlers';
 import { useGraphSyncHandlers } from '../../model/hooks/useGraphSyncHandlers';
 import { useEdgeDeleteEvents } from './useEdgeDeleteEvents';
-import type { Note } from '@/shared/model';
-import { useCallback, useEffect, type MouseEvent, type RefObject } from 'react';
-import type { Edge, EdgeChange, Node, NodeChange } from 'reactflow';
 
 interface UseGraphContentHandlersProps {
   layoutId: string;

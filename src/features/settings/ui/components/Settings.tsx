@@ -1,38 +1,23 @@
-import {
-  useChangeProfilePictureMutation,
-  useGetUserProfileQuery,
-} from '@/entities';
-import { setUserProfile } from '@/entities/user';
-import { ImageViewerModal } from '@/features/profile';
-import { settingsSections } from '../../model';
-import logo from '@/shared/assets/logo.avif';
-import { cn, useModalActions } from '@/shared/lib';
-import { ImageUploadModal } from '@/widgets/ui';
+import { logoImage as logo } from '@/shared/assets';
+import { cn } from '@/shared/lib/core';
 import { PhotoCamera } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import {
   useCallback,
-  useEffect,
-  useState,
-  type ComponentType,
   type FC,
-  type ReactElement,
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-
-type RootStateLike = {
-  user: {
-    profile?: {
-      id?: string;
-      username?: string;
-      email?: string;
-      imgUrl?: string;
-    } | null;
-  };
-};
+import type { SettingsSectionActionType } from '../../model';
+import { settingsSections, useSettings } from '../../model';
+import { ExportDataButton } from './ExportDataButton';
+import { ImageViewerModal } from './ImageViewerModal';
+import { ImportDataButton } from './ImportDataButton';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { LogoutActionButton } from './LogoutActionButton';
+import { OpenPermissionsDashboardButton } from './OpenPermissionsDashboardButton';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const SettingsHeader = () => {
   const { t } = useTranslation();
@@ -85,97 +70,33 @@ const SettingsHeader = () => {
 
 export const Settings: FC = () => {
   const { t } = useTranslation();
-  const profile = useSelector((state: RootStateLike) => state.user.profile);
-  const dispatch = useDispatch();
-  const { openModalFromTrigger } = useModalActions();
-  const [avatarVersion, setAvatarVersion] = useState<number | undefined>(
-    undefined
-  );
+  const {
+    profile,
+    renderAvatar,
+    renderSectionIcon,
+    getSectionActionType,
+    openImageViewer,
+    openChangePhotoModal,
+  } = useSettings();
 
-  const getUserId = useCallback((): string => {
-    return profile?.id || '';
-  }, [profile?.id]);
-
-  const [changeProfilePicture] = useChangeProfilePictureMutation();
-  const { data: userProfileResponse, refetch: refetchProfile } =
-    useGetUserProfileQuery(getUserId(), { skip: !getUserId() });
-
-  useEffect(() => {
-    if (userProfileResponse?.data) {
-      dispatch(setUserProfile(userProfileResponse.data));
-    }
-  }, [userProfileResponse, dispatch]);
-
-  const handleOpenImage = openModalFromTrigger(
-    profile?.imgUrl ? (
-      <ImageViewerModal
-        imageUrl={`https://${profile.imgUrl}`}
-        alt={profile.username || 'Аватар'}
-      />
-    ) : null,
-    {
-      title: ' ',
-      size: 'lg',
-      closeOnOverlayClick: true,
-    }
-  );
-
-  const handleChangePhoto = openModalFromTrigger(
-    <ImageUploadModal
-      uploadFn={async (file: File) => {
-        const res = await changeProfilePicture({
-          file,
-          userId: getUserId(),
-        }).unwrap();
-        return res?.data?.newImgUrl ?? '';
-      }}
-      onUploaded={(_url: string) => {
-        setTimeout(() => {
-          refetchProfile();
-          setAvatarVersion(Date.now());
-        }, 2000);
-      }}
-    />,
-    {
-      title: t('profile:changePhoto') || 'Изменить фото',
-      size: 'md',
-    }
-  );
-
-  const renderAvatar = useCallback(() => {
-    if (profile?.imgUrl) {
-      return (
-        <img
-          src={`https://${profile.imgUrl}${avatarVersion ? `?v=${avatarVersion}` : ''}`}
-          alt={profile.username || 'Аватар'}
-          className='h-full w-full object-cover'
-        />
-      );
-    }
-
-    const initial = profile?.username?.[0]?.toUpperCase() || 'U';
-    return (
-      <div
-        className={cn(
-          'flex h-full w-full items-center justify-center',
-          'bg-gray-300 dark:bg-gray-600',
-          'text-2xl font-semibold text-gray-600 dark:text-gray-300',
-          'max-sm:text-xl'
-        )}
-      >
-        {initial}
-      </div>
-    );
-  }, [profile?.imgUrl, profile?.username, avatarVersion]);
-
-  const renderSectionIcon = useCallback(
-    (icon: ComponentType<{ className?: string }> | (() => ReactElement)) => {
-      if (typeof icon === 'function' && icon.length === 0) {
-        return (icon as () => ReactElement)();
+  const renderSectionAction = useCallback(
+    (actionType: SettingsSectionActionType) => {
+      switch (actionType) {
+        case 'theme':
+          return <ThemeSwitcher />;
+        case 'language':
+          return <LanguageSwitcher />;
+        case 'exportData':
+          return <ExportDataButton />;
+        case 'importData':
+          return <ImportDataButton />;
+        case 'permissionsDashboard':
+          return <OpenPermissionsDashboardButton />;
+        case 'logout':
+          return <LogoutActionButton />;
+        default:
+          return null;
       }
-
-      const IconComponent = icon as ComponentType<{ className?: string }>;
-      return <IconComponent className='h-5 w-5 max-sm:h-4 max-sm:w-4' />;
     },
     []
   );
@@ -202,7 +123,21 @@ export const Settings: FC = () => {
                       'cursor-pointer transition-opacity hover:opacity-80',
                       { 'cursor-default hover:opacity-100': !profile?.imgUrl }
                     )}
-                    onClick={profile?.imgUrl ? handleOpenImage : undefined}
+                    onClick={
+                      profile?.imgUrl
+                        ? e => {
+                            openImageViewer(
+                              profile?.imgUrl ? (
+                                <ImageViewerModal
+                                  imageUrl={`https://${profile.imgUrl}`}
+                                  alt={profile.username || 'Аватар'}
+                                />
+                              ) : null,
+                              e as unknown as ReactMouseEvent<HTMLElement>
+                            );
+                          }
+                        : undefined
+                    }
                     role={profile?.imgUrl ? 'button' : undefined}
                     tabIndex={profile?.imgUrl ? 0 : undefined}
                     onKeyDown={e => {
@@ -211,7 +146,13 @@ export const Settings: FC = () => {
                         (e.key === 'Enter' || e.key === ' ')
                       ) {
                         e.preventDefault();
-                        handleOpenImage(
+                        openImageViewer(
+                          profile?.imgUrl ? (
+                            <ImageViewerModal
+                              imageUrl={`https://${profile.imgUrl}`}
+                              alt={profile.username || 'Аватар'}
+                            />
+                          ) : null,
                           e as unknown as ReactMouseEvent<HTMLElement>
                         );
                       }
@@ -221,7 +162,7 @@ export const Settings: FC = () => {
                   </div>
 
                   <button
-                    onClick={handleChangePhoto}
+                    onClick={openChangePhotoModal}
                     className={cn(
                       'absolute right-0 bottom-0',
                       'h-6 w-6 rounded-full',
@@ -297,7 +238,9 @@ export const Settings: FC = () => {
                         'max-sm:flex max-sm:w-full max-sm:justify-end'
                       )}
                     >
-                      {section.action}
+                      {renderSectionAction(
+                        getSectionActionType(section.actionType)
+                      )}
                     </div>
                   </div>
                 </motion.div>

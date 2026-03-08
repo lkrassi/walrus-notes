@@ -1,7 +1,7 @@
-import type { HelpSectionData } from '../../lib/markdownHelpData';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { memo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { HelpSectionData } from '../../lib/markdownHelpData';
 
 interface HelpSectionProps {
   section: HelpSectionData;

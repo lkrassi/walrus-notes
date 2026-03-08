@@ -1,10 +1,10 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
 import { useCreateLayoutMutation } from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { Button, Input } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Input } from 'shared';
-import { cn } from 'shared/lib/cn';
 import { ColorSelector } from './ColorSelector';
 
 interface CreateLayoutFormProps {

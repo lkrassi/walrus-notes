@@ -1,5 +1,5 @@
 import type { Edge } from 'reactflow';
-import type { Command } from 'shared/model/command';
+import type { Command } from '@/shared/model/command';
 
 export class MoveNodeCommand implements Command {
   private nodeId: string;

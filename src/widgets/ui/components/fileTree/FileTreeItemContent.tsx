@@ -1,11 +1,10 @@
 import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem as UseFileTreeItem } from '@/entities/tab';
+import { cn } from '@/shared/lib/core';
+import { useDropdown } from '@/shared/lib/react/hooks';
+import { DropdownContent } from '@/shared/ui';
 import { useLocalization } from '@/widgets/hooks';
-import { useAppSelector } from '@/widgets/hooks/redux';
-import { useDropdown } from '@/widgets/hooks/useDropdown';
-import type { FileTreeItem as UseFileTreeItem } from '@/widgets/hooks/useFileTree';
-import { DropdownContent } from '@/widgets/ui/components/dropdown/DropdownContent';
 import {
   useCallback,
   useEffect,
@@ -13,6 +12,11 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useSelector } from 'react-redux';
+
+type NotesApiRootState = Parameters<
+  ReturnType<typeof notesApi.endpoints.getNotes.select>
+>[0];
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;
@@ -76,7 +80,7 @@ export const FileTreeItemContent = ({
     }
   }, [notesResponse, isExpanded, item.id, onNotesLoaded]);
 
-  const apiState = useAppSelector(state => state.api);
+  const apiState = useSelector((state: NotesApiRootState) => state.api);
 
   const allNotes = useMemo(() => {
     const notesMap = new Map<string, Note>();
@@ -85,7 +89,7 @@ export const FileTreeItemContent = ({
       const cachedData = notesApi.endpoints.getNotes.select({
         layoutId: item.id,
         page,
-      })({ api: apiState });
+      })({ api: apiState } as NotesApiRootState);
 
       if (cachedData?.data?.data) {
         cachedData.data.data.forEach(note => {

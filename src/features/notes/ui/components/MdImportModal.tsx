@@ -1,6 +1,7 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
-import { cn } from '@/shared/lib';
+import { useNotifications } from '@/entities/notification';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
 import {
   useCallback,
   useRef,
@@ -10,7 +11,6 @@ import {
   type FC,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 
 type Props = {
   onImported: (content: string) => void;

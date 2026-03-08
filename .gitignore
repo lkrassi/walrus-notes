@@ -27,3 +27,5 @@ dist-server/
 
 .pnpm-store/
 pnpm-store/
+
+fsd.md

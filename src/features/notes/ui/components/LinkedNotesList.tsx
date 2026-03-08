@@ -1,8 +1,8 @@
-import { useLinkedNotes } from '../../lib/hooks';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLinkedNotes } from '../../lib/hooks';
 import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {

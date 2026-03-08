@@ -1,5 +1,6 @@
-import type { Layout, Note } from '@/shared/model';
-import type { FileTreeItem } from './useFileTree';
+import type { Layout } from '@/entities/layout';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem } from '@/entities/tab';
 
 export type FileTreeState = {
   fileTree: FileTreeItem[];

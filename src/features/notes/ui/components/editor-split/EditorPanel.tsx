@@ -1,7 +1,7 @@
-import { MarkdownEditor } from '../MarkdownEditor';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { motion } from 'framer-motion';
 import { memo, type FC } from 'react';
+import { MarkdownEditor } from '../MarkdownEditor';
 import type { EditorPanelProps } from './types';
 
 export const EditorPanel: FC<EditorPanelProps> = memo(function EditorPanel({

@@ -1,10 +1,9 @@
-import { useModalContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
 import { useRegisterMutation, useSendConfirmCodeMutation } from '@/entities';
-import { usePasswordVisibility } from '@/features/auth/hooks';
-import { createAuthValidationSchemas } from '@/features/auth/model/validationSchemas';
-import { cn } from '@/shared/lib';
-import { useMobileForm } from '@/shared/lib/hooks';
+import { useNotifications } from '@/entities/notification';
+import { Button, Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalContext } from '@/shared/lib/react';
+import { useMobileForm } from '@/shared/lib/react/hooks';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -16,9 +15,10 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Skeleton } from 'shared';
+import { usePasswordVisibility } from '../../lib/hooks';
+import { createAuthValidationSchemas } from '../../model/validationSchemas';
 const ConfirmCodeModal = lazy(() =>
-  import('features/auth/ui/components/ConfirmCodeModal').then(m => ({
+  import('./ConfirmCodeModal').then(m => ({
     default: m.ConfirmCodeModal,
   }))
 );

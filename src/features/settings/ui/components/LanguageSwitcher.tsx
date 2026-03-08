@@ -1,9 +1,9 @@
-import { useModalActions, useModalContentContext } from '@/app/providers/modal';
-import { cn } from '@/shared/lib';
-import { Button } from '@/shared/ui';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalActions, useModalContentContext } from '@/shared/lib/react';
 import { RussianFlagIcon } from '@/shared/ui/icons/RussianFlagIcon';
 import { UKFlagIcon } from '@/shared/ui/icons/UKFlagIcon';
-import { type FC } from 'react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const LANGUAGES = [
@@ -23,14 +23,10 @@ const LANGUAGES = [
 
 export const LanguageSwitcher: FC = () => {
   const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
   const { openModalFromTrigger } = useModalActions();
 
-  const handleLanguageSelect = async (
-    langCode: string,
-    closeModal: () => void
-  ) => {
-    await i18n.changeLanguage(langCode);
+  const handleLanguageSelect = (langCode: string, closeModal: () => void) => {
+    void i18n.changeLanguage(langCode);
     closeModal();
   };
 
@@ -42,10 +38,8 @@ export const LanguageSwitcher: FC = () => {
         {LANGUAGES.map(language => (
           <Button
             key={language.code}
-            onClick={() => {
-              void handleLanguageSelect(language.code, closeModal);
-            }}
-            variant={currentLanguage === language.code ? 'default' : 'disabled'}
+            onClick={() => handleLanguageSelect(language.code, closeModal)}
+            variant={i18n.language === language.code ? 'default' : 'disabled'}
             className={cn(
               'flex',
               'items-center',
@@ -77,7 +71,7 @@ export const LanguageSwitcher: FC = () => {
   };
 
   const currentLang =
-    LANGUAGES.find(lang => lang.code === currentLanguage) || LANGUAGES[1];
+    LANGUAGES.find(lang => lang.code === i18n.language) || LANGUAGES[1];
 
   const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
     title: t('common:header.changeLanguage'),

@@ -1,4 +1,4 @@
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useCallback, useRef, useState } from 'react';
 

@@ -1,5 +1,6 @@
-import { useNotifications } from '@/app/providers/notifications';
 import { useConfirmCodeMutation } from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { Button } from '@/shared';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,7 +20,6 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 import * as Yup from 'yup';
 
 interface ResetPasswordModalProps {

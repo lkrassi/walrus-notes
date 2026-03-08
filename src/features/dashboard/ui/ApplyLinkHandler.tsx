@@ -1,5 +1,5 @@
-import { useNotifications } from '@/app/providers/notifications';
 import { useApplyLinkMutation } from '@/entities';
+import { useNotifications } from '@/entities/notification';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';

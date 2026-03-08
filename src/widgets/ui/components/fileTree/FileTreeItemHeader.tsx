@@ -1,14 +1,12 @@
-import { useModalActions } from '@/app/providers/modal';
-import { useShareLinkModal } from '@/features/graph/hooks/useShareLinkModal';
-import { DeleteLayoutForm } from '@/features/layout/ui/components/DeleteLayoutForm';
-import { UpdateLayoutForm } from '@/features/layout/ui/components/UpdateLayoutForm';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
+import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { CreateNoteForm } from '@/features/notes';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import { useShareModal } from '@/features/share';
+import { cn } from '@/shared/lib/core';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
-import { useIsMobile, useLocalization } from '@/widgets/hooks';
-import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
+import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
 import { ChevronDown, FileText, Pencil, Share2, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';
@@ -44,7 +42,7 @@ export const FileTreeItemHeader = ({
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
-  const { openShareLinkModal } = useShareLinkModal();
+  const { openShareLinkModal } = useShareModal();
 
   useEffect(() => {
     return () => {

@@ -1,8 +1,9 @@
-import { useModalActions } from '@/app/providers/modal';
+import { useNotifications } from '@/entities/notification';
 import { useUploadFileMutation } from '@/shared/api';
-import type { AwarenessUser } from '@/shared/lib';
-import { cn } from '@/shared/lib';
-import { ImageUploadModal } from '@/shared/ui/components/ImageUploader';
+import { cn } from '@/shared/lib/core';
+import { useModalActions } from '@/shared/lib/react';
+import type { AwarenessUser } from '@/shared/lib/react/collaboration';
+import { ImageUploadModal } from '@/shared/ui';
 import { memo, useCallback, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConfirmationLeaveForm } from './ConfirmationLeaveForm';
@@ -55,6 +56,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
 }) {
   const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
+  const { showError, showSuccess } = useNotifications();
   const [uploadFile] = useUploadFileMutation();
 
   const handleOpenImageUpload = useCallback(
@@ -70,13 +72,15 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
             onInsertImage(normalized);
           }
         }}
+        onUploadSuccess={showSuccess}
+        onUploadError={showError}
       />,
       {
         title: t('notes:uploadImage') || 'Загрузить изображение',
         size: 'md',
       }
     ),
-    [onInsertImage, openModalFromTrigger, t, uploadFile]
+    [onInsertImage, openModalFromTrigger, showError, showSuccess, t, uploadFile]
   );
 
   const handleOpenImport = useCallback(

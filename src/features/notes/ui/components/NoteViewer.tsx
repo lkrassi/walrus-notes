@@ -1,12 +1,7 @@
-import type { UserProfileState } from '@/entities';
-import { useExportNote } from '../../lib/hooks';
-import type { AwarenessUser } from '@/shared/lib';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
-import { memo, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useNoteEditor } from '../../model/useNoteEditor';
-import type { CollaborativeNoteEditorHandle } from './CollaborativeNoteEditor';
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
+import { memo } from 'react';
+import { useNoteViewerState } from '../../model';
 import { NoteContent } from './NoteContent';
 import { NoteHeader } from './NoteHeader';
 
@@ -25,50 +20,30 @@ export const NoteViewer = memo(function NoteViewer({
   openedFromSidebar: _openedFromSidebar,
 }: NoteViewerProps) {
   const {
+    noteId,
     isEditing,
     title,
     payload,
     isLoading,
     setPayload,
     handleEdit,
-    handleCancel,
-    handleSave,
     hasLocalChanges,
     hasServerDraft,
     isSaving,
     isPending,
-    handleDiscard,
-  } = useNoteEditor(note, onNoteUpdated);
-
-  const { exportNote } = useExportNote();
-  const collaborativeEditorRef = useRef<CollaborativeNoteEditorHandle>(null);
-
-  const autoOpenedRef = useRef(false);
-  useEffect(() => {
-    autoOpenedRef.current = false;
-  }, [note.id]);
-
-  useEffect(() => {
-    if (autoOpenedRef.current) return;
-    if (hasLocalChanges || hasServerDraft) {
-      handleEdit();
-      autoOpenedRef.current = true;
-    }
-  }, [hasLocalChanges, hasServerDraft, handleEdit]);
-
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
-    new Map()
-  );
-
-  const profile = useSelector(
-    (state: { user: UserProfileState }) => state.user.profile
-  );
-  const currentUserId = profile?.id || '';
-
-  const toggleFullscreen = () => {
-    setIsFullscreen(prev => !prev);
-  };
+    isFullscreen,
+    onlineUsers,
+    currentUserId,
+    collaborativeEditorRef,
+    setOnlineUsers,
+    toggleFullscreen,
+    handleInsertImage,
+    handleExport,
+    handleImport,
+    handleSaveAction,
+    handleCancelAction,
+    handleDiscardAction,
+  } = useNoteViewerState({ note, onNoteUpdated });
 
   return (
     <div
@@ -85,7 +60,7 @@ export const NoteViewer = memo(function NoteViewer({
     >
       {' '}
       <NoteHeader
-        noteId={note.id}
+        noteId={noteId}
         isEditing={isEditing}
         title={title}
         isLoading={isLoading}
@@ -94,34 +69,14 @@ export const NoteViewer = memo(function NoteViewer({
         isSaving={isSaving}
         isPending={isPending}
         onEdit={handleEdit}
-        onSave={async (overrideTitle?: string) => {
-          await handleSave(overrideTitle);
-        }}
-        onCancel={async () => {
-          await handleCancel();
-        }}
-        onDiscardConfirm={async () => {
-          await handleDiscard();
-        }}
-        onInsertImage={url => {
-          const alt = 'image';
-          const snippet = `![${alt}](${url})`;
-
-          if (collaborativeEditorRef.current) {
-            collaborativeEditorRef.current.insertText(snippet);
-          } else {
-            setPayload(prev =>
-              prev && prev.trim().length > 0 ? `${prev}\n\n${snippet}` : snippet
-            );
-          }
-        }}
+        onSave={handleSaveAction}
+        onCancel={handleCancelAction}
+        onDiscardConfirm={handleDiscardAction}
+        onInsertImage={handleInsertImage}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
-        onExport={() => exportNote(title, payload)}
-        onImport={content => {
-          setPayload(() => content);
-          if (!isEditing) handleEdit();
-        }}
+        onExport={handleExport}
+        onImport={handleImport}
         onlineUsers={onlineUsers}
         currentUserId={currentUserId}
       />
@@ -139,34 +94,12 @@ export const NoteViewer = memo(function NoteViewer({
           isPending={isPending}
           isFullscreen={isFullscreen}
           onEdit={handleEdit}
-          onSave={async () => {
-            await handleSave();
-          }}
-          onCancel={async () => {
-            await handleCancel();
-          }}
-          onDiscardConfirm={async () => {
-            await handleDiscard();
-          }}
-          onInsertImage={url => {
-            const alt = 'image';
-            const snippet = `![${alt}](${url})`;
-
-            if (collaborativeEditorRef.current) {
-              collaborativeEditorRef.current.insertText(snippet);
-            } else {
-              setPayload(prev =>
-                prev && prev.trim().length > 0
-                  ? `${prev}\n\n${snippet}`
-                  : snippet
-              );
-            }
-          }}
-          onExport={() => exportNote(title, payload)}
-          onImport={content => {
-            setPayload(() => content);
-            if (!isEditing) handleEdit();
-          }}
+          onSave={handleSaveAction}
+          onCancel={handleCancelAction}
+          onDiscardConfirm={handleDiscardAction}
+          onInsertImage={handleInsertImage}
+          onExport={handleExport}
+          onImport={handleImport}
           onToggleFullscreen={toggleFullscreen}
           onOnlineUsersChange={setOnlineUsers}
           collaborativeEditorRef={collaborativeEditorRef}

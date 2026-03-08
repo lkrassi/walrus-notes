@@ -1,6 +1,6 @@
-import { type FC } from 'react';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { useIsMobile } from '@/widgets/hooks';
+import { type FC } from 'react';
 import './garland.css';
 
 interface Props {

@@ -7,7 +7,7 @@ import {
   DeleteEdgeCommand,
   MoveEdgeCommand,
   type useGraphHistory,
-} from '@/entities/graph/model';
+} from '@/entities/graph';
 import { useCallback, useState, type RefObject } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
 

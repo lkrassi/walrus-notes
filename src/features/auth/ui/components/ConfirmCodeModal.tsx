@@ -1,5 +1,6 @@
-import { useNotifications } from '@/app/providers/notifications';
 import { useConfirmCodeMutation } from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { Button } from '@/shared';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -12,7 +13,6 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 
 interface ConfirmCodeModalProps {
   email: string;

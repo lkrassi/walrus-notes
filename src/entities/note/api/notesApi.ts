@@ -1,9 +1,23 @@
 import { layoutApi } from '@/entities/layout';
 import { updateTabNote } from '@/entities/tab';
 import { apiSlice } from '@/shared/api';
-import type { RootState } from 'app/store';
-import type { Layout, Note } from 'shared/model/types/layouts';
-import type { NotePosition } from 'shared/model/types/notes';
+import type { Layout } from '@/entities/layout';
+import type { Note, NotePosition } from '@/entities/note';
+
+type EntityStateLike = {
+  tabs?: {
+    openTabs?: Array<{
+      item?: {
+        type?: string;
+        id?: string;
+        note?: {
+          linkedWithOut?: string[];
+          linkedWithIn?: string[];
+        };
+      };
+    }>;
+  };
+};
 
 interface GetNotesRequest {
   layoutId: string;
@@ -323,7 +337,7 @@ export const notesApi = apiSlice.injectEndpoints({
         const patchResults: Array<{ undo?: () => void }> = [];
         try {
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
-            getState() as RootState
+            getState() as EntityStateLike
           );
           const layouts = layoutsCache.data?.data || [];
           for (const l of layouts) {
@@ -403,7 +417,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
             try {
               const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
-                getState() as RootState
+                getState() as EntityStateLike
               );
               const layouts = layoutsCache.data?.data || [];
               for (const l of layouts) {
@@ -468,7 +482,7 @@ export const notesApi = apiSlice.injectEndpoints({
         const patchResults: Array<{ undo?: () => void }> = [];
         try {
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(
-            getState() as RootState
+            getState() as EntityStateLike
           );
           const layouts = layoutsCache.data?.data || [];
           for (const l of layouts) {
@@ -563,7 +577,7 @@ export const notesApi = apiSlice.injectEndpoints({
         { type: 'Notes', id: arg.noteId },
       ],
       onQueryStarted: async (arg, { dispatch, queryFulfilled, getState }) => {
-        const state = getState() as RootState;
+        const state = getState() as EntityStateLike;
 
         let realNoteData: Note | undefined;
 
@@ -670,7 +684,7 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWithIn: string[] | undefined;
 
         try {
-          const state = getState() as RootState;
+          const state = getState() as EntityStateLike;
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
           const layouts: Layout[] = layoutsCache.data?.data || [];
 
@@ -832,7 +846,7 @@ export const notesApi = apiSlice.injectEndpoints({
         let originalTabLinkedWithInDel: string[] | undefined;
 
         try {
-          const state = getState() as RootState;
+          const state = getState() as EntityStateLike;
           const layoutsCache = layoutApi.endpoints.getMyLayouts.select()(state);
           const layouts: Layout[] = layoutsCache.data?.data || [];
 

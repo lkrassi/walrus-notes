@@ -1,3 +1,3 @@
-export * from './Notification';
-export * from './NotificationsContainer';
-export * from './useNotifications';
+export { Notification } from './Notification';
+export { NotificationsContainer } from './NotificationsContainer';
+export { useNotifications } from './useNotifications';

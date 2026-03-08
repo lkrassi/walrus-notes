@@ -1,7 +1,7 @@
 import type { DragEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 
 interface UseGraphEventHandlersProps {
   handleAddNoteToGraph: (

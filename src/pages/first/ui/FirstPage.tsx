@@ -1,5 +1,11 @@
-import { First } from 'features';
+import { First } from './First';
+import { PublicHeader } from '@/widgets/ui';
 
 export const FirstPage = () => {
-  return <First />;
+  return (
+    <>
+      <PublicHeader />
+      <First />
+    </>
+  );
 };

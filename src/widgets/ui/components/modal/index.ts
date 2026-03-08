@@ -1,6 +1,8 @@
+export { Modal } from './Modal';
 export {
-  Modal,
   ModalContentContext,
   useModalContentContext,
-  useModalContext,
-} from '@/app/providers/modal';
+} from './modalContentContext';
+export { ModalProvider, useModalContext } from './ModalProvider';
+export { useModal } from './useModal';
+export { useModalActions } from './useModalActions';

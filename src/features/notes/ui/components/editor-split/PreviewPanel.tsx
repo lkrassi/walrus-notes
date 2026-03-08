@@ -1,6 +1,6 @@
-import { cn } from '@/shared/lib';
-import { Suspense, lazy, memo, type FC } from 'react';
 import { Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { Suspense, lazy, memo, type FC } from 'react';
 import type { PreviewPanelProps } from './types';
 
 const MarkdownPreview = lazy(() =>

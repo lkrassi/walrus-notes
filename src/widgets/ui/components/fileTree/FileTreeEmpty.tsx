@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/core';
 import { Folder } from 'lucide-react';
-import { cn } from '@/shared/lib';
 
 import { useLocalization } from '@/widgets/hooks';
 

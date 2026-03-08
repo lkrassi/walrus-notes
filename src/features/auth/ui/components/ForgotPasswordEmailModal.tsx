@@ -1,4 +1,5 @@
-import { useModalContentContext } from '@/app/providers/modal';
+import { Button } from '@/shared';
+import { useModalContentContext } from '@/shared/lib/react';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
@@ -7,7 +8,6 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { type FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from 'shared';
 import * as Yup from 'yup';
 
 interface ForgotPasswordEmailModalProps {

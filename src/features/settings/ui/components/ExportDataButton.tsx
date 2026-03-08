@@ -1,19 +1,15 @@
-import { useNotifications } from '@/app/providers/notifications';
-import type { RootState } from '@/app/store';
-import { useExportLayoutMutation } from '@/entities';
-import { cn } from '@/shared/lib';
+import { useExportLayoutMutation, useUser } from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { cn } from '@/shared/lib/core';
 import { Button } from '@/shared/ui';
 import { useCallback, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 export const ExportDataButton: FC = () => {
   const { t } = useTranslation();
-  const profile = useSelector((state: RootState) => state.user.profile);
+  const { userId } = useUser();
   const { showError, showSuccess } = useNotifications();
   const [exportLayout, { isLoading }] = useExportLayoutMutation();
-
-  const userId = profile?.id || '';
 
   const buildFileName = useCallback(() => {
     const now = new Date();

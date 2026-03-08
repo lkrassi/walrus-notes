@@ -1,8 +1,7 @@
-import { openTab, switchTab } from '@/entities';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import { useTabs } from '@/entities';
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
 import { memo, useCallback, type FC } from 'react';
-import { useDispatch } from 'react-redux';
 import { LinkedNotesList } from './LinkedNotesList';
 
 interface RelatedNotesProps {
@@ -14,7 +13,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
   note,
   layoutId,
 }) {
-  const dispatch = useDispatch();
+  const { open, switchTo } = useTabs();
   const effectiveLayoutId = layoutId || note?.layoutId || '';
   const linkedOutIds =
     note?.linkedWithOut ??
@@ -33,11 +32,11 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
           parentId: note.layoutId || selected.layoutId,
           note: selected,
         };
-        dispatch(openTab(item));
-        dispatch(switchTab(`note::${selected.id}`));
+        open(item);
+        switchTo(`note::${selected.id}`);
       } catch (_e) {}
     },
-    [dispatch, note.layoutId]
+    [note.layoutId, open, switchTo]
   );
 
   return (

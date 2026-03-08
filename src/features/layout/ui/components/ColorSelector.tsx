@@ -1,6 +1,6 @@
+import { Input } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import { type FC, useEffect, useState } from 'react';
-import { Input } from 'shared';
-import { cn } from 'shared/lib/cn';
 
 interface ColorSelectorProps {
   value?: string;

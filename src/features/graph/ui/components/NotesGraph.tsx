@@ -1,12 +1,10 @@
+import type { Note } from '@/entities/note';
 import { ReactFlowProvider } from 'reactflow';
 import { NotesGraphContent } from './NotesGraphContent';
 
 interface NotesGraphProps {
   layoutId: string;
-  onNoteOpen?: (noteData: {
-    noteId: string;
-    note: import('shared/model/types/layouts').Note;
-  }) => void;
+  onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
   allowNodeDrag?: boolean;
   isMain?: boolean;
 }

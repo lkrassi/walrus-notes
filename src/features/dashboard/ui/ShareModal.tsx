@@ -1,114 +1,33 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
-import {
-  resetGeneratedLink,
-  selectLastGeneratedLink,
-  useGenerateLinkMutation,
-} from '@/entities';
-import { cn } from '@/shared/lib';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import { Form, Formik } from 'formik';
 import { Check, Copy } from 'lucide-react';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button } from 'shared';
-import * as Yup from 'yup';
+import {
+  shareModalValidationSchema,
+  useShareModalState,
+} from '../model/useShareModalState';
 
 interface ShareModalProps {
   targetId: string;
   kind: 'LAYOUT' | 'NOTE';
 }
 
-const validationSchema = Yup.object().shape({
-  canRead: Yup.boolean(),
-  canWrite: Yup.boolean(),
-  canEdit: Yup.boolean(),
-  expirationOption: Yup.string().required('Выберите срок действия'),
-  customMinutes: Yup.number().when('expirationOption', {
-    is: 'custom',
-    then: schema =>
-      schema
-        .required('Введите количество минут')
-        .min(5, 'Минимум 5 минут')
-        .max(43200, 'Максимум 30 дней (43200 минут)'),
-    otherwise: schema => schema.nullable(),
-  }),
-});
-
 export const ShareModal = memo(function ShareModal({
   targetId,
   kind,
 }: ShareModalProps) {
-  const [generateLink, { error }] = useGenerateLinkMutation();
-  const dispatch = useDispatch();
+  const {
+    generatedLink,
+    copied,
+    modalTitle,
+    initialValues,
+    handleSubmit,
+    handleCopy,
+    handleClose,
+  } = useShareModalState(targetId, kind);
   const { t } = useTranslation();
-  const { showError } = useNotifications();
-  const { closeModal } = useModalContentContext();
-  const [copied, setCopied] = useState(false);
-
-  const generatedLink = useSelector(selectLastGeneratedLink);
-
-  const isLayout = kind === 'LAYOUT';
-  const modalTitle = isLayout
-    ? t('share:layout.modal.title')
-    : t('share:notes.modal.title');
-
-  const initialValues = {
-    canRead: true,
-    canWrite: false,
-    canEdit: false,
-    expirationOption: '30',
-    customMinutes: '',
-  };
-
-  const handleSubmit = async (values: typeof initialValues) => {
-    let expiredAt: string | null = null;
-
-    let minutes = 0;
-    if (values.expirationOption === 'custom') {
-      minutes = parseInt(values.customMinutes as unknown as string, 10);
-    } else {
-      minutes = parseInt(values.expirationOption, 10);
-    }
-
-    if (minutes > 0) {
-      const now = new Date();
-      const expirationDate = new Date(now.getTime() + minutes * 60000);
-      expiredAt = expirationDate.toISOString();
-    }
-
-    try {
-      await generateLink({
-        targetId,
-        kind,
-        canRead: values.canRead || values.canWrite || values.canEdit,
-        canWrite: values.canWrite,
-        canEdit: values.canEdit,
-        expiredAt,
-      }).unwrap();
-    } catch (_err) {
-      const errorMessage =
-        error && 'status' in error
-          ? t('share:modal.error.generic')
-          : t('share:modal.error.generic');
-      showError(errorMessage);
-    }
-  };
-
-  const handleCopy = async () => {
-    if (generatedLink?.fullUrl) {
-      try {
-        await navigator.clipboard.writeText(generatedLink.fullUrl);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch (_e) {}
-    }
-  };
-
-  const handleClose = () => {
-    dispatch(resetGeneratedLink());
-    closeModal();
-  };
 
   if (generatedLink) {
     return (
@@ -171,7 +90,7 @@ export const ShareModal = memo(function ShareModal({
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      validationSchema={shareModalValidationSchema}
       onSubmit={handleSubmit}
     >
       {({ values, errors, touched, setFieldValue, isSubmitting }) => (

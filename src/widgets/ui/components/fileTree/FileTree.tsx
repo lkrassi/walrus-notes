@@ -3,10 +3,10 @@ import {
   useGetMyLayoutsQuery,
   useLazySearchNotesQuery,
 } from '@/entities';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
+import { cn } from '@/shared/lib/core';
 import { useAppSelector } from '@/widgets/hooks/redux';
-import type { FileTreeItem as FileTreeItemType } from '@/widgets/hooks/useFileTree';
 import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { FileTreeEmpty } from './FileTreeEmpty';

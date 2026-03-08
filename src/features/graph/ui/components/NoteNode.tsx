@@ -1,6 +1,6 @@
-import { cn } from '@/shared/lib';
-import { useIsMobile } from '@/shared/lib/hooks';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
+import { useIsMobile } from '@/shared/lib/react/hooks';
 import { motion } from 'framer-motion';
 import { memo, useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';

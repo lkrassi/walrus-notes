@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { CommandHistory, type Command } from 'shared/model/command';
+import { CommandHistory, type Command } from '@/shared/model/command';
 
 export interface UseGraphHistoryReturn {
   executeCommand: (command: Command) => Promise<void>;

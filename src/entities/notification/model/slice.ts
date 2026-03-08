@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { normalizeMessage } from 'shared/model/utils/normalizeMessage';
+import { normalizeMessage } from '@/shared/model/utils/normalizeMessage';
 
 export type Notification = {
   id: string;

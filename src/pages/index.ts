@@ -1,6 +1,6 @@
 export { AuthPage } from './auth/ui/AuthPage';
-export { DashBoardPage } from './dashboard/DashBoardPage';
+export { DashboardPage } from './dashboard/DashboardPage';
 export { FirstPage } from './first/ui/FirstPage';
-export { MainWorkspacePage } from './main/ui/MainWorkspacePage';
-export { NotFoundPage } from './not-found/ui/NotFoundPage';
+export { MainPage } from './main/ui/MainPage';
 export { ProfilePage } from './profile/ui/ProfilePage';
+export { UnavailablePage } from './unavailable/ui/UnavailablePage';

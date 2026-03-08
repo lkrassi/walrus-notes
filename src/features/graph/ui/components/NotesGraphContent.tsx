@@ -1,8 +1,8 @@
-import { useGraphSelection } from '../../model/hooks/useGraphSelection';
-import { useNotesGraph } from '../../model/hooks/useNotesGraph';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { memo } from 'react';
 import { useGraphContentHandlers, useGraphState } from '../../lib/hooks';
+import { useGraphSelection } from '../../model/hooks/useGraphSelection';
+import { useNotesGraph } from '../../model/hooks/useNotesGraph';
 import { NotesGraphView } from './NotesGraphView';
 
 interface NotesGraphContentProps {

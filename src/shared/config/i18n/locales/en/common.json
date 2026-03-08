@@ -48,7 +48,7 @@
     "upload": "Upload",
     "cancel": "Cancel"
   },
-  "notFound": {
+  "unavailable": {
     "title": "Page lost in the ocean",
     "description": "It seems we can't find the page you're looking for. Perhaps it drifted away with the tide or never existed.",
     "goHome": "Return home",

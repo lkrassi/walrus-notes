@@ -1,5 +1,6 @@
-import { useShareLinkModal } from '@/features/graph';
-import { cn } from '@/shared/lib';
+import { useShareModal } from '@/features/share';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import {
   CircleQuestionMark,
   Download,
@@ -13,7 +14,6 @@ import {
   X,
 } from 'lucide-react';
 import { memo, type FC, type MouseEvent } from 'react';
-import { Button } from 'shared';
 
 interface NoteActionsProps {
   noteId?: string;
@@ -50,7 +50,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   onToggleFullscreen,
   t,
 }) {
-  const { openShareLinkModal } = useShareLinkModal();
+  const { openShareLinkModal } = useShareModal();
   return (
     <div
       className={cn(

@@ -1,18 +1,18 @@
-import { useModalActions } from '@/app/providers/modal';
 import { closeLayoutTabs, closeTabsByItemId } from '@/entities';
-import { CreateLayoutForm } from '@/features/layout/ui/components/CreateLayoutForm';
+import type { Note } from '@/entities/note';
+import type { FileTreeItem } from '@/entities/tab';
+import { CreateLayoutForm } from '@/features/layout';
 import { ProfileButton } from '@/features/profile';
-import logo from '@/shared/assets/logo.avif';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
+import { logoImage as logo } from '@/shared/assets';
+import { cn } from '@/shared/lib/core';
 import {
   useFileTree,
   useIsMobile,
   useLocalization,
+  useModalActions,
   useSidebar,
 } from '@/widgets/hooks';
 import { useAppDispatch } from '@/widgets/hooks/redux';
-import type { FileTreeItem } from '@/widgets/hooks/useFileTree';
 import { useResizableSidebar } from '@/widgets/hooks/useResizableSidebar';
 import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';

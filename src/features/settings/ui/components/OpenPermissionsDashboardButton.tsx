@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { Button } from '@/shared/ui';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { useCallback, type DragEvent, type MouseEvent } from 'react';
 import type { Node, NodeChange, OnNodesChange } from 'reactflow';
 

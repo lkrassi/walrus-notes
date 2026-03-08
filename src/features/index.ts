@@ -1,4 +1,4 @@
 export { Auth } from './auth/ui/components/Auth';
-export { DashBoard } from './dashboard';
-export { First } from './first/ui/components/First';
-export { Main } from './main';
+export { Dashboard } from './dashboard';
+export { ShareModalProviderContext, useShareModal } from './share';
+export type { ShareTargetKind } from './share';

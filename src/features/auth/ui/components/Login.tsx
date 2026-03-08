@@ -1,12 +1,13 @@
-import { useModalActions, useModalContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
-import type { AppDispatch } from '@/app/store';
-import { useForgotPasswordMutation, useLoginMutation } from '@/entities';
-import { setTokens, setUserProfile } from '@/entities/user';
-import { usePasswordVisibility } from '@/features/auth/hooks';
-import { createAuthValidationSchemas } from '@/features/auth/model/validationSchemas';
-import { cn } from '@/shared/lib';
-import { useMobileForm } from '@/shared/lib/hooks';
+import {
+  useForgotPasswordMutation,
+  useLoginMutation,
+  useUser,
+} from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { Button, Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { useModalActions, useModalContext } from '@/shared/lib/react';
+import { useMobileForm } from '@/shared/lib/react/hooks';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,16 +19,16 @@ import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { Suspense, lazy, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Skeleton } from 'shared';
+import { usePasswordVisibility } from '../../lib/hooks';
+import { createAuthValidationSchemas } from '../../model/validationSchemas';
 const ForgotPasswordEmailModal = lazy(() =>
-  import('features/auth/ui/components/ForgotPasswordEmailModal').then(m => ({
+  import('./ForgotPasswordEmailModal').then(m => ({
     default: m.ForgotPasswordEmailModal,
   }))
 );
 const ResetPasswordModal = lazy(() =>
-  import('features/auth/ui/components/ResetPasswordModal').then(m => ({
+  import('./ResetPasswordModal').then(m => ({
     default: m.ResetPasswordModal,
   }))
 );
@@ -37,7 +38,7 @@ type LoginProps = {
 };
 
 export const Login: FC<LoginProps> = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { setAuthTokens, updateProfile } = useUser();
   const { showError, showSuccess } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
   const [forgotPassword] = useForgotPasswordMutation();
@@ -61,23 +62,19 @@ export const Login: FC<LoginProps> = () => {
     try {
       const response = await login(values).unwrap();
 
-      dispatch(
-        setTokens({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-        })
-      );
+      setAuthTokens({
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+      });
 
-      dispatch(
-        setUserProfile({
-          id: response.data.userId,
-          username: '',
-          email: values.email,
-          imgUrl: '',
-          role: 'user',
-          createdAt: new Date().toISOString(),
-        })
-      );
+      updateProfile({
+        id: response.data.userId,
+        username: '',
+        email: values.email,
+        imgUrl: '',
+        role: 'user',
+        createdAt: new Date().toISOString(),
+      });
 
       localStorage.setItem('userId', response.data.userId);
       navigate('/main');

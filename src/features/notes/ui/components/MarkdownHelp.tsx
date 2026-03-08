@@ -1,6 +1,6 @@
-import { markdownHelpSections } from '../../lib/markdownHelpData';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
 import { type FC } from 'react';
+import { markdownHelpSections } from '../../lib/markdownHelpData';
 import { HelpSection } from './HelpSection';
 
 export const MarkdownHelp: FC = () => {

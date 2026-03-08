@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/core';
 import { memo, type ReactNode } from 'react';
-import { cn } from '@/shared/lib';
 
 export const CodeBlock = memo(function CodeBlock({
   inline,

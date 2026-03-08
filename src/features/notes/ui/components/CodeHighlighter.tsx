@@ -1,5 +1,5 @@
-import { ThemeContext } from '@/app/providers/theme';
-import { cn } from '@/shared/lib';
+import { cn } from '@/shared/lib/core';
+import { ThemeContext } from '@/shared/lib/react';
 import Highlight, { defaultProps, type Language } from 'prism-react-renderer';
 import duotoneDark from 'prism-react-renderer/themes/duotoneDark';
 import duotoneLight from 'prism-react-renderer/themes/duotoneLight';

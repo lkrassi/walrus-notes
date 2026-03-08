@@ -1,1 +1,15 @@
-export * from './notesApi';
+export {
+  notesApi,
+  useCreateNoteLinkMutation,
+  useCreateNoteMutation,
+  useDeleteNoteLinkMutation,
+  useDeleteNoteMutation,
+  useGetNotesQuery,
+  useGetPosedNotesQuery,
+  useGetUnposedNotesQuery,
+  useLazyGetNotesQuery,
+  useLazySearchNotesQuery,
+  useSearchNotesQuery,
+  useUpdateNoteMutation,
+  useUpdateNotePositionMutation,
+} from './notesApi';

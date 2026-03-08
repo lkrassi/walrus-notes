@@ -1,7 +1,7 @@
+import { cn } from '@/shared/lib/core';
 import { type FC } from 'react';
-import { cn } from '@/shared/lib';
-import type { EditablePermissionState } from '../../../model';
 import { rightsList } from '../../../lib/utils';
+import type { EditablePermissionState } from '../../../model';
 
 interface RightsBadgesProps {
   rights: EditablePermissionState;

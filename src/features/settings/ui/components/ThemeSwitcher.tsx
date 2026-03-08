@@ -1,6 +1,6 @@
-import { ThemeContext } from '@/app/providers/theme';
-import { cn } from '@/shared/lib';
-import { Button } from '@/shared/ui';
+import { Button } from '@/shared';
+import { cn } from '@/shared/lib/core';
+import { ThemeContext } from '@/shared/lib/react';
 import { Moon, Sun } from 'lucide-react';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';

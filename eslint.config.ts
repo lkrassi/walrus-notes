@@ -73,31 +73,31 @@ export default [
         {
           zones: [
             {
-              target: './src/shared',
-              from: './src/{app,pages,widgets,features,entities}',
+              target: './src/{app,pages,widgets,features,entities}',
+              from: './src/shared',
               message:
                 'Layer violation: shared must not depend on upper layers.',
             },
             {
-              target: './src/entities',
-              from: './src/{app,pages,widgets,features}',
+              target: './src/{app,pages,widgets,features}',
+              from: './src/entities',
               message:
                 'Layer violation: entities must not depend on app/pages/widgets/features.',
             },
             {
-              target: './src/features',
-              from: './src/{app,pages,widgets}',
+              target: './src/{app,pages,widgets}',
+              from: './src/features',
               message:
                 'Layer violation: features must not depend on app/pages/widgets.',
             },
             {
-              target: './src/widgets',
-              from: './src/{app,pages}',
+              target: './src/{app,pages}',
+              from: './src/widgets',
               message: 'Layer violation: widgets must not depend on app/pages.',
             },
             {
-              target: './src/pages',
-              from: './src/app',
+              target: './src/app',
+              from: './src/pages',
               message: 'Layer violation: pages must not depend on app.',
             },
           ],
@@ -170,16 +170,260 @@ export default [
   },
 
   {
+    files: [
+      'src/app/**/*.{ts,tsx}',
+      'src/pages/**/*.{ts,tsx}',
+      'src/shared/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/shared/lib',
+              message:
+                'Shared lib barrel import is forbidden. Use @/shared/lib/core or @/shared/lib/react.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/shared/ui/components/**'],
+              message: 'Use @/shared/ui instead of deep shared UI paths.',
+            },
+            {
+              group: ['@/shared/lib/ws', '@/shared/lib/ws/*'],
+              message:
+                'Legacy ws imports are forbidden. Use @/shared/lib/core (or @/shared/lib/core/ws).',
+            },
+            {
+              group: ['@/shared/lib/hooks', '@/shared/lib/hooks/*'],
+              message:
+                'Legacy hooks imports are forbidden. Use @/shared/lib/react/hooks.',
+            },
+            {
+              group: [
+                '@/features/*/ui/**',
+                '@/features/*/model/**',
+                '@/features/*/lib/**',
+                '@/features/*/api/**',
+                '@/features/*/hooks/**',
+                '@/entities/*/ui/**',
+                '@/entities/*/model/**',
+                '@/entities/*/lib/**',
+                '@/entities/*/api/**',
+                '@/entities/*/hooks/**',
+              ],
+              message:
+                'Direct import from feature/entity internals is forbidden. Use public API (@/features/<slice> or @/entities/<slice>).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
     files: ['src/features/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/shared/lib',
+              message:
+                'Shared lib barrel import is forbidden. Use @/shared/lib/core or @/shared/lib/react.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/shared/ui/components/**'],
+              message: 'Use @/shared/ui instead of deep shared UI paths.',
+            },
+            {
+              group: ['@/shared/lib/ws', '@/shared/lib/ws/*'],
+              message:
+                'Legacy ws imports are forbidden. Use @/shared/lib/core (or @/shared/lib/core/ws).',
+            },
+            {
+              group: ['@/shared/lib/hooks', '@/shared/lib/hooks/*'],
+              message:
+                'Legacy hooks imports are forbidden. Use @/shared/lib/react/hooks.',
+            },
+            {
+              group: [
+                '@/features/*/ui/**',
+                '@/features/*/model/**',
+                '@/features/*/lib/**',
+                '@/features/*/api/**',
+                '@/features/*/config/**',
+                '@/features/*/hooks/**',
+              ],
+              message:
+                'Direct import from feature internals is forbidden. Use relative imports inside the same feature or public API (@/features/<slice>) outside.',
+            },
+            {
+              group: [
+                '@/entities/*/ui/**',
+                '@/entities/*/model/**',
+                '@/entities/*/lib/**',
+                '@/entities/*/api/**',
+                '@/entities/*/hooks/**',
+              ],
+              message:
+                'Direct import from entity internals is forbidden. Use public API (@/entities/<slice>).',
+            },
+            {
+              group: ['widgets/*/*', '@/widgets/*/*'],
+              message:
+                'Features may import widgets only through widgets public API.',
+            },
+            {
+              group: ['@/app/*'],
+              message:
+                'Features should not import from app. Use widgets/features/entities/shared public APIs.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/entities/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/shared/lib',
+              message:
+                'Shared lib barrel import is forbidden. Use @/shared/lib/core or @/shared/lib/react.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/shared/lib/ws', '@/shared/lib/ws/*'],
+              message:
+                'Legacy ws imports are forbidden. Use @/shared/lib/core (or @/shared/lib/core/ws).',
+            },
+            {
+              group: ['@/shared/lib/hooks', '@/shared/lib/hooks/*'],
+              message:
+                'Legacy hooks imports are forbidden. Use @/shared/lib/react/hooks.',
+            },
+            {
+              group: [
+                '@/entities/*/ui/**',
+                '@/entities/*/model/**',
+                '@/entities/*/lib/**',
+                '@/entities/*/api/**',
+                '@/entities/*/config/**',
+                '@/entities/*/hooks/**',
+              ],
+              message:
+                'Direct import from entity internals is forbidden. Use relative imports inside the same entity or public API (@/entities/<slice>) outside.',
+            },
+            {
+              group: ['@/app/*'],
+              message:
+                'Entities should not import from app. Use entities/shared public APIs.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/widgets/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@/shared/lib',
+              message:
+                'Shared lib barrel import is forbidden. Use @/shared/lib/core or @/shared/lib/react.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/shared/ui/components/**'],
+              message: 'Use @/shared/ui instead of deep shared UI paths.',
+            },
+            {
+              group: ['@/shared/lib/ws', '@/shared/lib/ws/*'],
+              message:
+                'Legacy ws imports are forbidden. Use @/shared/lib/core (or @/shared/lib/core/ws).',
+            },
+            {
+              group: [
+                '@/features/*/ui/**',
+                '@/features/*/model/**',
+                '@/features/*/lib/**',
+                '@/features/*/api/**',
+                '@/features/*/hooks/**',
+                '@/entities/*/ui/**',
+                '@/entities/*/model/**',
+                '@/entities/*/lib/**',
+                '@/entities/*/api/**',
+                '@/entities/*/hooks/**',
+              ],
+              message:
+                'Direct import from feature/entity internals is forbidden. Use public API.',
+            },
+            {
+              group: ['@/shared/lib/hooks', '@/shared/lib/hooks/*'],
+              message:
+                'Use shared hooks via public API: @/shared/lib/react/hooks.',
+            },
+            {
+              group: ['@/app/*'],
+              message:
+                'Widgets should not import from app. Use local hooks/contexts or shared layer.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/shared/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
             {
-              group: ['widgets', 'widgets/*', '@/widgets', '@/widgets/*'],
+              group: [
+                'app',
+                'app/*',
+                'pages',
+                'pages/*',
+                'widgets',
+                'widgets/*',
+                'features',
+                'features/*',
+                'entities',
+                'entities/*',
+                '@/app',
+                '@/app/*',
+                '@/pages',
+                '@/pages/*',
+                '@/widgets',
+                '@/widgets/*',
+                '@/features',
+                '@/features/*',
+                '@/entities',
+                '@/entities/*',
+              ],
               message:
-                'Features must not import widgets. Use app/providers, shared, entities, or feature public APIs.',
+                'Shared must not import app/pages/widgets/features/entities.',
             },
           ],
         },
@@ -197,6 +441,20 @@ export default [
     rules: {
       'import/no-default-export': 'off',
       'unicorn/filename-case': 'off',
+    },
+  },
+
+  {
+    files: ['src/**/index.ts', 'src/**/index.tsx'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ExportAllDeclaration',
+          message:
+            'Avoid "export *" in public API files. Re-export explicit symbols per FSD rules.',
+        },
+      ],
     },
   },
 

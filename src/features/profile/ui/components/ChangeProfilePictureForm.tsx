@@ -1,12 +1,10 @@
-import { useModalContentContext } from '@/app/providers/modal';
-import { useNotifications } from '@/app/providers/notifications';
-import type { RootState } from '@/app/store';
-import { useChangeProfilePictureMutation } from '@/entities';
+import { useChangeProfilePictureMutation, useUser } from '@/entities';
+import { useNotifications } from '@/entities/notification';
+import { cn } from '@/shared/lib/core';
+import { useModalContentContext } from '@/shared/lib/react';
+import { Button } from '@/shared/ui';
 import { useRef, useState, type ChangeEvent, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { cn } from 'shared/lib/cn';
-import { Button } from 'shared/ui/components/Button';
 
 export const ChangeProfilePictureForm: FC = () => {
   const { t } = useTranslation();
@@ -14,8 +12,7 @@ export const ChangeProfilePictureForm: FC = () => {
   const { showSuccess, showError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [changeProfilePicture] = useChangeProfilePictureMutation();
-  const { profile } = useSelector((state: RootState) => state.user);
-  const userId = profile?.id || '';
+  const { userId } = useUser();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

@@ -1,8 +1,3 @@
-import { LogoutButton } from '@/features/auth';
-import { ExportDataButton } from '../ui/components/ExportDataButton';
-import { ImportDataButton } from '../ui/components/ImportDataButton';
-import { OpenPermissionsDashboardButton } from '../ui/components/OpenPermissionsDashboardButton';
-import { LanguageSwitcher, ThemeSwitcher } from '@/widgets/ui';
 import {
   Download,
   Languages,
@@ -11,8 +6,25 @@ import {
   ShieldCheck,
   Upload,
 } from 'lucide-react';
+import type { ComponentType, ReactElement } from 'react';
 
-export const settingsSections = [
+export type SettingsSectionActionType =
+  | 'theme'
+  | 'language'
+  | 'exportData'
+  | 'importData'
+  | 'permissionsDashboard'
+  | 'logout';
+
+export type SettingsSection = {
+  id: SettingsSectionActionType;
+  title: string;
+  description: string;
+  actionType: SettingsSectionActionType;
+  icon: ComponentType<{ className?: string }> | (() => ReactElement);
+};
+
+export const settingsSections: SettingsSection[] = [
   // {
   //   id: 'holiday',
   //   title: 'Новогодние украшения',
@@ -39,41 +51,41 @@ export const settingsSections = [
     title: 'Тема',
     icon: Moon,
     description: 'Переключение между светлой и тёмной темой',
-    action: <ThemeSwitcher />,
+    actionType: 'theme',
   },
   {
     id: 'language',
     title: 'Язык',
     icon: Languages,
     description: 'Выберите язык интерфейса',
-    action: <LanguageSwitcher />,
+    actionType: 'language',
   },
   {
     id: 'exportData',
     title: 'Экспорт данных',
     icon: Download,
     description: 'Выгрузить данные аккаунта',
-    action: <ExportDataButton />,
+    actionType: 'exportData',
   },
   {
     id: 'importData',
     title: 'Импорт данных',
     icon: Upload,
     description: 'Импортировать данные аккаунта',
-    action: <ImportDataButton />,
+    actionType: 'importData',
   },
   {
     id: 'permissionsDashboard',
     title: 'Дашборд доступов',
     icon: ShieldCheck,
     description: 'Перейти в управление правами доступа',
-    action: <OpenPermissionsDashboardButton />,
+    actionType: 'permissionsDashboard',
   },
   {
     id: 'logout',
     title: 'Выход',
     icon: LogOut,
     description: 'Выйти из аккаунта',
-    action: <LogoutButton />,
+    actionType: 'logout',
   },
 ];

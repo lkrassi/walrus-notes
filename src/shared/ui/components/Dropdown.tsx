@@ -1,3 +1,4 @@
+import { cn } from '@/shared/lib/core';
 import Popover from '@mui/material/Popover';
 import { ChevronDown } from 'lucide-react';
 import {
@@ -8,7 +9,6 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { cn } from 'shared/lib/cn';
 
 interface DropdownProps {
   trigger: ReactNode;

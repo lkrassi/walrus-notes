@@ -1,11 +1,5 @@
 import { useEffect } from 'react';
-
-interface EdgeDeleteEventDetail {
-  edgeId: string;
-  source: string;
-  target: string;
-  newTarget?: string | null;
-}
+import type { EdgeDeleteEventDetail } from '../../model/types';
 
 export const useEdgeDeleteEvents = (
   onDrop: (event: CustomEvent<EdgeDeleteEventDetail>) => void,

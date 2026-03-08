@@ -1,4 +1,4 @@
-import { Auth } from 'features';
+import { Auth } from '@/features';
 import { type FC } from 'react';
 
 export const AuthPage: FC = () => {

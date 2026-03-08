@@ -3,7 +3,7 @@ import {
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
 } from '@/entities';
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
 

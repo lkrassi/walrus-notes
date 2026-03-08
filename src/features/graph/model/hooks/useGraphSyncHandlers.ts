@@ -1,4 +1,4 @@
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { useCallback, useEffect } from 'react';
 import type { Node } from 'reactflow';
 

@@ -1,1 +1,1 @@
-export {};
+export type { Layout } from './types';

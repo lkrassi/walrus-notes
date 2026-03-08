@@ -1,10 +1,7 @@
-export * from './buttonProps';
-export * from './types/api';
-export * from './types/auth';
-export * from './types/fileTreeItem';
-export * from './types/layouts';
-export * from './types/notes';
-export * from './types/profile';
-export * from './utils/normalizeMessage';
-export * from './utils/tabUtils';
-export * from './ws';
+export type {
+  BaseResponse,
+  ErrorResponse,
+  MetaResponse,
+  PaginationResponse,
+} from './types/api';
+export { normalizeMessage } from './utils/normalizeMessage';

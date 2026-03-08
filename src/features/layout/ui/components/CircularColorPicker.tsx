@@ -1,7 +1,7 @@
+import { cn } from '@/shared/lib/core';
 import { memo, useCallback, type FC } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 import 'react-colorful/dist/style.css';
-import { cn } from 'shared/lib/cn';
 
 interface CircularColorPickerProps {
   value?: string;

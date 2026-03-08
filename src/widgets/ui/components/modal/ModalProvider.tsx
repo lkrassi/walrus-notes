@@ -3,8 +3,8 @@ import {
   type ModalOptions,
   type ModalState,
 } from '@/widgets/ui/components/modal/useModal';
-import { Modal } from './Modal';
 import { createContext, useContext, type FC, type ReactNode } from 'react';
+import { Modal } from './Modal';
 
 interface ModalContextType {
   openModal: (content: ReactNode, options?: ModalOptions) => void;

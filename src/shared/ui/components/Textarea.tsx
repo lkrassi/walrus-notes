@@ -1,9 +1,9 @@
+import { cn } from '@/shared/lib/core';
 import {
   forwardRef,
   type ChangeEvent,
   type TextareaHTMLAttributes,
 } from 'react';
-import { cn } from 'shared/lib/cn';
 
 export type TextareaProps = {
   value?: string;

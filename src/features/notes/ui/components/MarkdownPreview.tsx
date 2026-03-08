@@ -1,12 +1,12 @@
+import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
+import { forwardRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   allowedMarkdownElements,
   markdownComponents,
 } from '../../lib/markdownConfig';
-import { cn } from '@/shared/lib';
-import type { Note } from '@/shared/model';
-import { forwardRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { RelatedNotes } from './RelatedNotes';
 
 interface MarkdownPreviewProps {

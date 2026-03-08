@@ -1,13 +1,13 @@
-import { cn } from '@/shared/lib';
+import { Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Skeleton } from 'shared';
 
 const MarkdownPreview = lazy(() =>
   import('./MarkdownPreview').then(m => ({ default: m.MarkdownPreview }))
 );
 
-import type { Note } from '@/shared/model';
+import type { Note } from '@/entities/note';
 import { type FC } from 'react';
 
 interface Props {

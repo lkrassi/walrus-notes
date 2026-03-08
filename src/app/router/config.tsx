@@ -1,14 +1,14 @@
-import { ApplyLinkHandler } from 'features/dashboard/ui/ApplyLinkHandler';
+import { ApplyLinkHandler } from '@/features/dashboard';
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 import {
   AuthPageSkeleton,
-  MainPageSkeleton,
-  FirstPageSkeleton,
-  NotFoundPageSkeleton,
   DashboardPageSkeleton,
+  FirstPageSkeleton,
+  MainPageSkeleton,
   SettingsPageSkeleton,
+  UnavailablePageSkeleton,
 } from './RouteSkeletons';
 
 const FirstPage = lazy(() =>
@@ -22,17 +22,17 @@ const MainPage = lazy(() =>
 const AuthPage = lazy(() =>
   import('pages/auth/ui/AuthPage').then(m => ({ default: m.AuthPage }))
 );
-const DashBoardPage = lazy(() =>
-  import('pages/dashboard/DashBoardPage').then(m => ({
-    default: m.DashBoardPage,
+const DashboardPage = lazy(() =>
+  import('pages/dashboard/DashboardPage').then(m => ({
+    default: m.DashboardPage,
   }))
 );
 const ProfilePage = lazy(() =>
   import('pages/profile/ui/ProfilePage').then(m => ({ default: m.ProfilePage }))
 );
-const NotFoundPage = lazy(() =>
-  import('pages/not-found/ui/NotFoundPage').then(m => ({
-    default: m.NotFoundPage,
+const UnavailablePage = lazy(() =>
+  import('pages/unavailable/ui/UnavailablePage').then(m => ({
+    default: m.UnavailablePage,
   }))
 );
 
@@ -43,7 +43,7 @@ export const AppRoutes = {
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
   APPLY: '/apply',
-  NOT_FOUND: '*',
+  UNAVAILABLE: '*',
 };
 
 export const appRoutesConfig = [
@@ -88,7 +88,7 @@ export const appRoutesConfig = [
     element: (
       <ProtectedRoute>
         <Suspense fallback={<DashboardPageSkeleton />}>
-          <DashBoardPage />
+          <DashboardPage />
         </Suspense>
       </ProtectedRoute>
     ),
@@ -104,10 +104,10 @@ export const appRoutesConfig = [
     ),
   },
   {
-    path: AppRoutes.NOT_FOUND,
+    path: AppRoutes.UNAVAILABLE,
     element: (
-      <Suspense fallback={<NotFoundPageSkeleton />}>
-        <NotFoundPage />
+      <Suspense fallback={<UnavailablePageSkeleton />}>
+        <UnavailablePage />
       </Suspense>
     ),
   },

@@ -1,8 +1,8 @@
+import { cn } from '@/shared/lib/core';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { Network } from 'lucide-react';
-import { cn } from '@/shared/lib';
-import { useLocalization } from '@/widgets/hooks/useLocalization';
 
 interface AllNotesButtonProps {
   onAllNotesClick?: () => void;
