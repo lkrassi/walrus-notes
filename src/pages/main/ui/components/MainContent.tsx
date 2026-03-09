@@ -10,10 +10,12 @@ import { Tabs } from './Tabs';
 
 interface MainContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteTreeUpdate?: (noteId: string, updates: Partial<Note>) => void;
 }
 
 export const MainContent = memo(function DashboardContent({
   onNoteOpen,
+  onNoteTreeUpdate,
 }: MainContentProps) {
   const {
     openTabs,
@@ -28,6 +30,7 @@ export const MainContent = memo(function DashboardContent({
     handleNoteOpenFromGraph,
   } = useMainContentState({
     onNoteOpen,
+    onNoteTreeUpdate,
   });
 
   const renderContent = () => {

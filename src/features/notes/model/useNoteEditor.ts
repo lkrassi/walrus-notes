@@ -43,7 +43,7 @@ export const useNoteEditor = (
   }
 
   const [payload, setPayloadState] = useState<string>(initialPayload);
-  const [, { isLoading }] = useUpdateNoteMutation();
+  const [updateNote, { isLoading }] = useUpdateNoteMutation();
 
   const {
     commitDraft,
@@ -155,8 +155,19 @@ export const useNoteEditor = (
     }
 
     try {
+      const response = await updateNote({
+        noteId: note.id,
+        title: newTitle,
+        payload: newPayload,
+      }).unwrap();
+
+      const serverNote = response?.data;
+      const finalTitle = serverNote?.title ?? newTitle;
+      const finalPayload = serverNote?.payload ?? newPayload;
+      const finalUpdatedAt = serverNote?.updatedAt ?? new Date().toISOString();
+
       try {
-        const res = commitDraft(newPayload);
+        const res = commitDraft(finalPayload);
         try {
           if (res) {
             lastLocalCommitRef.current = Date.now();
@@ -164,7 +175,7 @@ export const useNoteEditor = (
         } catch (_e) {}
       } catch (_e) {}
       try {
-        setPayloadState(newPayload);
+        setPayloadState(finalPayload);
         try {
           dispatch(removeDraft({ noteId: note.id }));
         } catch (_e) {}
@@ -172,12 +183,13 @@ export const useNoteEditor = (
 
       const updatedNote: Note = {
         ...note,
-        title: newTitle,
-        payload: newPayload,
-        updatedAt: new Date().toISOString(),
+        ...serverNote,
+        title: finalTitle,
+        payload: finalPayload,
+        updatedAt: finalUpdatedAt,
       };
 
-      setTitle(newTitle);
+      setTitle(finalTitle);
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
 

@@ -41,12 +41,7 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
   };
 
   return (
-    <div className='flex w-full flex-col gap-3'>
-      <p className='text-secondary dark:text-dark-secondary text-center text-sm'>
-        {t('auth:forgotPasswordEmail.description') ||
-          'Введите адрес электронной почты для восстановления пароля'}
-      </p>
-
+    <div className='flex w-full flex-col gap-3 p-6'>
       <Formik
         initialValues={{ email: '' }}
         validationSchema={validationSchema}
@@ -56,9 +51,7 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
         validateOnMount={false}
       >
         {({ isValid, dirty }) => (
-          <Form
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-          >
+          <Form className='space-y-6'>
             <Field name='email'>
               {({ field, meta }: FieldProps<string>) => (
                 <div className='space-y-1'>
@@ -81,12 +74,13 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
               )}
             </Field>
 
-            <div className='flex justify-center gap-1.5'>
+            <div className='mt-1 flex justify-center gap-3'>
               <Button
                 type='button'
                 onClick={closeModal}
                 variant='escape'
                 disabled={isSubmitting}
+                className='btn'
               >
                 {t('common:buttons.cancel') || 'Отмена'}
               </Button>
@@ -96,6 +90,7 @@ export const ForgotPasswordEmailModal: FC<ForgotPasswordEmailModalProps> = ({
                   isSubmitting || !isValid || !dirty ? 'disabled' : 'submit'
                 }
                 disabled={isSubmitting || !isValid || !dirty}
+                className='btn'
               >
                 {isSubmitting ? (
                   <span className='inline-flex items-center gap-1'>

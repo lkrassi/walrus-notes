@@ -1,6 +1,5 @@
-import { createAppTheme } from '@/app/theme/theme';
 import { ThemeContext } from '@/shared/lib/react';
-import { useEffect, useMemo, useState, type FC, type ReactNode } from 'react';
+import { useEffect, useState, type FC, type ReactNode } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -26,11 +25,6 @@ const getInitialTheme = (): string => {
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<string>(getInitialTheme);
 
-  const muiTheme = useMemo(
-    () => createAppTheme(theme === 'dark' ? 'dark' : 'light'),
-    [theme]
-  );
-
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
@@ -53,10 +47,6 @@ export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   const toggleTheme = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
-
-  useEffect(() => {
-    document.body.style.fontFamily = muiTheme.typography.fontFamily;
-  }, [muiTheme.typography.fontFamily]);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

@@ -86,6 +86,10 @@ const createValidationSchema = (t: (key: string) => string) => ({
       .passwordStrength(t('auth:validation.passwordStrength'))
       .noCommonPasswords(t('auth:validation.passwordCommon'))
       .required(t('auth:validation.passwordRequired')),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password')], t('auth:validation.passwordsMustMatch'))
+      .required(t('auth:validation.confirmPasswordRequired')),
   }),
 });
 
@@ -121,4 +125,8 @@ export const registerValidationSchema = yup.object().shape({
     .string()
     .min(6, 'auth:validation.passwordMinLength')
     .required('auth:validation.passwordRequired'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'auth:validation.passwordsMustMatch')
+    .required('auth:validation.confirmPasswordRequired'),
 });

@@ -1,4 +1,3 @@
-import { ApplyLinkHandler } from '@/features/dashboard';
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -42,8 +41,8 @@ export const AppRoutes = {
   MAIN: '/main/:layoutId?/:noteId?',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
-  APPLY: '/apply',
   UNAVAILABLE: '*',
+  RANDOM: '/random',
 };
 
 export const appRoutesConfig = [
@@ -56,6 +55,10 @@ export const appRoutesConfig = [
     ),
   },
   {
+    path: AppRoutes.RANDOM,
+    element: <MainPageSkeleton />,
+  },
+  {
     path: AppRoutes.AUTH,
     element: (
       <GuestRoute>
@@ -63,14 +66,6 @@ export const appRoutesConfig = [
           <AuthPage />
         </Suspense>
       </GuestRoute>
-    ),
-  },
-  {
-    path: AppRoutes.APPLY,
-    element: (
-      <Suspense fallback={null}>
-        <ApplyLinkHandler />
-      </Suspense>
     ),
   },
   {

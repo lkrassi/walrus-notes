@@ -1,7 +1,7 @@
 import { useNotifications } from '@/entities/notification';
 import { useUploadFileMutation } from '@/shared/api';
 import { cn } from '@/shared/lib/core';
-import { useModalActions } from '@/shared/lib/react';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import type { AwarenessUser } from '@/shared/lib/react/collaboration';
 import { ImageUploadModal } from '@/shared/ui';
 import { memo, useCallback, type FC } from 'react';
@@ -88,7 +88,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
       <MdImportModal onImported={(c: string) => onImport?.(c)} />,
       {
         title: t('notes:import'),
-        size: 'md',
+        size: MODAL_SIZE_PRESETS.noteImport,
       }
     ),
     [onImport, openModalFromTrigger, t]
@@ -97,7 +97,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   const handleOpenHelp = useCallback(
     openModalFromTrigger(<MarkdownHelp />, {
       title: t('notes:markdownGuide'),
-      size: 'lg',
+      size: MODAL_SIZE_PRESETS.noteMarkdownHelp,
     }),
     [openModalFromTrigger, t]
   );
@@ -114,7 +114,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
       />,
       {
         title: t('notes:editTitle') || 'Edit title',
-        size: 'md',
+        size: MODAL_SIZE_PRESETS.noteEditTitle,
       }
     ),
     [onSave, openModalFromTrigger, t, title]

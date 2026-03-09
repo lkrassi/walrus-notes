@@ -5,10 +5,12 @@ import { useMainCreationFlows, useMainTabsFlow } from '../lib/hooks';
 
 interface UseMainContentStateProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteTreeUpdate?: (noteId: string, updates: Partial<Note>) => void;
 }
 
 export const useMainContentState = ({
   onNoteOpen,
+  onNoteTreeUpdate,
 }: UseMainContentStateProps) => {
   const { openTabs } = useTabs();
   const { handleOnCreateClick } = useMainCreationFlows();
@@ -26,6 +28,7 @@ export const useMainContentState = ({
     openTabs,
     activeTab,
     onNoteOpen,
+    onNoteTreeUpdate,
   });
 
   return {

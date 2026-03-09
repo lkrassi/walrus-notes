@@ -1,6 +1,10 @@
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import { useModalActions, useModalContentContext } from '@/shared/lib/react';
+import {
+  MODAL_SIZE_PRESETS,
+  useModalActions,
+  useModalContentContext,
+} from '@/shared/lib/react';
 import { Download, Upload } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +46,10 @@ export const ExportImportButton: FC<Props> = ({
             onClick={e => {
               const openImport = openModalFromTrigger(
                 <MdImportModal onImported={doImport} />,
-                { title: t('notes:import') }
+                {
+                  title: t('notes:import'),
+                  size: MODAL_SIZE_PRESETS.noteImport,
+                }
               );
               openImport(e as unknown as MouseEvent<HTMLElement>);
             }}
@@ -58,7 +65,7 @@ export const ExportImportButton: FC<Props> = ({
 
   const open = openModalFromTrigger(
     <ModalContent onExport={onExport} onImport={onImport} />,
-    { title: t('notes:exportImportTitle') }
+    { title: t('notes:exportImportTitle'), size: 'md' }
   );
 
   return (

@@ -2,7 +2,7 @@ import { useGetNotesQuery } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { cn } from '@/shared/lib/core';
-import { useModalActions } from '@/shared/lib/react/modal';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react/modal';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import type { Variants } from 'framer-motion';
 import { motion } from 'framer-motion';
@@ -39,7 +39,7 @@ export const FolderCard = ({
     />,
     {
       title: t('layout:updateLayoutData') || 'Редактировать папку',
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.layoutUpdate,
       showCloseButton: true,
     }
   );
@@ -51,7 +51,7 @@ export const FolderCard = ({
     />,
     {
       title: t('layout:deleteLayout') || 'Удалить папку',
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.layoutDelete,
       showCloseButton: true,
     }
   );

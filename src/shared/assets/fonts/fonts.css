@@ -1,22 +1,12 @@
 @font-face {
-  font-family: 'KWL';
-  src: url('./Podkova-VariableFont_wght.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Podkova';
+  src: url('./Podkova-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 html,
 body {
-  font-family:
-    'KWL',
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    'Noto Sans',
-    'Liberation Sans',
-    sans-serif !important;
+  font-family: 'Podkova', serif;
 }

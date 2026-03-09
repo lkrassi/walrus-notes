@@ -82,7 +82,6 @@ export const LanguageSwitcher: FC = () => {
   const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
     title: t('common:header.changeLanguage'),
     size: 'md',
-    mobileContentPadding: '16px',
   });
 
   return (
@@ -90,12 +89,10 @@ export const LanguageSwitcher: FC = () => {
       data-tour='language-switcher'
       onClick={openLanguageModal}
       variant='default'
-      className={cn('px-2', 'py-2', 'sm:px-3')}
+      className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
       title={t('common:header.changeLanguage')}
     >
-      <span className={cn('text-base', 'font-semibold')}>
-        {currentLang.name}
-      </span>
+      <span className='font-light'>{currentLang.name}</span>
     </Button>
   );
 };

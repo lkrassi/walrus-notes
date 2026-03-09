@@ -3,7 +3,7 @@ import {
   ShareModalProviderContext,
   type ShareTargetKind,
 } from '@/features/share';
-import { useModalActions } from '@/shared/lib/react';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { useCallback, type MouseEvent, type ReactNode } from 'react';
 
 export const ShareModalProvider = ({ children }: { children: ReactNode }) => {
@@ -15,7 +15,7 @@ export const ShareModalProvider = ({ children }: { children: ReactNode }) => {
         <ShareModal targetId={targetId} kind={kind} />,
         {
           title: kind === 'LAYOUT' ? 'Share Folder' : 'Share Note',
-          size: 'md',
+          size: MODAL_SIZE_PRESETS.shareAccess,
         }
       );
 

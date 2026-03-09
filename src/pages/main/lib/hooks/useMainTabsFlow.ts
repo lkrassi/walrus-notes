@@ -16,12 +16,14 @@ interface UseMainTabsFlowProps {
   openTabs: DashboardTab[];
   activeTab?: DashboardTab;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteTreeUpdate?: (noteId: string, updates: Partial<Note>) => void;
 }
 
 export const useMainTabsFlow = ({
   openTabs,
   activeTab,
   onNoteOpen,
+  onNoteTreeUpdate,
 }: UseMainTabsFlowProps) => {
   const dispatch = useDispatch();
 
@@ -73,8 +75,12 @@ export const useMainTabsFlow = ({
   const handleNoteUpdated = useCallback(
     (noteId: string, updates: Partial<Note>) => {
       dispatch(updateTabNote({ noteId, updates }));
+
+      if (onNoteTreeUpdate) {
+        onNoteTreeUpdate(noteId, updates);
+      }
     },
-    [dispatch]
+    [dispatch, onNoteTreeUpdate]
   );
 
   const handleItemSelect = useCallback(

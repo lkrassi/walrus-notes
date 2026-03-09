@@ -12,7 +12,7 @@ export const ThemeSwitcher = () => {
     <Button
       data-tour='theme-switcher'
       onClick={toggleTheme}
-      className={cn('px-2', 'py-2', 'sm:px-3')}
+      className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
       aria-label={
         theme === 'dark'
           ? t('common:theme.switchToLight')

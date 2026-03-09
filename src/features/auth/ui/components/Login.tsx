@@ -6,7 +6,11 @@ import {
 import { useNotifications } from '@/entities/notification';
 import { Button, Input, Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import { useModalActions, useModalContext } from '@/shared/lib/react';
+import {
+  MODAL_SIZE_PRESETS,
+  useModalActions,
+  useModalContext,
+} from '@/shared/lib/react';
 import { useMobileForm } from '@/shared/lib/react/hooks';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
@@ -29,6 +33,39 @@ const ResetPasswordModal = lazy(() =>
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
+};
+
+const getStringAtPath = (source: unknown, path: string[]): string | null => {
+  let current: unknown = source;
+
+  for (const key of path) {
+    if (!current || typeof current !== 'object') {
+      return null;
+    }
+
+    current = (current as Record<string, unknown>)[key];
+  }
+
+  return typeof current === 'string' && current.length > 0 ? current : null;
+};
+
+const extractLoginPayload = (response: unknown) => {
+  const accessToken =
+    getStringAtPath(response, ['data', 'accessToken']) ??
+    getStringAtPath(response, ['data', 'tokens', 'accessToken']) ??
+    getStringAtPath(response, ['accessToken']);
+
+  const refreshToken =
+    getStringAtPath(response, ['data', 'refreshToken']) ??
+    getStringAtPath(response, ['data', 'tokens', 'refreshToken']) ??
+    getStringAtPath(response, ['refreshToken']);
+
+  const userId =
+    getStringAtPath(response, ['data', 'userId']) ??
+    getStringAtPath(response, ['data', 'user', 'id']) ??
+    getStringAtPath(response, ['userId']);
+
+  return { accessToken, refreshToken, userId };
 };
 
 export const Login: FC<LoginProps> = () => {
@@ -55,20 +92,30 @@ export const Login: FC<LoginProps> = () => {
   const handleSubmit = async (values: typeof initialValues) => {
     try {
       const response = await login(values).unwrap();
+      const { accessToken, refreshToken, userId } =
+        extractLoginPayload(response);
+
+      if (!accessToken || !refreshToken || !userId) {
+        showError(
+          t('auth:login.error.invalidResponse') ||
+            'Не удалось завершить вход. Пожалуйста, попробуйте снова.'
+        );
+        return;
+      }
+
+      localStorage.setItem('userId', userId);
 
       setAuthTokens({
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        accessToken,
+        refreshToken,
       });
 
       updateProfile({
-        id: response.data.userId,
+        id: userId,
         username: '',
         email: values.email,
         imgUrl: '',
       });
-
-      localStorage.setItem('userId', response.data.userId);
       navigate('/main');
     } catch {
       showError(t('auth:login.error'));
@@ -122,7 +169,7 @@ export const Login: FC<LoginProps> = () => {
               </Suspense>,
               {
                 title: t('auth:resetPassword.title') || 'Сброс пароля',
-                size: 'md',
+                size: MODAL_SIZE_PRESETS.authResetPassword,
                 closeOnOverlayClick: false,
                 closeOnEscape: false,
                 showCloseButton: false,
@@ -152,7 +199,7 @@ export const Login: FC<LoginProps> = () => {
     </Suspense>,
     {
       title: t('auth:forgotPasswordEmail.title') || 'Восстановление пароля',
-      size: 'sm',
+      size: MODAL_SIZE_PRESETS.authForgotPasswordEmail,
       closeOnOverlayClick: true,
       closeOnEscape: true,
       showCloseButton: true,
@@ -254,10 +301,15 @@ export const Login: FC<LoginProps> = () => {
               <div className='flex flex-col gap-2.5'>
                 <Button
                   type='submit'
+                  variant={
+                    formikSubmitting || isSubmitting || !isValid || !dirty
+                      ? 'disabled'
+                      : 'default'
+                  }
                   disabled={
                     formikSubmitting || isSubmitting || !isValid || !dirty
                   }
-                  style={{ flex: 1, padding: '12px 32px' }}
+                  className='btn w-full'
                 >
                   {formikSubmitting || isSubmitting ? (
                     <span className='inline-flex items-center justify-center gap-2'>

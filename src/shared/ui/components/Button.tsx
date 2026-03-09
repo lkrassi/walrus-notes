@@ -31,9 +31,9 @@ const variantClasses: Record<ButtonVariant, string> = {
   ),
   disabled: cn(
     'bg-btn-disabled',
-    'text-text',
+    'text-text/60',
     'dark:bg-dark-btn-disabled',
-    'dark:text-dark-text'
+    'dark:text-text/20'
   ),
   escape: cn(
     'bg-btn-cancel',
@@ -66,6 +66,7 @@ export const Button = memo(
       ref
     ) => {
       const navigate = useNavigate();
+      const resolvedVariant: ButtonVariant = disabled ? 'disabled' : variant;
 
       const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
         if (disabled) return;
@@ -89,8 +90,8 @@ export const Button = memo(
           disabled={disabled}
           className={cn(
             'relative rounded-md px-4 py-1 text-base font-semibold transition-all duration-200',
-            'disabled:cursor-not-allowed disabled:brightness-90',
-            variantClasses[variant],
+            'disabled:cursor-not-allowed',
+            variantClasses[resolvedVariant],
             className
           )}
           onClick={handleClick}

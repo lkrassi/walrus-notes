@@ -153,12 +153,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
                   <div className='bg-border dark:bg-dark-border h-px w-full' />
                 )}
 
-                <div
-                  className='flex flex-col gap-2 overflow-auto p-6 max-sm:p-0'
-                  style={{
-                    padding: options.mobileContentPadding,
-                  }}
-                >
+                <div className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-6'>
                   <ModalContentContext.Provider value={{ closeModal: onClose }}>
                     {content}
                   </ModalContentContext.Provider>

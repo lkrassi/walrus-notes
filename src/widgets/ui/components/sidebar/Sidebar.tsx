@@ -5,6 +5,7 @@ import { CreateLayoutForm } from '@/features/layout';
 import { ProfileButton } from '@/features/profile';
 import { logoImage as logo } from '@/shared/assets';
 import { cn } from '@/shared/lib/core';
+import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import {
   useFileTree,
   useIsMobile,
@@ -57,7 +58,7 @@ const SidebarComponent = (
 
   const handleCreateLayout = openModalFromTrigger(<CreateLayoutForm />, {
     title: t('fileTree:createNewLayout'),
-    size: 'md',
+    size: MODAL_SIZE_PRESETS.layoutCreate,
   });
 
   const handleDeleteNote = (noteId: string) => {

@@ -76,7 +76,6 @@ export const LanguageSwitcher: FC = () => {
   const openLanguageModal = openModalFromTrigger(<LanguageModal />, {
     title: t('common:header.changeLanguage'),
     size: 'md',
-    mobileContentPadding: '16px',
   });
 
   return (

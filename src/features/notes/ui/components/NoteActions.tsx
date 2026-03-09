@@ -68,7 +68,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         <>
           <Button
             onClick={onSave}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+            className={cn(
+              'flex',
+              'h-8',
+              'w-14',
+              'items-center',
+              'justify-center'
+            )}
             disabled={isLoading}
             title={t('notes:save')}
             variant='submit'
@@ -84,7 +90,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
               }
               onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
             }}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+            className={cn(
+              'flex',
+              'h-8',
+              'w-14',
+              'items-center',
+              'justify-center'
+            )}
             disabled={isLoading}
             title={t('notes:cancel')}
             variant='escape'
@@ -94,7 +106,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
 
           <Button
             onClick={onOpenImageUpload}
-            className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+            className={cn(
+              'flex',
+              'h-8',
+              'w-14',
+              'items-center',
+              'justify-center'
+            )}
             disabled={isLoading}
             title={t('notes:uploadImage') || 'Upload image'}
             variant='default'
@@ -105,7 +123,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       ) : (
         <Button
           onClick={onEdit}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+          className={cn(
+            'flex',
+            'h-8',
+            'w-14',
+            'items-center',
+            'justify-center'
+          )}
           title={t('notes:edit')}
           variant='default'
         >
@@ -114,20 +138,49 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       )}
 
       {onExport && (
-        <Button
-          onClick={onExport}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
-          title={t('notes:export')}
-          variant='default'
-        >
-          <Download className={cn('h-4', 'w-4')} />
-        </Button>
+        <>
+          <Button
+            onClick={onExport}
+            className={cn(
+              'flex',
+              'h-8',
+              'w-14',
+              'items-center',
+              'justify-center'
+            )}
+            title={t('notes:export')}
+            variant='default'
+          >
+            <Download className={cn('h-4', 'w-4')} />
+          </Button>
+
+          <Button
+            onClick={onOpenImport}
+            className={cn(
+              'flex',
+              'h-8',
+              'w-14',
+              'items-center',
+              'justify-center'
+            )}
+            title={t('notes:import')}
+            variant='default'
+          >
+            <Upload className={cn('h-4', 'w-4')} />
+          </Button>
+        </>
       )}
 
       {noteId && !isEditing && (
         <Button
           onClick={e => openShareLinkModal(noteId, 'NOTE')(e)}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+          className={cn(
+            'flex',
+            'h-8',
+            'w-14',
+            'items-center',
+            'justify-center'
+          )}
           title={t('share:button.tooltip') || 'Share'}
           variant='default'
         >
@@ -135,28 +188,9 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         </Button>
       )}
 
-      {isEditing && (
-        <Button
-          onClick={onOpenImport}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
-          title={t('notes:import')}
-          variant='default'
-        >
-          <Upload className={cn('h-4', 'w-4')} />
-        </Button>
-      )}
-
       <Button
         onClick={onOpenHelp}
-        className={cn(
-          'flex',
-          'h-8',
-          'items-center',
-          'justify-center',
-          'py-2',
-          'hidden',
-          'sm:inline-flex'
-        )}
+        className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
         title={t('notes:editorHelp')}
         variant='default'
       >
@@ -166,7 +200,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       {onToggleFullscreen && (
         <Button
           onClick={onToggleFullscreen}
-          className={cn('flex', 'h-8', 'items-center', 'justify-center')}
+          className={cn(
+            'flex',
+            'h-8',
+            'w-14',
+            'items-center',
+            'justify-center'
+          )}
           title={
             isFullscreen ? t('notes:exitFullscreen') : t('notes:fullscreen')
           }

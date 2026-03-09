@@ -9,10 +9,22 @@ interface NotificationProps {
 }
 
 const toneClasses: Record<NotificationType['type'], string> = {
-  success: 'border-btn-submit/60',
-  error: 'border-btn-cancel/60',
-  warning: 'border-primary/60',
-  info: 'border-primary/40',
+  success: cn(
+    'border-emerald-500/60 bg-emerald-50 text-emerald-900',
+    'dark:border-emerald-400/70 dark:bg-emerald-950/50 dark:text-emerald-200'
+  ),
+  error: cn(
+    'border-red-500/70 bg-red-50 text-red-900',
+    'dark:border-red-400/80 dark:bg-red-950/45 dark:text-red-200'
+  ),
+  warning: cn(
+    'border-amber-500/65 bg-amber-50 text-amber-900',
+    'dark:border-amber-400/75 dark:bg-amber-950/45 dark:text-amber-200'
+  ),
+  info: cn(
+    'border-sky-500/60 bg-sky-50 text-sky-900',
+    'dark:border-sky-400/75 dark:bg-sky-950/45 dark:text-sky-200'
+  ),
 };
 
 const titleByType: Record<NotificationType['type'], string> = {
@@ -34,7 +46,7 @@ export const Notification: FC<NotificationProps> = ({
       role='alert'
       aria-live={notification.type === 'error' ? 'assertive' : 'polite'}
       className={cn(
-        'bg-bg/95 text-text dark:border-dark-border dark:bg-dark-bg/95 dark:text-dark-text w-full rounded-lg border px-4 py-3 shadow-md backdrop-blur-sm',
+        'w-full rounded-lg border px-4 py-3 shadow-md backdrop-blur-sm',
         tone
       )}
     >

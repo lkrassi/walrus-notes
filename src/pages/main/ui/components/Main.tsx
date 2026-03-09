@@ -2,7 +2,7 @@ import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { WebSocketProvider } from '@/shared/lib/react/websocket';
 import { Sidebar } from '@/widgets';
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useMainWorkspace } from '../../model';
 import { MainContent } from './MainContent';
 import { MainHeader } from './MainHeader';
@@ -14,6 +14,13 @@ export const Main = () => {
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
 
+  const handleNoteTreeUpdate = useCallback(
+    (noteId: string, updates: Partial<Note>) => {
+      sidebarRef.current?.updateNoteInTree(noteId, updates);
+    },
+    []
+  );
+
   return (
     <WebSocketProvider userId={userId}>
       <div className={cn('flex', 'h-screen', 'flex-col')}>
@@ -24,7 +31,10 @@ export const Main = () => {
             onItemSelect={handleItemSelect}
             selectedItemId={activeTabId || undefined}
           />
-          <MainContent onNoteOpen={handleNoteOpenFromGraph} />
+          <MainContent
+            onNoteOpen={handleNoteOpenFromGraph}
+            onNoteTreeUpdate={handleNoteTreeUpdate}
+          />
         </div>
       </div>
     </WebSocketProvider>

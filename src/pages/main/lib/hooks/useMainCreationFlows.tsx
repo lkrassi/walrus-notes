@@ -1,6 +1,10 @@
 import { CreateLayoutForm } from '@/features/layout';
 import { CreateNoteForm } from '@/features/notes';
-import { useModalActions, useModalContext } from '@/shared/lib/react';
+import {
+  MODAL_SIZE_PRESETS,
+  useModalActions,
+  useModalContext,
+} from '@/shared/lib/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateChoiceModal } from '../../ui/components/CreateChoiceModal';
@@ -14,7 +18,7 @@ export const useMainCreationFlows = () => {
   const handleCreateFolder = useCallback(() => {
     openModal(<CreateLayoutForm />, {
       title: t('layout:createLayout') || 'Создать папку',
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.layoutCreate,
       showCloseButton: true,
     });
   }, [openModal, t]);
@@ -23,7 +27,7 @@ export const useMainCreationFlows = () => {
     (layoutId: string) => {
       openModal(<CreateNoteForm layoutId={layoutId} />, {
         title: t('notes:createNote') || 'Создать заметку',
-        size: 'md',
+        size: MODAL_SIZE_PRESETS.noteCreate,
         showCloseButton: true,
       });
     },
@@ -33,7 +37,7 @@ export const useMainCreationFlows = () => {
   const handleStartNoteCreation = useCallback(() => {
     openModal(<FolderSelectModal onFolderSelected={handleFolderSelected} />, {
       title: '',
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.folderSelect,
       showCloseButton: true,
     });
   }, [handleFolderSelected, openModal]);
@@ -45,7 +49,7 @@ export const useMainCreationFlows = () => {
     />,
     {
       title: t('dashboard:whatToCreate'),
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.createChoice,
       showCloseButton: true,
     }
   );

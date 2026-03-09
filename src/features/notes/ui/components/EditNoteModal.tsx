@@ -38,7 +38,7 @@ export const EditNoteModal: FC<Props> = ({ title = '', onSaved }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn('space-y-4', 'p-6')}>
+    <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>
       <div>
         <label className={cn('tw-label')}>
           {t('notes:editTitleLabel') || 'Edit title'}

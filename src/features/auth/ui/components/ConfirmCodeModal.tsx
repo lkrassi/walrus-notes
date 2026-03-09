@@ -95,7 +95,7 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   }, []);
 
   return (
-    <div className='flex w-full flex-col gap-3'>
+    <div className='flex w-full flex-col gap-3 p-6'>
       <div className='text-center'>
         <p className='text-secondary dark:text-dark-secondary text-sm'>
           {t('auth:confirmCode.description') ||
@@ -137,9 +137,9 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
         onClick={handleSubmit}
         disabled={isLoading || code.join('').length !== 6}
         variant={
-          isLoading || code.join('').length !== 6 ? 'disabled' : 'submit'
+          isLoading || code.join('').length !== 6 ? 'disabled' : 'default'
         }
-        className='w-full'
+        className='btn w-full'
       >
         {isLoading
           ? t('auth:confirmCode.loading')

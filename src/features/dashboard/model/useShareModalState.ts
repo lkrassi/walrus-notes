@@ -53,11 +53,6 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
   const { closeModal } = useModalContentContext();
   const [copied, setCopied] = useState(false);
 
-  const modalTitle =
-    kind === 'LAYOUT'
-      ? t('share:layout.modal.title')
-      : t('share:notes.modal.title');
-
   const initialValues: ShareModalValues = {
     canRead: true,
     canWrite: false,
@@ -99,7 +94,6 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
   return {
     generatedLink,
     copied,
-    modalTitle,
     initialValues,
     handleSubmit,
     handleCopy,

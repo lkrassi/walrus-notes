@@ -1,14 +1,14 @@
 import { useImportLayoutMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
 import { cn } from '@/shared/lib/core';
-import { useModalActions } from '@/shared/lib/react';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { Button } from '@/shared/ui';
 import {
-  useRef,
-  useState,
-  type ChangeEvent,
-  type DragEvent,
-  type FC,
+    useRef,
+    useState,
+    type ChangeEvent,
+    type DragEvent,
+    type FC,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -137,7 +137,7 @@ export const ImportDataButton: FC = () => {
 
   const openModal = useModalActions().openModalFromTrigger(<DropZone />, {
     title: t('settings:backup.import.modalTitle'),
-    size: 'md',
+    size: MODAL_SIZE_PRESETS.dataImport,
     closeOnOverlayClick: true,
     showCloseButton: true,
   });

@@ -4,6 +4,7 @@ import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { CreateNoteForm } from '@/features/notes';
 import { useShareModal } from '@/features/share';
 import { cn } from '@/shared/lib/core';
+import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
@@ -100,7 +101,7 @@ export const FileTreeItemHeader = ({
     />,
     {
       title: t('notes:deleteNote'),
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.noteDelete,
     }
   );
 
@@ -108,7 +109,7 @@ export const FileTreeItemHeader = ({
     <CreateNoteForm layoutId={item.id} />,
     {
       title: t('fileTree:createNewNote'),
-      size: 'lg',
+      size: MODAL_SIZE_PRESETS.noteCreate,
     }
   );
 
@@ -122,7 +123,7 @@ export const FileTreeItemHeader = ({
     />,
     {
       title: t('layout:deleteLayout'),
-      size: 'md',
+      size: MODAL_SIZE_PRESETS.layoutDelete,
     }
   );
 
@@ -135,7 +136,7 @@ export const FileTreeItemHeader = ({
     />,
     {
       title: t('layout:updateLayoutData') || 'Edit layout',
-      size: 'lg',
+      size: MODAL_SIZE_PRESETS.layoutUpdate,
     }
   );
 

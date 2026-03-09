@@ -32,7 +32,6 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleInputChange = (index: number, value: string) => {
@@ -41,7 +40,6 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
-    setError(null);
 
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
@@ -79,15 +77,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   const handleSubmit = async (values: { newPassword: string }) => {
     const codeString = code.join('');
 
-    if (codeString.length !== 6) {
-      setError(
-        t('auth:resetPassword.error.incomplete') || 'Введите полный код'
-      );
-      return;
-    }
-
     setIsLoading(true);
-    setError(null);
 
     try {
       await confirmCode({
@@ -109,8 +99,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
           'Неверный код подтверждения';
         showError(errorMessage);
       } else if (errorCode === 'confirm_code_not_exist') {
-        errorMessage =
-          t('auth:resetPassword.error.codeNotExist') || 'Код не существует';
+        errorMessage = t('auth:resetPassword.error.codeNotExist');
         showError(errorMessage);
       } else if (errorCode === 'user_not_found') {
         errorMessage =
@@ -122,7 +111,6 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
           'Введите новый пароль';
       }
 
-      setError(errorMessage);
       setCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     } finally {
@@ -135,7 +123,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
   }, []);
 
   return (
-    <div className='flex w-full flex-col gap-3'>
+    <div className='flex w-full flex-col gap-3 p-6'>
       <div className='text-center'>
         <p className='text-secondary dark:text-dark-secondary text-sm'>
           {t('auth:resetPassword.description') ||
@@ -165,19 +153,10 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
             onPaste={handlePaste}
             disabled={isLoading}
             maxLength={1}
-            className={cn(
-              'h-12 w-12 px-0 text-center text-lg font-semibold',
-              error
-                ? 'border-red-500 dark:border-red-400'
-                : digit
-                  ? 'border-primary dark:border-dark-primary'
-                  : ''
-            )}
+            className={cn('h-12 w-12 px-0 text-center text-lg font-semibold')}
           />
         ))}
       </div>
-
-      {error && <p className='text-center text-sm text-red-500'>{error}</p>}
 
       <Formik
         initialValues={{ newPassword: '' }}
@@ -202,14 +181,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
         validateOnBlur={true}
       >
         {formik => (
-          <Form
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 20,
-            }}
-          >
+          <Form className='flex w-full flex-col gap-5'>
             <Field name='newPassword'>
               {({ field, meta }: FieldProps<string>) => (
                 <div className='space-y-1'>
@@ -261,7 +233,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
                 disabled={
                   isLoading || code.join('').length !== 6 || !formik.isValid
                 }
-                style={{ width: '100%', padding: '12px 32px' }}
+                className='btn w-full max-w-xs'
               >
                 {isLoading ? (
                   <span className='h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white' />

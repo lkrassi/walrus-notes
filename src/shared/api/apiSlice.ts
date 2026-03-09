@@ -91,8 +91,6 @@ const baseQueryWithReauth: BaseQueryFn<
       } catch {
         api.dispatch(clearUserProfileAction());
       }
-    } else {
-      api.dispatch(clearUserProfileAction());
     }
   }
 

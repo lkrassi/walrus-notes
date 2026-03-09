@@ -2,7 +2,7 @@ import { useRegisterMutation, useSendConfirmCodeMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
 import { Button, Input, Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import { useModalContext } from '@/shared/lib/react';
+import { MODAL_SIZE_PRESETS, useModalContext } from '@/shared/lib/react';
 import { useMobileForm } from '@/shared/lib/react/hooks';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
@@ -32,16 +32,21 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const { formRef } = useMobileForm();
 
   const { registerValidationSchema } = createAuthValidationSchemas(t);
+  const confirmPasswordPlaceholder = t(
+    'auth:register.confirmPasswordPlaceholder'
+  );
 
   const initialValues = {
     email: '',
     username: '',
     password: '',
+    confirmPassword: '',
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
-      await register(values).unwrap();
+      const { confirmPassword: _confirmPassword, ...registerPayload } = values;
+      await register(registerPayload).unwrap();
 
       try {
         await sendConfirmCode({
@@ -75,7 +80,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
           </Suspense>,
           {
             title: t('auth:confirmCode.title') || 'Подтверждение почты',
-            size: 'md',
+            size: MODAL_SIZE_PRESETS.authConfirmCode,
             closeOnOverlayClick: false,
             closeOnEscape: false,
             showCloseButton: false,
@@ -269,12 +274,61 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                 )}
               </Field>
 
+              <Field name='confirmPassword'>
+                {({ field, meta }: FieldProps<string>) => (
+                  <div className='space-y-1'>
+                    <label className='tw-label'>
+                      {t('auth:register.confirmPassword')}
+                    </label>
+                    <div className='relative'>
+                      <Input
+                        {...field}
+                        type={
+                          passwordVisibility.isVisible ? 'text' : 'password'
+                        }
+                        placeholder={confirmPasswordPlaceholder}
+                        autoComplete='new-password'
+                        required
+                        disabled={formikSubmitting || isSubmitting}
+                        aria-invalid={meta.touched && Boolean(meta.error)}
+                        className='form-input pr-10'
+                      />
+                      <button
+                        type='button'
+                        onClick={passwordVisibility.toggleVisibility}
+                        className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                        aria-label={
+                          passwordVisibility.isVisible
+                            ? t('common:password.hide')
+                            : t('common:password.show')
+                        }
+                        disabled={formikSubmitting || isSubmitting}
+                      >
+                        {passwordVisibility.isVisible ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                    <p className='min-h-5 text-xs text-red-500'>
+                      {meta.touched && meta.error ? meta.error : ' '}
+                    </p>
+                  </div>
+                )}
+              </Field>
+
               <Button
                 type='submit'
+                variant={
+                  formikSubmitting || isSubmitting || !isValid || !dirty
+                    ? 'disabled'
+                    : 'default'
+                }
                 disabled={
                   formikSubmitting || isSubmitting || !isValid || !dirty
                 }
-                style={{ width: '100%', padding: '12px 32px' }}
+                className='btn w-full'
               >
                 {formikSubmitting || isSubmitting ? (
                   <span className='inline-flex items-center justify-center gap-2'>
