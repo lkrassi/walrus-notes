@@ -20,26 +20,11 @@ export const HelpSection: FC<HelpSectionProps> = memo(function HelpSection({
       {section.descriptionKey && (
         <p className={cn('mb-2')}>{t(section.descriptionKey)}</p>
       )}
-      <div
-        className={cn(
-          'bg-gray-50',
-          'dark:bg-gray-800',
-          'p-4',
-          'rounded',
-          'text-sm'
-        )}
-      >
+      <div className={cn('bg-surface-2', 'p-4', 'rounded', 'text-sm')}>
         <pre>{t(section.exampleKey)}</pre>
       </div>
       {section.noteKey && (
-        <p
-          className={cn(
-            'mt-2',
-            'text-sm',
-            'text-gray-600',
-            'dark:text-gray-400'
-          )}
-        >
+        <p className={cn('mt-2', 'text-sm', 'text-muted-foreground')}>
           {t(section.noteKey)}
         </p>
       )}

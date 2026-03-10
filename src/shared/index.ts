@@ -4,6 +4,7 @@ export {
   ModalContentContext,
   ModalContext,
   ThemeContext,
+  WebSocketProvider,
   useDebounced,
   useDeviceType,
   useDndSensors,
@@ -18,10 +19,9 @@ export {
   useModalContext,
   useResizableBase,
   useResizableSplit,
-  useWebSocket,
   useWSContext,
+  useWebSocket,
   useYjsCollaboration,
-  WebSocketProvider,
 } from './lib/react';
 export type {
   AwarenessUser,
@@ -42,6 +42,7 @@ export type {
 } from './model';
 export {
   Button,
+  Card,
   Dropdown,
   DropdownContent,
   DropdownTrigger,

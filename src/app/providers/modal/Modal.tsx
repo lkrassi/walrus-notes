@@ -107,7 +107,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
         >
           <motion.div
             key='modal-overlay'
-            className='fixed inset-0 bg-black/50 backdrop-blur-sm'
+            className='bg-foreground/20 fixed inset-0 backdrop-blur-sm'
             onClick={handleClose}
             aria-hidden='true'
             initial={{ opacity: 0 }}
@@ -141,7 +141,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
                       <button
                         aria-label={t('common:modal.close')}
                         onClick={onClose}
-                        className='text-text dark:text-dark-text ml-auto rounded-md p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10'
+                        className='text-foreground hover:bg-surface-3 ml-auto rounded-md p-1 transition-colors'
                       >
                         <X size={20} />
                       </button>
@@ -150,7 +150,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
                 )}
 
                 {(options.title || options.showCloseButton) && (
-                  <div className='bg-border dark:bg-dark-border h-px w-full' />
+                  <div className='bg-border h-px w-full' />
                 )}
 
                 <div className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-6'>

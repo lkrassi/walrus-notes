@@ -15,7 +15,10 @@
     "start": "node dist-server/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:unused": "eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern"
+    "lint:unused": "eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern",
+    "lint:styles": "stylelint \"src/styles/**/*.css\" \"src/app/styles/markdown.css\"",
+    "check:raw-colors": "if grep -RInE \"#[0-9a-fA-F]{3,8}|rgba\\(\" src/features/graph src/app/styles/markdown.css src/widgets/ui/components/sidebar/Sidebar.tsx src/pages/main/ui/components/Tabs.tsx src/pages/main/ui/components/SortableTab.tsx src/app/providers/modal/Modal.tsx src/features/profile/ui/components/ProfileButton.tsx src/widgets/ui/components/fileTree/SearchInput.tsx src/widgets/ui/components/header/MobileMenu.tsx src/features/notes/ui/components/HelpSection.tsx; then echo 'Raw colors found in guarded zones'; exit 1; fi",
+    "guardrails": "pnpm run lint:styles && pnpm run check:raw-colors"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -81,6 +84,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "rollup-plugin-visualizer": "^7.0.0",
+    "stylelint": "^16.24.0",
     "terser": "^5.46.0",
     "tsx": "^4.20.6",
     "typescript": "~5.8.3",

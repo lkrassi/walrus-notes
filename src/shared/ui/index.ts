@@ -1,5 +1,6 @@
 export { Button } from './components/Button';
 export type { ButtonProps, ButtonVariant } from './components/Button';
+export { Card } from './components/Card';
 export { Dropdown, DropdownTrigger } from './components/Dropdown';
 export { DropdownContent } from './components/dropdown/DropdownContent';
 export type { DropdownContentState } from './components/dropdown/DropdownContent';

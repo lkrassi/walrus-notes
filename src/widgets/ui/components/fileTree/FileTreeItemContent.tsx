@@ -166,7 +166,7 @@ export const FileTreeItemContent = ({
       isOpen={isExpanded && item.type === 'layout'}
       state={contentState}
       emptyContent={
-        <div className={cn('mt-2', 'ml-6', 'text-sm', 'text-gray-500')}>
+        <div className={cn('mt-2', 'ml-6', 'text-sm', 'muted-text')}>
           {t('fileTree:folderEmpty')}
         </div>
       }

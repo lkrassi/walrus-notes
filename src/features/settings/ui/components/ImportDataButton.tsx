@@ -4,11 +4,12 @@ import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { Button } from '@/shared/ui';
 import {
-    useRef,
-    useState,
-    type ChangeEvent,
-    type DragEvent,
-    type FC,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FC,
+  type KeyboardEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,6 +58,13 @@ export const ImportDataButton: FC = () => {
 
   const handleDragLeave = () => setIsDragOver(false);
 
+  const handleDropZoneKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      fileInputRef.current?.click();
+    }
+  };
+
   const DropZone: FC = () => (
     <div className={cn('p-4', 'space-y-4')}>
       <div
@@ -67,6 +75,7 @@ export const ImportDataButton: FC = () => {
           'p-8',
           'text-center',
           'cursor-pointer',
+          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
           'transition-all',
           'duration-200',
           isDragOver
@@ -91,6 +100,7 @@ export const ImportDataButton: FC = () => {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={handleDropZoneKeyDown}
         role='button'
         tabIndex={0}
       >

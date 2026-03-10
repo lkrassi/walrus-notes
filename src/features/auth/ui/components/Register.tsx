@@ -200,7 +200,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       aria-invalid={meta.touched && Boolean(meta.error)}
                       className='form-input'
                     />
-                    <p className='min-h-5 text-xs text-red-500'>
+                    <p className='text-danger-foreground min-h-5 text-xs'>
                       {meta.touched && meta.error ? meta.error : ' '}
                     </p>
                   </div>
@@ -223,7 +223,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       aria-invalid={meta.touched && Boolean(meta.error)}
                       className='form-input'
                     />
-                    <p className='min-h-5 text-xs text-red-500'>
+                    <p className='text-danger-foreground min-h-5 text-xs'>
                       {meta.touched && meta.error ? meta.error : ' '}
                     </p>
                   </div>
@@ -252,7 +252,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={passwordVisibility.toggleVisibility}
-                        className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
                         aria-label={
                           passwordVisibility.isVisible
                             ? t('common:password.hide')
@@ -267,7 +267,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                         )}
                       </button>
                     </div>
-                    <p className='min-h-5 text-xs text-red-500'>
+                    <p className='text-danger-foreground min-h-5 text-xs'>
                       {meta.touched && meta.error ? meta.error : ' '}
                     </p>
                   </div>
@@ -296,7 +296,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={passwordVisibility.toggleVisibility}
-                        className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
                         aria-label={
                           passwordVisibility.isVisible
                             ? t('common:password.hide')
@@ -311,7 +311,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                         )}
                       </button>
                     </div>
-                    <p className='min-h-5 text-xs text-red-500'>
+                    <p className='text-danger-foreground min-h-5 text-xs'>
                       {meta.touched && meta.error ? meta.error : ' '}
                     </p>
                   </div>

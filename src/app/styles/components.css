@@ -15,7 +15,7 @@
 }
 
 .muted-text {
-  @apply text-secondary dark:text-dark-secondary;
+  @apply text-muted-foreground;
 }
 
 .card {

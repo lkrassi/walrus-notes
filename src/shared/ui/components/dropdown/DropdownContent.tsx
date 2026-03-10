@@ -117,13 +117,13 @@ export const DropdownContent: FC<DropdownContentProps> = ({
       case 'empty':
         return (
           emptyContent || (
-            <div className={cn('text-sm', 'text-gray-500')}>Пусто</div>
+            <div className={cn('text-sm', 'text-muted-foreground')}>Пусто</div>
           )
         );
       case 'error':
         return (
           errorContent || (
-            <div className={cn('text-sm', 'text-red-500')}>Ошибка</div>
+            <div className={cn('text-sm', 'text-danger')}>Ошибка</div>
           )
         );
       case 'content':

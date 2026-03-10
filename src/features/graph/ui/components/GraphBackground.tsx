@@ -1,5 +1,8 @@
 import { Background } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 export const GraphBackground = () => {
-  return <Background gap={20} size={1} color='#6b7280' />;
+  const palette = graphTheme();
+
+  return <Background gap={20} size={1} color={palette.edge} />;
 };

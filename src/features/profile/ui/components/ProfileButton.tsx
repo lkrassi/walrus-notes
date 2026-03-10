@@ -30,10 +30,11 @@ export const ProfileButton: FC = () => {
         'py-2',
         'transition-colors',
         'duration-150',
-        'hover:bg-gray-100',
-        'dark:hover:bg-gray-800',
-        'text-text',
-        'dark:text-dark-text'
+        'hover:bg-interactive-hover',
+        'active:bg-interactive-active',
+        'focus-visible:ring-ring',
+        'focus-visible:ring-2',
+        'text-foreground'
       )}
       title={t('profile:title')}
     >
@@ -52,11 +53,9 @@ export const ProfileButton: FC = () => {
               'w-full',
               'items-center',
               'justify-center',
-              'bg-gray-300',
+              'bg-surface-2',
               'font-semibold',
-              'text-gray-600',
-              'dark:bg-gray-600',
-              'dark:text-gray-300'
+              'text-muted-foreground'
             )}
           >
             {firstLetter}

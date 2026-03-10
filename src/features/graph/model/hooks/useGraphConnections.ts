@@ -1,6 +1,7 @@
 import { useCreateNoteLinkMutation } from '@/entities';
 import { useCallback, useMemo, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 interface UseGraphConnectionsProps {
   layoutId: string;
@@ -31,6 +32,8 @@ export const useGraphConnections = ({
   screenToFlowPosition,
   onEdgeCreated,
 }: UseGraphConnectionsProps) => {
+  const palette = graphTheme();
+
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [tempEdge, setTempEdge] = useState<Connection | null>(null);
   const [tempEdges, setTempEdges] = useState<Edge[]>([]);
@@ -49,7 +52,7 @@ export const useGraphConnections = ({
       const sourceNode = nodes.find(n => n.id === source);
       const edgeColor =
         (sourceNode?.data as { layoutColor?: string })?.layoutColor ||
-        '#6b7280';
+        palette.edge;
 
       const edge: Edge = {
         id: `temp-${source}-${target}-${Date.now()}`,
@@ -82,7 +85,7 @@ export const useGraphConnections = ({
 
       return edge;
     },
-    [nodes]
+    [nodes, palette.edge]
   );
 
   const onConnectStart = useCallback(

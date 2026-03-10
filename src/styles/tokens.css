@@ -1,0 +1,173 @@
+@layer base {
+  :root {
+    --background: oklch(98% 0.01 240);
+    --foreground: oklch(20% 0.02 240);
+
+    --surface-offset-1: -2%;
+    --surface-offset-2: -4%;
+    --surface-offset-3: -6%;
+
+    --surface: oklch(96% 0.01 240);
+    --surface-2: oklch(93% 0.01 240);
+    --surface-3: oklch(90% 0.01 240);
+
+    /* BRAND (based on #8eabc2) */
+
+    --brand-primary: oklch(65% 0.10 240);
+    --brand-primary-foreground: oklch(98% 0.01 240);
+
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--brand-primary-foreground);
+
+    --secondary: oklch(92% 0.02 240);
+    --secondary-foreground: oklch(25% 0.02 240);
+
+    --muted: oklch(94% 0.01 240);
+    --muted-foreground: oklch(50% 0.02 240);
+
+    --border: oklch(88% 0.01 240);
+    --input: oklch(88% 0.01 240);
+
+    --ring: var(--brand-primary);
+    --focus-ring: oklch(from var(--primary) l c h / 0.5);
+
+    /* interactive states */
+
+    --interactive-hover: color-mix(
+      in oklch,
+      var(--primary) 35%,
+      var(--surface)
+    );
+
+    --interactive-active: color-mix(
+      in oklch,
+      var(--primary) 50%,
+      var(--surface)
+    );
+
+    --interactive-selected: color-mix(
+      in oklch,
+      var(--primary) 22%,
+      var(--surface)
+    );
+
+    --interactive-disabled-bg: var(--muted);
+    --interactive-disabled-fg: var(--muted-foreground);
+
+    /* semantic */
+
+    --success: oklch(65% 0.16 145);
+    --danger: oklch(62% 0.20 25);
+    --danger-foreground: oklch(45% 0.16 25);
+    --warning: oklch(80% 0.15 85);
+
+    /* charts */
+
+    --chart-1: oklch(65% 0.12 240);
+    --chart-2: oklch(70% 0.14 200);
+    --chart-3: oklch(70% 0.17 30);
+    --chart-4: oklch(68% 0.16 310);
+    --chart-5: oklch(72% 0.14 85);
+  }
+
+  .dark {
+    --background: oklch(17% 0.02 240);
+    --foreground: oklch(96% 0.01 240);
+
+    --surface-offset-1: 3%;
+    --surface-offset-2: 6%;
+    --surface-offset-3: 9%;
+
+    --surface: oklch(22% 0.02 240);
+    --surface-2: oklch(26% 0.02 240);
+    --surface-3: oklch(30% 0.02 240);
+
+    /* brand */
+
+    --brand-primary: oklch(72% 0.09 240);
+    --brand-primary-foreground: oklch(98% 0.01 240);
+
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--brand-primary-foreground);
+
+    --secondary: oklch(28% 0.02 240);
+    --secondary-foreground: oklch(95% 0.01 240);
+
+    --muted: oklch(28% 0.02 240);
+    --muted-foreground: oklch(70% 0.02 240);
+
+    --border: oklch(30% 0.02 240);
+    --input: oklch(30% 0.02 240);
+
+    --focus-ring: oklch(from var(--primary) l c h / 0.5);
+
+    /* interactive */
+
+    --interactive-hover: color-mix(
+      in oklch,
+      var(--primary) 40%,
+      var(--surface)
+    );
+
+    --interactive-active: color-mix(
+      in oklch,
+      var(--primary) 55%,
+      var(--surface)
+    );
+
+    --interactive-selected: color-mix(
+      in oklch,
+      var(--primary) 30%,
+      var(--surface)
+    );
+
+    --interactive-disabled-bg: var(--surface-2);
+
+    --interactive-disabled-fg: color-mix(
+      in oklch,
+      var(--foreground) 82%,
+      var(--surface)
+    );
+
+    /* semantic */
+
+    --success: oklch(70% 0.15 150);
+    --danger: oklch(65% 0.20 25);
+    --danger-foreground: oklch(78% 0.15 25);
+    --warning: oklch(82% 0.15 85);
+
+    /* charts */
+
+    --chart-1: oklch(72% 0.11 240);
+    --chart-2: oklch(74% 0.13 200);
+    --chart-3: oklch(75% 0.16 30);
+    --chart-4: oklch(73% 0.14 310);
+    --chart-5: oklch(76% 0.13 80);
+  }
+
+  @supports (color: oklch(from white l c h)) {
+    :root {
+      --surface: oklch(
+        from var(--background) calc(l + var(--surface-offset-1)) c h
+      );
+      --surface-2: oklch(
+        from var(--background) calc(l + var(--surface-offset-2)) c h
+      );
+      --surface-3: oklch(
+        from var(--background) calc(l + var(--surface-offset-3)) c h
+      );
+    }
+
+    .dark {
+      --surface: oklch(
+        from var(--background) calc(l + var(--surface-offset-1)) c h
+      );
+      --surface-2: oklch(
+        from var(--background) calc(l + var(--surface-offset-2)) c h
+      );
+      --surface-3: oklch(
+        from var(--background) calc(l + var(--surface-offset-3)) c h
+      );
+    }
+  }
+}

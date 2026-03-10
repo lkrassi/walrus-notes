@@ -40,16 +40,11 @@ export const ShareModal = memo(function ShareModal({
           <div
             className={cn(
               'mb-4 overflow-auto rounded-lg p-3',
-              'border-border dark:border-dark-border border',
-              'bg-gray-100 dark:bg-gray-800'
+              'border-border border',
+              'bg-surface-2'
             )}
           >
-            <p
-              className={cn(
-                'font-mono text-xs break-all',
-                'text-text dark:text-dark-text'
-              )}
-            >
+            <p className={cn('font-mono text-xs break-all', 'text-foreground')}>
               {generatedLink.fullUrl}
             </p>
           </div>
@@ -95,12 +90,7 @@ export const ShareModal = memo(function ShareModal({
     >
       {({ values, errors, touched, setFieldValue, isSubmitting }) => (
         <Form className={cn('space-y-6', 'p-6')}>
-          <h2
-            className={cn(
-              'mb-6 text-xl font-bold',
-              'text-text dark:text-dark-text'
-            )}
-          >
+          <h2 className={cn('mb-6 text-xl font-bold', 'text-foreground')}>
             {modalTitle}
           </h2>
 
@@ -108,7 +98,7 @@ export const ShareModal = memo(function ShareModal({
             <label
               className={cn(
                 'mb-3 block text-sm font-medium',
-                'text-text dark:text-dark-text'
+                'text-foreground'
               )}
             >
               {t('share:modal.permissions.label')}
@@ -120,11 +110,12 @@ export const ShareModal = memo(function ShareModal({
                   checked={values.canRead}
                   onChange={e => setFieldValue('canRead', e.target.checked)}
                   disabled={values.canWrite || values.canEdit}
-                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                  className={cn(
+                    'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+                    'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                  )}
                 />
-                <span
-                  className={cn('text-sm', 'text-text dark:text-dark-text')}
-                >
+                <span className={cn('text-sm', 'text-foreground')}>
                   {t('share:modal.permissions.read')}
                 </span>
               </label>
@@ -139,11 +130,12 @@ export const ShareModal = memo(function ShareModal({
                       setFieldValue('canRead', true);
                     }
                   }}
-                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                  className={cn(
+                    'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+                    'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                  )}
                 />
-                <span
-                  className={cn('text-sm', 'text-text dark:text-dark-text')}
-                >
+                <span className={cn('text-sm', 'text-foreground')}>
                   {t('share:modal.permissions.write')}
                 </span>
               </label>
@@ -158,11 +150,12 @@ export const ShareModal = memo(function ShareModal({
                       setFieldValue('canRead', true);
                     }
                   }}
-                  className={cn('h-4 w-4 cursor-pointer rounded')}
+                  className={cn(
+                    'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+                    'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                  )}
                 />
-                <span
-                  className={cn('text-sm', 'text-text dark:text-dark-text')}
-                >
+                <span className={cn('text-sm', 'text-foreground')}>
                   {t('share:modal.permissions.edit')}
                 </span>
               </label>
@@ -173,7 +166,7 @@ export const ShareModal = memo(function ShareModal({
             <label
               className={cn(
                 'mb-3 block text-sm font-medium',
-                'text-text dark:text-dark-text'
+                'text-foreground'
               )}
             >
               {t('share:modal.expiration.label')}
@@ -190,11 +183,12 @@ export const ShareModal = memo(function ShareModal({
                     onChange={e =>
                       setFieldValue('expirationOption', e.target.value)
                     }
-                    className={cn('h-4 w-4 cursor-pointer')}
+                    className={cn(
+                      'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
+                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                    )}
                   />
-                  <span
-                    className={cn('text-sm', 'text-text dark:text-dark-text')}
-                  >
+                  <span className={cn('text-sm', 'text-foreground')}>
                     {t('share:modal.expiration.options.fiveMinutes')}
                   </span>
                 </label>
@@ -208,11 +202,12 @@ export const ShareModal = memo(function ShareModal({
                     onChange={e =>
                       setFieldValue('expirationOption', e.target.value)
                     }
-                    className={cn('h-4 w-4 cursor-pointer')}
+                    className={cn(
+                      'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
+                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                    )}
                   />
-                  <span
-                    className={cn('text-sm', 'text-text dark:text-dark-text')}
-                  >
+                  <span className={cn('text-sm', 'text-foreground')}>
                     {t('share:modal.expiration.options.thirtyMinutes')}
                   </span>
                 </label>
@@ -226,11 +221,12 @@ export const ShareModal = memo(function ShareModal({
                     onChange={e =>
                       setFieldValue('expirationOption', e.target.value)
                     }
-                    className={cn('h-4 w-4 cursor-pointer')}
+                    className={cn(
+                      'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
+                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                    )}
                   />
-                  <span
-                    className={cn('text-sm', 'text-text dark:text-dark-text')}
-                  >
+                  <span className={cn('text-sm', 'text-foreground')}>
                     {t('share:modal.expiration.options.oneHour')}
                   </span>
                 </label>
@@ -244,11 +240,12 @@ export const ShareModal = memo(function ShareModal({
                     onChange={e =>
                       setFieldValue('expirationOption', e.target.value)
                     }
-                    className={cn('h-4 w-4 cursor-pointer')}
+                    className={cn(
+                      'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
+                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+                    )}
                   />
-                  <span
-                    className={cn('text-sm', 'text-text dark:text-dark-text')}
-                  >
+                  <span className={cn('text-sm', 'text-foreground')}>
                     {t('share:modal.expiration.options.custom')}
                   </span>
                 </label>

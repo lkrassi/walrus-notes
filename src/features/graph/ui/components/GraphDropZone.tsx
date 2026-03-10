@@ -100,9 +100,7 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
         containerRef.current = node;
       }}
       className={`relative flex-1 ${
-        isDraggingEdge
-          ? 'cursor-no-drop bg-blue-50 ring-2 ring-blue-400 dark:bg-blue-900/20'
-          : ''
+        isDraggingEdge ? 'bg-surface-2 ring-ring cursor-no-drop ring-2' : ''
       } transition-all duration-200`}
       onDrop={e => {
         onDrop(e as unknown as DragEvent);
@@ -123,8 +121,8 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
           style={{
             position: 'fixed',
             pointerEvents: 'none',
-            border: '1px solid rgba(13,148,136,0.6)',
-            background: 'rgba(13,148,136,0.08)',
+            border: '1px solid var(--primary)',
+            background: 'color-mix(in oklch, var(--primary) 12%, transparent)',
             left: rectStyle.left,
             top: rectStyle.top,
             width: rectStyle.width,

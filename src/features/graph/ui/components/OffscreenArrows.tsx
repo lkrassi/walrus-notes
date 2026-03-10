@@ -1,6 +1,7 @@
 import { type FC } from 'react';
 import type { Node } from 'reactflow';
 import { useOffscreenArrows } from '../../lib/hooks';
+import { graphTheme } from '../../lib/utils';
 
 interface OffscreenArrowsProps {
   nodes: Node[];
@@ -15,6 +16,8 @@ export const OffscreenArrows: FC<OffscreenArrowsProps> = ({
   maxArrows = 100,
   isMain = false,
 }) => {
+  const palette = graphTheme();
+
   const { arrows } = useOffscreenArrows({
     nodes,
     minDistance,
@@ -61,7 +64,7 @@ export const OffscreenArrows: FC<OffscreenArrowsProps> = ({
           >
             <path
               d='M2 12 L18 12 M12 6 L18 12 L12 18'
-              stroke={a.color ?? 'rgba(255,80,80,0.95)'}
+              stroke={a.color ?? palette.danger}
               strokeWidth='1.8'
               strokeLinecap='round'
               strokeLinejoin='round'

@@ -120,7 +120,7 @@ export const Settings: FC = () => {
                     className={cn(
                       'flex h-16 w-16 items-center justify-center overflow-hidden rounded-full',
                       'max-sm:h-12 max-sm:w-12',
-                      'cursor-pointer transition-opacity hover:opacity-80',
+                      'focus-visible:ring-ring cursor-pointer transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:outline-none',
                       { 'cursor-default hover:opacity-100': !profile?.imgUrl }
                     )}
                     onClick={
@@ -166,9 +166,9 @@ export const Settings: FC = () => {
                     className={cn(
                       'absolute right-0 bottom-0',
                       'h-6 w-6 rounded-full',
-                      'bg-primary dark:bg-dark-primary',
-                      'flex items-center justify-center text-white',
-                      'transition-opacity hover:opacity-90'
+                      'bg-primary text-primary-foreground',
+                      'flex items-center justify-center',
+                      'focus-visible:ring-ring transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:outline-none'
                     )}
                     title={t('profile:changePhoto')}
                     aria-label={t('profile:changePhoto')}

@@ -56,9 +56,7 @@ export const MainContentState = ({ variant }: MainContentStateProps) => {
         >
           {t('main:selectFileOrFolder')}
         </h3>
-        <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
-          {t('main:selectItemDescription')}
-        </p>
+        <p className={cn('muted-text')}>{t('main:selectItemDescription')}</p>
       </div>
     </div>
   );

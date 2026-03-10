@@ -1,0 +1,141 @@
+@import '../shared/assets/fonts/fonts.css';
+@import 'tailwindcss';
+@import '../app/styles/components.css';
+@import '../app/styles/scrollbar.css';
+@import '../app/styles/markdown.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--focus-ring);
+  --color-interactive-hover: var(--interactive-hover);
+  --color-interactive-active: var(--interactive-active);
+  --color-interactive-selected: var(--interactive-selected);
+  --color-interactive-disabled-bg: var(--interactive-disabled-bg);
+  --color-interactive-disabled-fg: var(--interactive-disabled-fg);
+
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-warning: var(--warning);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-bg: var(--background);
+  --color-text: var(--foreground);
+  --color-primary-dark: var(--primary);
+  --color-primary-gradient: var(--primary);
+  --color-border-focus: var(--ring);
+  --color-btn: var(--primary);
+  --color-btn-cancel: var(--danger);
+  --color-btn-disabled: var(--muted);
+  --color-btn-submit: var(--success);
+
+  --color-dark-bg: var(--background);
+  --color-dark-text: var(--foreground);
+  --color-dark-primary: var(--primary);
+  --color-dark-primary-dark: var(--primary);
+  --color-dark-primary-gradient: var(--primary);
+  --color-dark-secondary: var(--secondary-foreground);
+  --color-dark-border: var(--border);
+  --color-dark-input-placeholder: var(--muted-foreground);
+  --color-dark-border-focus: var(--ring);
+  --color-dark-btn: var(--primary);
+  --color-dark-btn-cancel: var(--danger);
+  --color-dark-btn-disabled: var(--muted);
+  --color-dark-btn-submit: var(--success);
+  --color-input-placeholder: var(--muted-foreground);
+}
+
+html {
+  font-display: swap;
+}
+
+body {
+  font-display: swap;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  @apply bg-primary/30 text-foreground;
+}
+
+input::selection,
+textarea::selection {
+  @apply bg-primary/30 text-foreground;
+}
+
+a,
+button,
+input,
+textarea {
+  @apply outline-0;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+h1 {
+  @apply text-xl leading-tight font-bold max-sm:text-xl md:text-xl lg:text-2xl;
+}
+
+h2 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h3 {
+  @apply text-xl leading-snug font-semibold;
+}
+
+h4 {
+  @apply text-xl leading-relaxed font-medium max-sm:text-base md:text-2xl lg:text-3xl;
+}
+
+h5 {
+  @apply text-lg leading-relaxed font-medium max-sm:text-base md:text-xl lg:text-2xl;
+}
+
+h6 {
+  @apply text-base leading-relaxed font-medium max-sm:text-sm md:text-lg lg:text-xl;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--focus-ring);
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+[role='button']:focus:not(:focus-visible) {
+  outline: none;
+}

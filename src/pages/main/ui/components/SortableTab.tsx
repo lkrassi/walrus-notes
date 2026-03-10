@@ -69,9 +69,7 @@ export const SortableTab = ({
       <div
         className={cn(
           'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden',
-          isActive
-            ? 'dark:text-dark-text text-white'
-            : 'text-text dark:text-dark-text'
+          isActive ? 'text-primary-foreground' : 'text-foreground'
         )}
         onClick={handleContentClick}
         onMouseDown={handleMiddleClick}
@@ -95,12 +93,14 @@ export const SortableTab = ({
         }}
         className={cn(
           'relative z-10 ml-2',
-          isActive ? 'text-white' : 'text-text dark:text-dark-text'
+          isActive ? 'text-primary-foreground' : 'text-foreground'
         )}
       >
         <X
           className={cn(
-            isActive ? 'hover:bg-white hover:text-black' : 'hover:bg-primary',
+            isActive
+              ? 'hover:bg-interactive-hover hover:text-primary-foreground'
+              : 'hover:bg-interactive-hover hover:text-foreground',
             'h-3 w-3 rounded-xl'
           )}
         />

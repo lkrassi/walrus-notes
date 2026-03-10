@@ -97,10 +97,6 @@ h6 {
   --color-dark-btn-submit: #22c55e;
 }
 
-.ewq {
-  color: #6b6796;
-}
-
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid black;

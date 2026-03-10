@@ -34,7 +34,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       py-2
       text-base
       focus:outline-none
-      disabled:opacity-50
+      disabled:bg-interactive-disabled-bg
+      disabled:text-interactive-disabled-fg
+      disabled:opacity-70
       disabled:cursor-not-allowed
       resize-none
       w-full
@@ -44,23 +46,32 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     switch (variant) {
       case 'default':
         colorClasses = `
-          text-text dark:text-dark-text
-          placeholder-secondary dark:placeholder-dark-secondary
-          }
+          border border-border
+          bg-surface
+          text-foreground
+          placeholder:text-muted-foreground
+          focus:ring-2
+          focus:ring-ring
         `;
         break;
       case 'error':
         colorClasses = `
-          text-text dark:text-dark-text
-          placeholder-red-400 dark:placeholder-red-300
-          }
+          border border-danger
+          bg-surface
+          text-foreground
+          placeholder:text-danger
+          focus:ring-2
+          focus:ring-danger
         `;
         break;
       default:
         colorClasses = `
-          text-text dark:text-dark-text
-          placeholder-secondary dark:placeholder-dark-secondary
-          }
+          border border-border
+          bg-surface
+          text-foreground
+          placeholder:text-muted-foreground
+          focus:ring-2
+          focus:ring-ring
         `;
     }
 

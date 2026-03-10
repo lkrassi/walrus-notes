@@ -2,7 +2,7 @@ import { useDeleteNoteLinkMutation } from '@/entities';
 import { cn } from '@/shared/lib/core';
 import { memo, useCallback } from 'react';
 import { BaseEdge, useReactFlow, type EdgeProps } from 'reactflow';
-import { EDGE_COLORS, EDGE_INTERACTION } from './constants';
+import { EDGE_INTERACTION, getEdgeColors } from './constants';
 import { EdgeDeleteButton } from './EdgeDeleteButton';
 import type { MultiColorStepEdgeData } from './types';
 import { useEdgeDrag } from './useEdgeDrag';
@@ -25,10 +25,11 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     data,
   } = props;
   const { setEdges } = useReactFlow();
+  const edgeColors = getEdgeColors();
 
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
 
-  const strokeColor = data?.edgeColor || EDGE_COLORS.STROKE;
+  const strokeColor = data?.edgeColor || edgeColors.STROKE;
 
   const { getNodeFlowInfo, chooseClosestAnchor, findNodeUnderCursor } =
     useEdgeGeometry(source);
@@ -89,7 +90,7 @@ export const MultiColorEdge = memo(function MultiColorEdge(
 
   const getDragStrokeColor = () => {
     if (currentTargetNode) {
-      return isConnectionExists() ? EDGE_COLORS.INVALID : EDGE_COLORS.VALID;
+      return isConnectionExists() ? edgeColors.INVALID : edgeColors.VALID;
     }
     return strokeColor;
   };

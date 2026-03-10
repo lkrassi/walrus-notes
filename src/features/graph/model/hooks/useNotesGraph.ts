@@ -6,12 +6,15 @@ import {
 import type { Note } from '@/entities/note';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 interface UseNotesGraphProps {
   layoutId: string;
 }
 
 export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
+  const palette = graphTheme();
+
   const { data: posedNotesResponse, isLoading } = useGetPosedNotesQuery({
     layoutId,
   });
@@ -27,10 +30,10 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const layoutsMap = useMemo(() => {
     const m = new Map<string, string>();
     for (const l of layouts) {
-      if (l && l.id) m.set(l.id, l.color || '#6b7280');
+      if (l && l.id) m.set(l.id, l.color || palette.edge);
     }
     return m;
-  }, [layouts]);
+  }, [layouts, palette.edge]);
 
   const notesWithPositions = useMemo(
     () =>
@@ -80,7 +83,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
           if (!edgeExists) {
             const sourceColor =
-              layoutsMap.get(sourceNote.layoutId || '') || '#6b7280';
+              layoutsMap.get(sourceNote.layoutId || '') || palette.edge;
             const newEdge: Edge = {
               id: `edge-${sourceNote.id}-${targetNoteId}`,
               source: sourceNote.id,
@@ -136,7 +139,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
     });
 
     return edges;
-  }, [notesWithPositions, layoutsMap]);
+  }, [notesWithPositions, layoutsMap, palette.edge]);
 
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {

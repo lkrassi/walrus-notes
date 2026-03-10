@@ -5,8 +5,9 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
 import '@/shared/config';
-import './app/styles/App.css';
-import './app/styles/markdown.css';
+import '@/styles/base.css';
+import '@/styles/tokens.css';
+import '@/styles/theme.css';
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

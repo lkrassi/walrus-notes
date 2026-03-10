@@ -4,6 +4,7 @@ import { useIsMobile } from '@/shared/lib/react/hooks';
 import { motion } from 'framer-motion';
 import { memo, useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 interface NoteNodeProps {
   data: {
@@ -18,7 +19,8 @@ interface NoteNodeProps {
 
 export const NoteNodeComponent = memo(
   function NoteNodeComponent({ data, selected: _selected }: NoteNodeProps) {
-    const resolvedColor = data.layoutColor ?? '#6b7280';
+    const palette = graphTheme();
+    const resolvedColor = data.layoutColor ?? palette.edge;
     const isMobile = useIsMobile();
 
     const [isDragging, setIsDragging] = useState(false);
@@ -34,7 +36,7 @@ export const NoteNodeComponent = memo(
     const handleSize = isMobile ? 20 : 15;
     const handleStyle = {
       background: resolvedColor,
-      border: '2px solid white',
+      border: `2px solid ${palette.surface}`,
       width: handleSize,
       height: handleSize,
       cursor: 'crosshair',
@@ -100,10 +102,8 @@ export const NoteNodeComponent = memo(
           'rounded-xl',
           'p-2',
           'text-left',
-          'bg-white',
-          'text-black',
-          'dark:bg-gray-800',
-          'dark:text-white',
+          'bg-surface',
+          'text-foreground',
           'border-2'
         )}
         style={{

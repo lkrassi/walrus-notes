@@ -7,7 +7,7 @@ import {
   useEffect,
   useRef,
   useState,
-  type MouseEvent,
+  type KeyboardEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
@@ -41,7 +41,7 @@ export const Dropdown = ({
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 
-  const handleToggle = (_event: MouseEvent<HTMLElement>) => {
+  const handleToggle = () => {
     if (disabled) return;
 
     const newState = !isOpen;
@@ -50,6 +50,20 @@ export const Dropdown = ({
       setInternalIsOpen(newState);
     }
     onOpenChange?.(newState);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleToggle();
+    }
+
+    if (event.key === 'Escape' && isOpen) {
+      event.preventDefault();
+      handleClose();
+    }
   };
 
   const handleClose = useCallback(() => {
@@ -114,7 +128,16 @@ export const Dropdown = ({
     <div ref={rootRef} className={cn('relative', className)}>
       <div
         onClick={handleToggle}
-        className={cn('cursor-pointer', disabled ? 'cursor-not-allowed' : '')}
+        onKeyDown={handleKeyDown}
+        role='button'
+        tabIndex={disabled ? -1 : 0}
+        aria-haspopup='menu'
+        aria-expanded={isOpen}
+        className={cn(
+          'focus-visible:ring-ring rounded-md outline-none focus-visible:ring-2',
+          'cursor-pointer',
+          disabled ? 'cursor-not-allowed opacity-60' : ''
+        )}
       >
         {renderTrigger()}
       </div>
@@ -123,7 +146,7 @@ export const Dropdown = ({
         <div
           className={cn(
             'absolute z-50 rounded-lg shadow-lg backdrop-blur-sm',
-            'border-border dark:border-dark-border bg-bg/95 dark:bg-dark-bg/95 border',
+            'border-border bg-surface/95 border',
             getPositionClasses(),
             contentClassName
           )}
@@ -172,7 +195,7 @@ export const DropdownTrigger = ({
             className={cn(
               'h-3',
               'w-3',
-              'text-secondary dark:text-dark-secondary',
+              'text-muted-foreground',
               'transition-transform',
               'duration-200',
               isOpen ? 'rotate-0' : '-rotate-90'

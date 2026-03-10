@@ -459,12 +459,62 @@ export default [
   },
 
   {
+    files: [
+      'src/features/graph/ui/components/GraphBackground.tsx',
+      'src/features/graph/ui/components/GraphDropZone.tsx',
+      'src/features/graph/ui/components/GraphMiniMap.tsx',
+      'src/features/graph/ui/components/NoteNode.tsx',
+      'src/features/graph/ui/components/OffscreenArrows.tsx',
+      'src/features/graph/ui/components/multi-color-edge/**/*.{ts,tsx}',
+      'src/features/graph/lib/hooks/useOffscreenArrows.ts',
+      'src/features/graph/model/hooks/useNotesGraph.ts',
+      'src/features/graph/model/hooks/useGraphConnections.ts',
+      'src/features/graph/model/hooks/useGraphConnectionHandlers.ts',
+      'src/app/providers/modal/Modal.tsx',
+      'src/pages/main/ui/components/{Tabs,SortableTab}.tsx',
+      'src/widgets/ui/components/sidebar/Sidebar.tsx',
+      'src/widgets/ui/components/header/MobileMenu.tsx',
+      'src/widgets/ui/components/fileTree/SearchInput.tsx',
+      'src/features/profile/ui/components/ProfileButton.tsx',
+      'src/features/notes/ui/components/HelpSection.tsx',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/#[0-9a-fA-F]{3,8}|rgba\\(/i]',
+          message:
+            'Raw colors are forbidden in migrated UI zones. Use semantic tokens or graphTheme().',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}|rgba\\(/i]',
+          message:
+            'Raw colors are forbidden in migrated UI zones. Use semantic tokens or graphTheme().',
+        },
+        {
+          selector:
+            'Literal[value=/\\b(?:bg|text|border)-(?:white|black)\\b|\\b(?:bg|text|border)-gray-(?:50|100|200|300|400|500|600|700|800|900|950)\\b|\\bgray-(?:50|100|200|300|400|500|600|700|800|900|950)\\b/i]',
+          message:
+            'Use semantic color utilities (background/foreground/surface/border/muted/primary) instead of white/black/gray classes.',
+        },
+        {
+          selector:
+            'TemplateElement[value.raw=/\\b(?:bg|text|border)-(?:white|black)\\b|\\b(?:bg|text|border)-gray-(?:50|100|200|300|400|500|600|700|800|900|950)\\b|\\bgray-(?:50|100|200|300|400|500|600|700|800|900|950)\\b/i]',
+          message:
+            'Use semantic color utilities (background/foreground/surface/border/muted/primary) instead of white/black/gray classes.',
+        },
+      ],
+    },
+  },
+
+  {
     ignores: [
       'dist/**',
       'dist-server/**',
       'node_modules/**',
       'coverage/**',
       '*.config.js',
+      '*.config.mjs',
     ],
   },
 ];

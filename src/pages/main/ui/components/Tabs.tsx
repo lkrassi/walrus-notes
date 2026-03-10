@@ -54,7 +54,7 @@ export const Tabs = memo(function Tabs({
   return (
     <div
       className={cn(
-        'border-border dark:border-dark-border dark:bg-dark-bg dark:text-dark-text relative flex bg-white shadow-sm'
+        'border-border bg-surface text-foreground relative flex border-b shadow-sm'
       )}
     >
       <DndContext
@@ -90,10 +90,10 @@ export const Tabs = memo(function Tabs({
           {activeTab ? (
             <div
               className={cn(
-                'border-border dark:border-dark-border relative flex max-w-50 min-w-30 cursor-grab items-center rounded-t-lg border-r px-4 py-2 whitespace-nowrap shadow-lg select-none',
+                'border-border relative flex max-w-50 min-w-30 cursor-grab items-center rounded-t-lg border-r px-4 py-2 whitespace-nowrap shadow-lg select-none',
                 activeTab.isActive
-                  ? 'bg-primary text-white'
-                  : 'text-text dark:text-dark-text bg-white dark:bg-gray-800'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-interactive-selected text-foreground'
               )}
             >
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>

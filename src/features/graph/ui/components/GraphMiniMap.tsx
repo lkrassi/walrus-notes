@@ -1,31 +1,33 @@
 import { memo, useCallback } from 'react';
 import { MiniMap, type Node } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 export const GraphMiniMap = memo(function GraphMiniMap() {
-  const nodeColor = useCallback((node: Node) => {
-    try {
-      const color = (node?.data as { layoutColor?: string } | undefined)
-        ?.layoutColor;
-      return color ?? '#000000';
-    } catch (_e) {
-      return '#000000';
-    }
-  }, []);
+  const palette = graphTheme();
+
+  const nodeColor = useCallback(
+    (node: Node) => {
+      try {
+        const color = (node?.data as { layoutColor?: string } | undefined)
+          ?.layoutColor;
+        return color ?? palette.node;
+      } catch (_e) {
+        return palette.node;
+      }
+    },
+    [palette.node]
+  );
 
   return (
     <MiniMap
       nodeColor={nodeColor}
-      maskColor='rgba(0, 0, 0, 0.1)'
-      nodeStrokeColor='#000'
+      maskColor={palette.hover}
+      nodeStrokeColor={palette.text}
       nodeBorderRadius={2}
       nodeStrokeWidth={1}
-      maskStrokeColor='rgba(0, 0, 0, 0.5)'
+      maskStrokeColor={palette.edge}
       maskStrokeWidth={2}
       position='bottom-right'
-      style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        border: '1px solid #e5e7eb',
-      }}
     />
   );
 });

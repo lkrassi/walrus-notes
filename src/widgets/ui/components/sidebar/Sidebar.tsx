@@ -96,7 +96,7 @@ const SidebarComponent = (
           className={cn(
             'fixed',
             'inset-0',
-            'bg-black/20',
+            'bg-foreground/20',
             'backdrop-blur-sm',
             'md:hidden',
             'z-90'
@@ -107,7 +107,7 @@ const SidebarComponent = (
 
       <aside
         className={cn(
-          'text-text',
+          'text-foreground',
           'border-border',
           'fixed',
           'top-0',
@@ -116,14 +116,11 @@ const SidebarComponent = (
           'flex',
           'flex-col',
           'border-r',
-          'bg-white',
+          'bg-surface',
           'transition-transform',
           'duration-300',
           'ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
-          'dark:bg-dark-bg',
-          'dark:border-dark-border',
-          'dark:text-dark-text',
           'md:relative',
           'md:flex',
           'md:translate-x-0',
@@ -134,7 +131,6 @@ const SidebarComponent = (
         <div
           className={cn(
             'border-border',
-            'dark:border-dark-border',
             'border-b',
             'pt-5',
             'pb-4',
@@ -169,8 +165,7 @@ const SidebarComponent = (
               <div className={cn('flex', 'items-baseline', 'gap-1')}>
                 <h1
                   className={cn(
-                    'text-text',
-                    'dark:text-dark-text',
+                    'text-foreground',
                     'text-base',
                     'font-bold',
                     'sm:text-xl',
@@ -203,10 +198,8 @@ const SidebarComponent = (
               title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
               className={cn(
-                'text-text',
+                'text-foreground',
                 'hover:text-primary',
-                'dark:text-dark-text',
-                'dark:hover:text-primary',
                 'rounded',
                 'p-1'
               )}
@@ -230,20 +223,12 @@ const SidebarComponent = (
           />
         </div>
 
-        <div
-          className={cn(
-            'border-t',
-            'border-border',
-            'dark:border-dark-border',
-            'p-4',
-            'mt-auto'
-          )}
-        >
+        <div className={cn('border-t', 'border-border', 'p-4', 'mt-auto')}>
           <Link
             to='/dashboard'
             className={cn(
-              'border-border dark:border-dark-border mb-3 flex items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
-              'text-text dark:text-dark-text hover:bg-gray-50 dark:hover:bg-gray-800'
+              'border-border mb-3 flex items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
+              'text-foreground hover:bg-surface-2'
             )}
           >
             <ShieldCheck className={cn('h-4 w-4')} />
@@ -266,8 +251,7 @@ const SidebarComponent = (
               'h-full',
               'w-2',
               'cursor-col-resize',
-              'hover:bg-gray-100',
-              'dark:hover:bg-gray-800'
+              'hover:bg-surface-2'
             )}
           />
         )}

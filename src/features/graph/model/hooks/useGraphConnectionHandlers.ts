@@ -10,6 +10,7 @@ import {
 } from '@/entities/graph';
 import { useCallback, useState, type RefObject } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
+import { graphTheme } from '../../lib/utils';
 
 type GraphHistory = ReturnType<typeof useGraphHistory>;
 
@@ -39,6 +40,7 @@ export const useGraphConnectionHandlers = ({
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [isDraggingEdge, setIsDraggingEdge] = useState(false);
+  const palette = graphTheme();
 
   const onConnect = useCallback(
     async (connection: Connection) => {
@@ -51,7 +53,7 @@ export const useGraphConnectionHandlers = ({
         target: target,
         type: 'multiColor' as const,
         data: {
-          edgeColor: '#6b7280',
+          edgeColor: palette.edge,
         },
       };
 
@@ -91,6 +93,7 @@ export const useGraphConnectionHandlers = ({
       setEdges,
       onConnectOriginal,
       graphHistory,
+      palette.edge,
     ]
   );
 
@@ -145,7 +148,7 @@ export const useGraphConnectionHandlers = ({
                   const sourceNode = nodes.find(n => n.id === source);
                   const edgeColor =
                     (sourceNode?.data as { layoutColor?: string })
-                      ?.layoutColor || '#6b7280';
+                      ?.layoutColor || palette.edge;
 
                   const newEdge = {
                     id: `edge-${source}-${newTarget}`,
@@ -207,6 +210,7 @@ export const useGraphConnectionHandlers = ({
       edges,
       graphHistory,
       isProcessingRef,
+      palette.edge,
     ]
   );
 

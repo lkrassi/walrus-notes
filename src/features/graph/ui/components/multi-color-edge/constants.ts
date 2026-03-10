@@ -1,9 +1,16 @@
-export const EDGE_COLORS = {
-  STROKE: '#6b7280',
-  VALID: '#10b981',
-  INVALID: '#ef4444',
-  DELETE_BUTTON: '#ff6b6b',
-} as const;
+import { graphTheme } from '../../../lib/utils';
+
+export const getEdgeColors = () => {
+  const palette = graphTheme();
+
+  return {
+    STROKE: palette.edge,
+    VALID: palette.success,
+    INVALID: palette.danger,
+    DELETE_BUTTON: palette.danger,
+    DELETE_BUTTON_FILL: palette.surface,
+  } as const;
+};
 
 export const NODE_DEFAULTS = {
   WIDTH: 160,

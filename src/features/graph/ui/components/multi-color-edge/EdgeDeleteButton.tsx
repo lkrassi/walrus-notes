@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/core';
 import { memo } from 'react';
-import { EDGE_COLORS, EDGE_INTERACTION } from './constants';
+import { EDGE_INTERACTION, getEdgeColors } from './constants';
 
 interface EdgeDeleteButtonProps {
   sourceX: number;
@@ -19,14 +19,16 @@ export const EdgeDeleteButton = memo(function EdgeDeleteButton({
   onMouseDown,
   onClick,
 }: EdgeDeleteButtonProps) {
+  const edgeColors = getEdgeColors();
+
   return (
     <g
       transform={`translate(${(sourceX + targetX) / 2}, ${(sourceY + targetY) / 2})`}
     >
       <circle
         r={EDGE_INTERACTION.DELETE_BUTTON_RADIUS}
-        fill='white'
-        stroke={EDGE_COLORS.DELETE_BUTTON}
+        fill={edgeColors.DELETE_BUTTON_FILL}
+        stroke={edgeColors.DELETE_BUTTON}
         strokeWidth={EDGE_INTERACTION.DELETE_BUTTON_STROKE_WIDTH}
         className={cn(
           'cursor-grab opacity-0 transition-opacity duration-200 hover:opacity-100'
@@ -41,7 +43,7 @@ export const EdgeDeleteButton = memo(function EdgeDeleteButton({
         textAnchor='middle'
         fontSize='10'
         fontWeight='bold'
-        fill={EDGE_COLORS.DELETE_BUTTON}
+        fill={edgeColors.DELETE_BUTTON}
         className={cn(
           'pointer-events-none opacity-0 transition-opacity duration-200 hover:opacity-100'
         )}

@@ -32,14 +32,13 @@ export const SearchInput = ({
         'rounded-md',
         'text-sm',
         'w-full',
-        'bg-gray-50',
-        'dark:bg-gray-800',
+        'bg-surface-2',
         'border',
-        'border-transparent',
+        'border-border',
         className || ''
       )}
     >
-      <Search className={cn('h-8', 'w-4', 'text-gray-400')} />
+      <Search className={cn('h-8', 'w-4', 'text-muted-foreground')} />
       <input
         value={value}
         onChange={e => setValue(e.target.value)}
@@ -49,14 +48,17 @@ export const SearchInput = ({
           'bg-transparent',
           'outline-none',
           'text-sm',
-          'text-text',
-          'dark:text-dark-text'
+          'text-foreground'
         )}
       />
       {value && (
         <button
           onClick={() => setValue('')}
-          className={cn('text-xl', 'text-gray-400', 'hover:text-gray-600')}
+          className={cn(
+            'text-xl',
+            'text-muted-foreground',
+            'hover:text-foreground'
+          )}
           title={t ? t('fileTree:clearSearch') : 'Очистить'}
         >
           ×

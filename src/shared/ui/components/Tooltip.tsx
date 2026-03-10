@@ -38,8 +38,7 @@ export const Tooltip: FC<TooltipProps> = ({
         role='tooltip'
         className={cn(
           'pointer-events-none absolute z-200 rounded-md px-2 py-1 text-xs whitespace-nowrap',
-          'bg-text text-bg opacity-0 shadow-md transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100',
-          'dark:bg-dark-text dark:text-dark-bg',
+          'bg-foreground text-background border-border border opacity-0 shadow-md transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100',
           placementClasses[placement]
         )}
       >

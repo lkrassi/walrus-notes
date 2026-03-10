@@ -1,3 +1,8 @@
+export {
+  getBrandPrimary,
+  resetBrandPrimary,
+  setBrandPrimary,
+} from './brandTheme';
 export { cn } from './cn';
 export { getUserColor, hexToRgba } from './colorUtils';
 export type { WSEvent, WSEventName } from './ws';

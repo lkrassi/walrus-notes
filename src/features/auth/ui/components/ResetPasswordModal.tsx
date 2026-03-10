@@ -204,7 +204,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
                     <button
                       type='button'
                       onClick={() => setShowPassword(!showPassword)}
-                      className='text-secondary dark:text-dark-secondary absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 hover:bg-black/5 dark:hover:bg-white/10'
+                      className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
                       aria-label={
                         showPassword
                           ? t('common:password.hide')
@@ -215,7 +215,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <p className='min-h-5 text-xs text-red-500'>
+                  <p className='text-danger-foreground min-h-5 text-xs'>
                     {meta.touched && meta.error ? meta.error : ' '}
                   </p>
                 </div>

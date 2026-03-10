@@ -42,7 +42,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   return (
     <article
       className={cn(
-        'border-border dark:border-dark-border dark:bg-dark-bg/60 rounded-xl border bg-white/80 p-4 backdrop-blur-sm'
+        'border-border bg-surface rounded-xl border p-4 backdrop-blur-sm'
       )}
     >
       <div className={cn('mb-3 flex items-center justify-between gap-2')}>
@@ -59,7 +59,8 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
           disabled={disabledDelete}
           className={cn(
             'inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs',
-            'text-red-600 hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/20'
+            'text-danger hover:bg-danger/10 disabled:opacity-50',
+            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
           )}
         >
           <Trash2 className={cn('h-3.5 w-3.5')} />
@@ -67,8 +68,8 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
         </button>
       </div>
 
-      <div className={cn('mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40')}>
-        <p className={cn('text-secondary dark:text-dark-secondary text-xs')}>
+      <div className={cn('bg-surface-2 mb-3 rounded-lg p-3')}>
+        <p className={cn('text-muted-foreground text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
         <p className={cn('mt-1 text-sm font-medium break-all')}>{targetName}</p>
@@ -81,7 +82,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
       <div className={cn('grid grid-cols-1 gap-2 sm:grid-cols-3')}>
         <label
           className={cn(
-            'border-border dark:border-dark-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.read')}</span>
@@ -91,12 +92,16 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
             onChange={event =>
               onChange('canRead', event.target.checked, permission)
             }
+            className={cn(
+              'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+            )}
           />
         </label>
 
         <label
           className={cn(
-            'border-border dark:border-dark-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.write')}</span>
@@ -106,12 +111,16 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
             onChange={event =>
               onChange('canWrite', event.target.checked, permission)
             }
+            className={cn(
+              'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+            )}
           />
         </label>
 
         <label
           className={cn(
-            'border-border dark:border-dark-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.edit')}</span>
@@ -121,6 +130,10 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
             onChange={event =>
               onChange('canEdit', event.target.checked, permission)
             }
+            className={cn(
+              'border-border text-primary accent-primary h-4 w-4 cursor-pointer rounded',
+              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
+            )}
           />
         </label>
       </div>
@@ -131,8 +144,9 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
           onClick={() => onUpdate(permission.id, draft)}
           disabled={disabledUpdate}
           className={cn(
-            'bg-primary rounded-md px-3 py-1.5 text-sm font-medium text-white',
-            'hover:bg-primary/90 disabled:opacity-60'
+            'bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm font-medium',
+            'hover:bg-primary/90 disabled:opacity-60',
+            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
           )}
         >
           {t('share:permissionsDashboard.actions.update')}

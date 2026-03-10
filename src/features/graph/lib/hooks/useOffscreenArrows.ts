@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Node } from 'reactflow';
 import { useReactFlow } from 'reactflow';
+import { graphTheme } from '../utils';
 
 export type Arrow = {
   id: string;
@@ -63,12 +64,13 @@ function calculateArrowsForClusters(
 ): Arrow[] {
   const arrows: Arrow[] = [];
   const clusters = new Map<string, { nodes: Node[]; color: string }>();
+  const defaultColor = graphTheme().edge;
 
   for (const n of nodes) {
     const note = n.data?.note;
     const layoutId = note?.layoutId || 'default';
     const color =
-      (n.data as { layoutColor?: string })?.layoutColor || '#6b7280';
+      (n.data as { layoutColor?: string })?.layoutColor || defaultColor;
 
     if (!clusters.has(layoutId)) {
       clusters.set(layoutId, { nodes: [], color });
@@ -139,6 +141,7 @@ function calculateArrowsForNodes(
   maxArrows: number
 ): Arrow[] {
   const arrows: Arrow[] = [];
+  const defaultColor = graphTheme().edge;
 
   for (const n of nodes) {
     const nx = (n.position?.x ?? 0) * zoom + panX;
@@ -156,7 +159,7 @@ function calculateArrowsForNodes(
 
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
     const color =
-      (n.data as { layoutColor?: string })?.layoutColor || '#6b7280';
+      (n.data as { layoutColor?: string })?.layoutColor || defaultColor;
 
     arrows.push({
       id: n.id,

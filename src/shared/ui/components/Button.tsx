@@ -8,7 +8,17 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export type ButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
+type SemanticButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'danger'
+  | 'success'
+  | 'outline'
+  | 'ghost';
+type LegacyButtonVariant = 'default' | 'disabled' | 'escape' | 'submit';
+export type ResolvedButtonVariant = SemanticButtonVariant | 'disabled';
+
+export type ButtonVariant = SemanticButtonVariant | LegacyButtonVariant;
 
 export type ButtonProps = {
   children: ReactNode;
@@ -21,32 +31,49 @@ export type ButtonProps = {
   title?: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
 
-const variantClasses: Record<ButtonVariant, string> = {
-  default: cn(
-    'bg-btn',
-    'text-white',
+const variantClasses: Record<ResolvedButtonVariant, string> = {
+  primary: cn(
+    'bg-primary',
+    'text-primary-foreground',
     'hover:brightness-105',
-    'dark:bg-dark-btn',
-    'dark:text-white'
+    'active:brightness-95'
+  ),
+  secondary: cn(
+    'bg-secondary',
+    'text-secondary-foreground',
+    'hover:brightness-95',
+    'active:brightness-90'
+  ),
+  danger: cn('bg-danger', 'text-white', 'hover:brightness-105'),
+  success: cn('bg-success', 'text-white', 'hover:brightness-105'),
+  outline: cn(
+    'border',
+    'border-border',
+    'bg-background',
+    'text-foreground',
+    'hover:bg-interactive-hover',
+    'active:bg-interactive-active'
+  ),
+  ghost: cn(
+    'bg-transparent',
+    'text-foreground',
+    'hover:bg-interactive-hover',
+    'active:bg-interactive-active'
   ),
   disabled: cn(
-    'bg-btn-disabled',
-    'text-text/60',
-    'dark:bg-dark-btn-disabled',
-    'dark:text-text/20'
+    'border',
+    'border-border',
+    'bg-interactive-disabled-bg',
+    'text-interactive-disabled-fg',
+    'cursor-not-allowed'
   ),
-  escape: cn(
-    'bg-btn-cancel',
-    'text-white',
-    'hover:brightness-105',
-    'dark:bg-dark-btn-cancel'
-  ),
-  submit: cn(
-    'bg-btn-submit',
-    'text-white',
-    'hover:brightness-105',
-    'dark:bg-dark-btn-submit'
-  ),
+};
+
+const legacyVariantMap: Record<LegacyButtonVariant, ResolvedButtonVariant> = {
+  default: 'primary',
+  escape: 'danger',
+  submit: 'success',
+  disabled: 'disabled',
 };
 
 export const Button = memo(
@@ -66,7 +93,13 @@ export const Button = memo(
       ref
     ) => {
       const navigate = useNavigate();
-      const resolvedVariant: ButtonVariant = disabled ? 'disabled' : variant;
+      const baseVariant =
+        variant in legacyVariantMap
+          ? legacyVariantMap[variant as LegacyButtonVariant]
+          : (variant as ResolvedButtonVariant);
+      const resolvedVariant: ResolvedButtonVariant = disabled
+        ? 'disabled'
+        : baseVariant;
 
       const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
         if (disabled) return;
@@ -90,6 +123,7 @@ export const Button = memo(
           disabled={disabled}
           className={cn(
             'relative rounded-md px-4 py-1 text-base font-semibold transition-all duration-200',
+            'focus-visible:ring-ring focus-visible:ring-2',
             'disabled:cursor-not-allowed',
             variantClasses[resolvedVariant],
             className
