@@ -67,8 +67,8 @@ export const useSettings = () => {
       }}
     />,
     {
-      title: t('profile:changePhoto') || 'Изменить фото',
-      size: 'md',
+      title: t('profile:changePhoto'),
+      size: 'lg',
     }
   );
 

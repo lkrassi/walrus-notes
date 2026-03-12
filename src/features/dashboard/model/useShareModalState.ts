@@ -91,6 +91,11 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
     closeModal();
   };
 
+  const modalTitle =
+    kind === 'LAYOUT'
+      ? t('share:modal.title.layout')
+      : t('share:modal.title.note');
+
   return {
     generatedLink,
     copied,
@@ -98,5 +103,6 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
     handleSubmit,
     handleCopy,
     handleClose,
+    modalTitle,
   };
 };

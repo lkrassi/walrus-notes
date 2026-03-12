@@ -32,7 +32,7 @@ export const ConfirmationLeaveForm: FC<{ onConfirm?: () => void }> = ({
         />
       </div>
 
-      <p className={cn('text-secondary', 'mb-6', 'text-center')}>
+      <p className={cn('muted-text', 'mb-6', 'text-center')}>
         {t('notes:unsavedConfirmDescription')}
       </p>
       <div className={cn('flex', 'justify-center', 'gap-3')}>

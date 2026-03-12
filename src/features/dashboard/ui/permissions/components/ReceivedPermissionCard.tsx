@@ -58,14 +58,14 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
         />
         <div className={cn('min-w-0')}>
           <p className={cn('truncate text-sm font-medium')}>{userName}</p>
-          <p className={cn('text-secondary dark:text-dark-secondary text-xs')}>
+          <p className={cn('muted-text text-xs')}>
             {t('share:permissionsDashboard.receivedFrom')}
           </p>
         </div>
       </div>
 
       <div className={cn('mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40')}>
-        <p className={cn('text-secondary dark:text-dark-secondary text-xs')}>
+        <p className={cn('muted-text text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
         <p className={cn('mt-1 text-sm font-medium break-all')}>{targetName}</p>

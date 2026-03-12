@@ -36,6 +36,9 @@ export interface PermissionItem {
   fromUserId: string;
   fromUserName?: string;
   fromUserAvatar?: string;
+  toUserId: string;
+  toUserName?: string;
+  toUserAvatar?: string;
   kind: string;
   targetId: string;
   targetTitle?: string;
@@ -119,6 +122,9 @@ export const shareApi = apiSlice.injectEndpoints({
           fromUserId: item.fromUserId ?? '',
           fromUserName: item.fromUserName || item.fromUsername,
           fromUserAvatar: item.fromUserAvatar || item.fromUserImgUrl,
+          toUserId: (item as any).toUserId ?? '',
+          toUserName: (item as any).toUserName,
+          toUserAvatar: (item as any).toUserAvatar,
           kind: item.kind ?? 'PERMISSIONS_KIND_UNSPECIFIED',
           targetId: item.targetId ?? '',
           targetTitle: item.targetTitle || item.title,

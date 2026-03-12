@@ -71,6 +71,7 @@
     "emptyReceived": "No received permissions yet",
     "emptyShared": "No shared permissions yet",
     "receivedFrom": "Access granted by",
+    "sharedTo": "Access granted to",
     "targetLabel": "Access target",
     "target": "Target",
     "fromUser": "From user",

@@ -77,7 +77,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
       />,
       {
         title: t('notes:uploadImage') || 'Загрузить изображение',
-        size: 'md',
+        size: 'lg',
       }
     ),
     [onInsertImage, openModalFromTrigger, showError, showSuccess, t, uploadFile]
@@ -123,7 +123,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   const handleOpenCancelConfirmation = useCallback(
     openModalFromTrigger(
       <ConfirmationLeaveForm onConfirm={onDiscardConfirm} />,
-      { title: t('notes:unsavedConfirmTitle'), size: 'sm' }
+      { title: t('notes:unsavedConfirmTitle'), size: 'lg' }
     ),
     [onDiscardConfirm, openModalFromTrigger, t]
   );

@@ -1,4 +1,3 @@
-import { useShareModal } from '@/features/share';
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import {
@@ -9,7 +8,6 @@ import {
   Maximize2,
   Minimize2,
   Save,
-  Share2,
   Upload,
   X,
 } from 'lucide-react';
@@ -34,7 +32,6 @@ interface NoteActionsProps {
 }
 
 export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
-  noteId,
   isEditing,
   isLoading,
   isFullscreen,
@@ -50,7 +47,6 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   onToggleFullscreen,
   t,
 }) {
-  const { openShareLinkModal } = useShareModal();
   return (
     <div
       className={cn(
@@ -169,23 +165,6 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
             <Upload className={cn('h-4', 'w-4')} />
           </Button>
         </>
-      )}
-
-      {noteId && !isEditing && (
-        <Button
-          onClick={e => openShareLinkModal(noteId, 'NOTE')(e)}
-          className={cn(
-            'flex',
-            'h-8',
-            'w-14',
-            'items-center',
-            'justify-center'
-          )}
-          title={t('share:button.tooltip') || 'Share'}
-          variant='default'
-        >
-          <Share2 className={cn('h-4', 'w-4')} />
-        </Button>
       )}
 
       <Button

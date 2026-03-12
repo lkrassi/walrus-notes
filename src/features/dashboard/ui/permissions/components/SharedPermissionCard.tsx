@@ -4,11 +4,14 @@ import { Shield, Trash2 } from 'lucide-react';
 import { type FC } from 'react';
 import { createFriendlyTargetName, kindLabelKey } from '../../../lib/utils';
 import type { EditablePermissionState } from '../../../model';
+import { PermissionAvatar } from './PermissionAvatar';
 import { RightsBadges } from './RightsBadges';
 
 interface SharedPermissionCardProps {
   permission: PermissionItem;
   draft: EditablePermissionState;
+  toUserName?: string;
+  toUserAvatar?: string;
   disabledDelete: boolean;
   disabledUpdate: boolean;
   onChange: (
@@ -24,6 +27,8 @@ interface SharedPermissionCardProps {
 export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   permission,
   draft,
+  toUserName,
+  toUserAvatar,
   disabledDelete,
   disabledUpdate,
   onChange,
@@ -41,9 +46,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
 
   return (
     <article
-      className={cn(
-        'border-border bg-surface rounded-xl border p-4 backdrop-blur-sm'
-      )}
+      className={cn('border-border rounded-xl border p-4 backdrop-blur-sm')}
     >
       <div className={cn('mb-3 flex items-center justify-between gap-2')}>
         <div className={cn('inline-flex items-center gap-2')}>
@@ -68,8 +71,24 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
         </button>
       </div>
 
-      <div className={cn('bg-surface-2 mb-3 rounded-lg p-3')}>
-        <p className={cn('text-muted-foreground text-xs')}>
+      {/* КОМУ выдан доступ */}
+      <div className={cn('mb-3 flex items-center gap-3')}>
+        <PermissionAvatar
+          name={toUserName || t('share:permissionsDashboard.user.unknown')}
+          avatarUrl={toUserAvatar}
+        />
+        <div className={cn('min-w-0')}>
+          <p className={cn('truncate text-sm font-medium')}>
+            {toUserName || t('share:permissionsDashboard.user.unknown')}
+          </p>
+          <p className={cn('muted-text text-xs')}>
+            {t('share:permissionsDashboard.sharedTo')}
+          </p>
+        </div>
+      </div>
+
+      <div className={cn('mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40')}>
+        <p className={cn('muted-text text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
         <p className={cn('mt-1 text-sm font-medium break-all')}>{targetName}</p>

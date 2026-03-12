@@ -8,22 +8,16 @@ import {
   type PermissionItem,
 } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { cn } from '@/shared/lib/core';
-import { motion } from 'framer-motion';
-import { useEffect, useMemo, useRef, useState, type FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { initialFromPermission } from '../../lib/utils';
-import type { EditablePermissionState } from '../../model';
-import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';
-import { SharedPermissionCard } from './components/SharedPermissionCard';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { initialFromPermission } from '../lib/utils';
+import type { EditablePermissionState } from '../model';
 
 interface ResolvedUserInfo {
   username?: string;
   imgUrl?: string;
 }
 
-export const PermissionsDashboardContent: FC = () => {
-  const { t } = useTranslation();
+export function useDashboardPermissions() {
   const { showError, showSuccess } = useNotifications();
   const { data } = useGetPermissionsDashboardQuery();
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
@@ -37,7 +31,6 @@ export const PermissionsDashboardContent: FC = () => {
   const [drafts, setDrafts] = useState<Record<string, EditablePermissionState>>(
     {}
   );
-
   const [usersById, setUsersById] = useState<Record<string, ResolvedUserInfo>>(
     {}
   );
@@ -52,16 +45,11 @@ export const PermissionsDashboardContent: FC = () => {
 
   useEffect(() => {
     const layouts = layoutsResponse?.data || [];
-    if (!layouts.length) {
-      return;
-    }
-
+    if (!layouts.length) return;
     setTargetTitlesById(prev => {
       const next = { ...prev };
       for (const layout of layouts) {
-        if (layout.title) {
-          next[layout.id] = layout.title;
-        }
+        if (layout.title) next[layout.id] = layout.title;
       }
       return next;
     });
@@ -72,27 +60,18 @@ export const PermissionsDashboardContent: FC = () => {
     const userIdsToFetch = Array.from(
       new Set(
         allPermissions
-          .map(permission => permission.fromUserId)
+          .flatMap(permission => [permission.fromUserId, permission.toUserId])
           .filter(userId => {
-            if (!userId) {
-              return false;
-            }
-
+            if (!userId) return false;
             const alreadyResolved =
               !!usersById[userId]?.username && !!usersById[userId]?.imgUrl;
             return !alreadyResolved && !loadedUserIdsRef.current.has(userId);
           })
       )
     );
-
-    if (!userIdsToFetch.length) {
-      return;
-    }
-
+    if (!userIdsToFetch.length) return;
     userIdsToFetch.forEach(userId => loadedUserIdsRef.current.add(userId));
-
     let cancelled = false;
-
     const resolveUsers = async () => {
       const responses = await Promise.allSettled(
         userIdsToFetch.map(async userId => {
@@ -104,14 +83,9 @@ export const PermissionsDashboardContent: FC = () => {
           };
         })
       );
-
-      if (cancelled) {
-        return;
-      }
-
+      if (cancelled) return;
       setUsersById(prev => {
         const next = { ...prev };
-
         responses.forEach(response => {
           if (response.status === 'fulfilled') {
             next[response.value.userId] = {
@@ -120,13 +94,10 @@ export const PermissionsDashboardContent: FC = () => {
             };
           }
         });
-
         return next;
       });
     };
-
     resolveUsers();
-
     return () => {
       cancelled = true;
     };
@@ -136,45 +107,27 @@ export const PermissionsDashboardContent: FC = () => {
     const layouts = layoutsResponse?.data || [];
     const layoutIdsToFetch = layouts
       .map(layout => layout.id)
-      .filter(layoutId => {
-        return !loadedLayoutIdsRef.current.has(layoutId);
-      });
-
-    if (!layoutIdsToFetch.length) {
-      return;
-    }
-
-    layoutIdsToFetch.forEach(layoutId => {
-      loadedLayoutIdsRef.current.add(layoutId);
-    });
-
+      .filter(layoutId => !loadedLayoutIdsRef.current.has(layoutId));
+    if (!layoutIdsToFetch.length) return;
+    layoutIdsToFetch.forEach(layoutId =>
+      loadedLayoutIdsRef.current.add(layoutId)
+    );
     let cancelled = false;
-
     const resolveNoteTitles = async () => {
       const titleEntries: Array<[string, string]> = [];
-
       for (const layoutId of layoutIdsToFetch) {
         let page = 1;
         let totalPages = 1;
-
         do {
           const response = await loadNotes({ layoutId, page }, true).unwrap();
-
           response.data.forEach(note => {
-            if (note.title) {
-              titleEntries.push([note.id, note.title]);
-            }
+            if (note.title) titleEntries.push([note.id, note.title]);
           });
-
           totalPages = response.pagination?.pages || 1;
           page += 1;
         } while (page <= totalPages);
       }
-
-      if (cancelled || !titleEntries.length) {
-        return;
-      }
-
+      if (cancelled || !titleEntries.length) return;
       setTargetTitlesById(prev => {
         const next = { ...prev };
         titleEntries.forEach(([id, title]) => {
@@ -183,9 +136,7 @@ export const PermissionsDashboardContent: FC = () => {
         return next;
       });
     };
-
     resolveNoteTitles();
-
     return () => {
       cancelled = true;
     };
@@ -193,7 +144,6 @@ export const PermissionsDashboardContent: FC = () => {
 
   const enrichPermission = (permission: PermissionItem): PermissionItem => {
     const userInfo = usersById[permission.fromUserId];
-
     return {
       ...permission,
       fromUserName: permission.fromUserName || userInfo?.username,
@@ -209,7 +159,14 @@ export const PermissionsDashboardContent: FC = () => {
   );
 
   const mergedShared = useMemo(() => {
-    const source = sharedRaw.map(enrichPermission);
+    const source = sharedRaw.map(permission => {
+      const toUser = usersById[permission.toUserId] || {};
+      return {
+        ...enrichPermission(permission),
+        toUserName: toUser.username,
+        toUserAvatar: toUser.imgUrl,
+      };
+    });
     return source.map(permission => ({
       permission,
       draft: drafts[permission.id] || initialFromPermission(permission),
@@ -224,36 +181,21 @@ export const PermissionsDashboardContent: FC = () => {
   ) => {
     setDrafts(prev => {
       const current = prev[permissionId] || initialFromPermission(fallback);
-      let next: EditablePermissionState = {
-        ...current,
-        [field]: value,
-      };
-
-      if (field === 'canEdit' && value) {
-        next = { ...next, canRead: true };
-      }
-
-      if (field === 'canWrite' && value) {
-        next = { ...next, canRead: true };
-      }
-
-      if (field === 'canRead' && !value) {
+      let next: EditablePermissionState = { ...current, [field]: value };
+      if (field === 'canEdit' && value) next = { ...next, canRead: true };
+      if (field === 'canWrite' && value) next = { ...next, canRead: true };
+      if (field === 'canRead' && !value)
         next = { ...next, canWrite: false, canEdit: false };
-      }
-
-      return {
-        ...prev,
-        [permissionId]: next,
-      };
+      return { ...prev, [permissionId]: next };
     });
   };
 
   const handleDelete = async (permissionId: string) => {
     try {
       await deletePermission({ permissionId }).unwrap();
-      showSuccess(t('share:permissionsDashboard.notifications.deleted'));
+      showSuccess('Доступ удалён');
     } catch {
-      showError(t('share:permissionsDashboard.notifications.deleteError'));
+      showError('Ошибка удаления');
     }
   };
 
@@ -268,92 +210,24 @@ export const PermissionsDashboardContent: FC = () => {
         canWrite: draft.canWrite,
         canEdit: draft.canEdit,
       }).unwrap();
-
-      showSuccess(t('share:permissionsDashboard.notifications.updated'));
+      showSuccess('Доступ обновлён');
       setDrafts(prev => {
         const copy = { ...prev };
         delete copy[permissionId];
         return copy;
       });
     } catch {
-      showError(t('share:permissionsDashboard.notifications.updateError'));
+      showError('Ошибка обновления');
     }
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28 }}
-      className={cn('mx-auto w-full max-w-6xl p-4 md:p-8')}
-    >
-      <div className={cn('grid gap-6 xl:grid-cols-2')}>
-        <motion.section
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.26, delay: 0.08 }}
-          className={cn(
-            'border-border dark:border-dark-border dark:bg-dark-bg rounded-2xl border bg-white p-4 md:p-5'
-          )}
-        >
-          <h2 className={cn('mb-4 text-lg font-semibold')}>
-            {t('share:permissionsDashboard.receivedTitle')}
-          </h2>
-
-          {!received.length && (
-            <p
-              className={cn('text-secondary dark:text-dark-secondary text-sm')}
-            >
-              {t('share:permissionsDashboard.emptyReceived')}
-            </p>
-          )}
-
-          <div className={cn('space-y-3')}>
-            {received.map(item => (
-              <ReceivedPermissionCard key={item.id} permission={item} t={t} />
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.26, delay: 0.12 }}
-          className={cn(
-            'border-border dark:border-dark-border dark:bg-dark-bg rounded-2xl border bg-white p-4 md:p-5'
-          )}
-        >
-          <h2 className={cn('mb-4 text-lg font-semibold')}>
-            {t('share:permissionsDashboard.sharedTitle')}
-          </h2>
-
-          {!mergedShared.length && (
-            <p
-              className={cn('text-secondary dark:text-dark-secondary text-sm')}
-            >
-              {t('share:permissionsDashboard.emptyShared')}
-            </p>
-          )}
-
-          <div className={cn('space-y-3')}>
-            {mergedShared.map(({ permission, draft }) => (
-              <SharedPermissionCard
-                key={permission.id}
-                permission={permission}
-                draft={draft}
-                disabledDelete={isDeleting}
-                disabledUpdate={isUpdating}
-                onChange={(field, value, fallback) =>
-                  setDraftValue(permission.id, field, value, fallback)
-                }
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                t={t}
-              />
-            ))}
-          </div>
-        </motion.section>
-      </div>
-    </motion.div>
-  );
-};
+  return {
+    received,
+    mergedShared,
+    setDraftValue,
+    handleDelete,
+    handleUpdate,
+    isDeleting,
+    isUpdating,
+  };
+}
