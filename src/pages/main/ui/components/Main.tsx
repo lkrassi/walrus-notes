@@ -5,7 +5,7 @@ import { Sidebar } from '@/widgets';
 import { useCallback, useRef } from 'react';
 import { useMainWorkspace } from '../../model';
 import { MainContent } from './MainContent';
-import { MainHeader } from './MainHeader';
+import { PrivateHeader } from '@/widgets/ui';
 
 export const Main = () => {
   const { userId, activeTabId, handleItemSelect, handleNoteOpenFromGraph } =
@@ -24,7 +24,7 @@ export const Main = () => {
   return (
     <WebSocketProvider userId={userId}>
       <div className={cn('flex', 'h-screen', 'flex-col')}>
-        <MainHeader />
+        <PrivateHeader />
         <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
           <Sidebar
             ref={sidebarRef}

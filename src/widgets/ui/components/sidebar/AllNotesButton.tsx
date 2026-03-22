@@ -72,7 +72,7 @@ export const AllNotesButton = ({
                   'mb-1'
                 )}
               >
-                {t('main:allNotes') || 'Общий граф'}
+                {t('main:allNotes')}
               </h3>
               <p className={cn('text-white/80', 'text-sm')}>
                 {t('main:allNotesDescription')}
@@ -97,7 +97,6 @@ export const AllNotesButton = ({
         'flex',
         'items-center',
         'gap-2',
-        'transition-colors',
         isSelected
           ? cn(
               'bg-primary',
@@ -105,12 +104,7 @@ export const AllNotesButton = ({
               'dark:bg-dark-primary',
               'dark:text-dark-text'
             )
-          : cn(
-              'text-text',
-              'dark:text-dark-text',
-              'hover:bg-gray-200',
-              'dark:hover:bg-gray-800'
-            )
+          : cn('hover:bg-muted-foreground/10')
       )}
       title={t('main:allNotes')}
     >

@@ -16,7 +16,7 @@
   "updateLayout": "Обновить",
   "updating": "Обновление...",
   "updateLayoutData": "Обновить данные папки",
-  "chooseColor": "Выберите цвет",
+  "chooseColor": "Цвет папки",
   "layoutsLoadedSuccess": "Папки успешно загружены",
   "layoutsLoadError": "Ошибка при загрузке папок",
   "noLayoutsFound": "Папки не найдены",
@@ -24,11 +24,15 @@
   "refresh": "Обновить",
   "delete": "Удалить",
   "backendNotImplemented": "Бэкендры долго пишут, пока не реализовано",
-
   "deleteLayout": "Удалить папку",
   "deleteLayoutConfirmation": "Вы уверены, что хотите удалить папку \"{{title}}\"?",
   "deleteLayoutWarning": "Это действие нельзя отменить. Все заметки внутри папки также будут удалены.",
   "layoutDeletedSuccess": "Папка успешно удалена",
   "layoutDeletionError": "Произошла ошибка при удалении папки",
-  "deleting": "Удаление..."
+  "deleting": "Удаление...",
+  "tooltip": {
+    "share": "Поделиться папкой",
+    "edit": "Изменить папку",
+    "delete": "Удалить папку"
+  }
 }

@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useShareLink } from './useShareLink';
 
-type ShareKind = 'LAYOUT' | 'NOTE';
-
 export interface ShareModalValues {
   canRead: boolean;
   canWrite: boolean;
@@ -46,7 +44,7 @@ const toExpirationIso = (values: ShareModalValues) => {
   return expirationDate.toISOString();
 };
 
-export const useShareModalState = (targetId: string, kind: ShareKind) => {
+export const useShareModalState = (targetId: string) => {
   const { generateLink, generatedLink, resetLink } = useShareLink();
   const { t } = useTranslation();
   const { showError } = useNotifications();
@@ -65,7 +63,6 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
     try {
       await generateLink({
         targetId,
-        kind,
         canRead: values.canRead || values.canWrite || values.canEdit,
         canWrite: values.canWrite,
         canEdit: values.canEdit,
@@ -91,10 +88,7 @@ export const useShareModalState = (targetId: string, kind: ShareKind) => {
     closeModal();
   };
 
-  const modalTitle =
-    kind === 'LAYOUT'
-      ? t('share:modal.title.layout')
-      : t('share:modal.title.note');
+  const modalTitle = t('share:modal.permissions.title');
 
   return {
     generatedLink,

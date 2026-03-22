@@ -138,7 +138,7 @@ const DraggableNoteItem = ({
         'duration-200',
         'cursor-grab',
         'active:cursor-grabbing',
-        isItemDragging ? 'opacity-50' : ''
+        isItemDragging ? 'pointer-events-none opacity-0' : ''
       )}
       title={`Перетаскиваемая заметка: ${note.title}`}
     >

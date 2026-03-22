@@ -92,7 +92,7 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
               </div>
             }
             className={cn(
-              'dark:bg-dark-bg border-border dark:border-dark-border rounded-lg border bg-white shadow-lg',
+              'dark:bg-dark-bg rounded-lg bg-white shadow-lg',
               'w-full'
             )}
           >

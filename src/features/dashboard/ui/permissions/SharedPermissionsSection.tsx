@@ -72,7 +72,7 @@ export const SharedPermissionsSection: FC<SharedPermissionsSectionProps> = ({
         className={cn(
           'flex h-24 items-center justify-center rounded-xl border',
           'border-border border-dashed',
-          'text-secondary dark:text-dark-secondary text-sm'
+          'muted-text text-sm'
         )}
       >
         {t('share:permissionsDashboard.emptyShared')}

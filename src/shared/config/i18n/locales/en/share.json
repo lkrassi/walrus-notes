@@ -1,19 +1,8 @@
 {
-  "button": {
-    "tooltip": "Share"
-  },
-  "layout": {
-    "modal": {
-      "title": "Configure Folder Access"
-    }
-  },
-  "notes": {
-    "modal": {
-      "title": "Configure Note Access"
-    }
-  },
   "modal": {
     "permissions": {
+      "head": "Configure Access",
+      "title": "Configure Folder Access",
       "label": "Access Level",
       "read": "Read",
       "write": "Write",

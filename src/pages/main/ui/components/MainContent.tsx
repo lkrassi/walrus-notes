@@ -2,7 +2,6 @@ import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { memo } from 'react';
 import { useMainContentState } from '../../model';
-import { EmptyMainFallback } from './EmptyMainFallback';
 import { GraphTabContent } from './GraphTabContent';
 import { MainContentState } from './MainContentState';
 import { NoteTabContent } from './NoteTabContent';
@@ -19,14 +18,11 @@ export const MainContent = memo(function DashboardContent({
 }: MainContentProps) {
   const {
     openTabs,
-    isMobile,
     activeTab,
-    handleOnCreateClick,
     handleTabClick,
     handleTabClose,
     handleTabReorder,
     handleNoteUpdated,
-    handleFolderClickFromGallery,
     handleNoteOpenFromGraph,
   } = useMainContentState({
     onNoteOpen,
@@ -35,14 +31,7 @@ export const MainContent = memo(function DashboardContent({
 
   const renderContent = () => {
     if (!activeTab) {
-      return isMobile ? (
-        <EmptyMainFallback
-          onFolderClick={handleFolderClickFromGallery}
-          onCreateClick={handleOnCreateClick}
-        />
-      ) : (
-        <MainContentState variant='empty' />
-      );
+      return <MainContentState variant='empty' />;
     }
 
     if (activeTab.item.type === 'note') {

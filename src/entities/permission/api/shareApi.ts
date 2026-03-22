@@ -1,8 +1,7 @@
 import { apiSlice } from '@/shared/api';
 
-interface GenerateLinkRequest {
+export interface GenerateLinkRequest {
   targetId: string;
-  kind: 'LAYOUT' | 'NOTE';
   canRead: boolean;
   canWrite: boolean;
   canEdit: boolean;
@@ -93,14 +92,6 @@ interface UpdatePermissionRequest {
   canEdit: boolean;
 }
 
-const mapKindToPermissionsKind = (
-  kind: 'LAYOUT' | 'NOTE'
-): 'PERMISSIONS_KIND_LAYOUT' | 'PERMISSIONS_KIND_NOTE' => {
-  return kind === 'LAYOUT'
-    ? 'PERMISSIONS_KIND_LAYOUT'
-    : 'PERMISSIONS_KIND_NOTE';
-};
-
 export const shareApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getPermissionsDashboard: builder.query<PermissionsDashboardData, void>({
@@ -150,7 +141,6 @@ export const shareApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: {
           targetId: payload.targetId,
-          kind: mapKindToPermissionsKind(payload.kind),
           canRead: payload.canRead,
           canWrite: payload.canWrite,
           canEdit: payload.canEdit,

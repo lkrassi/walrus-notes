@@ -1,5 +1,5 @@
 import type { PermissionItem } from '@/entities';
-import type { EditablePermissionState } from './types';
+import type { EditablePermissionState } from '../../model';
 
 export const initialFromPermission = (
   permission: PermissionItem

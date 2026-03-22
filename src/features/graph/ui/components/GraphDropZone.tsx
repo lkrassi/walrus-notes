@@ -20,6 +20,8 @@ interface GraphDropZoneProps {
     x2: number;
     y2: number;
   }) => void;
+  activeDragNote?: unknown | null;
+  lastDndDropAt?: number | null;
 }
 
 export const GraphDropZone: FC<GraphDropZoneProps> = ({
@@ -27,6 +29,8 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
   children,
   isDraggingEdge = false,
   onBoxSelect,
+  activeDragNote = null,
+  lastDndDropAt = null,
 }) => {
   const { setNodeRef } = useDroppable({
     id: 'graph-drop-zone',
@@ -103,6 +107,11 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
         isDraggingEdge ? 'bg-surface-2 ring-ring cursor-no-drop ring-2' : ''
       } transition-all duration-200`}
       onDrop={e => {
+        // If dnd-kit is active and handling the drag, or we just handled a dnd-kit drop,
+        // skip native drop handling to avoid double-adding notes.
+        const now = Date.now();
+        if (activeDragNote) return;
+        if (lastDndDropAt && now - lastDndDropAt < 500) return;
         onDrop(e as unknown as DragEvent);
       }}
       onDragOver={e => {

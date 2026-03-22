@@ -28,13 +28,11 @@ export const ProfileButton: FC = () => {
         'rounded-lg',
         'px-3',
         'py-2',
-        'transition-colors',
-        'duration-150',
-        'hover:bg-interactive-hover',
         'active:bg-interactive-active',
         'focus-visible:ring-ring',
         'focus-visible:ring-2',
-        'text-foreground'
+        'text-foreground',
+        'hover:bg-muted-foreground/10'
       )}
       title={t('profile:title')}
     >

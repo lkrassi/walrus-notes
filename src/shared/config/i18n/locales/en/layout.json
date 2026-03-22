@@ -16,7 +16,7 @@
   "updateLayout": "Update",
   "updating": "Updating...",
   "updateLayoutData": "Update layout data",
-  "chooseColor": "Choose color",
+  "chooseColor": "Layout color",
   "layoutsLoadedSuccess": "Layouts loaded successfully",
   "layoutsLoadError": "Error loading layouts",
   "noLayoutsFound": "Layouts not found",
@@ -24,11 +24,15 @@
   "refresh": "Refresh",
   "delete": "Delete",
   "backendNotImplemented": "Backend not implemented yet",
-
   "deleteLayout": "Delete layout",
   "deleteLayoutConfirmation": "Are you sure you want to delete the layout \"{{title}}\"?",
   "deleteLayoutWarning": "This action cannot be undone. All notes inside the layout will also be deleted.",
   "layoutDeletedSuccess": "Layout successfully deleted",
   "layoutDeletionError": "An error occurred while deleting the layout",
-  "deleting": "Deleting..."
+  "deleting": "Deleting...",
+  "tooltip": {
+    "share": "Share layout",
+    "edit": "Edit layout",
+    "delete": "Delete layout"
+  }
 }

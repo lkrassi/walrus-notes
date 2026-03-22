@@ -1,5 +1,6 @@
 import {
   useForgotPasswordMutation,
+  useLazyGetUserProfileQuery,
   useLoginMutation,
   useUser,
 } from '@/entities';
@@ -70,6 +71,7 @@ const extractLoginPayload = (response: unknown) => {
 
 export const Login: FC<LoginProps> = () => {
   const { setAuthTokens, updateProfile } = useUser();
+  const [triggerGetProfile] = useLazyGetUserProfileQuery();
   const { showError, showSuccess } = useNotifications();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
   const [forgotPassword] = useForgotPasswordMutation();
@@ -110,12 +112,19 @@ export const Login: FC<LoginProps> = () => {
         refreshToken,
       });
 
-      updateProfile({
-        id: userId,
-        username: '',
-        email: values.email,
-        imgUrl: '',
-      });
+      // Fetch real profile from server
+      const profileResult = await triggerGetProfile(userId).unwrap();
+      if (profileResult && profileResult.data) {
+        updateProfile(profileResult.data);
+      } else {
+        // fallback if profile is missing
+        updateProfile({
+          id: userId,
+          username: '',
+          email: values.email,
+          imgUrl: '',
+        });
+      }
       navigate('/main');
     } catch {
       showError(t('auth:login.error'));

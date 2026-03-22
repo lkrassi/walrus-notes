@@ -1,11 +1,12 @@
+import type { PermissionItem } from '@/entities';
 import {
+  useApplyLinkMutation,
   useDeletePermissionMutation,
   useGetMyLayoutsQuery,
   useGetPermissionsDashboardQuery,
   useLazyGetNotesQuery,
   useLazyGetUserProfileQuery,
   useUpdatePermissionMutation,
-  type PermissionItem,
 } from '@/entities';
 import { useNotifications } from '@/entities/notification';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -27,6 +28,7 @@ export function useDashboardPermissions() {
     useDeletePermissionMutation();
   const [updatePermission, { isLoading: isUpdating }] =
     useUpdatePermissionMutation();
+  const [applyLink] = useApplyLinkMutation();
 
   const [drafts, setDrafts] = useState<Record<string, EditablePermissionState>>(
     {}
@@ -221,12 +223,28 @@ export function useDashboardPermissions() {
     }
   };
 
+  const handleApplyLink = async (linkId: string) => {
+    try {
+      const response = await applyLink({ linkId }).unwrap();
+      const { targetId, kind } = response;
+      const targetName = targetTitlesById[targetId] || 'папка';
+      const accessLevel =
+        kind === 'PERMISSIONS_KIND_LAYOUT' ? 'папке' : 'заметке';
+
+      showSuccess(`Теперь у вас есть доступ к ${accessLevel} "${targetName}".`);
+      window.location.href = '/main';
+    } catch {
+      showError('Ошибка при получении доступа.');
+    }
+  };
+
   return {
     received,
     mergedShared,
     setDraftValue,
     handleDelete,
     handleUpdate,
+    handleApplyLink,
     isDeleting,
     isUpdating,
   };

@@ -34,6 +34,11 @@ const UnavailablePage = lazy(() =>
     default: m.UnavailablePage,
   }))
 );
+const ApplyLinkPage = lazy(() =>
+  import('@/pages/apply/ui/ApplyLinkPage').then(m => ({
+    default: m.ApplyLinkPage,
+  }))
+);
 
 export const AppRoutes = {
   FIRST: '/',
@@ -43,6 +48,7 @@ export const AppRoutes = {
   PROFILE: '/profile',
   UNAVAILABLE: '*',
   RANDOM: '/random',
+  APPLY_LINK: '/apply',
 };
 
 export const appRoutesConfig = [
@@ -103,6 +109,14 @@ export const appRoutesConfig = [
     element: (
       <Suspense fallback={<UnavailablePageSkeleton />}>
         <UnavailablePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: AppRoutes.APPLY_LINK,
+    element: (
+      <Suspense fallback={<UnavailablePageSkeleton />}>
+        <ApplyLinkPage />
       </Suspense>
     ),
   },

@@ -70,7 +70,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
               .linkedWith as string[])
           : [];
 
-      outgoingLinks.forEach(targetNoteId => {
+      outgoingLinks.forEach((targetNoteId: string) => {
         const targetNoteExists = notesWithPositions.some(
           n => n.id === targetNoteId
         );

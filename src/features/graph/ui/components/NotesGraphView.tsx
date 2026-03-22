@@ -2,7 +2,13 @@ import type { UseGraphHistoryReturn } from '@/entities/graph';
 import type { Note } from '@/entities/note';
 import { useDndSensors, useIsMobile } from '@/shared/lib/react/hooks';
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { memo, type DragEvent, type FC, type MouseEvent } from 'react';
+import {
+  memo,
+  useState,
+  type DragEvent,
+  type FC,
+  type MouseEvent,
+} from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {
@@ -104,6 +110,8 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
         centerCoords,
       });
 
+    const [lastDndDropAt, setLastDndDropAt] = useState<number | null>(null);
+
     return (
       <GraphContainer>
         <DndContext
@@ -113,12 +121,20 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
             touchTolerance: 5,
           })}
           onDragStart={handleDndDragStart}
-          onDragEnd={handleDndDragEnd}
+          onDragEnd={event => {
+            try {
+              handleDndDragEnd(event);
+            } finally {
+              setLastDndDropAt(Date.now());
+            }
+          }}
         >
           <GraphDropZone
             onDrop={onDrop}
             isDraggingEdge={isDraggingEdge}
             onBoxSelect={onBoxSelect}
+            activeDragNote={activeDragNote}
+            lastDndDropAt={lastDndDropAt}
           >
             <TouchEnabledGraph
               nodes={nodesWithSelection}

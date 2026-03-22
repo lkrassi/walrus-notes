@@ -116,7 +116,7 @@ const SidebarComponent = (
           'flex',
           'flex-col',
           'border-r',
-          'bg-surface',
+          'bg-bg',
           'transition-transform',
           'duration-300',
           'ease-in-out',
@@ -153,38 +153,20 @@ const SidebarComponent = (
 
             <Link
               to='/main'
-              className={cn('flex', 'items-center', 'md:gap-3')}
+              className={cn('flex', 'items-center')}
               aria-label={t('common:header.goToHomepage')}
             >
               <img
                 src={logo}
                 alt={t('common:header.logoAlt')}
-                className={cn('h-16', 'w-16', 'md:h-22', 'md:w-22')}
+                className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
                 loading='lazy'
               />
               <div className={cn('flex', 'items-baseline', 'gap-1')}>
-                <h1
-                  className={cn(
-                    'text-foreground',
-                    'text-base',
-                    'font-bold',
-                    'sm:text-xl',
-                    'md:text-2xl'
-                  )}
-                >
+                <h1 className={cn('text-text', 'dark:text-dark-text')}>
                   Walrus
                 </h1>
-                <h1
-                  className={cn(
-                    'text-primary',
-                    'text-base',
-                    'font-bold',
-                    'sm:text-xl',
-                    'md:text-2xl'
-                  )}
-                >
-                  Notes
-                </h1>
+                <h1 className={cn('text-primary')}>Notes</h1>
               </div>
             </Link>
           </div>
@@ -228,7 +210,7 @@ const SidebarComponent = (
             to='/dashboard'
             className={cn(
               'border-border mb-3 flex items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
-              'text-foreground hover:bg-surface-2'
+              'text-foreground hover:bg-muted-foreground/10'
             )}
           >
             <ShieldCheck className={cn('h-4 w-4')} />

@@ -9,7 +9,6 @@ import { cn } from '@/shared/lib/core';
 import { useAppSelector } from '@/widgets/hooks/redux';
 import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { FileTreeEmpty } from './FileTreeEmpty';
 import { FileTreeItem } from './FileTreeItem';
 import { SearchInput } from './SearchInput';
 
@@ -233,9 +232,7 @@ export const FileTree = memo(
         )}
 
         <div className={cn('flex-1', 'overflow-y-auto', 'p-2')}>
-          {fileTree.length === 0 ? (
-            <FileTreeEmpty />
-          ) : isSearchMode ? (
+          {fileTree.length === 0 ? null : isSearchMode ? (
             <div className={cn('space-y-1')}>
               {fileTree.map(item => {
                 const isSelected = selectedItemId === item.id;

@@ -11,12 +11,10 @@ import {
 
 interface ShareModalProps {
   targetId: string;
-  kind: 'LAYOUT' | 'NOTE';
 }
 
 export const ShareModal = memo(function ShareModal({
   targetId,
-  kind,
 }: ShareModalProps) {
   const {
     generatedLink,
@@ -26,7 +24,7 @@ export const ShareModal = memo(function ShareModal({
     handleSubmit,
     handleCopy,
     handleClose,
-  } = useShareModalState(targetId, kind);
+  } = useShareModalState(targetId);
   const { t } = useTranslation();
 
   if (generatedLink) {

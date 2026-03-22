@@ -1,5 +1,5 @@
 import { type Variants } from 'framer-motion';
-import { Brain, ShieldCheck, Sparkles, Users, Zap } from 'lucide-react';
+import { ShieldCheck, Sparkles, Users, Zap } from 'lucide-react';
 
 export const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -68,10 +68,6 @@ export const featureVariantsMobile: Variants = {
 };
 
 export const features = [
-  {
-    key: 'visualThinking',
-    icon: Brain,
-  },
   {
     key: 'fastOrganization',
     icon: Zap,

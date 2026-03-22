@@ -59,7 +59,7 @@
 }
 
 .hero-h1 {
-  @apply text-text dark:text-dark-text mb-6 text-4xl font-bold max-lg:w-full max-lg:text-center sm:text-5xl lg:text-6xl;
+  @apply text-text dark:text-dark-text mb-6 text-4xl font-bold max-lg:w-full max-lg:text-center sm:text-3xl lg:text-7xl;
 }
 
 .feature-card {

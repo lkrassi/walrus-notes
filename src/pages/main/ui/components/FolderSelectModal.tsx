@@ -57,23 +57,18 @@ export const FolderSelectModal = ({
       <div className='space-y-4 p-6'>
         <div className='py-8 text-center'>
           <FolderIcon
-            className={cn(
-              'mx-auto mb-4 h-12 w-12',
-              'text-secondary dark:text-dark-secondary'
-            )}
+            className={cn('mx-auto mb-4 h-12 w-12', 'muted-text')}
             fillColor='currentColor'
             strokeColor='currentColor'
           />
-          <h3 className='text-text dark:text-dark-text mb-2 text-lg font-medium'>
-            {t('main:noFoldersAvailable') || 'Нет доступных папок'}
+          <h3 className='muted-text mb-2 text-lg font-medium'>
+            {t('main:noFoldersAvailable')}
           </h3>
-          <p className='text-secondary dark:text-dark-secondary text-sm'>
-            {t('main:createFolderFirst') || 'Сначала создайте папку'}
-          </p>
+          <p className='muted-text text-sm'>{t('main:createFolderFirst')}</p>
         </div>
         <div className='flex justify-center'>
           <Button onClick={handleCancel} variant='escape'>
-            {t('common:cancel') || 'Отмена'}
+            {t('common:cancel')}
           </Button>
         </div>
       </div>

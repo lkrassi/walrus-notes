@@ -33,16 +33,7 @@ export const MainContentState = ({ variant }: MainContentStateProps) => {
       )}
     >
       <div className={cn('text-center')}>
-        <div
-          className={cn(
-            'text-secondary',
-            'dark:text-dark-secondary',
-            'mx-auto',
-            'mb-4',
-            'h-16',
-            'w-16'
-          )}
-        >
+        <div className={cn('muted-text', 'mx-auto', 'mb-4', 'h-16', 'w-16')}>
           <FileText className='h-15 w-15' />{' '}
         </div>
         <h3

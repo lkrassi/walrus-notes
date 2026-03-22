@@ -42,7 +42,6 @@ export type {
 } from './model';
 export {
   Button,
-  Card,
   Dropdown,
   DropdownContent,
   DropdownTrigger,

@@ -1,20 +1,19 @@
 import { ShareModal } from '@/features/dashboard';
-import {
-  ShareModalProviderContext,
-  type ShareTargetKind,
-} from '@/features/share';
+import { ShareModalProviderContext } from '@/features/share';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
+import { useLocalization } from '@/widgets';
 import { useCallback, type MouseEvent, type ReactNode } from 'react';
 
 export const ShareModalProvider = ({ children }: { children: ReactNode }) => {
   const { openModalFromTrigger } = useModalActions();
+  const { t } = useLocalization();
 
   const openShareLinkModal = useCallback(
-    (targetId: string, kind: ShareTargetKind) => {
+    (targetId: string) => {
       const handleOpen = openModalFromTrigger(
-        <ShareModal targetId={targetId} kind={kind} />,
+        <ShareModal targetId={targetId} />,
         {
-          title: kind === 'LAYOUT' ? 'Share Folder' : 'Share Note',
+          title: t('share:modal.permissions.head'),
           size: MODAL_SIZE_PRESETS.shareAccess,
         }
       );

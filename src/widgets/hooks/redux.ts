@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 type AppStateLike = {
   user: unknown;
   tabs: unknown;
-  api: unknown;
+  api: any;
 };
 
 export const useAppDispatch = () => useDispatch();

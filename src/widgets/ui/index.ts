@@ -1,6 +1,5 @@
 export {
   FileTree,
-  FileTreeEmpty,
   FileTreeItem,
   FileTreeItemContent,
   FileTreeItemHeader,

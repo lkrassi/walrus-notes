@@ -8,9 +8,10 @@ import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
-import { ChevronDown, FileText, Pencil, Share2, Trash2 } from 'lucide-react';
+import { ChevronDown, FileText, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';
+import { FileTreeItemActions } from './FileTreeItemActions';
 
 type FileTreeItemHeaderProps = {
   item: FileTreeItemType;
@@ -297,80 +298,32 @@ export const FileTreeItemHeader = ({
         </span>
 
         <div className={cn('flex', 'items-center', 'gap-1')}>
-          {item.type === 'layout' && (
-            <>
-              {item.isMain !== true && isSelected && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    openShareLinkModal(item.id, 'LAYOUT')(e);
-                  }}
-                  className={cn(
-                    'transition-opacity',
-                    'duration-150',
-                    'opacity-100',
-                    isMobile
-                      ? 'text-gray-600 dark:text-white'
-                      : isSelected
-                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                  )}
-                  title={t('share:button.tooltip') || 'Share'}
-                >
-                  <Share2 className={cn('h-4', 'w-4')} />
-                </button>
-              )}
-              {item.isMain !== true && isSelected && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleUpdateLayout(e);
-                  }}
-                  className={cn(
-                    'transition-opacity',
-                    'duration-150',
-                    'opacity-100',
-                    isMobile
-                      ? 'text-gray-600 dark:text-white'
-                      : isSelected
-                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                  )}
-                  title={t('layout:edit') || 'Edit'}
-                >
-                  <Pencil className={cn('h-4', 'w-4')} />
-                </button>
-              )}
-              {item.isMain !== true && isSelected && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleDeleteLayout(e);
-                  }}
-                  className={cn(
-                    'transition-opacity',
-                    'duration-150',
-                    'opacity-100',
-                    isMobile
-                      ? 'text-gray-600 dark:text-white'
-                      : isSelected
-                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                  )}
-                  title={t('layout:deleteLayout')}
-                >
-                  <Trash2 className={cn('h-4', 'w-4')} />
-                </button>
-              )}
-            </>
+          {item.type === 'layout' && item.isMain !== true && isSelected && (
+            <FileTreeItemActions
+              onShare={e => {
+                e.stopPropagation();
+                openShareLinkModal(item.id, 'LAYOUT')(e);
+              }}
+              onEdit={e => {
+                e.stopPropagation();
+                handleUpdateLayout(e);
+              }}
+              onDelete={e => {
+                e.stopPropagation();
+                handleDeleteLayout(e);
+              }}
+              isMobile={isMobile}
+              titleShare={t('layout:tooltip.share')}
+              titleEdit={t('layout:tooltip.edit')}
+              titleDelete={t('layout:tooltip.delete')}
+            />
           )}
-
           {item.type === 'note' && item.isMain !== true && isSelected && (
             <>
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleDeleteNote(e);
+                  handleDeleteNote(e as any);
                 }}
                 className={cn(
                   'transition-opacity',
