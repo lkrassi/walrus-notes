@@ -12,4 +12,5 @@ export {
   useSearchNotesQuery,
   useUpdateNoteMutation,
   useUpdateNotePositionMutation,
+  useDragNoteMutation,
 } from './notesApi';

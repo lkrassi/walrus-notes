@@ -37,6 +37,7 @@ interface GraphReactFlowCoreProps {
   onNodeDoubleClick: (event: MouseEvent, node: Node) => void;
   disableZoomDuringDrag?: boolean;
   allowNodeDrag?: boolean;
+  canEdit?: boolean;
   isMain?: boolean;
   graphHistory?: UseGraphHistoryReturn;
   ViewportTracker: FC<{
@@ -64,6 +65,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
   onNodeDoubleClick,
   disableZoomDuringDrag,
   allowNodeDrag,
+  canEdit = true,
   isMain,
   graphHistory,
   ViewportTracker,
@@ -77,9 +79,9 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       edges={edgesWithSelection}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
+      onConnect={canEdit ? onConnect : undefined}
+      onConnectStart={canEdit ? onConnectStart : undefined}
+      onConnectEnd={canEdit ? onConnectEnd : undefined}
       onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}
       onNodeDrag={onNodeDrag}
@@ -91,9 +93,9 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       edgeTypes={edgeTypes}
       fitView
       attributionPosition='bottom-left'
-      nodesDraggable={allowNodeDrag !== false}
-      nodesConnectable={true}
-      elementsSelectable={true}
+      nodesDraggable={canEdit && allowNodeDrag !== false}
+      nodesConnectable={canEdit}
+      elementsSelectable={canEdit}
       selectNodesOnDrag={false}
       minZoom={0.1}
       maxZoom={2}

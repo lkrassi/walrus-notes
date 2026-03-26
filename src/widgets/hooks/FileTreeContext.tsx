@@ -18,6 +18,11 @@ import { useAppSelector } from './redux';
 import { useNotifications } from './useNotifications';
 
 const FileTreeContext = createContext<{
+  moveNoteInTree: (
+    noteId: string,
+    fromLayoutId: string,
+    toLayoutId: string
+  ) => void;
   fileTree: FileTreeState['fileTree'];
   expandedItems: FileTreeState['expandedItems'];
   isLoading: boolean;
@@ -83,6 +88,17 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     dispatchFileTree({ type: 'ADD_NOTE', payload: { layoutId, note } });
   };
 
+  const moveNoteInTree = (
+    noteId: string,
+    fromLayoutId: string,
+    toLayoutId: string
+  ) => {
+    dispatchFileTree({
+      type: 'MOVE_NOTE',
+      payload: { noteId, fromLayoutId, toLayoutId },
+    });
+  };
+
   const removeNoteFromTree = (noteId: string) => {
     dispatchFileTree({ type: 'REMOVE_NOTE', payload: noteId });
   };
@@ -116,6 +132,7 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
   const reloadLayouts = () => {};
 
   const value = {
+    moveNoteInTree,
     fileTree,
     expandedItems,
     isLoading,

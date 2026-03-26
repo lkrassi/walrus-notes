@@ -43,8 +43,8 @@ interface NotesGraphViewProps {
   onPaneClick: (event: MouseEvent) => void;
   onNodeDoubleClick: (event: MouseEvent, node: Node) => void;
   isDraggingEdge: boolean;
-  onDrop: (event: DragEvent) => void;
-  onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;
+  onDrop?: (event: DragEvent) => void;
+  onAddNoteToGraph?: (note: Note, position?: { x: number; y: number }) => void;
   screenToFlowPosition?: (position: { x: number; y: number }) => {
     x: number;
     y: number;
@@ -59,6 +59,7 @@ interface NotesGraphViewProps {
   allowNodeDrag?: boolean;
   isMain?: boolean;
   graphHistory?: UseGraphHistoryReturn;
+  canEdit?: boolean;
 }
 
 export const NotesGraphView: FC<NotesGraphViewProps> = memo(
@@ -87,6 +88,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
     onBoxSelect,
     isMain,
     graphHistory,
+    canEdit = true,
   }: NotesGraphViewProps) {
     const isMobile = useIsMobile();
 
@@ -130,7 +132,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
           }}
         >
           <GraphDropZone
-            onDrop={onDrop}
+              onDrop={onDrop ?? (() => {})}
             isDraggingEdge={isDraggingEdge}
             onBoxSelect={onBoxSelect}
             activeDragNote={activeDragNote}
@@ -139,7 +141,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
             <TouchEnabledGraph
               nodes={nodesWithSelection}
               onNodePositionChange={handleTouchNodePositionChange}
-              disabled={!isMobile || allowNodeDrag === false}
+              disabled={!isMobile || allowNodeDrag === false || !canEdit}
             >
               <div className='relative h-full w-full'>
                 <GraphReactFlowCore
@@ -161,6 +163,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                   onNodeDoubleClick={onNodeDoubleClick}
                   disableZoomDuringDrag={disableZoomDuringDrag}
                   allowNodeDrag={allowNodeDrag}
+                  canEdit={canEdit}
                   isMain={isMain}
                   graphHistory={graphHistory}
                   ViewportTracker={ViewportTracker}
@@ -175,7 +178,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
           </GraphDropZone>
           <UnposedNotesList
             layoutId={layoutId}
-            onNoteSelect={onAddNoteToGraph}
+            onNoteSelect={onAddNoteToGraph ?? (() => {})}
           />
           <DragOverlay>
             <NoteDragOverlay note={activeDragNote} />

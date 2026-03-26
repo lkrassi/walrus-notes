@@ -3,6 +3,7 @@ import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
 import type { ReactNode } from 'react';
 import { FileTreeItemContent } from './FileTreeItemContent';
 import { FileTreeItemHeader } from './FileTreeItemHeader';
+import { useDroppable } from '@dnd-kit/core';
 
 type FileTreeItemProps = {
   item: FileTreeItemType;
@@ -33,8 +34,23 @@ export const FileTreeItem = ({
   onNotesLoaded,
   toggleExpanded,
 }: FileTreeItemProps) => {
+  // DnD: layout droppable
+  let droppableClassName = '';
+  let dropRef = undefined;
+  if (item.type === 'layout' && item.isMain !== true && item.access?.canEdit) {
+    const { setNodeRef, isOver: over, active } = useDroppable({
+      id: item.id,
+      data: { type: 'layout', layoutId: item.id },
+    });
+    dropRef = setNodeRef;
+    const activeLayoutId = active?.data?.current?.fromLayoutId;
+    const isValidDropTarget = over && activeLayoutId && activeLayoutId !== item.id;
+    droppableClassName = isValidDropTarget
+      ? 'rounded-lg bg-primary/5 outline outline-1 outline-primary/25'
+      : '';
+  }
   return (
-    <div>
+    <div ref={dropRef} className={droppableClassName}>
       <FileTreeItemHeader
         item={item}
         level={level}

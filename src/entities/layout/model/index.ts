@@ -1,1 +1,2 @@
-export type { Layout } from './types';
+export { getLayoutAccess } from './access';
+export type { Layout, LayoutPermission } from './types';

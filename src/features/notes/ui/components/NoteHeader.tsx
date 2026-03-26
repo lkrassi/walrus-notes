@@ -33,6 +33,7 @@ interface NoteHeaderProps {
   onExport?: () => void;
   onImport?: (content: string) => void;
   onToggleFullscreen?: () => void;
+  canWrite?: boolean;
 }
 
 export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
@@ -53,6 +54,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   onExport,
   onImport,
   onToggleFullscreen,
+  canWrite = true,
 }) {
   const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
@@ -103,6 +105,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   );
 
   const handleOpenEditTitle = useCallback(
+    // keep title editing disabled for read-only notes
     openModalFromTrigger(
       <EditNoteModal
         title={title}
@@ -134,7 +137,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
 
   return (
     <div className={cn('panel-header')}>
-      <NoteTitle title={title} onEdit={handleOpenEditTitle} />
+      <NoteTitle title={title} onEdit={handleOpenEditTitle} canWrite={canWrite} />
 
       <NoteActions
         noteId={noteId}
@@ -151,6 +154,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
         onOpenCancelConfirmation={handleOpenCancelConfirmation}
         onExport={onExport}
         onToggleFullscreen={onToggleFullscreen}
+        canWrite={canWrite}
         t={t}
       />
     </div>

@@ -2,6 +2,7 @@ import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { WebSocketProvider } from '@/shared/lib/react/websocket';
 import { Sidebar } from '@/widgets';
+import { FileTreeProvider } from '@/widgets/hooks/FileTreeContext';
 import { useCallback, useRef } from 'react';
 import { useMainWorkspace } from '../../model';
 import { MainContent } from './MainContent';
@@ -26,11 +27,13 @@ export const Main = () => {
       <div className={cn('flex', 'h-screen', 'flex-col')}>
         <PrivateHeader />
         <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
-          <Sidebar
-            ref={sidebarRef}
-            onItemSelect={handleItemSelect}
-            selectedItemId={activeTabId || undefined}
-          />
+          <FileTreeProvider>
+            <Sidebar
+              ref={sidebarRef}
+              onItemSelect={handleItemSelect}
+              selectedItemId={activeTabId || undefined}
+            />
+          </FileTreeProvider>
           <MainContent
             onNoteOpen={handleNoteOpenFromGraph}
             onNoteTreeUpdate={handleNoteTreeUpdate}

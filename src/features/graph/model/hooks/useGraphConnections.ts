@@ -5,6 +5,7 @@ import { graphTheme } from '../../lib/utils';
 
 interface UseGraphConnectionsProps {
   layoutId: string;
+  canEdit?: boolean;
   nodes: Node[];
   edges: Edge[];
   selectedNodeId: string | null;
@@ -27,6 +28,7 @@ const isValidNoteId = (id: string | null | undefined): id is string => {
 
 export const useGraphConnections = ({
   layoutId,
+  canEdit = true,
   nodes,
   edges,
   screenToFlowPosition,
@@ -109,6 +111,10 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: unknown) => {
+      if (!canEdit) {
+        setTempEdge(null);
+        return;
+      }
       if (!tempEdge?.source || !isValidNoteId(tempEdge.source)) {
         setTempEdge(null);
         return;
@@ -247,6 +253,7 @@ export const useGraphConnections = ({
     },
     [
       layoutId,
+      canEdit,
       createNoteLink,
       tempEdge,
       screenToFlowPosition,
@@ -258,6 +265,7 @@ export const useGraphConnections = ({
 
   const onConnect = useCallback(
     async (connection: Connection) => {
+      if (!canEdit) return;
       if (
         !isValidNoteId(connection.source) ||
         !isValidNoteId(connection.target)
@@ -305,7 +313,7 @@ export const useGraphConnections = ({
         );
       }
     },
-    [layoutId, createNoteLink, allEdges, createEdge]
+    [layoutId, canEdit, createNoteLink, allEdges, createEdge]
   );
 
   return {

@@ -4,11 +4,13 @@ import { memo, type FC, type MouseEvent } from 'react';
 interface NoteTitleProps {
   title: string;
   onEdit: (event: MouseEvent<HTMLElement>) => void;
+  canWrite?: boolean;
 }
 
 export const NoteTitle: FC<NoteTitleProps> = memo(function NoteTitle({
   title,
   onEdit,
+  canWrite = true,
 }) {
   return (
     <div className={cn('min-w-0', 'flex-1')}>
@@ -23,6 +25,7 @@ export const NoteTitle: FC<NoteTitleProps> = memo(function NoteTitle({
       >
         <button
           onClick={onEdit}
+          disabled={!canWrite}
           className={cn(
             'note-title',
             'flex',
@@ -31,7 +34,7 @@ export const NoteTitle: FC<NoteTitleProps> = memo(function NoteTitle({
             'text-left',
             'hover:opacity-75',
             'transition-opacity',
-            'cursor-pointer',
+            canWrite ? 'cursor-pointer' : 'cursor-default',
             'bg-transparent',
             'border-none',
             'padding-0',

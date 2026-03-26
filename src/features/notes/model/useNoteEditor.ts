@@ -19,6 +19,7 @@ type RootStateLike = {
 
 export const useNoteEditor = (
   note: Note,
+  canWrite: boolean,
   onNoteUpdated?: (note: Note) => void
 ) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -127,6 +128,7 @@ export const useNoteEditor = (
   };
 
   const handleEdit = () => {
+    if (!canWrite) return;
     setIsEditing(true);
   };
 
@@ -137,6 +139,10 @@ export const useNoteEditor = (
   };
 
   const handleSave = async (overrideTitle?: string) => {
+    if (!canWrite) {
+      setIsEditing(false);
+      return false;
+    }
     const safeTitle =
       overrideTitle !== undefined ? overrideTitle : (title ?? '');
     const safePayload = payload ?? '';

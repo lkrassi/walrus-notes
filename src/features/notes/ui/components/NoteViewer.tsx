@@ -1,3 +1,4 @@
+import { getLayoutAccess, useGetMyLayoutsQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { memo } from 'react';
@@ -19,6 +20,9 @@ export const NoteViewer = memo(function NoteViewer({
   onNoteUpdated,
   openedFromSidebar: _openedFromSidebar,
 }: NoteViewerProps) {
+  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
+  const currentLayout = (layoutsResponse?.data || []).find(l => l.id === layoutId);
+  const canWrite = currentLayout ? getLayoutAccess(currentLayout).canWrite : true;
   const {
     noteId,
     isEditing,
@@ -43,7 +47,7 @@ export const NoteViewer = memo(function NoteViewer({
     handleSaveAction,
     handleCancelAction,
     handleDiscardAction,
-  } = useNoteViewerState({ note, onNoteUpdated });
+  } = useNoteViewerState({ note, canWrite, onNoteUpdated });
 
   return (
     <div
@@ -79,6 +83,7 @@ export const NoteViewer = memo(function NoteViewer({
         onImport={handleImport}
         onlineUsers={onlineUsers}
         currentUserId={currentUserId}
+        canWrite={canWrite}
       />
       <div className={cn('flex-1', 'overflow-hidden')}>
         <NoteContent

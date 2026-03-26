@@ -1,10 +1,11 @@
+import type { UserProfileState } from '@/entities/user';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 type AppStateLike = {
-  user: unknown;
+  user: UserProfileState;
   tabs: unknown;
-  api: any;
+  api: unknown;
 };
 
 export const useAppDispatch = () => useDispatch();

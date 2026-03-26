@@ -1,3 +1,4 @@
+import { getLayoutAccess } from '@/entities/layout';
 import type { Layout } from '@/entities/layout';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
@@ -9,6 +10,10 @@ export type FileTreeState = {
 
 export type FileTreeAction =
   | { type: 'LOAD_LAYOUTS'; payload: Layout[] }
+  | {
+      type: 'MOVE_NOTE';
+      payload: { noteId: string; fromLayoutId: string; toLayoutId: string };
+    }
   | {
       type: 'LOAD_NOTES';
       payload: {
@@ -51,6 +56,7 @@ export const fileTreeReducer = (
         title: layout.title,
         children: [],
         isMain: layout.isMain === true,
+        access: getLayoutAccess(layout),
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
         color: layout.color,
@@ -182,6 +188,7 @@ export const fileTreeReducer = (
         title: action.payload.title,
         children: [],
         isMain: action.payload.isMain === true,
+        access: getLayoutAccess(action.payload),
         createdAt: action.payload.createdAt,
         updatedAt: action.payload.updatedAt,
         color: action.payload.color,
@@ -208,10 +215,44 @@ export const fileTreeReducer = (
                 title: updatedLayout.title || layout.title,
                 updatedAt: updatedLayout.updatedAt || layout.updatedAt,
                 color: updatedLayout.color || layout.color,
+                access: updatedLayout.permission
+                  ? getLayoutAccess({
+                      ...(layout as unknown as Layout),
+                      ...(updatedLayout as Partial<Layout>),
+                    } as Layout)
+                  : layout.access,
               }
             : layout
         ),
       };
+    }
+    case 'MOVE_NOTE': {
+      const { noteId, fromLayoutId, toLayoutId } = action.payload;
+      let movedNote: FileTreeItem | null = null;
+      const newFileTree = state.fileTree
+        .map(layout => {
+          if (layout.id === fromLayoutId) {
+            const children = (layout.children || []).filter(child => {
+              if (child.id === noteId) {
+                movedNote = { ...child, parentId: toLayoutId };
+                return false;
+              }
+              return true;
+            });
+            return { ...layout, children };
+          }
+          return layout;
+        })
+        .map(layout => {
+          if (layout.id === toLayoutId && movedNote) {
+            return {
+              ...layout,
+              children: [...(layout.children || []), movedNote],
+            };
+          }
+          return layout;
+        });
+      return { ...state, fileTree: newFileTree };
     }
     case 'CLEAN_EXPANDED': {
       const newSet = new Set(state.expandedItems);

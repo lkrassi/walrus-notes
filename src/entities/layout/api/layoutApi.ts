@@ -1,6 +1,15 @@
 import { apiSlice } from '@/shared/api';
 import type { Layout } from '@/entities/layout';
 
+const normalizeLayoutPermission = (layout: Layout): Layout => ({
+  ...layout,
+  permission: layout.permission ?? {
+    canRead: true,
+    canWrite: true,
+    canEdit: true,
+  },
+});
+
 interface GetMyLayoutsResponse {
   data: Layout[];
   meta: {
@@ -125,6 +134,10 @@ export const layoutApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getMyLayouts: builder.query<GetMyLayoutsResponse, void>({
       query: () => '/layout/my',
+      transformResponse: (response: GetMyLayoutsResponse) => ({
+        ...response,
+        data: (response.data || []).map(normalizeLayoutPermission),
+      }),
       providesTags: ['Layouts'],
     }),
     createLayout: builder.mutation<CreateLayoutResponse, CreateLayoutRequest>({
@@ -141,6 +154,11 @@ export const layoutApi = apiSlice.injectEndpoints({
           title,
           ownerId: '',
           isMain: false,
+          permission: {
+            canRead: true,
+            canWrite: true,
+            canEdit: true,
+          },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         } as Layout;

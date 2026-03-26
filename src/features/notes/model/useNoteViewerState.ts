@@ -8,11 +8,13 @@ import { useNoteEditor } from './useNoteEditor';
 
 interface UseNoteViewerStateParams {
   note: Note;
+  canWrite: boolean;
   onNoteUpdated?: (note: Note) => void;
 }
 
 export const useNoteViewerState = ({
   note,
+  canWrite,
   onNoteUpdated,
 }: UseNoteViewerStateParams) => {
   const {
@@ -29,7 +31,7 @@ export const useNoteViewerState = ({
     isSaving,
     isPending,
     handleDiscard,
-  } = useNoteEditor(note, onNoteUpdated);
+  } = useNoteEditor(note, canWrite, onNoteUpdated);
 
   const { exportNote } = useExportNote();
   const collaborativeEditorRef = useRef<CollaborativeNoteEditorHandle>(null);
@@ -80,12 +82,13 @@ export const useNoteViewerState = ({
 
   const handleImport = useCallback(
     (content: string) => {
+      if (!canWrite) return;
       setPayload(() => content);
       if (!isEditing) {
         handleEdit();
       }
     },
-    [handleEdit, isEditing, setPayload]
+    [canWrite, handleEdit, isEditing, setPayload]
   );
 
   const handleSaveAction = useCallback(

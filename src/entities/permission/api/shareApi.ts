@@ -60,6 +60,9 @@ interface RawPermissionItem {
   id?: string;
   uuid?: string;
   'uuid.UUID'?: string;
+  toUserId?: string;
+  toUserName?: string;
+  toUserAvatar?: string;
 }
 
 interface PermissionsDashboardResponse {
@@ -113,9 +116,9 @@ export const shareApi = apiSlice.injectEndpoints({
           fromUserId: item.fromUserId ?? '',
           fromUserName: item.fromUserName || item.fromUsername,
           fromUserAvatar: item.fromUserAvatar || item.fromUserImgUrl,
-          toUserId: (item as any).toUserId ?? '',
-          toUserName: (item as any).toUserName,
-          toUserAvatar: (item as any).toUserAvatar,
+          toUserId: item.toUserId ?? '',
+          toUserName: item.toUserName,
+          toUserAvatar: item.toUserAvatar,
           kind: item.kind ?? 'PERMISSIONS_KIND_UNSPECIFIED',
           targetId: item.targetId ?? '',
           targetTitle: item.targetTitle || item.title,

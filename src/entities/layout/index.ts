@@ -9,4 +9,5 @@ export {
 } from './api';
 
 export type { LayoutBackupData } from './api';
-export type { Layout } from './model';
+export { getLayoutAccess } from './model';
+export type { Layout, LayoutPermission } from './model';

@@ -12,5 +12,6 @@ export {
   useSearchNotesQuery,
   useUpdateNoteMutation,
   useUpdateNotePositionMutation,
+  useDragNoteMutation,
 } from './api';
-export type { Note, NotePosition, NoteWithPosition } from './model';
+export type { Note, NotePosition, NoteWithPosition } from './model/types';

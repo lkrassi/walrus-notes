@@ -13,7 +13,7 @@
 
     /* BRAND (based on #8eabc2) */
 
-    --brand-primary: oklch(65% 0.10 240);
+    --brand-primary: oklch(65% 0.1 240);
     --brand-primary-foreground: oklch(98% 0.01 240);
 
     --primary: var(--brand-primary);
@@ -57,7 +57,7 @@
     /* semantic */
 
     --success: oklch(65% 0.16 145);
-    --danger: oklch(62% 0.20 25);
+    --danger: oklch(62% 0.2 25);
     --danger-foreground: oklch(45% 0.16 25);
     --warning: oklch(80% 0.15 85);
 
@@ -132,7 +132,7 @@
     /* semantic */
 
     --success: oklch(70% 0.15 150);
-    --danger: oklch(65% 0.20 25);
+    --danger: oklch(65% 0.2 25);
     --danger-foreground: oklch(78% 0.15 25);
     --warning: oklch(82% 0.15 85);
 

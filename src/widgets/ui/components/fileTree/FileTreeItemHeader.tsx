@@ -8,6 +8,7 @@ import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
+import { useDraggable } from '@dnd-kit/core';
 import { ChevronDown, FileText, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';
@@ -45,6 +46,7 @@ export const FileTreeItemHeader = ({
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const { openShareLinkModal } = useShareModal();
+  const canEdit = item.access ? !!item.access.canEdit : true;
 
   useEffect(() => {
     return () => {
@@ -141,8 +143,30 @@ export const FileTreeItemHeader = ({
     }
   );
 
+  // DnD: только note draggable
+  let draggableProps = {};
+  let dragRef = undefined;
+  if (item.type === 'note' && canEdit) {
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+      id: item.id,
+      data: {
+        type: 'note',
+        noteId: item.id,
+        fromLayoutId: item.parentId,
+        title: item.title,
+      },
+      disabled: item.isMain,
+    });
+    draggableProps = {
+      ...attributes,
+      ...listeners,
+      style: { opacity: isDragging ? 0 : 1 },
+    };
+    dragRef = setNodeRef;
+  }
+
   return (
-    <div className={cn('w-full')}>
+    <div className={cn('w-full')} ref={dragRef} {...draggableProps}>
       <div
         className={cn(
           'relative',
@@ -298,7 +322,10 @@ export const FileTreeItemHeader = ({
         </span>
 
         <div className={cn('flex', 'items-center', 'gap-1')}>
-          {item.type === 'layout' && item.isMain !== true && isSelected && (
+          {item.type === 'layout' &&
+            item.isMain !== true &&
+            isSelected &&
+            canEdit && (
             <FileTreeItemActions
               onShare={e => {
                 e.stopPropagation();
@@ -318,12 +345,15 @@ export const FileTreeItemHeader = ({
               titleDelete={t('layout:tooltip.delete')}
             />
           )}
-          {item.type === 'note' && item.isMain !== true && isSelected && (
+          {item.type === 'note' &&
+            item.isMain !== true &&
+            isSelected &&
+            canEdit && (
             <>
               <button
                 onClick={e => {
                   e.stopPropagation();
-                  handleDeleteNote(e as any);
+                  handleDeleteNote(e);
                 }}
                 className={cn(
                   'transition-opacity',
@@ -347,7 +377,8 @@ export const FileTreeItemHeader = ({
       {item.type === 'layout' &&
         item.isMain !== true &&
         isSelected &&
-        isExpanded && (
+        isExpanded &&
+        canEdit && (
           <div
             style={{
               paddingLeft: `${paddingLeft + 40}px`,
