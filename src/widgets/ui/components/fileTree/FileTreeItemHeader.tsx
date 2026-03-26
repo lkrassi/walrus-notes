@@ -153,8 +153,6 @@ export const FileTreeItemHeader = ({
           'gap-2',
           'rounded-lg',
           'py-2',
-          'transition-opacity',
-          'duration-150',
           'text-text',
           'dark:text-dark-text'
         )}
@@ -185,9 +183,7 @@ export const FileTreeItemHeader = ({
               'h-4',
               'w-4',
               'items-center',
-              'justify-center',
-              'transition-transform',
-              'duration-200'
+              'justify-center'
             )}
           >
             <ChevronDown
@@ -195,8 +191,6 @@ export const FileTreeItemHeader = ({
                 'h-4',
                 'w-4',
                 'transform',
-                'transition-transform',
-                'duration-200',
                 isExpanded ? 'rotate-0' : '-rotate-90',
                 'text-black',
                 'dark:text-white'
@@ -326,8 +320,6 @@ export const FileTreeItemHeader = ({
                   handleDeleteNote(e as any);
                 }}
                 className={cn(
-                  'transition-opacity',
-                  'duration-150',
                   'opacity-100',
                   isMobile
                     ? 'text-gray-600 dark:text-white'
@@ -363,7 +355,7 @@ export const FileTreeItemHeader = ({
               }}
               className={cn(
                 'text-primary dark:text-dark-primary text-sm font-medium',
-                'transition-opacity duration-150 hover:opacity-80'
+                'hover:opacity-80'
               )}
               title={t('fileTree:addMore')}
             >
