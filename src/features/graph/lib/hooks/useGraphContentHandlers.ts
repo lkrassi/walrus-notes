@@ -40,6 +40,7 @@ interface UseGraphContentHandlersProps {
   rfSetNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
   rfSetEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
   setIsNodeDragging: (isDragging: boolean) => void;
+  canEdit?: boolean;
 }
 
 export const useGraphContentHandlers = ({
@@ -65,6 +66,7 @@ export const useGraphContentHandlers = ({
   rfSetNodes,
   rfSetEdges,
   setIsNodeDragging,
+  canEdit = true,
 }: UseGraphContentHandlersProps) => {
   const {
     handleNodeDragStart,
@@ -93,6 +95,7 @@ export const useGraphContentHandlers = ({
     setTempEdges,
   } = useGraphConnections({
     layoutId,
+    canEdit,
     nodes,
     edges,
     selectedNodeId,
@@ -166,9 +169,10 @@ export const useGraphContentHandlers = ({
 
   const handleAddNoteToGraph = useCallback(
     (note: Note, dropPosition?: { x: number; y: number }) => {
+      if (!canEdit) return;
       handleAddNoteToGraphOrig?.(note, dropPosition);
     },
-    [handleAddNoteToGraphOrig]
+    [canEdit, handleAddNoteToGraphOrig]
   );
 
   const handleNodeMouseEnterWrapped = useCallback(

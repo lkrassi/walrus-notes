@@ -1,3 +1,4 @@
+import { getLayoutAccess, useGetMyLayoutsQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import { memo } from 'react';
 import { useGraphContentHandlers, useGraphState } from '../../lib/hooks';
@@ -18,6 +19,9 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   allowNodeDrag,
   isMain,
 }: NotesGraphContentProps) {
+  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
+  const currentLayout = (layoutsResponse?.data || []).find(l => l.id === layoutId);
+  const canEdit = currentLayout ? getLayoutAccess(currentLayout).canEdit : true;
   const {
     initialNodes,
     initialEdges,
@@ -92,6 +96,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     rfSetNodes,
     rfSetEdges,
     setIsNodeDragging,
+    canEdit,
   });
 
   const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
@@ -107,18 +112,18 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   return (
     <NotesGraphView
       layoutId={layoutId}
-      allowNodeDrag={allowNodeDrag}
+      allowNodeDrag={allowNodeDrag && canEdit}
       nodes={nodes}
       edges={edges}
       nodesWithSelection={nodesWithSelection}
       edgesWithSelection={edgesWithSelection}
       onNodesChange={handleNodesChange}
       onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
-      onNodeDragStart={handleNodeDragStart}
-      onNodeDragStop={handleNodeDragStop}
+      onConnect={canEdit ? onConnect : undefined}
+      onConnectStart={canEdit ? onConnectStart : undefined}
+      onConnectEnd={canEdit ? onConnectEnd : undefined}
+      onNodeDragStart={canEdit ? handleNodeDragStart : undefined}
+      onNodeDragStop={canEdit ? handleNodeDragStop : undefined}
       onNodeClick={handleNodeClick}
       onNodeMouseEnter={handleNodeMouseEnterWrapped}
       onNodeMouseLeave={handleNodeMouseLeaveWrapped}
@@ -126,12 +131,13 @@ export const NotesGraphContent = memo(function NotesGraphContent({
       onPaneClick={onPaneClick}
       onNodeDoubleClick={handleNodeDoubleClick}
       isDraggingEdge={isDraggingEdge}
-      onDrop={handleNoteDrop}
-      onBoxSelect={handleBoxSelect}
-      onAddNoteToGraph={handleAddNoteToGraph}
+      onDrop={canEdit ? handleNoteDrop : () => {}}
+      onBoxSelect={canEdit ? handleBoxSelect : undefined}
+      onAddNoteToGraph={canEdit ? handleAddNoteToGraph : () => {}}
       screenToFlowPosition={screenToFlowPosition}
       isMain={isMain}
       graphHistory={graphHistory}
+      canEdit={canEdit}
     />
   );
 });

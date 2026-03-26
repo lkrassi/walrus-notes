@@ -1,4 +1,5 @@
 import {
+  getLayoutAccess,
   useGetMyLayoutsQuery,
   useGetPosedNotesQuery,
   useUpdateNotePositionMutation,
@@ -21,6 +22,8 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
   const layouts = layoutsResponse?.data || [];
+  const currentLayout = layouts.find(l => l.id === layoutId);
+  const canEdit = currentLayout ? getLayoutAccess(currentLayout).canEdit : true;
   const [updatePosition] = useUpdateNotePositionMutation();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
@@ -143,6 +146,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {
+      if (!canEdit) return;
       try {
         await updatePosition({
           layoutId,
@@ -152,7 +156,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
         }).unwrap();
       } catch (_error) {}
     },
-    [layoutId, updatePosition]
+    [layoutId, canEdit, updatePosition]
   );
 
   const onNodeClick = useCallback((nodeId: string) => {

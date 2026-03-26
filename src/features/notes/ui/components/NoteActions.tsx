@@ -28,6 +28,7 @@ interface NoteActionsProps {
   onOpenCancelConfirmation: (e: MouseEvent<HTMLElement>) => void;
   onExport?: () => void;
   onToggleFullscreen?: () => void;
+  canWrite?: boolean;
   t: (key: string) => string;
 }
 
@@ -45,6 +46,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   onOpenCancelConfirmation,
   onExport,
   onToggleFullscreen,
+  canWrite = true,
   t,
 }) {
   return (
@@ -60,7 +62,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         'sm:flex-nowrap'
       )}
     >
-      {isEditing ? (
+      {canWrite && (isEditing ? (
         <>
           <Button
             onClick={onSave}
@@ -131,9 +133,9 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         >
           <Edit3 className={cn('h-4', 'w-4')} />
         </Button>
-      )}
+      ))}
 
-      {onExport && (
+      {canWrite && onExport && (
         <>
           <Button
             onClick={onExport}
@@ -167,14 +169,16 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         </>
       )}
 
-      <Button
-        onClick={onOpenHelp}
-        className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
-        title={t('notes:editorHelp')}
-        variant='default'
-      >
-        <CircleQuestionMark className={cn('h-4', 'w-4')} />
-      </Button>
+      {canWrite && (
+        <Button
+          onClick={onOpenHelp}
+          className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
+          title={t('notes:editorHelp')}
+          variant='default'
+        >
+          <CircleQuestionMark className={cn('h-4', 'w-4')} />
+        </Button>
+      )}
 
       {onToggleFullscreen && (
         <Button

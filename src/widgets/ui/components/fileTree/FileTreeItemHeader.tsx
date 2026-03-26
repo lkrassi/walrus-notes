@@ -8,6 +8,7 @@ import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
+import { useDraggable } from '@dnd-kit/core';
 import { ChevronDown, FileText, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';
@@ -45,6 +46,7 @@ export const FileTreeItemHeader = ({
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const { openShareLinkModal } = useShareModal();
+  const canEdit = item.access ? !!item.access.canEdit : true;
 
   useEffect(() => {
     return () => {
@@ -141,8 +143,30 @@ export const FileTreeItemHeader = ({
     }
   );
 
+  // DnD: только note draggable
+  let draggableProps = {};
+  let dragRef = undefined;
+  if (item.type === 'note' && canEdit) {
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+      id: item.id,
+      data: {
+        type: 'note',
+        noteId: item.id,
+        fromLayoutId: item.parentId,
+        title: item.title,
+      },
+      disabled: item.isMain,
+    });
+    draggableProps = {
+      ...attributes,
+      ...listeners,
+      style: { opacity: isDragging ? 0 : 1 },
+    };
+    dragRef = setNodeRef;
+  }
+
   return (
-    <div className={cn('w-full')}>
+    <div className={cn('w-full')} ref={dragRef} {...draggableProps}>
       <div
         className={cn(
           'relative',
@@ -153,6 +177,8 @@ export const FileTreeItemHeader = ({
           'gap-2',
           'rounded-lg',
           'py-2',
+          'transition-opacity',
+          'duration-150',
           'text-text',
           'dark:text-dark-text'
         )}
@@ -183,7 +209,9 @@ export const FileTreeItemHeader = ({
               'h-4',
               'w-4',
               'items-center',
-              'justify-center'
+              'justify-center',
+              'transition-transform',
+              'duration-200'
             )}
           >
             <ChevronDown
@@ -191,6 +219,8 @@ export const FileTreeItemHeader = ({
                 'h-4',
                 'w-4',
                 'transform',
+                'transition-transform',
+                'duration-200',
                 isExpanded ? 'rotate-0' : '-rotate-90',
                 'text-black',
                 'dark:text-white'
@@ -292,54 +322,63 @@ export const FileTreeItemHeader = ({
         </span>
 
         <div className={cn('flex', 'items-center', 'gap-1')}>
-          {item.type === 'layout' && item.isMain !== true && isSelected && (
-            <FileTreeItemActions
-              onShare={e => {
-                e.stopPropagation();
-                openShareLinkModal(item.id, 'LAYOUT')(e);
-              }}
-              onEdit={e => {
-                e.stopPropagation();
-                handleUpdateLayout(e);
-              }}
-              onDelete={e => {
-                e.stopPropagation();
-                handleDeleteLayout(e);
-              }}
-              isMobile={isMobile}
-              titleShare={t('layout:tooltip.share')}
-              titleEdit={t('layout:tooltip.edit')}
-              titleDelete={t('layout:tooltip.delete')}
-            />
-          )}
-          {item.type === 'note' && item.isMain !== true && isSelected && (
-            <>
-              <button
-                onClick={e => {
+          {item.type === 'layout' &&
+            item.isMain !== true &&
+            isSelected &&
+            canEdit && (
+              <FileTreeItemActions
+                onShare={e => {
                   e.stopPropagation();
-                  handleDeleteNote(e as any);
+                  openShareLinkModal(item.id, 'LAYOUT')(e);
                 }}
-                className={cn(
-                  'opacity-100',
-                  isMobile
-                    ? 'text-gray-600 dark:text-white'
-                    : isSelected
-                      ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                )}
-                title={t('notes:deleteNote')}
-              >
-                <Trash2 className={cn('h-4', 'w-4')} />
-              </button>
-            </>
-          )}
+                onEdit={e => {
+                  e.stopPropagation();
+                  handleUpdateLayout(e);
+                }}
+                onDelete={e => {
+                  e.stopPropagation();
+                  handleDeleteLayout(e);
+                }}
+                isMobile={isMobile}
+                titleShare={t('layout:tooltip.share')}
+                titleEdit={t('layout:tooltip.edit')}
+                titleDelete={t('layout:tooltip.delete')}
+              />
+            )}
+          {item.type === 'note' &&
+            item.isMain !== true &&
+            isSelected &&
+            canEdit && (
+              <>
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDeleteNote(e);
+                  }}
+                  className={cn(
+                    'transition-opacity',
+                    'duration-150',
+                    'opacity-100',
+                    isMobile
+                      ? 'text-gray-600 dark:text-white'
+                      : isSelected
+                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                  )}
+                  title={t('notes:deleteNote')}
+                >
+                  <Trash2 className={cn('h-4', 'w-4')} />
+                </button>
+              </>
+            )}
         </div>
       </div>
 
       {item.type === 'layout' &&
         item.isMain !== true &&
         isSelected &&
-        isExpanded && (
+        isExpanded &&
+        canEdit && (
           <div
             style={{
               paddingLeft: `${paddingLeft + 40}px`,
@@ -355,7 +394,7 @@ export const FileTreeItemHeader = ({
               }}
               className={cn(
                 'text-primary dark:text-dark-primary text-sm font-medium',
-                'hover:opacity-80'
+                'transition-opacity duration-150 hover:opacity-80'
               )}
               title={t('fileTree:addMore')}
             >

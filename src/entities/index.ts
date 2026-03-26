@@ -22,6 +22,7 @@ export {
 } from './graph';
 export type { UseGraphHistoryReturn } from './graph';
 export {
+  getLayoutAccess,
   layoutApi,
   useCreateLayoutMutation,
   useDeleteLayoutMutation,
