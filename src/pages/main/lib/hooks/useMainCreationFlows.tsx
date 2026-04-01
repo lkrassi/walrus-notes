@@ -48,7 +48,7 @@ export const useMainCreationFlows = () => {
       onCreateNote={handleStartNoteCreation}
     />,
     {
-      title: t('dashboard:whatToCreate'),
+      title: t('main:whatToCreate'),
       size: MODAL_SIZE_PRESETS.createChoice,
       showCloseButton: true,
     }

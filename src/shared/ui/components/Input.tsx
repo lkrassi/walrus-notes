@@ -22,6 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       id,
       'aria-label': ariaLabel,
       'aria-describedby': ariaDescribedBy,
+      ...rest
     }: InputProps,
     ref
   ) => {
@@ -32,8 +33,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         type={type}
         value={value}
-        onChange={onChange as never}
-        onBlur={onBlur as never}
+        onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
         disabled={disabled}
         className={cn(
@@ -54,6 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         minLength={minLength}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
+        {...rest}
       />
     );
   }

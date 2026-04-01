@@ -1,7 +1,6 @@
 import type { Note } from '@/entities/note';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
 import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
-import { CreateNoteForm } from '@/features/notes';
 import { useShareModal } from '@/features/share';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
@@ -34,6 +33,7 @@ export const FileTreeItemHeader = ({
   isSelected,
   hasSelection,
   onItemClick,
+  onOpenGraph,
   onDeleteNote,
   onDeleteLayout,
   toggleExpanded,
@@ -106,14 +106,6 @@ export const FileTreeItemHeader = ({
     {
       title: t('notes:deleteNote'),
       size: MODAL_SIZE_PRESETS.noteDelete,
-    }
-  );
-
-  const handleCreateNote = openModalFromTrigger(
-    <CreateNoteForm layoutId={item.id} />,
-    {
-      title: t('fileTree:createNewNote'),
-      size: MODAL_SIZE_PRESETS.noteCreate,
     }
   );
 
@@ -340,10 +332,19 @@ export const FileTreeItemHeader = ({
                   e.stopPropagation();
                   handleDeleteLayout(e);
                 }}
+                onOpenGraph={
+                  onOpenGraph
+                    ? e => {
+                        e.stopPropagation();
+                        onOpenGraph(item.id);
+                      }
+                    : undefined
+                }
                 isMobile={isMobile}
                 titleShare={t('layout:tooltip.share')}
                 titleEdit={t('layout:tooltip.edit')}
                 titleDelete={t('layout:tooltip.delete')}
+                titleOpenGraph={t('layout:tooltip.graph')}
               />
             )}
           {item.type === 'note' &&
@@ -359,12 +360,12 @@ export const FileTreeItemHeader = ({
                   className={cn(
                     'transition-opacity',
                     'duration-150',
-                    'opacity-100',
+                    'opacity-0',
+                    'group-hover:opacity-100',
+                    'group-focus-within:opacity-100',
                     isMobile
-                      ? 'text-gray-600 dark:text-white'
-                      : isSelected
-                        ? 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                        : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                      ? 'text-gray-600 opacity-100 dark:text-white'
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
                   )}
                   title={t('notes:deleteNote')}
                 >
@@ -374,35 +375,6 @@ export const FileTreeItemHeader = ({
             )}
         </div>
       </div>
-
-      {item.type === 'layout' &&
-        item.isMain !== true &&
-        isSelected &&
-        isExpanded &&
-        canWrite && (
-          <div
-            style={{
-              paddingLeft: `${paddingLeft + 40}px`,
-              paddingRight: '12px',
-            }}
-            className={cn('pb-1')}
-          >
-            <button
-              type='button'
-              onClick={e => {
-                e.stopPropagation();
-                handleCreateNote(e);
-              }}
-              className={cn(
-                'text-primary dark:text-dark-primary text-sm font-medium',
-                'transition-opacity duration-150 hover:opacity-80'
-              )}
-              title={t('fileTree:addMore')}
-            >
-              {t('fileTree:addMore')}
-            </button>
-          </div>
-        )}
     </div>
   );
 };

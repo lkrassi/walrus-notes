@@ -517,6 +517,9 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         const state = getState() as unknown as LocalRootState;
+        const layouts =
+          layoutApi.endpoints.getMyLayouts.select()(state).data?.data || [];
+        const allLayoutIds = layouts.map(layout => layout.id);
 
         const unposedCache = notesApi.endpoints.getUnposedNotes.select({
           layoutId: arg.layoutId,
@@ -525,7 +528,7 @@ export const notesApi = apiSlice.injectEndpoints({
           note => note.id === arg.noteId
         );
 
-        const patches = [
+        const patches: UndoPatch[] = [
           dispatch(
             notesApi.util.updateQueryData(
               'getUnposedNotes',
@@ -578,6 +581,31 @@ export const notesApi = apiSlice.injectEndpoints({
           ),
         ];
 
+        for (const layoutId of allLayoutIds) {
+          if (layoutId === arg.layoutId) continue;
+
+          patches.push(
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId },
+                draft => {
+                  if (!draft) return;
+                  const idx = draft.data.findIndex(
+                    note => note.id === arg.noteId
+                  );
+                  if (idx === -1) return;
+
+                  draft.data[idx] = {
+                    ...draft.data[idx],
+                    position: { xPos: arg.xPos, yPos: arg.yPos },
+                  };
+                }
+              )
+            )
+          );
+        }
+
         try {
           await queryFulfilled;
         } catch {
@@ -599,31 +627,45 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const patches: UndoPatch[] = [
-          dispatch(
-            notesApi.util.updateQueryData(
-              'getPosedNotes',
-              { layoutId: arg.layoutId },
-              draft => {
-                if (!draft) return;
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        const state = getState() as unknown as LocalRootState;
+        const layouts =
+          layoutApi.endpoints.getMyLayouts.select()(state).data?.data || [];
+        const allLayoutIds = layouts.map(layout => layout.id);
 
-                const source = draft.data.find(n => n.id === arg.firstNoteId);
-                const target = draft.data.find(n => n.id === arg.secondNoteId);
-                if (!source || !target) return;
+        const patches: UndoPatch[] = [];
 
-                const out = source.linkedWithOut ?? [];
-                if (!out.includes(arg.secondNoteId)) {
-                  source.linkedWithOut = [...out, arg.secondNoteId];
+        for (const layoutId of allLayoutIds) {
+          patches.push(
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId },
+                draft => {
+                  if (!draft) return;
+
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  const target = draft.data.find(
+                    n => n.id === arg.secondNoteId
+                  );
+                  if (!source || !target) return;
+
+                  const out = source.linkedWithOut ?? [];
+                  if (!out.includes(arg.secondNoteId)) {
+                    source.linkedWithOut = [...out, arg.secondNoteId];
+                  }
+
+                  const incoming = target.linkedWithIn ?? [];
+                  if (!incoming.includes(arg.firstNoteId)) {
+                    target.linkedWithIn = [...incoming, arg.firstNoteId];
+                  }
                 }
-
-                const incoming = target.linkedWithIn ?? [];
-                if (!incoming.includes(arg.firstNoteId)) {
-                  target.linkedWithIn = [...incoming, arg.firstNoteId];
-                }
-              }
+              )
             )
-          ),
+          );
+        }
+
+        patches.push(
           dispatch(
             notesApi.util.updateQueryData(
               'getNotes',
@@ -649,8 +691,8 @@ export const notesApi = apiSlice.injectEndpoints({
                 }
               }
             )
-          ),
-        ];
+          )
+        );
 
         try {
           await queryFulfilled;
@@ -659,6 +701,7 @@ export const notesApi = apiSlice.injectEndpoints({
         }
       },
       invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: arg.layoutId },
         { type: 'Notes', id: `posed-${arg.layoutId}` },
       ],
     }),
@@ -672,32 +715,46 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const patches: UndoPatch[] = [
-          dispatch(
-            notesApi.util.updateQueryData(
-              'getPosedNotes',
-              { layoutId: arg.layoutId },
-              draft => {
-                if (!draft) return;
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        const state = getState() as unknown as LocalRootState;
+        const layouts =
+          layoutApi.endpoints.getMyLayouts.select()(state).data?.data || [];
+        const allLayoutIds = layouts.map(layout => layout.id);
 
-                const source = draft.data.find(n => n.id === arg.firstNoteId);
-                const target = draft.data.find(n => n.id === arg.secondNoteId);
+        const patches: UndoPatch[] = [];
 
-                if (source?.linkedWithOut) {
-                  source.linkedWithOut = source.linkedWithOut.filter(
-                    id => id !== arg.secondNoteId
+        for (const layoutId of allLayoutIds) {
+          patches.push(
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId },
+                draft => {
+                  if (!draft) return;
+
+                  const source = draft.data.find(n => n.id === arg.firstNoteId);
+                  const target = draft.data.find(
+                    n => n.id === arg.secondNoteId
                   );
-                }
 
-                if (target?.linkedWithIn) {
-                  target.linkedWithIn = target.linkedWithIn.filter(
-                    id => id !== arg.firstNoteId
-                  );
+                  if (source?.linkedWithOut) {
+                    source.linkedWithOut = source.linkedWithOut.filter(
+                      id => id !== arg.secondNoteId
+                    );
+                  }
+
+                  if (target?.linkedWithIn) {
+                    target.linkedWithIn = target.linkedWithIn.filter(
+                      id => id !== arg.firstNoteId
+                    );
+                  }
                 }
-              }
+              )
             )
-          ),
+          );
+        }
+
+        patches.push(
           dispatch(
             notesApi.util.updateQueryData(
               'getNotes',
@@ -721,8 +778,8 @@ export const notesApi = apiSlice.injectEndpoints({
                 }
               }
             )
-          ),
-        ];
+          )
+        );
 
         try {
           await queryFulfilled;
@@ -731,6 +788,7 @@ export const notesApi = apiSlice.injectEndpoints({
         }
       },
       invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: arg.layoutId },
         { type: 'Notes', id: `posed-${arg.layoutId}` },
       ],
     }),

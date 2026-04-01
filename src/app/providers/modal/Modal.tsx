@@ -7,7 +7,11 @@ import {
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { useEffect, type FC, type MouseEvent as ReactMouseEvent } from 'react';
+import {
+  useEffect,
+  type FC,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ModalProps {
@@ -41,8 +45,11 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
     onClose();
   };
 
-  const handleContainerClick = (event: ReactMouseEvent<HTMLDivElement>) => {
+  const handleBackdropPointerDown = (
+    event: ReactPointerEvent<HTMLDivElement>
+  ) => {
     if (event.target === event.currentTarget) {
+      event.preventDefault();
       handleClose();
     }
   };
@@ -108,7 +115,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
           <motion.div
             key='modal-overlay'
             className='bg-foreground/20 fixed inset-0 backdrop-blur-sm'
-            onClick={handleClose}
+            onPointerDown={handleBackdropPointerDown}
             aria-hidden='true'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -118,7 +125,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
 
           <div
             className='fixed inset-0 flex items-center justify-center p-4'
-            onClick={handleContainerClick}
+            onPointerDown={handleBackdropPointerDown}
           >
             <motion.div
               className={`w-full ${maxWidth}`}

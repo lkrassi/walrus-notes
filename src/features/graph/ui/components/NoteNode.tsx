@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { memo, useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
+import { NotePreview } from './NotePreview';
 
 interface NoteNodeProps {
   data: {
@@ -43,7 +44,7 @@ export const NoteNodeComponent = memo(
     };
 
     return (
-      <motion.button
+      <motion.div
         onPointerDown={e => {
           pointerStartRef.current = { x: e.clientX, y: e.clientY };
 
@@ -94,27 +95,15 @@ export const NoteNodeComponent = memo(
           window.addEventListener('pointerup', upHandler);
         }}
         ref={btnRef}
-        className={cn(
-          'relative',
-          'max-w-40',
-          'min-w-40',
-          'cursor-pointer',
-          'rounded-xl',
-          'p-2',
-          'text-left',
-          'bg-surface',
-          'text-foreground',
-          'border-2'
-        )}
-        style={{
-          borderColor: resolvedColor,
-        }}
-        title='Клик по ЛКМ для открытия заметки'
+        className={cn('relative')}
         animate={{
           opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
         }}
         transition={{ duration: 0.18 }}
       >
+        <div className={cn('cursor-pointer', 'pointer-events-none')}>
+          <NotePreview note={data.note} layoutColor={data.layoutColor} />
+        </div>
         <Handle
           type='source'
           position={Position.Right}
@@ -172,20 +161,7 @@ export const NoteNodeComponent = memo(
           style={handleStyle}
           className={cn('z-10')}
         />
-
-        <h3
-          className={cn(
-            'm-3',
-            'line-clamp-2',
-            'overflow-hidden',
-            'text-center',
-            'font-semibold',
-            'text-ellipsis'
-          )}
-        >
-          {data.note.title}
-        </h3>
-      </motion.button>
+      </motion.div>
     );
   },
   (prev: NoteNodeProps, next: NoteNodeProps) => {

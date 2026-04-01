@@ -39,6 +39,7 @@
   "deleteNoteConfirmation": "Are you sure you want to delete the note \"{{title}}\"?",
   "deleteNoteWarning": "This action cannot be undone.",
   "noteDeletionError": "Error deleting note",
+  "recordNotFoundDeleted": "The note was deleted",
   "deleting": "Deleting...",
   "delete": "Delete",
   "editorHelp": "Editor Hints",

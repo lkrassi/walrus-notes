@@ -6,11 +6,13 @@
   "noLayouts": "Нет папок",
   "createFirstLayout": "Создайте первую папку",
   "createNewNote": "Создать новую заметку",
+  "addNote": "Добавить заметку",
   "addMore": "Добавить ещё",
   "noSearchResults": "Ничего не найдено",
   "tryDifferentQuery": "Попробуйте другой запрос",
   "folderEmpty": "Папка пуста",
   "loading": "Загрузка",
+  "showMore": "Показать ещё",
   "searchPlaceholder": "Поиск...",
   "clearSearch": "Очистить поле поиска"
 }

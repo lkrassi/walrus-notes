@@ -29,10 +29,12 @@
   "deleteLayoutWarning": "This action cannot be undone. All notes inside the layout will also be deleted.",
   "layoutDeletedSuccess": "Layout successfully deleted",
   "layoutDeletionError": "An error occurred while deleting the layout",
+  "recordNotFoundWithNotes": "The folder was deleted, and all notes in it were deleted as well",
   "deleting": "Deleting...",
   "tooltip": {
     "share": "Share layout",
     "edit": "Edit layout",
-    "delete": "Delete layout"
+    "delete": "Delete layout",
+    "graph": "Show graph"
   }
 }

@@ -45,7 +45,12 @@ export const ExportImportButton: FC<Props> = ({
           <Button
             onClick={e => {
               const openImport = openModalFromTrigger(
-                <MdImportModal onImported={doImport} />,
+                <MdImportModal
+                  onImported={content => {
+                    doImport(content);
+                    closeModal();
+                  }}
+                />,
                 {
                   title: t('notes:import'),
                   size: MODAL_SIZE_PRESETS.noteImport,

@@ -50,7 +50,7 @@ export const FolderCard = ({
       layoutTitle={layout.title || 'Untitled'}
     />,
     {
-      title: t('layout:deleteLayout') || 'Удалить папку',
+      title: t('layout:deleteLayout'),
       size: MODAL_SIZE_PRESETS.layoutDelete,
       showCloseButton: true,
     }

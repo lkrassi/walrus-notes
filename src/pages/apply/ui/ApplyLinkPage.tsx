@@ -18,11 +18,18 @@ const ApplyLinkPage: React.FC = () => {
       return;
     }
 
+    const applyGuardKey = `apply-link-processed:${linkId}`;
+    if (sessionStorage.getItem(applyGuardKey) === '1') {
+      navigate('/main');
+      return;
+    }
+
     if (hasProcessedRef.current) return;
 
     hasProcessedRef.current = true;
     try {
       await handleApplyLink(linkId);
+      sessionStorage.setItem(applyGuardKey, '1');
       showSuccess('Доступ успешно предоставлен.');
       navigate('/main');
     } catch (error: unknown) {

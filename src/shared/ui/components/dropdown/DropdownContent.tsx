@@ -115,11 +115,7 @@ export const DropdownContent: FC<DropdownContentProps> = ({
   const renderContent = () => {
     switch (state) {
       case 'empty':
-        return (
-          emptyContent || (
-            <div className={cn('text-sm', 'text-muted-foreground')}>Пусто</div>
-          )
-        );
+        return emptyContent;
       case 'error':
         return (
           errorContent || (

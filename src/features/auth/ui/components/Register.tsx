@@ -26,6 +26,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [register, { isLoading: isSubmitting }] = useRegisterMutation();
   const [sendConfirmCode] = useSendConfirmCodeMutation();
   const passwordVisibility = usePasswordVisibility();
+  const confirmPasswordVisibility = usePasswordVisibility();
   const { t } = useTranslation();
   const { openModal, closeModal } = useModalContext();
 
@@ -243,7 +244,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                           passwordVisibility.isVisible ? 'text' : 'password'
                         }
                         placeholder={t('auth:login.passwordPlaceholder')}
-                        autoComplete='current-password'
+                        autoComplete='new-password'
                         required
                         disabled={formikSubmitting || isSubmitting}
                         aria-invalid={meta.touched && Boolean(meta.error)}
@@ -284,7 +285,9 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <Input
                         {...field}
                         type={
-                          passwordVisibility.isVisible ? 'text' : 'password'
+                          confirmPasswordVisibility.isVisible
+                            ? 'text'
+                            : 'password'
                         }
                         placeholder={confirmPasswordPlaceholder}
                         autoComplete='new-password'
@@ -295,16 +298,16 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       />
                       <button
                         type='button'
-                        onClick={passwordVisibility.toggleVisibility}
+                        onClick={confirmPasswordVisibility.toggleVisibility}
                         className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
                         aria-label={
-                          passwordVisibility.isVisible
+                          confirmPasswordVisibility.isVisible
                             ? t('common:password.hide')
                             : t('common:password.show')
                         }
                         disabled={formikSubmitting || isSubmitting}
                       >
-                        {passwordVisibility.isVisible ? (
+                        {confirmPasswordVisibility.isVisible ? (
                           <EyeOff size={18} />
                         ) : (
                           <Eye size={18} />

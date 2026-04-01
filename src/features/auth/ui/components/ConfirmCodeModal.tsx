@@ -3,6 +3,7 @@ import { useNotifications } from '@/entities/notification';
 import { Button, Input } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import {
+  type ChangeEvent,
   type ClipboardEvent,
   type FC,
   type KeyboardEvent,
@@ -28,7 +29,31 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleInputChange = (index: number, value: string) => {
+  const applyDigitsFrom = (startIndex: number, rawValue: string) => {
+    const digits = rawValue.replace(/\D/g, '').slice(0, 6 - startIndex);
+    if (!digits.length) return;
+
+    const next = [...code];
+    for (let offset = 0; offset < digits.length; offset += 1) {
+      next[startIndex + offset] = digits[offset];
+    }
+    setCode(next);
+
+    const nextIndex = Math.min(startIndex + digits.length, 5);
+    inputRefs.current[nextIndex]?.focus();
+  };
+
+  const handleInputChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+
+    if (value.length > 1) {
+      applyDigitsFrom(index, value);
+      return;
+    }
+
     if (!/^\d?$/.test(value)) return;
 
     const newCode = [...code];
@@ -40,9 +65,22 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
     }
   };
 
-  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Backspace' && !code[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      const newCode = [...code];
+
+      if (newCode[index]) {
+        newCode[index] = '';
+        setCode(newCode);
+        return;
+      }
+
+      if (index > 0) {
+        newCode[index - 1] = '';
+        setCode(newCode);
+        inputRefs.current[index - 1]?.focus();
+      }
     } else if (e.key === 'ArrowLeft' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     } else if (e.key === 'ArrowRight' && index < 5) {
@@ -50,22 +88,10 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
     }
   };
 
-  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (index: number, e: ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
-    const pastedCode = pastedData.replace(/\D/g, '').slice(0, 6).split('');
-
-    const newCode = [...code];
-    pastedCode.forEach((digit, index) => {
-      if (index < 6) {
-        newCode[index] = digit;
-      }
-    });
-    setCode(newCode);
-
-    const nextEmptyIndex = newCode.findIndex(c => !c);
-    const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
-    inputRefs.current[focusIndex]?.focus();
+    applyDigitsFrom(index, pastedData);
   };
 
   const handleSubmit = async () => {
@@ -116,14 +142,13 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
             }}
             type='text'
             inputMode='numeric'
+            autoComplete={index === 0 ? 'one-time-code' : 'off'}
             maxLength={1}
             value={digit}
             autoFocus={index === 0}
-            onChange={e =>
-              handleInputChange(index, (e.target as HTMLInputElement).value)
-            }
+            onChange={e => handleInputChange(index, e)}
             onKeyDown={e => handleKeyDown(index, e)}
-            onPaste={handlePaste}
+            onPaste={e => handlePaste(index, e)}
             disabled={isLoading}
             className={cn(
               'h-12 w-12 px-0 text-center text-lg font-semibold',

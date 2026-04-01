@@ -1,5 +1,6 @@
 import type { Note } from '@/entities/note';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
+import { cn } from '@/shared';
 import { useDroppable } from '@dnd-kit/core';
 import type { ReactNode } from 'react';
 import { FileTreeItemContent } from './FileTreeItemContent';
@@ -62,7 +63,7 @@ export const FileTreeItem = ({
     }
   }
   return (
-    <div ref={dropRef} className={droppableClassName}>
+    <div ref={dropRef} className={cn('group', droppableClassName)}>
       <FileTreeItemHeader
         item={item}
         level={level}

@@ -85,7 +85,7 @@
       "helper": "Choose the Walrus Notes backup JSON file",
       "modalTitle": "Import backup",
       "warningTitle": "Replace all data",
-      "warningText": "Current layouts, notes and links will be deleted and replaced with the backup file. This action cannot be undone.",
+      "warningText": "Current layouts, notes and links will be deleted and replaced with the backup file. This action cannot be undone. Folders shared with you by other users will not be affected.",
       "dropOrClick": "Drop a JSON file here or click to select",
       "confirm": "Yes, replace",
       "cancel": "Cancel"

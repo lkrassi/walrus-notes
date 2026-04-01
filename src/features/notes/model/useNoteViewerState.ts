@@ -84,11 +84,8 @@ export const useNoteViewerState = ({
     (content: string) => {
       if (!canWrite) return;
       setPayload(() => content);
-      if (!isEditing) {
-        handleEdit();
-      }
     },
-    [canWrite, handleEdit, isEditing, setPayload]
+    [canWrite, setPayload]
   );
 
   const handleSaveAction = useCallback(

@@ -224,18 +224,7 @@ export function useDashboardPermissions() {
   };
 
   const handleApplyLink = async (linkId: string) => {
-    try {
-      const response = await applyLink({ linkId }).unwrap();
-      const { targetId, kind } = response;
-      const targetName = targetTitlesById[targetId] || 'папка';
-      const accessLevel =
-        kind === 'PERMISSIONS_KIND_LAYOUT' ? 'папке' : 'заметке';
-
-      showSuccess(`Теперь у вас есть доступ к ${accessLevel} "${targetName}".`);
-      window.location.href = '/main';
-    } catch {
-      showError('Ошибка при получении доступа.');
-    }
+    return applyLink({ linkId }).unwrap();
   };
 
   return {

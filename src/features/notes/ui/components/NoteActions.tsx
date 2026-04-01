@@ -150,7 +150,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
             title={t('notes:export')}
             variant='default'
           >
-            <Download className={cn('h-4', 'w-4')} />
+            <Upload className={cn('h-4', 'w-4')} />
           </Button>
 
           <Button
@@ -165,7 +165,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
             title={t('notes:import')}
             variant='default'
           >
-            <Upload className={cn('h-4', 'w-4')} />
+            <Download className={cn('h-4', 'w-4')} />
           </Button>
         </>
       )}

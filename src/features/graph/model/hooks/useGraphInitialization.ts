@@ -31,6 +31,8 @@ export const useGraphInitialization = ({
       for (const inNode of initialNodes) {
         const prev = map.get(inNode.id as string);
         if (!prev) return false;
+        if (prev.position.x !== inNode.position.x) return false;
+        if (prev.position.y !== inNode.position.y) return false;
         try {
           const prevColor =
             (prev.data as { layoutColor?: string } | undefined)?.layoutColor ??

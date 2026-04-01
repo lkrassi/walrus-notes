@@ -4,15 +4,21 @@ interface CoordinateOverlayProps {
   nodeId?: string | null;
   coords?: { x: number; y: number } | null;
   centerCoords?: { x: number; y: number } | null;
+  rightOffset?: string;
 }
 
 export const CoordinateOverlay: FC<CoordinateOverlayProps> = ({
   nodeId,
   coords,
   centerCoords,
+  rightOffset = '0px',
 }) => {
   return (
-    <div className='pointer-events-none absolute top-2 right-2' aria-hidden>
+    <div
+      className='pointer-events-none absolute top-2 z-20 transition-[right] duration-300 ease-in-out'
+      style={{ right: `calc(0.5rem + ${rightOffset})` }}
+      aria-hidden
+    >
       <div className='bg-bg dark:bg-dark-bg text-text dark:text-dark-text m-2 rounded p-2 text-xl shadow'>
         {centerCoords ? (
           <div className='text-xs'>

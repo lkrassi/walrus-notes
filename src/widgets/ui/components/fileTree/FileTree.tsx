@@ -131,6 +131,7 @@ export const FileTree = memo(
 
     const [searchQuery, setSearchQuery] = useState('');
     const [triggerSearch, { data: searchResponse }] = useLazySearchNotesQuery();
+    const [focusedLayoutId, setFocusedLayoutId] = useState<string | null>(null);
 
     useEffect(() => {
       if (searchQuery.trim()) {
@@ -255,16 +256,60 @@ export const FileTree = memo(
       }
     }, [selectedItemId, layoutsResponse?.data, apiState]);
 
+    useEffect(() => {
+      if (selectedParentId) {
+        setFocusedLayoutId(selectedParentId);
+        return;
+      }
+
+      if (!selectedItemId) return;
+
+      const selectedLayout = (layoutsResponse?.data || []).find(
+        layout => layout.id === selectedItemId && layout.isMain !== true
+      );
+
+      if (selectedLayout) {
+        setFocusedLayoutId(selectedLayout.id);
+      }
+    }, [selectedItemId, selectedParentId, layoutsResponse?.data]);
+
     const handleItemClick = useCallback(
       (item: FileTreeItemType) => {
-        if (item.type === 'layout' && item.isMain) {
+        if (item.type === 'layout' && item.isMain !== true) {
+          const isSameFocused = focusedLayoutId === item.id;
+          const isExpanded = expandedItems.has(item.id);
+
+          setFocusedLayoutId(item.id);
+
+          if (isSameFocused) {
+            toggleExpanded(item.id);
+            return;
+          }
+
+          if (!isExpanded) {
+            toggleExpanded(item.id);
+          }
+          return;
+        }
+
+        if (item.type === 'layout' && item.isMain === true) {
           onOpenGraph?.(item.id);
           return;
         }
 
+        if (item.type === 'note' && item.parentId) {
+          setFocusedLayoutId(item.parentId);
+        }
+
         onItemSelect?.(item);
       },
-      [onItemSelect, onOpenGraph]
+      [
+        expandedItems,
+        focusedLayoutId,
+        onItemSelect,
+        onOpenGraph,
+        toggleExpanded,
+      ]
     );
 
     const renderTreeItem = useCallback(
@@ -274,7 +319,9 @@ export const FileTree = memo(
         const isSelected =
           item.type === 'note'
             ? selectedItemId === item.id
-            : selectedItemId === item.id || selectedParentId === item.id;
+            : item.isMain !== true
+              ? focusedLayoutId === item.id
+              : selectedItemId === item.id || selectedParentId === item.id;
 
         return (
           <FileTreeItem
@@ -283,7 +330,7 @@ export const FileTree = memo(
             level={level}
             isExpanded={isExpanded}
             isSelected={isSelected}
-            hasSelection={!!selectedItemId}
+            hasSelection={!!selectedItemId || !!focusedLayoutId}
             hasChildren={!!item.children?.length}
             onItemClick={handleItemClick}
             onOpenGraph={onOpenGraph}
@@ -296,6 +343,7 @@ export const FileTree = memo(
         expandedItems,
         selectedItemId,
         selectedParentId,
+        focusedLayoutId,
         handleItemClick,
         onOpenGraph,
         toggleExpanded,

@@ -39,6 +39,7 @@
   "deleteNoteConfirmation": "Вы уверены, что хотите удалить заметку \"{{title}}\"?",
   "deleteNoteWarning": "Это действие нельзя отменить.",
   "noteDeletionError": "Ошибка при удалении заметки",
+  "recordNotFoundDeleted": "Заметка была удалена",
   "deleting": "Удаление...",
   "delete": "Удалить",
   "editorHelp": "Подсказки по редактору",

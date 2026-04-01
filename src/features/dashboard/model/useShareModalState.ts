@@ -1,6 +1,6 @@
 import { useNotifications } from '@/entities/notification';
 import { useModalContentContext } from '@/shared/lib/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useShareLink } from './useShareLink';
@@ -50,6 +50,11 @@ export const useShareModalState = (targetId: string) => {
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [copied, setCopied] = useState(false);
+
+  // Очищаем старую ссылку при смене targetId
+  useEffect(() => {
+    resetLink();
+  }, [targetId, resetLink]);
 
   const initialValues: ShareModalValues = {
     canRead: true,

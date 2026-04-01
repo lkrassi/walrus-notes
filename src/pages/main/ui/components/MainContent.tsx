@@ -18,11 +18,14 @@ export const MainContent = memo(function DashboardContent({
 }: MainContentProps) {
   const {
     openTabs,
+    isMobile,
     activeTab,
+    handleOnCreateClick,
     handleTabClick,
     handleTabClose,
     handleTabReorder,
     handleNoteUpdated,
+    handleFolderClickFromGallery,
     handleNoteOpenFromGraph,
   } = useMainContentState({
     onNoteOpen,
@@ -31,7 +34,14 @@ export const MainContent = memo(function DashboardContent({
 
   const renderContent = () => {
     if (!activeTab) {
-      return <MainContentState variant='empty' />;
+      return (
+        <MainContentState
+          variant='empty'
+          isMobile={isMobile}
+          onCreateClick={handleOnCreateClick}
+          onFolderClick={handleFolderClickFromGallery}
+        />
+      );
     }
 
     if (activeTab.item.type === 'note') {

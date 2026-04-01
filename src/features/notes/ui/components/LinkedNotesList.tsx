@@ -7,6 +7,7 @@ import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {
   layoutId?: string | null;
+  noteId?: string;
   linkedInIds?: string[];
   linkedOutIds?: string[];
   onNoteSelect?: (note: Note) => void;
@@ -14,6 +15,7 @@ interface LinkedNotesListProps {
 
 export const LinkedNotesList = ({
   layoutId,
+  noteId,
   linkedInIds = [],
   linkedOutIds = [],
   onNoteSelect,
@@ -24,6 +26,7 @@ export const LinkedNotesList = ({
 
   const { linkedNotesIn, linkedNotesOut, isLoading } = useLinkedNotes({
     layoutId,
+    noteId,
     linkedInIds,
     linkedOutIds,
   });

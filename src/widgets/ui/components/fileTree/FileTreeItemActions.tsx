@@ -12,20 +12,24 @@ type Props = {
   onShare: (e: ReactMouseEvent<HTMLElement>) => void;
   onEdit: (e: ReactMouseEvent<HTMLElement>) => void;
   onDelete: (e: ReactMouseEvent<HTMLElement>) => void;
+  onOpenGraph?: (e: ReactMouseEvent<HTMLElement>) => void;
   isMobile: boolean;
   titleShare?: string;
   titleEdit?: string;
   titleDelete?: string;
+  titleOpenGraph?: string;
 };
 
 export const FileTreeItemActions: FC<Props> = ({
   onShare,
   onEdit,
   onDelete,
+  onOpenGraph,
   isMobile,
   titleShare = 'Share',
   titleEdit = 'Edit',
   titleDelete = 'Delete',
+  titleOpenGraph = 'Show Graph',
 }) => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -178,6 +182,32 @@ export const FileTreeItemActions: FC<Props> = ({
           >
             <span>{titleDelete}</span>
           </button>
+
+          {onOpenGraph && (
+            <button
+              role='menuitem'
+              onClick={e => {
+                e.stopPropagation();
+                setOpen(false);
+                onOpenGraph(e);
+              }}
+              className={cn(
+                'w-full',
+                'text-left',
+                'px-3',
+                'py-2',
+                'flex',
+                'items-center',
+                'gap-2',
+                'text-sm',
+                'hover:bg-muted-foreground/10',
+                'dark:hover:bg-dark-bg'
+              )}
+              title={titleOpenGraph}
+            >
+              <span>{titleOpenGraph}</span>
+            </button>
+          )}
         </div>
       )}
     </div>

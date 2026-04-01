@@ -4,6 +4,7 @@ import {
   useUpdateNoteMutation,
 } from '@/entities';
 import type { Note } from '@/entities/note';
+import { i18n } from '@/shared/config/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDraftSync } from './useDraftSync';
@@ -116,11 +117,33 @@ export const useNoteEditor = (
     ignoreDraftRef.current = false;
   }, [note.id]);
 
+  const isRecordNotFound422 = (error: unknown): boolean => {
+    if (!error || typeof error !== 'object') return false;
+
+    const maybeError = error as {
+      status?: number | string;
+      data?: {
+        meta?: {
+          code?: string;
+        };
+      };
+    };
+
+    const rawStatus = maybeError.status;
+    const status =
+      typeof rawStatus === 'string' ? Number(rawStatus) : rawStatus;
+    const code = maybeError.data?.meta?.code;
+
+    return status === 422 && code === 'record_not_found';
+  };
+
   const showError = (message: string) => {
+    const translatedMessage = message.includes(':') ? i18n.t(message) : message;
+
     dispatch(
       addNotification({
         type: 'error',
-        message,
+        message: translatedMessage,
         duration: 7000,
         origin: 'ui',
       })
@@ -200,7 +223,11 @@ export const useNoteEditor = (
       onNoteUpdated?.(updatedNote);
 
       return true;
-    } catch (_e) {
+    } catch (error) {
+      if (isRecordNotFound422(error)) {
+        return false;
+      }
+
       showError('notes:noteUpdateError');
       return false;
     }

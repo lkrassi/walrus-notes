@@ -2,7 +2,13 @@ import { memo, useCallback } from 'react';
 import { MiniMap, type Node } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
 
-export const GraphMiniMap = memo(function GraphMiniMap() {
+interface GraphMiniMapProps {
+  xOffset?: string;
+}
+
+export const GraphMiniMap = memo(function GraphMiniMap({
+  xOffset = '0px',
+}: GraphMiniMapProps) {
   const palette = graphTheme();
 
   const nodeColor = useCallback(
@@ -28,6 +34,10 @@ export const GraphMiniMap = memo(function GraphMiniMap() {
       maskStrokeColor={palette.edge}
       maskStrokeWidth={2}
       position='bottom-right'
+      style={{
+        transform: `translateX(calc(-1 * ${xOffset}))`,
+        transition: 'transform 300ms ease-in-out',
+      }}
     />
   );
 });

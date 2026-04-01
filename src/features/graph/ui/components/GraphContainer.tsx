@@ -14,7 +14,8 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children }) => {
         'relative',
         'flex',
         'h-full',
-        'w-full'
+        'w-full',
+        'overflow-hidden'
       )}
     >
       {children}

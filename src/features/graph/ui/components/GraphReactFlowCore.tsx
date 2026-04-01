@@ -44,6 +44,7 @@ interface GraphReactFlowCoreProps {
     onViewportChange: (c: { x: number; y: number } | null) => void;
   }>;
   onViewportChange: (c: { x: number; y: number } | null) => void;
+  minimapOffset?: string;
 }
 
 export const GraphReactFlowCore = memo(function GraphReactFlowCore({
@@ -70,6 +71,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
   graphHistory,
   ViewportTracker,
   onViewportChange,
+  minimapOffset = '0px',
 }: GraphReactFlowCoreProps) {
   const isMobile = useIsMobile();
 
@@ -108,7 +110,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
     >
       <GraphBackground />
       <GraphControls graphHistory={graphHistory} />
-      <GraphMiniMap />
+      <GraphMiniMap xOffset={minimapOffset} />
       <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
       <ViewportTracker onViewportChange={onViewportChange} />
     </ReactFlow>

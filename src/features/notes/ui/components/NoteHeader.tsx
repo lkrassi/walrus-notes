@@ -105,7 +105,6 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   );
 
   const handleOpenEditTitle = useCallback(
-    // keep title editing disabled for read-only notes
     openModalFromTrigger(
       <EditNoteModal
         title={title}

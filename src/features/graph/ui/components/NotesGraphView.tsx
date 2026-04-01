@@ -1,9 +1,17 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
 import type { Note } from '@/entities/note';
 import { useDndSensors, useIsMobile } from '@/shared/lib/react/hooks';
-import { DndContext, DragOverlay } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  pointerWithin,
+  type CollisionDetection,
+} from '@dnd-kit/core';
+import { snapCenterToCursor } from '@dnd-kit/modifiers';
 import {
   memo,
+  useCallback,
   useState,
   type DragEvent,
   type FC,
@@ -105,14 +113,52 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
       onNodeDragStop,
     });
 
-    const { activeDragNote, handleDndDragStart, handleDndDragEnd } =
-      useGraphDragAndDrop({
-        onAddNoteToGraph: onAddNoteToGraph ?? (() => {}),
-        screenToFlowPosition,
-        centerCoords,
-      });
+    const {
+      activeDragNote,
+      activeDragId,
+      activeDragSize,
+      handleDndDragStart,
+      handleDndDragEnd,
+    } = useGraphDragAndDrop({
+      onAddNoteToGraph: onAddNoteToGraph ?? (() => {}),
+      screenToFlowPosition,
+      centerCoords,
+    });
 
     const [lastDndDropAt, setLastDndDropAt] = useState<number | null>(null);
+    const [isUnposedListOpen, setIsUnposedListOpen] = useState(false);
+    const unposedOffset = isUnposedListOpen ? 'min(400px, 45vw)' : '0px';
+
+    const collisionDetection = useCallback<CollisionDetection>(args => {
+      const pointerCollisions = pointerWithin(args);
+
+      if (pointerCollisions.length === 0) {
+        return closestCenter(args);
+      }
+
+      const unposedCollisions = pointerCollisions.filter(collision => {
+        const collisionId = collision.id.toString();
+        return (
+          collisionId === 'unposed-panel-drop' ||
+          collisionId === 'unposed-grid-drop' ||
+          collisionId.startsWith('unposed-')
+        );
+      });
+
+      if (unposedCollisions.length > 0) {
+        return unposedCollisions;
+      }
+
+      const graphCollision = pointerCollisions.find(
+        collision => collision.id.toString() === 'graph-drop-zone'
+      );
+
+      if (graphCollision) {
+        return [graphCollision];
+      }
+
+      return pointerCollisions;
+    }, []);
 
     return (
       <GraphContainer>
@@ -122,6 +168,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
             touchDelay: 100,
             touchTolerance: 5,
           })}
+          collisionDetection={collisionDetection}
           onDragStart={handleDndDragStart}
           onDragEnd={event => {
             try {
@@ -168,10 +215,12 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                   graphHistory={graphHistory}
                   ViewportTracker={ViewportTracker}
                   onViewportChange={setCenterCoords}
+                  minimapOffset={unposedOffset}
                 />
                 <CoordinateOverlay
                   coords={overlayCoords}
                   centerCoords={centerCoords}
+                  rightOffset={unposedOffset}
                 />
               </div>
             </TouchEnabledGraph>
@@ -179,9 +228,15 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
           <UnposedNotesList
             layoutId={layoutId}
             onNoteSelect={onAddNoteToGraph ?? (() => {})}
+            isOpen={isUnposedListOpen}
+            onOpenChange={setIsUnposedListOpen}
           />
-          <DragOverlay>
-            <NoteDragOverlay note={activeDragNote} />
+          <DragOverlay modifiers={[snapCenterToCursor]}>
+            <NoteDragOverlay
+              note={activeDragNote}
+              isCompact={activeDragId?.startsWith('unposed-') ?? false}
+              previewSize={activeDragSize}
+            />
           </DragOverlay>
         </DndContext>
       </GraphContainer>

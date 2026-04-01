@@ -45,6 +45,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
       <div className={cn('w-full', 'max-w-md')}>
         <LinkedNotesList
           layoutId={effectiveLayoutId}
+          noteId={note.id}
           linkedOutIds={linkedOutIds}
           linkedInIds={linkedInIds}
           onNoteSelect={handleNoteSelect}

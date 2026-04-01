@@ -67,7 +67,6 @@ interface RawPermissionItem {
 
 interface PermissionsDashboardResponse {
   data: {
-    recivied?: RawPermissionItem[];
     received?: RawPermissionItem[];
     shared?: RawPermissionItem[];
   };
@@ -124,8 +123,7 @@ export const shareApi = apiSlice.injectEndpoints({
           targetTitle: item.targetTitle || item.title,
         });
 
-        const receivedRaw =
-          response.data.recivied || response.data.received || [];
+        const receivedRaw = response.data.received || [];
         const sharedRaw = response.data.shared || [];
 
         return {
@@ -166,6 +164,7 @@ export const shareApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: { linkId: payload.linkId },
       }),
+      invalidatesTags: ['Layouts', 'Permissions'],
       transformResponse: (response: ApplyLinkResponse) => response.data,
     }),
 

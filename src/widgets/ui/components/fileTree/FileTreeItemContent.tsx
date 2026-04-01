@@ -1,10 +1,11 @@
 import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem as UseFileTreeItem } from '@/entities/tab';
+import { CreateNoteForm } from '@/features/notes';
 import { cn } from '@/shared/lib/core';
-import { useDropdown } from '@/shared/lib/react/hooks';
+import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { DropdownContent } from '@/shared/ui';
-import { useLocalization } from '@/widgets/hooks';
+import { useLocalization, useModalActions } from '@/widgets/hooks';
 import {
   useCallback,
   useEffect,
@@ -37,8 +38,19 @@ export const FileTreeItemContent = ({
   const [hasMore, setHasMore] = useState(true);
   const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { t } = useLocalization();
+  const { openModalFromTrigger } = useModalActions();
+  const canWrite = item.access ? !!item.access.canWrite : true;
+
+  const handleCreateNote = openModalFromTrigger(
+    <CreateNoteForm layoutId={item.id} />,
+    {
+      title: t('fileTree:createNewNote'),
+      size: MODAL_SIZE_PRESETS.noteCreate,
+    }
+  );
 
   const { data: notesResponse, isLoading: isQueryLoading } = useGetNotesQuery(
     { layoutId: item.id, page: 1 },
@@ -109,6 +121,7 @@ export const FileTreeItemContent = ({
         return;
       }
 
+      setIsLoading(true);
       try {
         const result = await triggerGetNotes({
           layoutId: item.id,
@@ -131,23 +144,17 @@ export const FileTreeItemContent = ({
         }
       } catch (_error) {
         setHasMore(false);
+      } finally {
+        setIsLoading(false);
       }
     },
     [hasMore, triggerGetNotes, item.id, totalPages, onNotesLoaded]
   );
 
-  const {
-    visibleItems,
-    isLoadingMore: _isLoadingMore,
-    hasMore: dropdownHasMore,
-    loadMore: dropdownLoadMore,
-  } = useDropdown({
-    items: allNotes,
-    isOpen: isExpanded && item.type === 'layout',
-    enablePagination: true,
-    hasMore: hasMore,
-    onLoadMore: loadMoreNotes,
-  });
+  const handleLoadMore = useCallback(() => {
+    const nextPage = Math.max(...loadedPages) + 1;
+    loadMoreNotes(nextPage);
+  }, [loadedPages, loadMoreNotes]);
 
   let contentState: 'loading' | 'content' | 'empty' = 'empty';
 
@@ -161,24 +168,37 @@ export const FileTreeItemContent = ({
     contentState = 'empty';
   }
 
+  const createNoteLabel =
+    allNotes.length > 0 ? t('fileTree:addMore') : t('fileTree:addNote');
+
   return (
     <DropdownContent
       isOpen={isExpanded && item.type === 'layout'}
       state={contentState}
+      className={cn('overflow-hidden')}
       emptyContent={
-        <div className={cn('mt-2', 'ml-6', 'text-sm', 'muted-text')}>
-          {t('fileTree:folderEmpty')}
+        <div className={cn('mt-2', 'ml-12', 'pb-2', 'text-sm', 'muted-text')}>
+          {canWrite && (
+            <button
+              type='button'
+              onClick={e => {
+                e.stopPropagation();
+                handleCreateNote(e);
+              }}
+              className={cn(
+                'text-primary dark:text-dark-primary font-medium',
+                'transition-opacity duration-150 hover:opacity-80'
+              )}
+              title={createNoteLabel}
+            >
+              {createNoteLabel}
+            </button>
+          )}
         </div>
       }
-      className={cn('overflow-hidden')}
-      onReachEnd={() => {
-        if (dropdownHasMore) {
-          dropdownLoadMore();
-        }
-      }}
     >
       <div>
-        {visibleItems.map(note => (
+        {allNotes.map(note => (
           <div
             key={`${note.id}-${note.updatedAt || note.createdAt}`}
             className={cn('mt-1')}
@@ -199,6 +219,51 @@ export const FileTreeItemContent = ({
             )}
           </div>
         ))}
+        {isInitialLoadDone && canWrite && (
+          <div className={cn('mt-2', 'ml-12')}>
+            <button
+              type='button'
+              onClick={e => {
+                e.stopPropagation();
+                handleCreateNote(e);
+              }}
+              className={cn(
+                'text-sm',
+                'font-medium',
+                'text-primary',
+                'dark:text-primary-dark',
+                'hover:opacity-80',
+                'transition-opacity',
+                'duration-150'
+              )}
+              title={createNoteLabel}
+            >
+              {createNoteLabel}
+            </button>
+          </div>
+        )}
+        {hasMore && isInitialLoadDone && (
+          <div className={cn('mt-3', 'ml-6', 'pb-2')}>
+            <button
+              onClick={handleLoadMore}
+              disabled={isLoading}
+              className={cn(
+                'text-sm',
+                'font-medium',
+                'text-primary',
+                'dark:text-primary-dark',
+                'hover:opacity-80',
+                'transition-opacity',
+                'duration-150',
+                isLoading && 'cursor-not-allowed opacity-50'
+              )}
+            >
+              {isLoading
+                ? `${t('fileTree:loading')}...`
+                : t('fileTree:showMore')}
+            </button>
+          </div>
+        )}
       </div>
     </DropdownContent>
   );
