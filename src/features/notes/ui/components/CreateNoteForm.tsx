@@ -105,7 +105,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('notes:noteTitlePlaceholder')}
-          className={cn('form-input', 'rounded-md')}
+          className={cn('form-input')}
           disabled={isLoading}
         />
       </div>
@@ -120,7 +120,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
           onChange={e => setPayload(e.target.value)}
           placeholder={t('notes:noteContentPlaceholderTextarea')}
           rows={6}
-          className={cn('form-input', 'rounded-md')}
+          className={cn('form-input')}
           disabled={isLoading}
         />
       </div>

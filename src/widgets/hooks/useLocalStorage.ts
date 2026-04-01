@@ -1,9 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+const LOCAL_STORAGE_EVENT = 'local-storage';
+
+type LocalStorageChangeDetail = {
+  key: string;
+  newValue: string | null;
+  sourceId?: string;
+};
 
 export const useLocalStorage = <T>(
   key: string,
   initialValue: T
 ): [T, (value: T | ((prevValue: T) => T)) => void, () => void] => {
+  const sourceIdRef = useRef(`${key}-${Math.random().toString(36).slice(2)}`);
+
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
@@ -31,16 +41,29 @@ export const useLocalStorage = <T>(
   const setValue = useCallback(
     (value: T | ((prevValue: T) => T)) => {
       try {
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
-        setStoredValue(valueToStore);
+        setStoredValue(prevValue => {
+          const valueToStore =
+            value instanceof Function ? value(prevValue) : value;
 
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        }
+          if (typeof window !== 'undefined') {
+            const serialized = JSON.stringify(valueToStore);
+            window.localStorage.setItem(key, serialized);
+            window.dispatchEvent(
+              new CustomEvent<LocalStorageChangeDetail>(LOCAL_STORAGE_EVENT, {
+                detail: {
+                  key,
+                  newValue: serialized,
+                  sourceId: sourceIdRef.current,
+                },
+              })
+            );
+          }
+
+          return valueToStore;
+        });
       } catch (_e) {}
     },
-    [key, storedValue]
+    [key]
   );
 
   const removeValue = useCallback(() => {
@@ -48,6 +71,15 @@ export const useLocalStorage = <T>(
       setStoredValue(initialValue);
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key);
+        window.dispatchEvent(
+          new CustomEvent<LocalStorageChangeDetail>(LOCAL_STORAGE_EVENT, {
+            detail: {
+              key,
+              newValue: null,
+              sourceId: sourceIdRef.current,
+            },
+          })
+        );
       }
     } catch (_e) {}
   }, [key, initialValue]);
@@ -61,11 +93,38 @@ export const useLocalStorage = <T>(
       }
     };
 
+    const handleLocalStorageChange = (event: Event) => {
+      const e = event as CustomEvent<LocalStorageChangeDetail>;
+      if (!e.detail || e.detail.key !== key) {
+        return;
+      }
+
+      if (e.detail.sourceId === sourceIdRef.current) {
+        return;
+      }
+
+      if (e.detail.newValue === null) {
+        setStoredValue(initialValue);
+        return;
+      }
+
+      try {
+        setStoredValue(JSON.parse(e.detail.newValue));
+      } catch (_e) {}
+    };
+
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', handleStorageChange);
-      return () => window.removeEventListener('storage', handleStorageChange);
+      window.addEventListener(LOCAL_STORAGE_EVENT, handleLocalStorageChange);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener(
+          LOCAL_STORAGE_EVENT,
+          handleLocalStorageChange
+        );
+      };
     }
-  }, [key]);
+  }, [initialValue, key]);
 
   return [storedValue, setValue, removeValue];
 };

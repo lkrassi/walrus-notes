@@ -49,7 +49,7 @@ export const SortableTab = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex max-w-50 min-w-30 cursor-grab items-center px-4 py-2 whitespace-nowrap select-none'
+        'relative flex max-w-50 min-w-30 cursor-grab items-center px-4 py-1 whitespace-nowrap select-none'
       )}
       title={tab.item.title}
       animate={{
@@ -62,7 +62,7 @@ export const SortableTab = ({
       {showAnimatedBackground && (
         <motion.div
           layoutId='activeTabBackground'
-          className='bg-primary absolute inset-0 rounded-t-lg'
+          className='bg-primary absolute inset-0'
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       )}
@@ -101,7 +101,7 @@ export const SortableTab = ({
             isActive
               ? 'hover:bg-interactive-hover hover:text-primary-foreground'
               : 'hover:bg-interactive-hover hover:text-foreground',
-            'h-3 w-3 rounded-xl'
+            'h-3 w-3'
           )}
         />
       </button>

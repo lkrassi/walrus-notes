@@ -152,39 +152,13 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
     async (noteId: string, xPos: number, yPos: number) => {
       if (!canWrite) return;
       try {
-        if (DEBUG_GRAPH_DND) {
-          console.log('[graph-dnd] mutation:start', {
-            noteId,
-            xPos,
-            yPos,
-            layoutId,
-          });
-        }
         await updatePosition({
           layoutId,
           noteId,
           xPos,
           yPos,
         }).unwrap();
-        if (DEBUG_GRAPH_DND) {
-          console.log('[graph-dnd] mutation:success', {
-            noteId,
-            xPos,
-            yPos,
-            layoutId,
-          });
-        }
-      } catch (error) {
-        if (DEBUG_GRAPH_DND) {
-          console.log('[graph-dnd] mutation:error', {
-            noteId,
-            xPos,
-            yPos,
-            layoutId,
-            error,
-          });
-        }
-      }
+      } catch (_e) {}
     },
     [layoutId, canWrite, updatePosition]
   );

@@ -112,17 +112,17 @@ export const Login: FC<LoginProps> = () => {
         refreshToken,
       });
 
-      // Fetch real profile from server
       const profileResult = await triggerGetProfile(userId).unwrap();
       if (profileResult && profileResult.data) {
         updateProfile(profileResult.data);
       } else {
-        // fallback if profile is missing
         updateProfile({
           id: userId,
           username: '',
           email: values.email,
           imgUrl: '',
+          role: 'USER',
+          createdAt: new Date().toISOString(),
         });
       }
       navigate('/main');
@@ -229,7 +229,7 @@ export const Login: FC<LoginProps> = () => {
           <div
             className={cn(
               'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
-              'mx-auto w-full max-w-md rounded-lg border p-4 shadow-2xl backdrop-blur-xl'
+              'mx-auto w-full max-w-md border p-4 shadow-2xl backdrop-blur-xl'
             )}
           >
             <h2

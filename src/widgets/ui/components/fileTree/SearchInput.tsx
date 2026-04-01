@@ -26,11 +26,11 @@ export const SearchInput = ({
       className={cn(
         'flex',
         'items-center',
-        'gap-2',
+        'gap-1.5',
         'px-2',
-        'py-1',
-        'rounded-md',
-        'text-sm',
+        'py-0.5',
+        'rounded-none',
+        'text-xs',
         'w-full',
         'bg-surface-2',
         'border',
@@ -38,16 +38,17 @@ export const SearchInput = ({
         className || ''
       )}
     >
-      <Search className={cn('h-8', 'w-4', 'text-muted-foreground')} />
+      <Search className={cn('h-3.5', 'w-3.5', 'text-muted-foreground')} />
       <input
         value={value}
         onChange={e => setValue(e.target.value)}
         placeholder={t ? t('fileTree:searchPlaceholder') : 'Поиск...'}
         className={cn(
           'flex-1',
+          'h-5',
           'bg-transparent',
           'outline-none',
-          'text-sm',
+          'text-xs',
           'text-foreground'
         )}
       />

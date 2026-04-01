@@ -39,7 +39,7 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
   return (
     <article
       className={cn(
-        'border-border dark:border-dark-border dark:bg-dark-bg/60 rounded-xl border bg-white/80 p-4 backdrop-blur-sm'
+        'border-border dark:border-dark-border dark:bg-dark-bg/60 border bg-white/80 p-4 backdrop-blur-sm'
       )}
     >
       <div className={cn('mb-3 flex items-center justify-between gap-2')}>
@@ -64,7 +64,7 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
         </div>
       </div>
 
-      <div className={cn('mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40')}>
+      <div className={cn('mb-3 bg-gray-50 p-3 dark:bg-gray-900/40')}>
         <p className={cn('muted-text text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>

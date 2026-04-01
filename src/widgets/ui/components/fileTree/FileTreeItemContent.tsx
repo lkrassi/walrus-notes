@@ -177,7 +177,7 @@ export const FileTreeItemContent = ({
       state={contentState}
       className={cn('overflow-hidden')}
       emptyContent={
-        <div className={cn('mt-2', 'ml-12', 'pb-2', 'text-sm', 'muted-text')}>
+        <div className={cn('mt-1', 'ml-8', 'pb-1', 'text-xs', 'muted-text')}>
           {canWrite && (
             <button
               type='button'
@@ -199,10 +199,7 @@ export const FileTreeItemContent = ({
     >
       <div>
         {allNotes.map(note => (
-          <div
-            key={`${note.id}-${note.updatedAt || note.createdAt}`}
-            className={cn('mt-1')}
-          >
+          <div key={note.id} className={cn('mt-0')}>
             {renderChild?.(
               {
                 id: note.id,
@@ -220,7 +217,7 @@ export const FileTreeItemContent = ({
           </div>
         ))}
         {isInitialLoadDone && canWrite && (
-          <div className={cn('mt-2', 'ml-12')}>
+          <div className={cn('mt-1', 'ml-8')}>
             <button
               type='button'
               onClick={e => {
@@ -228,7 +225,7 @@ export const FileTreeItemContent = ({
                 handleCreateNote(e);
               }}
               className={cn(
-                'text-sm',
+                'text-xs',
                 'font-medium',
                 'text-primary',
                 'dark:text-primary-dark',
@@ -243,12 +240,12 @@ export const FileTreeItemContent = ({
           </div>
         )}
         {hasMore && isInitialLoadDone && (
-          <div className={cn('mt-3', 'ml-6', 'pb-2')}>
+          <div className={cn('mt-1', 'ml-6', 'pb-1')}>
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
               className={cn(
-                'text-sm',
+                'text-xs',
                 'font-medium',
                 'text-primary',
                 'dark:text-primary-dark',

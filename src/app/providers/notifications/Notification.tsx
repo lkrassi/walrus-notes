@@ -45,10 +45,7 @@ export const Notification: FC<NotificationProps> = ({
     <div
       role='alert'
       aria-live={notification.type === 'error' ? 'assertive' : 'polite'}
-      className={cn(
-        'w-full rounded-lg border px-4 py-3 shadow-md backdrop-blur-sm',
-        tone
-      )}
+      className={cn('w-full border px-4 py-3 shadow-md backdrop-blur-sm', tone)}
     >
       <div className='flex items-start gap-3'>
         <div className='min-w-0 flex-1'>

@@ -10,21 +10,25 @@ import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
 import { useUser } from '@/entities/user';
 import { cn } from '@/shared/lib/core';
 import { useDndSensors } from '@/shared/lib/react/hooks/useDndSensors';
-import { useFileTree } from '@/widgets/hooks/FileTreeContext';
-import { useAppSelector } from '@/widgets/hooks/redux';
+import { useFileTree } from '@/widgets/hooks';
 import { useNotifications } from '@/widgets/hooks/useNotifications';
 import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';
 import {
+  closestCenter,
   DndContext,
   DragOverlay,
-  closestCenter,
   pointerWithin,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
 } from '@dnd-kit/core';
 import {
   restrictToFirstScrollableAncestor,
   snapCenterToCursor,
 } from '@dnd-kit/modifiers';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { FileText } from 'lucide-react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { FileTreeItem } from './FileTreeItem';
 import { SearchInput } from './SearchInput';
 
@@ -36,6 +40,34 @@ interface FileTreeProps {
   onOpenGraph?: (layoutId: string) => void;
 }
 
+type NotesApiRootState = Parameters<
+  ReturnType<typeof notesApi.endpoints.getNotes.select>
+>[0];
+
+type NoteDragData = {
+  type: 'note';
+  noteId: string;
+  fromLayoutId?: string;
+  title?: string;
+};
+
+type LayoutDropData = {
+  type: 'layout';
+  layoutId: string;
+};
+
+const isNoteDragData = (data: unknown): data is NoteDragData => {
+  if (!data || typeof data !== 'object') return false;
+  const candidate = data as Record<string, unknown>;
+  return candidate.type === 'note' && typeof candidate.noteId === 'string';
+};
+
+const isLayoutDropData = (data: unknown): data is LayoutDropData => {
+  if (!data || typeof data !== 'object') return false;
+  const candidate = data as Record<string, unknown>;
+  return candidate.type === 'layout' && typeof candidate.layoutId === 'string';
+};
+
 export const FileTree = memo(
   ({
     expandedItems,
@@ -45,7 +77,7 @@ export const FileTree = memo(
     onOpenGraph,
   }: FileTreeProps) => {
     const sensors = useDndSensors({ mouseDistance: 5 });
-    const { showWarning, showError } = useNotifications();
+    const { showError } = useNotifications();
 
     const { moveNoteInTree } = useFileTree();
     const [dragNote] = useDragNoteMutation();
@@ -62,71 +94,94 @@ export const FileTree = memo(
       return map;
     }, [layoutsResponse?.data]);
 
-    const [activeDrag, setActiveDrag] = useState<{
+    const [activeDragNote, setActiveDragNote] = useState<{
       noteId: string;
-      fromLayoutId: string;
-      title: string;
-      width: number;
+      title?: string;
     } | null>(null);
+    const dragStartLayoutIdRef = useRef<string | null>(null);
 
-    const handleDragStart = useCallback((event: any) => {
-      const data = event?.active?.data?.current;
-      if (data?.type === 'note') {
-        const width = event?.active?.rect?.current?.initial?.width;
-        setActiveDrag({
-          noteId: data.noteId,
-          fromLayoutId: data.fromLayoutId,
-          title: data.title ?? '',
-          width: typeof width === 'number' ? width : 240,
+    const handleDragStart = useCallback((event: DragStartEvent) => {
+      const activeData = event.active?.data?.current;
+      if (isNoteDragData(activeData)) {
+        setActiveDragNote({
+          noteId: activeData.noteId,
+          title: activeData.title,
         });
+        dragStartLayoutIdRef.current = activeData.fromLayoutId ?? null;
       }
     }, []);
 
-    const handleDragEnd = useCallback(
-      async (event: any) => {
-        const { active, over } = event;
-        setActiveDrag(null);
+    const handleDragCancel = useCallback(() => {
+      setActiveDragNote(null);
+      dragStartLayoutIdRef.current = null;
+    }, []);
 
-        if (!over) {
-          showWarning('Перенос возможен только в папку в сайдбаре.');
-          return;
-        }
+    const handleDragOver = useCallback((_event: DragOverEvent) => {
+      // No preview or reorder
+    }, []);
+
+    const handleDragEnd = useCallback(
+      async (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveDragNote(null);
 
         const activeData = active?.data?.current;
-        const overData = over?.data?.current;
-
-        if (!activeData || !overData) return;
-        if (activeData.type !== 'note') return;
-        if (overData.type !== 'layout') {
-          showWarning('Перенос возможен только в папку в сайдбаре.');
+        if (!isNoteDragData(activeData)) {
+          dragStartLayoutIdRef.current = null;
           return;
         }
-        if (activeData.fromLayoutId === overData.layoutId) return;
 
-        const sourceAccess = layoutAccessById.get(activeData.fromLayoutId);
-        const targetAccess = layoutAccessById.get(overData.layoutId);
+        if (!over) {
+          dragStartLayoutIdRef.current = null;
+          return;
+        }
+
+        const overData = over?.data?.current;
+        const fromLayoutId = dragStartLayoutIdRef.current;
+
+        if (!fromLayoutId) {
+          dragStartLayoutIdRef.current = null;
+          return;
+        }
+
+        let toLayoutId: string | null = null;
+
+        if (isLayoutDropData(overData)) {
+          toLayoutId = overData.layoutId;
+        } else if (isNoteDragData(overData)) {
+          toLayoutId = overData.fromLayoutId ?? null;
+        }
+
+        if (!toLayoutId || fromLayoutId === toLayoutId) {
+          dragStartLayoutIdRef.current = null;
+          return;
+        }
+
+        const sourceAccess = layoutAccessById.get(fromLayoutId);
+        const targetAccess = layoutAccessById.get(toLayoutId);
 
         if (!sourceAccess?.canWrite || !targetAccess?.canWrite) {
           showError(
             'Недостаточно прав для переноса заметки в выбранную папку.'
           );
+          dragStartLayoutIdRef.current = null;
           return;
         }
 
-        moveNoteInTree(
-          activeData.noteId,
-          activeData.fromLayoutId,
-          overData.layoutId
-        );
+        moveNoteInTree(activeData.noteId, fromLayoutId, toLayoutId);
 
         try {
           await dragNote({
             noteId: activeData.noteId,
-            toLayoutId: overData.layoutId,
+            toLayoutId,
           }).unwrap();
-        } catch {}
+        } catch (_error) {
+          // API call made, local state already updated
+        }
+
+        dragStartLayoutIdRef.current = null;
       },
-      [moveNoteInTree, dragNote, layoutAccessById, showError, showWarning]
+      [layoutAccessById, moveNoteInTree, dragNote, showError]
     );
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -195,8 +250,12 @@ export const FileTree = memo(
       }
 
       if (layoutsResponse?.data) {
-        const owned = layoutsResponse.data.filter(l => l.ownerId === userId);
-        const shared = layoutsResponse.data.filter(l => l.ownerId !== userId);
+        const owned = layoutsResponse.data.filter(
+          l => !l.ownerId || l.ownerId === userId
+        );
+        const shared = layoutsResponse.data.filter(
+          l => !!l.ownerId && l.ownerId !== userId
+        );
 
         return [
           ...owned.map(layout => ({
@@ -209,7 +268,7 @@ export const FileTree = memo(
             createdAt: layout.createdAt,
             updatedAt: layout.updatedAt,
             isNotesLoaded: false,
-            color: (layout as any).color,
+            color: layout.color,
             ownerId: layout.ownerId,
           })),
           ...shared.map(layout => ({
@@ -222,7 +281,7 @@ export const FileTree = memo(
             createdAt: layout.createdAt,
             updatedAt: layout.updatedAt,
             isNotesLoaded: false,
-            color: (layout as any).color,
+            color: layout.color,
             ownerId: layout.ownerId,
           })),
         ];
@@ -237,7 +296,39 @@ export const FileTree = memo(
       userId,
     ]);
 
-    const apiState = useAppSelector((s: any) => s.api);
+    const sharedLayoutIds = useMemo(() => {
+      const ids = new Set<string>();
+      for (const layout of layoutsResponse?.data || []) {
+        if (
+          !!layout.ownerId &&
+          layout.ownerId !== userId &&
+          layout.isMain !== true
+        ) {
+          ids.add(layout.id);
+        }
+      }
+      return ids;
+    }, [layoutsResponse?.data, userId]);
+
+    const nonSearchTreeItems = useMemo(
+      () =>
+        (fileTree ?? []).filter(
+          item => item.type === 'layout' && item.isMain !== true
+        ),
+      [fileTree]
+    );
+
+    const ownedTreeItems = useMemo(
+      () => nonSearchTreeItems.filter(item => !sharedLayoutIds.has(item.id)),
+      [nonSearchTreeItems, sharedLayoutIds]
+    );
+
+    const sharedTreeItems = useMemo(
+      () => nonSearchTreeItems.filter(item => sharedLayoutIds.has(item.id)),
+      [nonSearchTreeItems, sharedLayoutIds]
+    );
+
+    const apiState = useSelector((state: NotesApiRootState) => state.api);
 
     const selectedParentId = useMemo(() => {
       if (!selectedItemId) return;
@@ -247,7 +338,7 @@ export const FileTree = memo(
           const cached = notesApi.endpoints.getNotes.select({
             layoutId: layout.id,
             page,
-          })({ api: apiState } as any);
+          })({ api: apiState } as NotesApiRootState);
 
           if (cached?.data?.data?.some(n => n.id === selectedItemId)) {
             return layout.id;
@@ -330,6 +421,7 @@ export const FileTree = memo(
             level={level}
             isExpanded={isExpanded}
             isSelected={isSelected}
+            isAnyNoteDragging={activeDragNote !== null}
             hasSelection={!!selectedItemId || !!focusedLayoutId}
             hasChildren={!!item.children?.length}
             onItemClick={handleItemClick}
@@ -350,25 +442,55 @@ export const FileTree = memo(
       ]
     );
 
+    const collisionDetection = useCallback(
+      (args: Parameters<typeof pointerWithin>[0]) => {
+        const pointerHits = pointerWithin(args);
+        if (pointerHits.length > 0) {
+          const hitsWithoutActive = pointerHits.filter(
+            hit => String(hit.id) !== String(args.active.id)
+          );
+
+          const hitsForSorting =
+            hitsWithoutActive.length > 0 ? hitsWithoutActive : pointerHits;
+
+          return [...hitsForSorting].sort((a, b) => {
+            const aContainer = args.droppableContainers.find(
+              container => String(container.id) === String(a.id)
+            );
+            const bContainer = args.droppableContainers.find(
+              container => String(container.id) === String(b.id)
+            );
+            const aType = aContainer?.data?.current?.type;
+            const bType = bContainer?.data?.current?.type;
+
+            if (aType === bType) return 0;
+            if (aType === 'layout') return -1;
+            if (bType === 'layout') return 1;
+            return 0;
+          });
+        }
+        return closestCenter(args);
+      },
+      []
+    );
+
     return (
       <DndContext
         sensors={sensors}
-        collisionDetection={args => {
-          const pointerHits = pointerWithin(args);
-          if (pointerHits.length > 0) return pointerHits;
-          return closestCenter(args);
-        }}
+        collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragCancel={handleDragCancel}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToFirstScrollableAncestor]}
       >
         <div className='flex h-full flex-col'>
-          <div className='p-2'>
+          <div className='px-1 py-1'>
             <SearchInput onSearchChange={setSearchQuery} />
           </div>
 
           {!isSearchMode && (
-            <div className='px-2 py-1'>
+            <div className='px-1 py-0.5'>
               <AllNotesButton
                 onAllNotesClick={() => {
                   const main = layoutsResponse?.data?.find(l => l.isMain);
@@ -379,9 +501,9 @@ export const FileTree = memo(
             </div>
           )}
 
-          <div className='flex-1 overflow-y-auto p-2'>
+          <div className='flex-1 overflow-y-auto px-1 py-0.5'>
             {isSearchMode ? (
-              <div className='space-y-1'>
+              <div className='space-y-0'>
                 {(fileTree ?? []).map(item => (
                   <FileTreeItem
                     key={item.id}
@@ -389,39 +511,56 @@ export const FileTree = memo(
                     level={0}
                     isExpanded={false}
                     isSelected={selectedItemId === item.id}
+                    isAnyNoteDragging={activeDragNote !== null}
                     hasSelection={!!selectedItemId}
                     hasChildren={false}
                     onItemClick={handleItemClick}
+                    renderChild={renderTreeItem}
+                    toggleExpanded={toggleExpanded}
                   />
                 ))}
               </div>
             ) : (
-              <div className='space-y-1'>
-                {(fileTree ?? [])
-                  .filter(
-                    i =>
-                      i.type === 'layout' &&
-                      !i.isMain &&
-                      'isNotesLoaded' in i &&
-                      Array.isArray(i.children)
-                  )
-                  .map(item => renderTreeItem(item as FileTreeItemType))}
+              <div>
+                {ownedTreeItems.map(item => renderTreeItem(item, 0))}
+                {ownedTreeItems.length > 0 && sharedTreeItems.length > 0 && (
+                  <div className='border-border dark:border-dark-border my-1 border-t' />
+                )}
+                {sharedTreeItems.map(item => renderTreeItem(item, 0))}
               </div>
             )}
           </div>
         </div>
 
-        <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
-          {activeDrag ? (
+        <DragOverlay
+          adjustScale={false}
+          dropAnimation={null}
+          modifiers={[snapCenterToCursor]}
+        >
+          {activeDragNote ? (
             <div
               className={cn(
-                'pointer-events-none flex items-center gap-2 rounded-lg',
-                'border border-black/10 bg-white/95 px-3 py-2',
-                'text-sm text-black shadow-sm'
+                'pointer-events-none',
+                'flex',
+                'min-w-45',
+                'max-w-70',
+                'items-center',
+                'gap-2',
+                'rounded-none',
+                'border',
+                'border-border/80',
+                'bg-surface',
+                'px-2.5',
+                'py-1.5',
+                'shadow-[0_8px_24px_rgba(0,0,0,0.22)]',
+                'dark:border-dark-border/80',
+                'dark:bg-dark-surface'
               )}
-              style={{ width: `${activeDrag.width}px` }}
             >
-              <span className='truncate font-medium'>{activeDrag.title}</span>
+              <FileText className={cn('h-3.5', 'w-3.5', 'shrink-0')} />
+              <span className={cn('truncate', 'text-[13px]', 'leading-5')}>
+                {activeDragNote.title || 'Untitled note'}
+              </span>
             </div>
           ) : null}
         </DragOverlay>
@@ -429,3 +568,5 @@ export const FileTree = memo(
     );
   }
 );
+
+FileTree.displayName = 'FileTree';

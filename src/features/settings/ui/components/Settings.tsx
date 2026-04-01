@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/core';
+import { PrivateHeader } from '@/widgets/ui';
 import { motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import {
@@ -16,7 +17,6 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { LogoutActionButton } from './LogoutActionButton';
 import { OpenPermissionsDashboardButton } from './OpenPermissionsDashboardButton';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import { PrivateHeader } from '@/widgets/ui';
 
 export const Settings: FC = () => {
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ export const Settings: FC = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.28 }}
-              className={cn('card p-6', 'max-sm:rounded-lg max-sm:p-4')}
+              className={cn('card p-6', 'max-sm:p-4')}
             >
               <div className='flex items-center gap-x-10'>
                 <div className='relative'>
@@ -152,14 +152,14 @@ export const Settings: FC = () => {
                   transition={{ duration: 0.26, delay: idx * 0.04 }}
                   className={cn(
                     'card flex h-full p-6 transition-shadow duration-200 hover:shadow-md',
-                    'max-sm:rounded-lg max-sm:p-4'
+                    'max-sm:p-4'
                   )}
                 >
                   <div className='flex w-full items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3'>
                     <div className='flex flex-1 items-center gap-4 max-sm:w-full'>
                       <div
                         className={cn(
-                          'rounded-lg p-2 max-sm:rounded-md max-sm:p-1.5',
+                          'p-2 max-sm:rounded-md max-sm:p-1.5',
                           'bg-primary/10 dark:bg-dark-primary/10',
                           'text-primary dark:text-dark-primary'
                         )}

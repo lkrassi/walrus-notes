@@ -68,7 +68,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
           placeholder='#rrggbb'
           value={local || ''}
           onChange={e => handleTextChange(e.target.value)}
-          className={cn('form-input', 'rounded-md')}
+          className={cn('form-input')}
           style={{ width: 120 }}
         />
       </div>

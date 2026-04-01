@@ -231,7 +231,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
             isOpen={isUnposedListOpen}
             onOpenChange={setIsUnposedListOpen}
           />
-          <DragOverlay modifiers={[snapCenterToCursor]}>
+          <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
             <NoteDragOverlay
               note={activeDragNote}
               isCompact={activeDragId?.startsWith('unposed-') ?? false}

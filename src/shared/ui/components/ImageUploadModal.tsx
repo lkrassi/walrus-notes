@@ -100,7 +100,6 @@ export const ImageUploadModal: FC<Props> = ({
         className={cn(
           'border-2',
           'border-dashed',
-          'rounded-lg',
           'p-8',
           'text-center',
           'cursor-pointer',

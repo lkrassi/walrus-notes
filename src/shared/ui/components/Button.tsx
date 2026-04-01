@@ -122,7 +122,7 @@ export const Button = memo(
           type={type}
           disabled={disabled}
           className={cn(
-            'relative rounded-md px-4 py-1 text-base font-semibold transition-all duration-200',
+            'relative px-4 py-1 text-base font-semibold transition-all duration-200',
             'focus-visible:ring-ring focus-visible:ring-2',
             'disabled:cursor-not-allowed',
             variantClasses[resolvedVariant],

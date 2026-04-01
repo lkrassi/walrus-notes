@@ -14,7 +14,7 @@ export const ReceivedPermissionsSection: FC<
 > = ({ received, t }) => (
   <section
     className={cn(
-      'group relative overflow-hidden rounded-2xl border',
+      'group relative overflow-hidden border',
       'border-border dark:border-dark-border',
       'dark:bg-dark-bg bg-white',
       'p-5'
@@ -24,7 +24,7 @@ export const ReceivedPermissionsSection: FC<
       <div className='flex items-center gap-2'>
         <div
           className={cn(
-            'flex h-8 w-8 items-center justify-center rounded-lg',
+            'flex h-8 w-8 items-center justify-center',
             'bg-primary/10 text-primary'
           )}
         >
@@ -49,7 +49,7 @@ export const ReceivedPermissionsSection: FC<
     {!received.length && (
       <div
         className={cn(
-          'flex h-24 items-center justify-center rounded-xl border',
+          'flex h-24 items-center justify-center border',
           'border-border border-dashed',
           'text-secondary dark:text-dark-secondary text-sm'
         )}

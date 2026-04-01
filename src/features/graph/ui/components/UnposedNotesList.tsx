@@ -5,6 +5,7 @@ import { useDndMonitor, useDroppable } from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
+  defaultAnimateLayoutChanges,
   rectSortingStrategy,
   useSortable,
 } from '@dnd-kit/sortable';
@@ -147,7 +148,14 @@ export const UnposedNotesList = ({
 
       <div
         ref={setPanelDropRef}
-        className={cn('absolute', 'top-0', 'right-0', 'bottom-0', 'z-30')}
+        className={cn(
+          'absolute',
+          'top-0',
+          'right-0',
+          'bottom-0',
+          'z-30',
+          isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        )}
       >
         <motion.aside
           initial={false}
@@ -163,16 +171,6 @@ export const UnposedNotesList = ({
             'shadow-xl'
           )}
         >
-          <div
-            className={cn(
-              'border-border dark:border-dark-border flex items-center justify-between border-b px-4 py-3'
-            )}
-          >
-            <h3 className={cn('text-foreground text-sm font-semibold')}>
-              Без позиции ({orderedNotes.length})
-            </h3>
-          </div>
-
           <SortableContext
             items={orderedNotes.map(note => `unposed-${note.id}`)}
             strategy={rectSortingStrategy}
@@ -241,6 +239,13 @@ const SortableNoteCard = ({
       note,
       dragSize,
     },
+    animateLayoutChanges: args => {
+      if (args.isSorting || args.wasDragging) {
+        return false;
+      }
+
+      return defaultAnimateLayoutChanges(args);
+    },
   });
 
   const style = {
@@ -259,14 +264,7 @@ const SortableNoteCard = ({
       {...attributes}
       {...listeners}
       onClick={() => onClick(note)}
-      className={cn(
-        'w-full',
-        'cursor-grab',
-        'active:cursor-grabbing',
-        'transition',
-        'duration-200',
-        'hover:scale-[1.02]'
-      )}
+      className={cn('w-full', 'cursor-grab', 'active:cursor-grabbing')}
       title={`Перетаскиваемая заметка: ${note.title}`}
     >
       <div className={cn('pointer-events-none w-full')}>

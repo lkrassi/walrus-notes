@@ -66,7 +66,7 @@ export const CreateLayoutForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={t('layout:layoutTitlePlaceholder')}
-          className={cn('form-input', 'rounded-md')}
+          className={cn('form-input')}
           disabled={isLoading}
         />
       </div>

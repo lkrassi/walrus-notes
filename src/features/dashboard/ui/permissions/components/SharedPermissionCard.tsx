@@ -45,9 +45,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   );
 
   return (
-    <article
-      className={cn('border-border rounded-xl border p-4 backdrop-blur-sm')}
-    >
+    <article className={cn('border-border border p-4 backdrop-blur-sm')}>
       <div className={cn('mb-3 flex items-center justify-between gap-2')}>
         <div className={cn('inline-flex items-center gap-2')}>
           <Shield className={cn('text-primary h-4 w-4')} />
@@ -87,7 +85,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
         </div>
       </div>
 
-      <div className={cn('mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-900/40')}>
+      <div className={cn('mb-3 bg-gray-50 p-3 dark:bg-gray-900/40')}>
         <p className={cn('muted-text text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
@@ -101,7 +99,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
       <div className={cn('grid grid-cols-1 gap-2 sm:grid-cols-3')}>
         <label
           className={cn(
-            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.read')}</span>
@@ -120,7 +118,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
 
         <label
           className={cn(
-            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.write')}</span>
@@ -139,7 +137,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
 
         <label
           className={cn(
-            'border-border flex items-center justify-between rounded-lg border px-3 py-2 text-sm'
+            'border-border flex items-center justify-between border px-3 py-2 text-sm'
           )}
         >
           <span>{t('share:permissionsDashboard.flagsLabel.edit')}</span>

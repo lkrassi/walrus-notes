@@ -11,6 +11,7 @@ type FileTreeItemProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  isAnyNoteDragging?: boolean;
   hasSelection?: boolean;
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
@@ -27,6 +28,7 @@ export const FileTreeItem = ({
   level,
   isExpanded,
   isSelected,
+  isAnyNoteDragging,
   hasSelection,
   onItemClick,
   onOpenGraph,
@@ -58,17 +60,18 @@ export const FileTreeItem = ({
 
     if (isValidDropTarget) {
       droppableClassName = item.access?.canWrite
-        ? 'rounded-lg bg-primary/5 outline outline-1 outline-primary/25'
-        : 'rounded-lg bg-danger/10 outline outline-1 outline-danger/25';
+        ? 'bg-primary/8 outline outline-1 outline-primary/25'
+        : 'bg-danger/10 outline outline-1 outline-danger/25';
     }
   }
   return (
-    <div ref={dropRef} className={cn('group', droppableClassName)}>
+    <div ref={dropRef} className={cn(droppableClassName)}>
       <FileTreeItemHeader
         item={item}
         level={level}
         isExpanded={isExpanded}
         isSelected={isSelected}
+        isAnyNoteDragging={isAnyNoteDragging}
         hasSelection={hasSelection}
         onItemClick={onItemClick}
         onOpenGraph={onOpenGraph}

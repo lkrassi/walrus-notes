@@ -30,12 +30,11 @@ export const useFileTree = () => {
   });
 
   const { fileTree, expandedItems } = state;
+  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 
   useEffect(() => {
     saveExpandedItems(expandedItems);
   }, [expandedItems]);
-
-  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
 
   useEffect(() => {
     if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
@@ -52,6 +51,16 @@ export const useFileTree = () => {
   const addNoteToTree = useCallback((layoutId: string, note: Note) => {
     dispatchFileTree({ type: 'ADD_NOTE', payload: { layoutId, note } });
   }, []);
+
+  const moveNoteInTree = useCallback(
+    (noteId: string, fromLayoutId: string, toLayoutId: string) => {
+      dispatchFileTree({
+        type: 'MOVE_NOTE',
+        payload: { noteId, fromLayoutId, toLayoutId },
+      });
+    },
+    []
+  );
 
   const removeNoteFromTree = useCallback((noteId: string) => {
     dispatchFileTree({ type: 'REMOVE_NOTE', payload: noteId });
@@ -88,6 +97,7 @@ export const useFileTree = () => {
   return {
     fileTree,
     expandedItems,
+    moveNoteInTree,
     toggleExpanded,
     addNoteToTree,
     removeNoteFromTree,

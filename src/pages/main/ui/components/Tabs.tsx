@@ -90,10 +90,10 @@ export const Tabs = memo(function Tabs({
           {activeTab ? (
             <div
               className={cn(
-                'border-border relative flex max-w-50 min-w-30 cursor-grab items-center rounded-t-lg border-r px-4 py-2 whitespace-nowrap shadow-lg select-none',
+                'relative flex max-w-50 min-w-30 cursor-grab items-center px-4 py-1 whitespace-nowrap select-none',
                 activeTab.isActive
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-interactive-selected text-foreground'
+                  : 'bg-surface text-foreground'
               )}
             >
               <div className='mr-2 flex min-w-0 flex-1 items-center overflow-hidden'>

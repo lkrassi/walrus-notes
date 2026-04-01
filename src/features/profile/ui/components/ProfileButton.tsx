@@ -25,7 +25,6 @@ export const ProfileButton: FC = () => {
         'w-full',
         'items-center',
         'gap-3',
-        'rounded-lg',
         'px-3',
         'py-2',
         'active:bg-interactive-active',

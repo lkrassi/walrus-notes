@@ -148,7 +148,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
                       <button
                         aria-label={t('common:modal.close')}
                         onClick={onClose}
-                        className='text-foreground hover:bg-surface-3 ml-auto rounded-md p-1 transition-colors'
+                        className='text-foreground hover:bg-surface-3 ml-auto p-1 transition-colors'
                       >
                         <X size={20} />
                       </button>

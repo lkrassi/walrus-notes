@@ -1,32 +1,32 @@
 @layer base {
   .dark {
-    --background: oklch(17% 0.02 240);
-    --foreground: oklch(96% 0.01 240);
+    --background: #1e1e1e;
+    --foreground: #cccccc;
 
-    --surface-offset-1: 3%;
-    --surface-offset-2: 6%;
-    --surface-offset-3: 9%;
+    --surface-offset-1: 1.8%;
+    --surface-offset-2: 3.8%;
+    --surface-offset-3: 5.8%;
 
-    --surface: oklch(22% 0.02 240);
-    --surface-2: oklch(26% 0.02 240);
-    --surface-3: oklch(30% 0.02 240);
+    --surface: #252526;
+    --surface-2: #2d2d2d;
+    --surface-3: #333333;
 
-    --brand-primary: oklch(72% 0.09 240);
-    --brand-primary-foreground: oklch(98% 0.01 240);
+    --brand-primary: #0e639c;
+    --brand-primary-foreground: #ffffff;
 
     --primary: var(--brand-primary);
     --primary-foreground: var(--brand-primary-foreground);
 
-    --secondary: oklch(28% 0.02 240);
-    --secondary-foreground: oklch(95% 0.01 240);
+    --secondary: #2a2d2e;
+    --secondary-foreground: #d0d0d0;
 
-    --muted: oklch(28% 0.02 240);
-    --muted-foreground: oklch(70% 0.02 240);
+    --muted: #2f2f2f;
+    --muted-foreground: #9d9d9d;
 
-    --border: oklch(30% 0.02 240);
-    --input: oklch(30% 0.02 240);
+    --border: #3c3c3c;
+    --input: #3c3c3c;
 
-    --focus-ring: oklch(from var(--primary) l c h / 0.5);
+    --focus-ring: color-mix(in srgb, var(--primary) 55%, transparent);
 
     --interactive-hover: color-mix(
       in oklch,
@@ -54,15 +54,15 @@
       var(--surface)
     );
 
-    --success: oklch(70% 0.15 150);
-    --danger: oklch(65% 0.2 25);
-    --danger-foreground: oklch(78% 0.15 25);
-    --warning: oklch(82% 0.15 85);
+    --success: #89d185;
+    --danger: #f48771;
+    --danger-foreground: #ffb7ab;
+    --warning: #d7ba7d;
 
-    --chart-1: oklch(72% 0.11 240);
-    --chart-2: oklch(74% 0.13 200);
-    --chart-3: oklch(75% 0.16 30);
-    --chart-4: oklch(73% 0.14 310);
-    --chart-5: oklch(76% 0.13 80);
+    --chart-1: #4fc1ff;
+    --chart-2: #0e639c;
+    --chart-3: #c586c0;
+    --chart-4: #ce9178;
+    --chart-5: #89d185;
   }
 }

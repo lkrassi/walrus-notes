@@ -9,7 +9,6 @@ import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
 import { useDraggable } from '@dnd-kit/core';
 import { ChevronDown, FileText, Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
 import { DeleteNoteForm } from './DeleteNoteForm';
 import { FileTreeItemActions } from './FileTreeItemActions';
 
@@ -18,6 +17,7 @@ type FileTreeItemHeaderProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  isAnyNoteDragging?: boolean;
   hasSelection?: boolean;
   onItemClick: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
@@ -31,41 +31,22 @@ export const FileTreeItemHeader = ({
   level,
   isExpanded,
   isSelected,
-  hasSelection,
+  isAnyNoteDragging,
+  hasSelection: _hasSelection,
   onItemClick,
   onOpenGraph,
   onDeleteNote,
   onDeleteLayout,
   toggleExpanded,
 }: FileTreeItemHeaderProps) => {
-  const [_isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
-  const paddingLeft = 20 + level * 16;
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const paddingLeft = 10 + level * 12;
 
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const { openShareLinkModal } = useShareModal();
   const canWrite = item.access ? !!item.access.canWrite : true;
   const canEdit = item.access ? !!item.access.canEdit : true;
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => setIsHovered(true), 100);
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => setIsHovered(false), 100);
-  };
 
   const handleItemClick = () => onItemClick(item);
 
@@ -136,30 +117,41 @@ export const FileTreeItemHeader = ({
     }
   );
 
-  // DnD: только note draggable
-  let draggableProps = {};
-  let dragRef = undefined;
-  if (item.type === 'note' && canWrite) {
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-      id: item.id,
-      data: {
-        type: 'note',
-        noteId: item.id,
-        fromLayoutId: item.parentId,
-        title: item.title,
-      },
-      disabled: item.isMain,
-    });
-    draggableProps = {
-      ...attributes,
-      ...listeners,
-      style: { opacity: isDragging ? 0 : 1 },
-    };
-    dragRef = setNodeRef;
-  }
+  const isDraggableNote = item.type === 'note' && canWrite && !item.isMain;
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: item.id,
+    data: {
+      type: 'note',
+      noteId: item.id,
+      fromLayoutId: item.parentId,
+      title: item.title,
+    },
+    disabled: !isDraggableNote,
+  });
+
+  const draggableProps = isDraggableNote
+    ? {
+        ...attributes,
+        ...listeners,
+        style: {
+          opacity: isDragging ? 0 : 1,
+          zIndex: isDragging ? 30 : 'auto',
+        },
+      }
+    : {};
+
+  const dragRef = isDraggableNote ? setNodeRef : undefined;
 
   return (
-    <div className={cn('w-full')} ref={dragRef} {...draggableProps}>
+    <div
+      className={cn(
+        'group',
+        'w-full',
+        item.type === 'note' && isAnyNoteDragging && 'pointer-events-none'
+      )}
+      ref={dragRef}
+      {...draggableProps}
+    >
       <div
         className={cn(
           'relative',
@@ -167,27 +159,24 @@ export const FileTreeItemHeader = ({
           'w-full',
           'cursor-pointer',
           'items-center',
-          'gap-2',
-          'rounded-lg',
-          'py-2',
+          'gap-1.5',
+          'rounded-none',
+          'py-0.5',
+          'min-h-7',
           'transition-opacity',
           'duration-150',
           'text-text',
-          'dark:text-dark-text'
+          'dark:text-dark-text',
+          item.type === 'layout'
+            ? 'hover:bg-primary/12 dark:hover:bg-interactive-hover'
+            : !isAnyNoteDragging &&
+                'hover:bg-primary/12 dark:hover:bg-interactive-hover',
+          isSelected && 'bg-primary/20 dark:bg-interactive-selected'
         )}
         style={{
           paddingLeft: `${paddingLeft}px`,
-          paddingRight: '12px',
-          ...(hasSelection &&
-          !isSelected &&
-          (item.type === 'layout' || item.type === 'note')
-            ? { opacity: 0.5 }
-            : {}),
+          paddingRight: '8px',
         }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onFocus={handleMouseEnter}
-        onBlur={handleMouseLeave}
         onClick={handleItemClick}
       >
         {item.type === 'layout' && item.isMain !== true && (
@@ -199,8 +188,8 @@ export const FileTreeItemHeader = ({
             }}
             className={cn(
               'flex',
-              'h-4',
-              'w-4',
+              'h-3.5',
+              'w-3.5',
               'items-center',
               'justify-center',
               'transition-transform',
@@ -209,8 +198,8 @@ export const FileTreeItemHeader = ({
           >
             <ChevronDown
               className={cn(
-                'h-4',
-                'w-4',
+                'h-3.5',
+                'w-3.5',
                 'transform',
                 'transition-transform',
                 'duration-200',
@@ -222,51 +211,20 @@ export const FileTreeItemHeader = ({
           </button>
         )}
 
-        {item.type === 'note' && <div className={cn('h-4', 'w-4')} />}
+        {item.type === 'note' && <div className={cn('h-3.5', 'w-3.5')} />}
 
         <div>
           {item.type === 'layout' ? (
             isExpanded ? (
-              <div
-                className={cn(
-                  'h-6',
-                  'w-6',
-                  'flex',
-                  'items-center',
-                  'justify-center',
-                  'rounded-full',
-                  isSelected && !item.color
-                    ? 'bg-primary dark:bg-primary-dark text-white'
-                    : ''
-                )}
-              >
-                <FolderOpenIcon
-                  className={cn('h-6', 'w-6')}
-                  fillColor={item.color}
-                />
-              </div>
+              <FolderOpenIcon
+                className={cn('h-4', 'w-4')}
+                fillColor={item.color}
+              />
             ) : (
-              <div
-                className={cn(
-                  'h-6',
-                  'w-6',
-                  'flex',
-                  'items-center',
-                  'justify-center',
-                  'rounded-full',
-                  isSelected && !item.color
-                    ? 'bg-primary dark:bg-primary-dark text-white'
-                    : ''
-                )}
-              >
-                <FolderIcon
-                  className={cn('h-6', 'w-6')}
-                  fillColor={item.color}
-                />
-              </div>
+              <FolderIcon className={cn('h-4', 'w-4')} fillColor={item.color} />
             )
           ) : (
-            <FileText className={cn('h-4', 'w-4')} />
+            <FileText className={cn('h-3.5', 'w-3.5')} />
           )}
         </div>
 
@@ -276,8 +234,9 @@ export const FileTreeItemHeader = ({
             'flex-1',
             'min-w-0',
             'truncate',
-            'text-sm',
-            'font-medium'
+            'text-[13px]',
+            'leading-5',
+            isSelected ? 'font-medium' : 'font-normal'
           )}
         >
           {item.title}
@@ -347,32 +306,35 @@ export const FileTreeItemHeader = ({
                 titleOpenGraph={t('layout:tooltip.graph')}
               />
             )}
-          {item.type === 'note' &&
-            item.isMain !== true &&
-            isSelected &&
-            canWrite && (
-              <>
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleDeleteNote(e);
-                  }}
-                  className={cn(
-                    'transition-opacity',
-                    'duration-150',
-                    'opacity-0',
-                    'group-hover:opacity-100',
-                    'group-focus-within:opacity-100',
-                    isMobile
-                      ? 'text-gray-600 opacity-100 dark:text-white'
+          {item.type === 'note' && item.isMain !== true && canWrite && (
+            <>
+              <button
+                onPointerDown={e => {
+                  e.stopPropagation();
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeleteNote(e);
+                }}
+                className={cn(
+                  !isAnyNoteDragging && 'transition-opacity duration-150',
+                  'opacity-0',
+                  !isAnyNoteDragging && 'group-hover:opacity-100',
+                  !isAnyNoteDragging && 'group-focus-within:opacity-100',
+                  'flex h-5 w-5 items-center justify-center',
+                  isAnyNoteDragging && 'pointer-events-none',
+                  isMobile
+                    ? 'text-gray-600 opacity-100 dark:text-white'
+                    : isAnyNoteDragging
+                      ? 'text-text/50 dark:text-dark-text/50'
                       : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
-                  )}
-                  title={t('notes:deleteNote')}
-                >
-                  <Trash2 className={cn('h-4', 'w-4')} />
-                </button>
-              </>
-            )}
+                )}
+                title={t('notes:deleteNote')}
+              >
+                <Trash2 className={cn('h-4', 'w-4')} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

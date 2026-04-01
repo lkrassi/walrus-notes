@@ -94,15 +94,6 @@ export const useGraphDragAndDrop = ({
         setActiveDragSize(resolveDragSizeFromData(event.active.data.current));
       }
 
-      if (DEBUG_GRAPH_DND) {
-        console.log('[graph-dnd] start', {
-          activeId: event.active.id.toString(),
-          noteId: note?.id,
-          initialRect,
-          dragSize: resolveDragSizeFromData(event.active.data.current),
-        });
-      }
-
       const handlePointer = (e: PointerEvent) => {
         setLastClientCoords({ x: e.clientX, y: e.clientY });
       };
@@ -131,16 +122,6 @@ export const useGraphDragAndDrop = ({
         overId?.startsWith('unposed-');
       const isDroppedToGraph = !!overId && !isDroppedBackToUnposed;
 
-      if (DEBUG_GRAPH_DND) {
-        console.log('[graph-dnd] end', {
-          activeId: id,
-          overId,
-          lastClientCoords,
-          isDroppedBackToUnposed,
-          isDroppedToGraph,
-        });
-      }
-
       if (id.startsWith('unposed-') && isDroppedToGraph) {
         const noteFromPayload = resolveNoteFromDragData(active.data.current);
         const fallbackNoteId = id.replace('unposed-', '');
@@ -154,14 +135,6 @@ export const useGraphDragAndDrop = ({
             try {
               dropPosition = screenToFlowPosition(client);
             } catch (_e) {}
-          }
-
-          if (DEBUG_GRAPH_DND) {
-            console.log('[graph-dnd] add-to-graph', {
-              noteId: note.id,
-              noteFromPayload: !!noteFromPayload,
-              dropPosition,
-            });
           }
 
           onAddNoteToGraph?.(note, dropPosition);

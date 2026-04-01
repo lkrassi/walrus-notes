@@ -88,27 +88,27 @@ export const AllNotesButton = ({
       onClick={onAllNotesClick}
       className={cn(
         'w-full',
-        'px-3',
-        'py-2',
-        'rounded',
+        'px-2',
+        'py-1',
+        'min-h-7',
+        'rounded-none',
         'text-left',
-        'text-sm',
+        'text-[13px]',
         'flex',
         'items-center',
         'gap-2',
         isSelected
           ? cn(
-              'bg-primary',
-              'text-white',
-              'dark:bg-dark-primary',
-              'dark:text-dark-text'
+              'bg-interactive-selected',
+              'text-foreground',
+              'dark:text-foreground'
             )
-          : cn('hover:bg-muted-foreground/10')
+          : cn('hover:bg-interactive-hover')
       )}
       title={t('main:allNotes')}
     >
-      <Network className='h-4 w-4 shrink-0' />
-      <span className='truncate font-medium'>{t('main:allNotes')}</span>
+      <Network className='h-3.5 w-3.5 shrink-0' />
+      <span className='truncate font-normal'>{t('main:allNotes')}</span>
     </button>
   );
 };

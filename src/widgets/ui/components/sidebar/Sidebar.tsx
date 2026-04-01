@@ -116,9 +116,7 @@ const SidebarComponent = (
           className={cn(
             'border-border',
             'border-b',
-            'pt-5',
-            'pb-4',
-            'px-4',
+            'p-3',
             'flex',
             'flex-col',
             'gap-3'
@@ -163,12 +161,7 @@ const SidebarComponent = (
               onClick={handleCreateLayout}
               title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
-              className={cn(
-                'text-foreground',
-                'hover:text-primary',
-                'rounded',
-                'p-1'
-              )}
+              className={cn('text-foreground', 'hover:text-primary', 'p-1')}
             >
               <Plus className={cn('h-5', 'w-5')} />
             </button>
@@ -189,7 +182,7 @@ const SidebarComponent = (
           <Link
             to='/dashboard'
             className={cn(
-              'border-border mb-3 flex items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
+              'border-border mb-3 flex items-center justify-center gap-2 border px-3 py-2 text-sm font-medium',
               'text-foreground hover:bg-muted-foreground/10'
             )}
           >

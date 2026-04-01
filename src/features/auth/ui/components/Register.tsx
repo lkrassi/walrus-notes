@@ -172,7 +172,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
           <div
             className={cn(
               'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
-              'mx-auto w-full max-w-md rounded-lg border p-4 shadow-2xl backdrop-blur-xl'
+              'mx-auto w-full max-w-md border p-4 shadow-2xl backdrop-blur-xl'
             )}
           >
             <h2

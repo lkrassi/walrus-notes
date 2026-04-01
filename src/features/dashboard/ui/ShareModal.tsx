@@ -37,7 +37,7 @@ export const ShareModal = memo(function ShareModal({
 
           <div
             className={cn(
-              'mb-4 overflow-auto rounded-lg p-3',
+              'mb-4 overflow-auto p-3',
               'border-border border',
               'bg-surface-2'
             )}
@@ -259,7 +259,7 @@ export const ShareModal = memo(function ShareModal({
                     }
                     placeholder={t('share:modal.expiration.customPlaceholder')}
                     className={cn(
-                      'form-input w-full rounded-md',
+                      'form-input w-full',
                       touched.customMinutes && errors.customMinutes
                         ? 'border-red-500'
                         : ''
