@@ -8,6 +8,8 @@ type LocalRootState = {
   [k: string]: unknown;
 };
 
+type UndoPatch = { undo: () => void };
+
 interface GetNotesRequest {
   layoutId: string;
   page?: number;
@@ -263,6 +265,12 @@ export const notesApi = apiSlice.injectEndpoints({
 
         if (!fromLayoutId || !movedNote) return;
 
+        const movedToLayout: Note = {
+          ...movedNote,
+          layoutId: toLayoutId,
+          position: undefined,
+        };
+
         const removePatch = dispatch(
           notesApi.util.updateQueryData(
             'getNotes',
@@ -285,11 +293,60 @@ export const notesApi = apiSlice.injectEndpoints({
           )
         );
 
+        const removeFromSourcePosedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getPosedNotes',
+            { layoutId: fromLayoutId },
+            draft => {
+              if (!draft) return;
+              draft.data = draft.data.filter(n => n.id !== noteId);
+            }
+          )
+        );
+
+        const removeFromSourceUnposedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getUnposedNotes',
+            { layoutId: fromLayoutId },
+            draft => {
+              if (!draft) return;
+              draft.data = draft.data.filter(n => n.id !== noteId);
+            }
+          )
+        );
+
+        const removeFromTargetPosedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getPosedNotes',
+            { layoutId: toLayoutId },
+            draft => {
+              if (!draft) return;
+              draft.data = draft.data.filter(n => n.id !== noteId);
+            }
+          )
+        );
+
+        const addToTargetUnposedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getUnposedNotes',
+            { layoutId: toLayoutId },
+            draft => {
+              if (!draft) return;
+              if (draft.data.some(n => n.id === noteId)) return;
+              draft.data.unshift(movedToLayout);
+            }
+          )
+        );
+
         try {
           await queryFulfilled;
         } catch {
           removePatch.undo();
           addPatch.undo();
+          removeFromSourcePosedPatch.undo();
+          removeFromSourceUnposedPatch.undo();
+          removeFromTargetPosedPatch.undo();
+          addToTargetUnposedPatch.undo();
         }
       },
     }),
@@ -302,6 +359,10 @@ export const notesApi = apiSlice.injectEndpoints({
       }),
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         const temp = createTempNote(arg.title);
+        const tempUnposedNote: Note = {
+          ...temp,
+          layoutId: arg.layoutId,
+        };
 
         const patch = dispatch(
           notesApi.util.updateQueryData(
@@ -309,6 +370,17 @@ export const notesApi = apiSlice.injectEndpoints({
             { layoutId: arg.layoutId, page: 1 },
             draft => {
               draft.data.unshift(temp);
+            }
+          )
+        );
+
+        const unposedPatch = dispatch(
+          notesApi.util.updateQueryData(
+            'getUnposedNotes',
+            { layoutId: arg.layoutId },
+            draft => {
+              if (!draft) return;
+              draft.data.unshift(tempUnposedNote);
             }
           )
         );
@@ -332,8 +404,32 @@ export const notesApi = apiSlice.injectEndpoints({
               }
             )
           );
+
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getUnposedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                if (!draft) return;
+                const i = draft.data.findIndex(
+                  n => n.id === tempUnposedNote.id
+                );
+                if (i !== -1) {
+                  const responseTitle = data.data.title?.trim();
+                  draft.data[i] = {
+                    ...data.data,
+                    title: responseTitle?.length
+                      ? responseTitle
+                      : tempUnposedNote.title,
+                    layoutId: data.data.layoutId || arg.layoutId,
+                  };
+                }
+              }
+            )
+          );
         } catch {
           patch.undo();
+          unposedPatch.undo();
         }
       },
     }),
@@ -349,7 +445,7 @@ export const notesApi = apiSlice.injectEndpoints({
         const layouts =
           layoutApi.endpoints.getMyLayouts.select()(state).data?.data || [];
 
-        const patches: any[] = [];
+        const patches: UndoPatch[] = [];
 
         for (const l of layouts) {
           patches.push(
@@ -394,6 +490,9 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
+      providesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+      ],
     }),
 
     getUnposedNotes: builder.query<
@@ -402,6 +501,9 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
+      providesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `unposed-${arg.layoutId}` },
+      ],
     }),
 
     updateNotePosition: builder.mutation<
@@ -413,6 +515,79 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        const state = getState() as unknown as LocalRootState;
+
+        const unposedCache = notesApi.endpoints.getUnposedNotes.select({
+          layoutId: arg.layoutId,
+        })(state);
+        const noteToMove = unposedCache.data?.data?.find(
+          note => note.id === arg.noteId
+        );
+
+        const patches = [
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getUnposedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                if (!draft) return;
+                draft.data = draft.data.filter(note => note.id !== arg.noteId);
+              }
+            )
+          ),
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                if (!draft) return;
+
+                const idx = draft.data.findIndex(
+                  note => note.id === arg.noteId
+                );
+                if (idx !== -1) {
+                  draft.data[idx] = {
+                    ...draft.data[idx],
+                    position: { xPos: arg.xPos, yPos: arg.yPos },
+                  };
+                  return;
+                }
+
+                if (!noteToMove) return;
+
+                draft.data.unshift({
+                  ...noteToMove,
+                  layoutId: noteToMove.layoutId || arg.layoutId,
+                  position: { xPos: arg.xPos, yPos: arg.yPos },
+                });
+              }
+            )
+          ),
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId: arg.layoutId, page: 1 },
+              draft => {
+                if (!draft) return;
+                const note = draft.data.find(n => n.id === arg.noteId);
+                if (!note) return;
+                note.position = { xPos: arg.xPos, yPos: arg.yPos };
+              }
+            )
+          ),
+        ];
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach(patch => patch.undo());
+        }
+      },
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: `unposed-${arg.layoutId}` },
+      ],
     }),
 
     createNoteLink: builder.mutation<
@@ -424,6 +599,68 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const patches: UndoPatch[] = [
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                if (!draft) return;
+
+                const source = draft.data.find(n => n.id === arg.firstNoteId);
+                const target = draft.data.find(n => n.id === arg.secondNoteId);
+                if (!source || !target) return;
+
+                const out = source.linkedWithOut ?? [];
+                if (!out.includes(arg.secondNoteId)) {
+                  source.linkedWithOut = [...out, arg.secondNoteId];
+                }
+
+                const incoming = target.linkedWithIn ?? [];
+                if (!incoming.includes(arg.firstNoteId)) {
+                  target.linkedWithIn = [...incoming, arg.firstNoteId];
+                }
+              }
+            )
+          ),
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId: arg.layoutId, page: 1 },
+              draft => {
+                if (!draft) return;
+
+                const source = draft.data.find(n => n.id === arg.firstNoteId);
+                const target = draft.data.find(n => n.id === arg.secondNoteId);
+
+                if (source) {
+                  const out = source.linkedWithOut ?? [];
+                  if (!out.includes(arg.secondNoteId)) {
+                    source.linkedWithOut = [...out, arg.secondNoteId];
+                  }
+                }
+
+                if (target) {
+                  const incoming = target.linkedWithIn ?? [];
+                  if (!incoming.includes(arg.firstNoteId)) {
+                    target.linkedWithIn = [...incoming, arg.firstNoteId];
+                  }
+                }
+              }
+            )
+          ),
+        ];
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach(p => p.undo());
+        }
+      },
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+      ],
     }),
 
     deleteNoteLink: builder.mutation<
@@ -435,6 +672,67 @@ export const notesApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const patches: UndoPatch[] = [
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: arg.layoutId },
+              draft => {
+                if (!draft) return;
+
+                const source = draft.data.find(n => n.id === arg.firstNoteId);
+                const target = draft.data.find(n => n.id === arg.secondNoteId);
+
+                if (source?.linkedWithOut) {
+                  source.linkedWithOut = source.linkedWithOut.filter(
+                    id => id !== arg.secondNoteId
+                  );
+                }
+
+                if (target?.linkedWithIn) {
+                  target.linkedWithIn = target.linkedWithIn.filter(
+                    id => id !== arg.firstNoteId
+                  );
+                }
+              }
+            )
+          ),
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId: arg.layoutId, page: 1 },
+              draft => {
+                if (!draft) return;
+
+                const source = draft.data.find(n => n.id === arg.firstNoteId);
+                const target = draft.data.find(n => n.id === arg.secondNoteId);
+
+                if (source?.linkedWithOut) {
+                  source.linkedWithOut = source.linkedWithOut.filter(
+                    id => id !== arg.secondNoteId
+                  );
+                }
+
+                if (target?.linkedWithIn) {
+                  target.linkedWithIn = target.linkedWithIn.filter(
+                    id => id !== arg.firstNoteId
+                  );
+                }
+              }
+            )
+          ),
+        ];
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach(p => p.undo());
+        }
+      },
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `posed-${arg.layoutId}` },
+      ],
     }),
 
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({

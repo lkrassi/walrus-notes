@@ -137,7 +137,11 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
 
   return (
     <div className={cn('panel-header')}>
-      <NoteTitle title={title} onEdit={handleOpenEditTitle} canWrite={canWrite} />
+      <NoteTitle
+        title={title}
+        onEdit={handleOpenEditTitle}
+        canWrite={canWrite}
+      />
 
       <NoteActions
         noteId={noteId}

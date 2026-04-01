@@ -1,4 +1,8 @@
-import { getLayoutAccess, useCreateNoteMutation, useGetMyLayoutsQuery } from '@/entities';
+import {
+  getLayoutAccess,
+  useCreateNoteMutation,
+  useGetMyLayoutsQuery,
+} from '@/entities';
 import type { Note } from '@/entities/note';
 import { useNotifications } from '@/entities/notification';
 import { Button, Input, Textarea } from '@/shared';
@@ -31,8 +35,12 @@ export const CreateNoteForm = memo(function CreateNoteForm({
   const { closeModal } = useModalContentContext();
   const [createNote, { isLoading }] = useCreateNoteMutation();
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-  const currentLayout = (layoutsResponse?.data || []).find(l => l.id === layoutId);
-  const canEdit = currentLayout ? getLayoutAccess(currentLayout).canEdit : true;
+  const currentLayout = (layoutsResponse?.data || []).find(
+    l => l.id === layoutId
+  );
+  const canWrite = currentLayout
+    ? getLayoutAccess(currentLayout).canWrite
+    : true;
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -49,7 +57,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
       }
 
       try {
-        if (!canEdit) {
+        if (!canWrite) {
           showError('Not enough permissions');
           return;
         }
@@ -80,7 +88,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
       showError,
       t,
       title,
-      canEdit,
+      canWrite,
     ]
   );
 
@@ -131,7 +139,7 @@ export const CreateNoteForm = memo(function CreateNoteForm({
           type='submit'
           variant={!title.trim() || isLoading ? 'disabled' : 'submit'}
           className={cn('btn')}
-          disabled={!title.trim() || isLoading || !canEdit}
+          disabled={!title.trim() || isLoading || !canWrite}
         >
           {isLoading ? t('notes:creating') : t('notes:createNote')}
         </Button>

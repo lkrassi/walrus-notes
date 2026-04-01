@@ -1,4 +1,3 @@
-import { closeLayoutTabs, closeTabsByItemId } from '@/entities';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
 import { CreateLayoutForm } from '@/features/layout';
@@ -13,7 +12,6 @@ import {
   useModalActions,
   useSidebar,
 } from '@/widgets/hooks';
-import { useAppDispatch } from '@/widgets/hooks/redux';
 import { useResizableSidebar } from '@/widgets/hooks/useResizableSidebar';
 import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';
@@ -37,14 +35,8 @@ const SidebarComponent = (
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
-  const dispatch = useAppDispatch();
-  const {
-    fileTree,
-    expandedItems,
-    toggleExpanded,
-    updateNoteInTree,
-    addNoteToTree,
-  } = useFileTree();
+  const { fileTree, expandedItems, toggleExpanded, updateNoteInTree } =
+    useFileTree();
 
   const { openModalFromTrigger } = useModalActions();
 
@@ -60,14 +52,6 @@ const SidebarComponent = (
     title: t('fileTree:createNewLayout'),
     size: MODAL_SIZE_PRESETS.layoutCreate,
   });
-
-  const handleDeleteNote = (noteId: string) => {
-    dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
-  };
-
-  const handleDeleteLayout = (layoutId: string) => {
-    dispatch(closeLayoutTabs(layoutId));
-  };
 
   const handleItemSelect = (item: FileTreeItem) => {
     onItemSelect?.(item);
@@ -195,13 +179,9 @@ const SidebarComponent = (
           <FileTree
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
-            updateNoteInTree={updateNoteInTree}
-            addNoteToTree={addNoteToTree}
             onItemSelect={handleItemSelect}
             selectedItemId={currentSelectedItemId}
             onOpenGraph={handleOpenGraph}
-            onDeleteNote={handleDeleteNote}
-            onDeleteLayout={handleDeleteLayout}
           />
         </div>
 

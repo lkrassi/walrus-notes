@@ -11,8 +11,6 @@ export type DraftPhase =
 export interface UseDraftSyncOpts {
   noteId: string | null | undefined;
   userId: string;
-  // Legacy transport config kept for API compatibility.
-  // Realtime transport is sourced from WebSocketProvider context.
   serverUrl?: string;
   draft: string;
   debounceMs?: number;
@@ -49,6 +47,7 @@ export interface DraftWebSocketClient {
     eventName: WSEventName,
     listener: (payload: unknown, raw?: WSEvent) => void
   ) => () => void;
+  isConnected?: boolean;
   onOpen?: (cb: () => void) => () => void;
 }
 

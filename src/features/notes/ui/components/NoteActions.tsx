@@ -62,48 +62,66 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         'sm:flex-nowrap'
       )}
     >
-      {canWrite && (isEditing ? (
-        <>
-          <Button
-            onClick={onSave}
-            className={cn(
-              'flex',
-              'h-8',
-              'w-14',
-              'items-center',
-              'justify-center'
-            )}
-            disabled={isLoading}
-            title={t('notes:save')}
-            variant='submit'
-          >
-            <Save className={cn('h-4', 'w-4')} />
-          </Button>
+      {canWrite &&
+        (isEditing ? (
+          <>
+            <Button
+              onClick={onSave}
+              className={cn(
+                'flex',
+                'h-8',
+                'w-14',
+                'items-center',
+                'justify-center'
+              )}
+              disabled={isLoading}
+              title={t('notes:save')}
+              variant='submit'
+            >
+              <Save className={cn('h-4', 'w-4')} />
+            </Button>
 
-          <Button
-            onClick={e => {
-              if (!hasLocalChanges) {
-                onCancel();
-                return;
-              }
-              onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
-            }}
-            className={cn(
-              'flex',
-              'h-8',
-              'w-14',
-              'items-center',
-              'justify-center'
-            )}
-            disabled={isLoading}
-            title={t('notes:cancel')}
-            variant='escape'
-          >
-            <X className={cn('h-4', 'w-4')} />
-          </Button>
+            <Button
+              onClick={e => {
+                if (!hasLocalChanges) {
+                  onCancel();
+                  return;
+                }
+                onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
+              }}
+              className={cn(
+                'flex',
+                'h-8',
+                'w-14',
+                'items-center',
+                'justify-center'
+              )}
+              disabled={isLoading}
+              title={t('notes:cancel')}
+              variant='escape'
+            >
+              <X className={cn('h-4', 'w-4')} />
+            </Button>
 
+            <Button
+              onClick={onOpenImageUpload}
+              className={cn(
+                'flex',
+                'h-8',
+                'w-14',
+                'items-center',
+                'justify-center'
+              )}
+              disabled={isLoading}
+              title={t('notes:uploadImage') || 'Upload image'}
+              variant='default'
+            >
+              <ImageIcon className={cn('h-4', 'w-4')} />
+            </Button>
+          </>
+        ) : (
           <Button
-            onClick={onOpenImageUpload}
+            onClick={onEdit}
             className={cn(
               'flex',
               'h-8',
@@ -111,29 +129,12 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
               'items-center',
               'justify-center'
             )}
-            disabled={isLoading}
-            title={t('notes:uploadImage') || 'Upload image'}
+            title={t('notes:edit')}
             variant='default'
           >
-            <ImageIcon className={cn('h-4', 'w-4')} />
+            <Edit3 className={cn('h-4', 'w-4')} />
           </Button>
-        </>
-      ) : (
-        <Button
-          onClick={onEdit}
-          className={cn(
-            'flex',
-            'h-8',
-            'w-14',
-            'items-center',
-            'justify-center'
-          )}
-          title={t('notes:edit')}
-          variant='default'
-        >
-          <Edit3 className={cn('h-4', 'w-4')} />
-        </Button>
-      ))}
+        ))}
 
       {canWrite && onExport && (
         <>
@@ -172,7 +173,13 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       {canWrite && (
         <Button
           onClick={onOpenHelp}
-          className={cn('flex', 'h-8', 'w-14', 'items-center', 'justify-center')}
+          className={cn(
+            'flex',
+            'h-8',
+            'w-14',
+            'items-center',
+            'justify-center'
+          )}
           title={t('notes:editorHelp')}
           variant='default'
         >

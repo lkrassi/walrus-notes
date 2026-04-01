@@ -1,9 +1,9 @@
 import type { Note } from '@/entities/note';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
+import { useDroppable } from '@dnd-kit/core';
 import type { ReactNode } from 'react';
 import { FileTreeItemContent } from './FileTreeItemContent';
 import { FileTreeItemHeader } from './FileTreeItemHeader';
-import { useDroppable } from '@dnd-kit/core';
 
 type FileTreeItemProps = {
   item: FileTreeItemType;
@@ -37,17 +37,29 @@ export const FileTreeItem = ({
   // DnD: layout droppable
   let droppableClassName = '';
   let dropRef = undefined;
-  if (item.type === 'layout' && item.isMain !== true && item.access?.canEdit) {
-    const { setNodeRef, isOver: over, active } = useDroppable({
+  if (item.type === 'layout' && item.isMain !== true) {
+    const {
+      setNodeRef,
+      isOver: over,
+      active,
+    } = useDroppable({
       id: item.id,
       data: { type: 'layout', layoutId: item.id },
     });
     dropRef = setNodeRef;
+    const activeType = active?.data?.current?.type;
     const activeLayoutId = active?.data?.current?.fromLayoutId;
-    const isValidDropTarget = over && activeLayoutId && activeLayoutId !== item.id;
-    droppableClassName = isValidDropTarget
-      ? 'rounded-lg bg-primary/5 outline outline-1 outline-primary/25'
-      : '';
+    const isValidDropTarget =
+      over &&
+      activeType === 'note' &&
+      activeLayoutId &&
+      activeLayoutId !== item.id;
+
+    if (isValidDropTarget) {
+      droppableClassName = item.access?.canWrite
+        ? 'rounded-lg bg-primary/5 outline outline-1 outline-primary/25'
+        : 'rounded-lg bg-danger/10 outline outline-1 outline-danger/25';
+    }
   }
   return (
     <div ref={dropRef} className={droppableClassName}>

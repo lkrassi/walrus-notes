@@ -7,8 +7,8 @@ import {
   useEffect,
   useRef,
   useState,
-  type KeyboardEvent,
   type ReactElement,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from 'react';
 
@@ -52,7 +52,7 @@ export const Dropdown = ({
     onOpenChange?.(newState);
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (disabled) return;
 
     if (event.key === 'Enter' || event.key === ' ') {
@@ -85,7 +85,7 @@ export const Dropdown = ({
       }
     };
 
-    const onKeyDown = (event: KeyboardEvent) => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape') {
         handleClose();
       }

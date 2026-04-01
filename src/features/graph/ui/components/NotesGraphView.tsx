@@ -107,7 +107,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
 
     const { activeDragNote, handleDndDragStart, handleDndDragEnd } =
       useGraphDragAndDrop({
-        onAddNoteToGraph,
+        onAddNoteToGraph: onAddNoteToGraph ?? (() => {}),
         screenToFlowPosition,
         centerCoords,
       });
@@ -132,7 +132,7 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
           }}
         >
           <GraphDropZone
-              onDrop={onDrop ?? (() => {})}
+            onDrop={onDrop ?? (() => {})}
             isDraggingEdge={isDraggingEdge}
             onBoxSelect={onBoxSelect}
             activeDragNote={activeDragNote}

@@ -13,7 +13,7 @@ export const SelectionHighlight: FC<SelectionHighlightProps> = memo(
   function SelectionHighlight({ left, top, width, height, color }) {
     return (
       <div
-        className={cn('pointer-events-none absolute z-20 rounded-[2px]')}
+        className={cn('pointer-events-none absolute z-20 rounded-xs')}
         style={{
           left,
           top,

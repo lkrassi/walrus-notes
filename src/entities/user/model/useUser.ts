@@ -1,16 +1,10 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { UserProfileState } from './slice';
 import { clearUserProfile, setTokens, setUserProfile } from './slice';
 
 type UserStateLike = {
-  user: {
-    profile?: {
-      id?: string;
-      username?: string;
-      email?: string;
-      imgUrl?: string;
-    } | null;
-  };
+  user: UserProfileState;
 };
 
 export const useUser = () => {
@@ -19,7 +13,7 @@ export const useUser = () => {
   const userId = profile?.id ?? '';
 
   const updateProfile = useCallback(
-    (nextProfile: NonNullable<UserStateLike['user']['profile']>) => {
+    (nextProfile: NonNullable<UserProfileState['profile']>) => {
       dispatch(setUserProfile(nextProfile));
     },
     [dispatch]

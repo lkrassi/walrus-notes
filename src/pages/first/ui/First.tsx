@@ -13,7 +13,6 @@ import {
   itemVariants,
   itemVariantsMobile,
 } from '../model';
-import { BackgroundIcons } from './BackgroundIcons';
 
 export const First = () => {
   const navigate = useNavigate();
@@ -146,8 +145,6 @@ export const First = () => {
           </div>
         </motion.div>
       </div>
-
-      {!isMobile && <BackgroundIcons />}
     </>
   );
 };

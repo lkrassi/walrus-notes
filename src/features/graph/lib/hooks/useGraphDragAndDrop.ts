@@ -3,7 +3,7 @@ import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useCallback, useRef, useState } from 'react';
 
 interface UseGraphDragAndDropProps {
-  onAddNoteToGraph: (note: Note, position?: { x: number; y: number }) => void;
+  onAddNoteToGraph?: (note: Note, position?: { x: number; y: number }) => void;
   screenToFlowPosition?: (position: { x: number; y: number }) => {
     x: number;
     y: number;
@@ -58,7 +58,7 @@ export const useGraphDragAndDrop = ({
               dropPosition = screenToFlowPosition(client);
             } catch (_e) {}
           }
-          onAddNoteToGraph(note, dropPosition);
+          onAddNoteToGraph?.(note, dropPosition);
         }
       }
 

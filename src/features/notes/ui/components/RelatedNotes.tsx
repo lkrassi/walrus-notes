@@ -1,5 +1,6 @@
 import { useTabs } from '@/entities';
 import type { Note } from '@/entities/note';
+import type { FileTreeItem } from '@/entities/tab';
 import { cn } from '@/shared/lib/core';
 import { memo, useCallback, type FC } from 'react';
 import { LinkedNotesList } from './LinkedNotesList';
@@ -24,7 +25,7 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
   const handleNoteSelect = useCallback(
     (selected: Note) => {
       try {
-        const item = {
+        const item: FileTreeItem = {
           id: selected.id,
           type: 'note',
           title: selected.title,

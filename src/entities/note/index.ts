@@ -4,6 +4,7 @@ export {
   useCreateNoteMutation,
   useDeleteNoteLinkMutation,
   useDeleteNoteMutation,
+  useDragNoteMutation,
   useGetNotesQuery,
   useGetPosedNotesQuery,
   useGetUnposedNotesQuery,
@@ -12,6 +13,5 @@ export {
   useSearchNotesQuery,
   useUpdateNoteMutation,
   useUpdateNotePositionMutation,
-  useDragNoteMutation,
 } from './api';
 export type { Note, NotePosition, NoteWithPosition } from './model/types';

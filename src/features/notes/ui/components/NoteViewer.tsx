@@ -21,8 +21,12 @@ export const NoteViewer = memo(function NoteViewer({
   openedFromSidebar: _openedFromSidebar,
 }: NoteViewerProps) {
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-  const currentLayout = (layoutsResponse?.data || []).find(l => l.id === layoutId);
-  const canWrite = currentLayout ? getLayoutAccess(currentLayout).canWrite : true;
+  const currentLayout = (layoutsResponse?.data || []).find(
+    l => l.id === layoutId
+  );
+  const canWrite = currentLayout
+    ? getLayoutAccess(currentLayout).canWrite
+    : true;
   const {
     noteId,
     isEditing,

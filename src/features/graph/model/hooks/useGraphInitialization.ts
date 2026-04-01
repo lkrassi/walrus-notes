@@ -56,6 +56,15 @@ export const useGraphInitialization = ({
           return false;
         if ((prev as Edge).targetHandle !== (inEdge as Edge).targetHandle)
           return false;
+        try {
+          const prevColor =
+            (prev.data as { edgeColor?: string } | undefined)?.edgeColor ??
+            null;
+          const newColor =
+            (inEdge.data as { edgeColor?: string } | undefined)?.edgeColor ??
+            null;
+          if (prevColor !== newColor) return false;
+        } catch (_e) {}
       }
       return true;
     };

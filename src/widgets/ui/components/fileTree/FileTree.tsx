@@ -4,13 +4,15 @@ import {
   useGetMyLayoutsQuery,
   useLazySearchNotesQuery,
 } from '@/entities';
-import { useDragNoteMutation } from '@/entities/note';
 import type { Note } from '@/entities/note';
+import { useDragNoteMutation } from '@/entities/note';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
+import { useUser } from '@/entities/user';
 import { cn } from '@/shared/lib/core';
 import { useDndSensors } from '@/shared/lib/react/hooks/useDndSensors';
 import { useFileTree } from '@/widgets/hooks/FileTreeContext';
 import { useAppSelector } from '@/widgets/hooks/redux';
+import { useNotifications } from '@/widgets/hooks/useNotifications';
 import { AllNotesButton } from '@/widgets/ui/components/sidebar/AllNotesButton';
 import {
   DndContext,
@@ -18,7 +20,10 @@ import {
   closestCenter,
   pointerWithin,
 } from '@dnd-kit/core';
-import { snapCenterToCursor } from '@dnd-kit/modifiers';
+import {
+  restrictToFirstScrollableAncestor,
+  snapCenterToCursor,
+} from '@dnd-kit/modifiers';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { FileTreeItem } from './FileTreeItem';
 import { SearchInput } from './SearchInput';
@@ -40,10 +45,12 @@ export const FileTree = memo(
     onOpenGraph,
   }: FileTreeProps) => {
     const sensors = useDndSensors({ mouseDistance: 5 });
+    const { showWarning, showError } = useNotifications();
 
     const { moveNoteInTree } = useFileTree();
     const [dragNote] = useDragNoteMutation();
     const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
+
     const layoutAccessById = useMemo(() => {
       const map = new Map<
         string,
@@ -80,18 +87,31 @@ export const FileTree = memo(
         const { active, over } = event;
         setActiveDrag(null);
 
-        if (!over) return;
+        if (!over) {
+          showWarning('Перенос возможен только в папку в сайдбаре.');
+          return;
+        }
 
         const activeData = active?.data?.current;
         const overData = over?.data?.current;
 
         if (!activeData || !overData) return;
         if (activeData.type !== 'note') return;
-        if (overData.type !== 'layout') return;
+        if (overData.type !== 'layout') {
+          showWarning('Перенос возможен только в папку в сайдбаре.');
+          return;
+        }
         if (activeData.fromLayoutId === overData.layoutId) return;
+
         const sourceAccess = layoutAccessById.get(activeData.fromLayoutId);
         const targetAccess = layoutAccessById.get(overData.layoutId);
-        if (!sourceAccess?.canEdit || !targetAccess?.canEdit) return;
+
+        if (!sourceAccess?.canWrite || !targetAccess?.canWrite) {
+          showError(
+            'Недостаточно прав для переноса заметки в выбранную папку.'
+          );
+          return;
+        }
 
         moveNoteInTree(
           activeData.noteId,
@@ -106,7 +126,7 @@ export const FileTree = memo(
           }).unwrap();
         } catch {}
       },
-      [moveNoteInTree, dragNote, layoutAccessById]
+      [moveNoteInTree, dragNote, layoutAccessById, showError, showWarning]
     );
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -120,12 +140,16 @@ export const FileTree = memo(
 
     const isSearchMode = searchQuery.trim().length > 0;
 
+    const { userId } = useUser();
+
     const fileTree = useMemo(() => {
       if (searchQuery && searchResponse?.data) {
         const q = searchQuery.trim().toLowerCase();
+
         return searchResponse.data.map(n => {
           const title = (n.title || '').toString();
           const payload = (n.payload || '').toString();
+
           let field: 'title' | 'payload' | null = null;
           let snippet = '';
 
@@ -137,7 +161,10 @@ export const FileTree = memo(
             const idx = payload.toLowerCase().indexOf(q);
             const start = Math.max(0, idx - 30);
             const end = Math.min(payload.length, idx + q.length + 30);
-            snippet = `${start > 0 ? '... ' : ''}${payload.slice(start, end)}${end < payload.length ? ' ...' : ''}`;
+            snippet = `${start > 0 ? '... ' : ''}${payload.slice(
+              start,
+              end
+            )}${end < payload.length ? ' ...' : ''}`;
           }
 
           const note = { ...n } as Note & {
@@ -147,6 +174,7 @@ export const FileTree = memo(
               query: string;
             };
           };
+
           if (field) {
             note._match = { field, snippet, query: searchQuery };
           }
@@ -164,28 +192,48 @@ export const FileTree = memo(
           };
         });
       }
-      // layouts fallback
+
       if (layoutsResponse?.data) {
-        return layoutsResponse.data.map(layout => ({
-          id: layout.id,
-          type: 'layout' as const,
-          title: layout.title,
-          children: [],
-          isMain: layout.isMain ?? false,
-          access: getLayoutAccess(layout),
-          createdAt: layout.createdAt,
-          updatedAt: layout.updatedAt,
-          isNotesLoaded: false,
-          color: (layout as unknown as { color?: string }).color,
-        }));
+        const owned = layoutsResponse.data.filter(l => l.ownerId === userId);
+        const shared = layoutsResponse.data.filter(l => l.ownerId !== userId);
+
+        return [
+          ...owned.map(layout => ({
+            id: layout.id,
+            type: 'layout' as const,
+            title: layout.title,
+            children: [],
+            isMain: layout.isMain ?? false,
+            access: getLayoutAccess(layout),
+            createdAt: layout.createdAt,
+            updatedAt: layout.updatedAt,
+            isNotesLoaded: false,
+            color: (layout as any).color,
+            ownerId: layout.ownerId,
+          })),
+          ...shared.map(layout => ({
+            id: layout.id,
+            type: 'layout' as const,
+            title: layout.title,
+            children: [],
+            isMain: layout.isMain ?? false,
+            access: getLayoutAccess(layout),
+            createdAt: layout.createdAt,
+            updatedAt: layout.updatedAt,
+            isNotesLoaded: false,
+            color: (layout as any).color,
+            ownerId: layout.ownerId,
+          })),
+        ];
       }
+
       return [];
     }, [
       layoutsResponse?.data,
-      isSearchMode,
       searchResponse,
       searchQuery,
       layoutAccessById,
+      userId,
     ]);
 
     const apiState = useAppSelector((s: any) => s.api);
@@ -264,8 +312,9 @@ export const FileTree = memo(
         }}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        modifiers={[restrictToFirstScrollableAncestor]}
       >
-        <div className={cn('flex h-full flex-col')}>
+        <div className='flex h-full flex-col'>
           <div className='p-2'>
             <SearchInput onSearchChange={setSearchQuery} />
           </div>
@@ -318,8 +367,7 @@ export const FileTree = memo(
           {activeDrag ? (
             <div
               className={cn(
-                'pointer-events-none',
-                'flex items-center gap-2 rounded-lg',
+                'pointer-events-none flex items-center gap-2 rounded-lg',
                 'border border-black/10 bg-white/95 px-3 py-2',
                 'text-sm text-black shadow-sm'
               )}

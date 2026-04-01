@@ -1,12 +1,12 @@
 import { useModalContext, type ModalOptions } from '@/shared/lib/react';
-import { useCallback, type ReactNode } from 'react';
+import { useCallback, type ReactElement } from 'react';
 
 export const useAnimatedModal = () => {
   const { openModal } = useModalContext();
 
   const openAnimatedModal = useCallback(
     (
-      content: ReactNode,
+      content: ReactElement,
       options: ModalOptions,
       triggerElement?: HTMLElement | null
     ) => {

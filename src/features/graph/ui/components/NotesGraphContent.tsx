@@ -20,8 +20,13 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   isMain,
 }: NotesGraphContentProps) {
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-  const currentLayout = (layoutsResponse?.data || []).find(l => l.id === layoutId);
-  const canEdit = currentLayout ? getLayoutAccess(currentLayout).canEdit : true;
+  const currentLayout = (layoutsResponse?.data || []).find(
+    l => l.id === layoutId
+  );
+  const access = currentLayout
+    ? getLayoutAccess(currentLayout)
+    : { canRead: true, canWrite: true, canEdit: true };
+  const canWrite = access.canWrite;
   const {
     initialNodes,
     initialEdges,
@@ -96,7 +101,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     rfSetNodes,
     rfSetEdges,
     setIsNodeDragging,
-    canEdit,
+    canEdit: canWrite,
   });
 
   const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
@@ -112,18 +117,18 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   return (
     <NotesGraphView
       layoutId={layoutId}
-      allowNodeDrag={allowNodeDrag && canEdit}
+      allowNodeDrag={allowNodeDrag && canWrite}
       nodes={nodes}
       edges={edges}
       nodesWithSelection={nodesWithSelection}
       edgesWithSelection={edgesWithSelection}
       onNodesChange={handleNodesChange}
       onEdgesChange={onEdgesChange}
-      onConnect={canEdit ? onConnect : undefined}
-      onConnectStart={canEdit ? onConnectStart : undefined}
-      onConnectEnd={canEdit ? onConnectEnd : undefined}
-      onNodeDragStart={canEdit ? handleNodeDragStart : undefined}
-      onNodeDragStop={canEdit ? handleNodeDragStop : undefined}
+      onConnect={canWrite ? onConnect : undefined}
+      onConnectStart={canWrite ? onConnectStart : undefined}
+      onConnectEnd={canWrite ? onConnectEnd : undefined}
+      onNodeDragStart={canWrite ? handleNodeDragStart : undefined}
+      onNodeDragStop={canWrite ? handleNodeDragStop : undefined}
       onNodeClick={handleNodeClick}
       onNodeMouseEnter={handleNodeMouseEnterWrapped}
       onNodeMouseLeave={handleNodeMouseLeaveWrapped}
@@ -131,13 +136,13 @@ export const NotesGraphContent = memo(function NotesGraphContent({
       onPaneClick={onPaneClick}
       onNodeDoubleClick={handleNodeDoubleClick}
       isDraggingEdge={isDraggingEdge}
-      onDrop={canEdit ? handleNoteDrop : () => {}}
-      onBoxSelect={canEdit ? handleBoxSelect : undefined}
-      onAddNoteToGraph={canEdit ? handleAddNoteToGraph : () => {}}
+      onDrop={canWrite ? handleNoteDrop : () => {}}
+      onBoxSelect={canWrite ? handleBoxSelect : undefined}
+      onAddNoteToGraph={canWrite ? handleAddNoteToGraph : () => {}}
       screenToFlowPosition={screenToFlowPosition}
       isMain={isMain}
       graphHistory={graphHistory}
-      canEdit={canEdit}
+      canEdit={canWrite}
     />
   );
 });

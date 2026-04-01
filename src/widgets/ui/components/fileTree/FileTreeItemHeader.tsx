@@ -46,6 +46,7 @@ export const FileTreeItemHeader = ({
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const { openShareLinkModal } = useShareModal();
+  const canWrite = item.access ? !!item.access.canWrite : true;
   const canEdit = item.access ? !!item.access.canEdit : true;
 
   useEffect(() => {
@@ -146,7 +147,7 @@ export const FileTreeItemHeader = ({
   // DnD: только note draggable
   let draggableProps = {};
   let dragRef = undefined;
-  if (item.type === 'note' && canEdit) {
+  if (item.type === 'note' && canWrite) {
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
       id: item.id,
       data: {
@@ -348,7 +349,7 @@ export const FileTreeItemHeader = ({
           {item.type === 'note' &&
             item.isMain !== true &&
             isSelected &&
-            canEdit && (
+            canWrite && (
               <>
                 <button
                   onClick={e => {
@@ -378,7 +379,7 @@ export const FileTreeItemHeader = ({
         item.isMain !== true &&
         isSelected &&
         isExpanded &&
-        canEdit && (
+        canWrite && (
           <div
             style={{
               paddingLeft: `${paddingLeft + 40}px`,

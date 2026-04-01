@@ -22,7 +22,7 @@ interface ApplyLinkRequest {
 interface ApplyLinkResponse {
   data: {
     targetId: string;
-    kind: 'PERMISSIONS_KIND_LAYOUT' | 'PERMISSIONS_KIND_NOTE';
+    kind: 'PERMISSIONS_KIND_LAYOUT';
   };
   meta: Record<string, unknown>;
 }
@@ -144,6 +144,7 @@ export const shareApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: {
           targetId: payload.targetId,
+          kind: 'PERMISSIONS_KIND_LAYOUT',
           canRead: payload.canRead,
           canWrite: payload.canWrite,
           canEdit: payload.canEdit,
