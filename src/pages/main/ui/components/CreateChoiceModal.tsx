@@ -56,7 +56,6 @@ export const CreateChoiceModal = ({
           'md:gap-4',
           'p-3',
           'md:p-4',
-          'rounded-lg',
           'border-2',
           'border-gray-200',
           'dark:border-gray-700',

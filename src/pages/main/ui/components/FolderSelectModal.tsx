@@ -102,7 +102,7 @@ export const FolderSelectModal = ({
                     key={layout.id}
                     onClick={() => handleFolderClick(layout)}
                     className={cn(
-                      'flex w-full items-center gap-3 rounded-lg border-2 p-3',
+                      'flex w-full items-center gap-3 border-2 p-3',
                       'cursor-pointer transition-all focus:outline-none',
                       isSelected
                         ? [

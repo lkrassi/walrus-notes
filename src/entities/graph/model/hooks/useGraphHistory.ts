@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
 import { CommandHistory, type Command } from '@/shared/model/command';
+import { useCallback, useMemo, useState } from 'react';
 
 export interface UseGraphHistoryReturn {
   executeCommand: (command: Command) => Promise<void>;
@@ -13,11 +13,12 @@ export interface UseGraphHistoryReturn {
 }
 
 export const useGraphHistory = (
+  layoutId: string,
   maxHistorySize = 100
 ): UseGraphHistoryReturn => {
   const history = useMemo(
     () => new CommandHistory(maxHistorySize),
-    [maxHistorySize]
+    [layoutId, maxHistorySize]
   );
 
   const [, forceUpdate] = useState({});

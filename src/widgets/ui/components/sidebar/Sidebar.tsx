@@ -2,9 +2,9 @@ import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
 import { CreateLayoutForm } from '@/features/layout';
 import { ProfileButton } from '@/features/profile';
+import { logoImage as logo } from '@/shared/assets';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
-import { Skeleton } from '@/shared/ui';
 import {
   useFileTree,
   useIsMobile,
@@ -15,10 +15,9 @@ import {
 import { useResizableSidebar } from '@/widgets/hooks/useResizableSidebar';
 import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';
-import { MobileMenu } from '@/widgets/ui/components/header/MobileMenu';
-import { Plus, ShieldCheck } from 'lucide-react';
+import { Plus, ShieldCheck, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem) => void;
@@ -78,6 +77,9 @@ const SidebarComponent = (
     setIsMobileOpen(false);
   };
 
+  const location = useLocation();
+  const isSettingsPage = location.pathname === '/settings';
+  const isDashboardPage = location.pathname === '/dashboard';
   return (
     <>
       {isMobileOpen && (
@@ -122,15 +124,84 @@ const SidebarComponent = (
             'border-border',
             'border-b',
             'px-4',
-            'py-5',
-            'max-md:py-5',
+            'py-2',
             'flex',
             'flex-col',
             'gap-3'
           )}
         >
-          <div className={cn('flex', 'items-center', 'gap-2', 'md:hidden')}>
-            <MobileMenu iconClassName={cn('h-6', 'w-6')} />
+          <div
+            className={cn(
+              'flex',
+              'items-center',
+              'gap-2',
+              'md:hidden',
+              'mb-2',
+              'min-h-12'
+            )}
+            style={{ minHeight: '48px' }}
+          >
+            <button
+              onClick={() => setIsMobileOpen(false)}
+              className={cn(
+                'text-muted-foreground',
+                'hover:text-foreground',
+                'focus:ring-ring',
+                'rounded-lg',
+                'p-2',
+                'transition-colors',
+                'duration-200',
+                'hover:bg-interactive-hover',
+                'active:bg-interactive-active',
+                'focus:ring-2',
+                'focus:outline-none'
+              )}
+              aria-label={t('common:menu.close')}
+            >
+              <X className={cn('h-6', 'w-6')} />
+            </button>
+
+            <img
+              src={logo}
+              alt={t('common:header.logoAlt')}
+              className={cn(
+                'h-12',
+                'w-12',
+                'min-h-12',
+                'min-w-12',
+                'max-h-12',
+                'max-w-12'
+              )}
+              loading='lazy'
+            />
+            <div
+              className={cn('flex', 'items-baseline', 'gap-1', 'flex-1')}
+              style={{ minHeight: '48px', alignItems: 'center' }}
+            >
+              <h1
+                className={cn(
+                  'text-text',
+                  'dark:text-dark-text',
+                  'text-xl',
+                  'leading-none',
+                  'font-bold'
+                )}
+                style={{ lineHeight: '48px', height: '48px' }}
+              >
+                Walrus
+              </h1>
+              <h1
+                className={cn(
+                  'text-primary',
+                  'text-xl',
+                  'leading-none',
+                  'font-bold'
+                )}
+                style={{ lineHeight: '48px', height: '48px' }}
+              >
+                Notes
+              </h1>
+            </div>
           </div>
 
           <div className={cn('flex', 'items-center', 'justify-between')}>
@@ -149,23 +220,13 @@ const SidebarComponent = (
         </div>
 
         <div className={cn('flex-1 overflow-y-auto')}>
-          {isInitialLayoutsLoading ? (
-            <div className='space-y-2 p-2'>
-              <Skeleton className='h-9 w-full rounded-lg' />
-              <Skeleton className='h-8 w-full rounded-md' />
-              <Skeleton className='h-8 w-full rounded-md' />
-              <Skeleton className='h-8 w-full rounded-md' />
-              <Skeleton className='h-8 w-full rounded-md' />
-            </div>
-          ) : (
-            <FileTree
-              expandedItems={expandedItems}
-              toggleExpanded={toggleExpanded}
-              onItemSelect={handleItemSelect}
-              selectedItemId={currentSelectedItemId}
-              onOpenGraph={handleOpenGraph}
-            />
-          )}
+          <FileTree
+            expandedItems={expandedItems}
+            toggleExpanded={toggleExpanded}
+            onItemSelect={handleItemSelect}
+            selectedItemId={currentSelectedItemId}
+            onOpenGraph={handleOpenGraph}
+          />
         </div>
 
         <div className={cn('border-t', 'border-border', 'p-4', 'mt-auto')}>

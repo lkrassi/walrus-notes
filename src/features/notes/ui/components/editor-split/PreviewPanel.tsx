@@ -1,4 +1,3 @@
-import { Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { Suspense, lazy, memo, type FC } from 'react';
 import type { PreviewPanelProps } from './types';
@@ -32,17 +31,7 @@ export const PreviewPanel: FC<PreviewPanelProps> = memo(function PreviewPanel({
         !isDesktop && 'min-h-0'
       )}
     >
-      <Suspense
-        fallback={
-          <div className={cn('h-full', 'space-y-3')}>
-            <Skeleton className='h-7 w-3/5' />
-            <Skeleton className='h-4 w-full' />
-            <Skeleton className='h-4 w-11/12' />
-            <Skeleton className='h-4 w-5/6' />
-            <Skeleton className='h-4 w-full' />
-          </div>
-        }
-      >
+      <Suspense fallback={null}>
         <MarkdownPreview
           ref={previewRef}
           content={payload}

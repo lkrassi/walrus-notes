@@ -63,17 +63,24 @@ export const MainContentState = ({
             'h-full',
             'overflow-y-auto',
             'p-3',
-            'space-y-3',
+            'space-y-4',
             'flex',
             'flex-col',
             'justify-center'
           )}
         >
-          <Skeleton className='h-11 w-full rounded-lg' />
-          <div className='space-y-2'>
-            <Skeleton className='h-22 w-full rounded-xl' />
-            <Skeleton className='h-22 w-full rounded-xl' />
-            <Skeleton className='h-22 w-full rounded-xl' />
+          <div
+            className={cn('border-border dark:border-dark-border border p-4')}
+          >
+            <Skeleton className='mb-3 h-6 w-2/3 rounded-none' />
+            <Skeleton className='h-4 w-full rounded-none' />
+          </div>
+          <Skeleton className='h-11 w-full rounded-none' />
+          <div className='grid grid-cols-2 gap-2'>
+            <Skeleton className='h-24 w-full rounded-none' />
+            <Skeleton className='h-24 w-full rounded-none' />
+            <Skeleton className='h-24 w-full rounded-none' />
+            <Skeleton className='h-24 w-full rounded-none' />
           </div>
         </div>
       );
@@ -87,7 +94,7 @@ export const MainContentState = ({
           'h-full',
           'overflow-y-auto',
           'p-3',
-          'space-y-3',
+          'space-y-4',
           'flex',
           'flex-col',
           'justify-center'
@@ -103,18 +110,29 @@ export const MainContentState = ({
 
         {nonMainLayouts.length > 0 ? (
           <div className={cn('space-y-2')}>
-            {nonMainLayouts.map(layout => (
-              <FolderCard
-                key={layout.id}
-                layout={layout}
-                onFolderClick={onFolderClick}
-                itemVariants={itemVariants}
-                cardHoverVariants={cardHoverVariants}
-              />
-            ))}
+            <div className={cn('grid', 'grid-cols-2', 'gap-2')}>
+              {nonMainLayouts.map(layout => (
+                <FolderCard
+                  key={layout.id}
+                  layout={layout}
+                  onFolderClick={onFolderClick}
+                  itemVariants={itemVariants}
+                  cardHoverVariants={cardHoverVariants}
+                />
+              ))}
+            </div>
           </div>
         ) : (
-          <div className={cn('text-center', 'py-8')}>
+          <div
+            className={cn(
+              'border-border dark:border-dark-border',
+              'bg-surface dark:bg-dark-surface',
+              'text-center',
+              'border',
+              'py-8',
+              'px-4'
+            )}
+          >
             <h3
               className={cn(
                 'text-text',

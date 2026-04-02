@@ -12,6 +12,7 @@ import { snapCenterToCursor } from '@dnd-kit/modifiers';
 import {
   memo,
   useCallback,
+  useEffect,
   useState,
   type DragEvent,
   type FC,
@@ -130,6 +131,10 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
     const [lastDndDropAt, setLastDndDropAt] = useState<number | null>(null);
     const [isUnposedListOpen, setIsUnposedListOpen] = useState(false);
     const unposedOffset = isUnposedListOpen ? 'min(400px, 45vw)' : '0px';
+
+    useEffect(() => {
+      setIsUnposedListOpen(false);
+    }, [layoutId]);
 
     const collisionDetection = useCallback<CollisionDetection>(args => {
       const pointerCollisions = pointerWithin(args);

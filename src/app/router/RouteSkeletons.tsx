@@ -3,13 +3,25 @@ import { cn } from '@/shared/lib/core';
 import { useIsMobile } from '@/shared/lib/react/hooks';
 import { Skeleton } from '@/shared/ui';
 
-const BrandSkeleton = () => {
+const PublicBrandSkeleton = () => {
   return (
-    <div className={cn('flex', 'items-center', 'gap-2', 'ml-5')}>
-      <Skeleton className='h-16 w-16 rounded-none' />
-      <div className={cn('flex', 'items-baseline', 'gap-2')}>
-        <Skeleton className='h-7 w-20 rounded-none' />
-        <Skeleton className='h-7 w-16 rounded-none' />
+    <div className={cn('flex', 'items-center', 'gap-2', 'py-1')}>
+      <Skeleton className='h-10 w-10 rounded-full' />
+      <div className={cn('flex', 'items-baseline', 'gap-1')}>
+        <Skeleton className='h-6 w-20 rounded-none' />
+        <Skeleton className='h-6 w-16 rounded-none' />
+      </div>
+    </div>
+  );
+};
+
+const PrivateBrandSkeleton = () => {
+  return (
+    <div className={cn('flex', 'items-center', 'gap-2', 'py-1')}>
+      <Skeleton className='h-10 w-10 rounded-full' />
+      <div className={cn('flex', 'items-baseline', 'gap-1')}>
+        <Skeleton className='h-6 w-20 rounded-none' />
+        <Skeleton className='h-6 w-16 rounded-none' />
       </div>
     </div>
   );
@@ -19,15 +31,15 @@ const PublicHeaderSkeleton = () => {
   return (
     <header
       className={cn(
+        'bg-bg',
         'dark:bg-dark-bg',
         'border-border dark:border-dark-border',
         'flex flex-col items-center gap-4 border-b',
-        'h-20',
         'max-md:py-5',
         'md:flex-row md:items-center md:justify-between md:px-5'
       )}
     >
-      <BrandSkeleton />
+      <PublicBrandSkeleton />
       <div className='flex items-center gap-2'>
         <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
         <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
@@ -44,11 +56,12 @@ const PrivateHeaderSkeleton = ({
   return (
     <header
       className={cn(
+        'bg-bg',
         'dark:bg-dark-bg',
         'border-border dark:border-dark-border',
         'flex flex-col gap-3 border-b',
         'max-md:py-5',
-        'md:px-2'
+        'md:px-5'
       )}
     >
       <div className={cn('flex items-center justify-between px-4 md:px-0')}>
@@ -56,7 +69,7 @@ const PrivateHeaderSkeleton = ({
           {showMobileMenu && (
             <Skeleton className='mr-2 h-10 w-10 rounded-lg md:hidden' />
           )}
-          <BrandSkeleton />
+          <PrivateBrandSkeleton />
         </div>
       </div>
     </header>
@@ -176,25 +189,19 @@ export const MainPageSkeleton = () => {
   const MainHeaderSkeleton = () => (
     <header
       className={cn(
-        'bg-bg dark:bg-dark-bg',
+        'bg-bg',
+        'dark:bg-dark-bg',
         'border-border dark:border-dark-border',
-        'flex h-20 items-center justify-between border-b px-4 md:px-5'
+        'flex flex-col gap-3 border-b',
+        'max-md:py-5',
+        'md:px-5'
       )}
     >
-      <div className='flex items-center gap-2 md:gap-3'>
-        <Skeleton className='h-10 w-10 rounded-none md:hidden' />
-        <div className='flex items-center gap-2'>
-          <Skeleton className='h-14 w-14 rounded-none md:h-18 md:w-18' />
-          <div className='flex items-baseline gap-1'>
-            <Skeleton className='h-6 w-24 rounded-none' />
-            <Skeleton className='h-6 w-18 rounded-none' />
-          </div>
+      <div className={cn('flex items-center justify-between px-4 md:px-0')}>
+        <div className='flex items-center'>
+          <Skeleton className='mr-2 h-10 w-10 rounded-lg md:hidden' />
+          <PrivateBrandSkeleton />
         </div>
-      </div>
-
-      <div className='flex items-center gap-2'>
-        <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
-        <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
       </div>
     </header>
   );

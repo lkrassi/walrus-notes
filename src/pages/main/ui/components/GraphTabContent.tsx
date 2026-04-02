@@ -1,6 +1,5 @@
 import type { DashboardTab } from '@/entities';
 import type { Note } from '@/entities/note';
-import { Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { lazy, Suspense } from 'react';
 
@@ -37,22 +36,7 @@ export const GraphTabContent = ({
   }
 
   return (
-    <Suspense
-      fallback={
-        <div
-          className={cn(
-            'h-full',
-            'border-border dark:border-dark-border',
-            'space-y-3 rounded-xl border p-4'
-          )}
-        >
-          <Skeleton className='h-7 w-2/5' />
-          <Skeleton className='h-4 w-full' />
-          <Skeleton className='h-4 w-3/4' />
-          <Skeleton className='h-[60%] w-full rounded-xl' />
-        </div>
-      }
-    >
+    <Suspense fallback={null}>
       <NotesGraph
         layoutId={layoutId}
         onNoteOpen={onNoteOpen}

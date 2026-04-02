@@ -1,6 +1,5 @@
 import { getLayoutAccess, useGetMyLayoutsQuery } from '@/entities';
 import type { Note } from '@/entities/note';
-import { Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { memo } from 'react';
 import { useGraphContentHandlers, useGraphState } from '../../lib/hooks';
@@ -127,10 +126,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
           'space-y-3 rounded-xl border p-4'
         )}
       >
-        <Skeleton className='h-7 w-2/5' />
-        <Skeleton className='h-4 w-full' />
-        <Skeleton className='h-4 w-3/4' />
-        <Skeleton className='h-[60%] w-full rounded-xl' />
+        {/* Skeletons removed as they are not needed in graph view */}
       </div>
     );
   }

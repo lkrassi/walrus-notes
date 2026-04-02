@@ -27,7 +27,7 @@ export const useGraphState = ({
   const [edges, setEdgesState, onEdgesChange] = useEdgesState([]);
   const [isNodeDragging, setIsNodeDragging] = useState(false);
 
-  const graphHistory = useGraphHistory(100);
+  const graphHistory = useGraphHistory(layoutId, 100);
 
   const { isProcessingRef, isNodeDraggingRef } = useGraphInitialization({
     layoutId,

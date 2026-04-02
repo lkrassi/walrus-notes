@@ -9,6 +9,8 @@ const PrivateHeaderComponent = () => {
   const { t } = useLocalization();
   const location = useLocation();
   const isProfilePage = location.pathname === '/profile';
+  const isSettingsPage = location.pathname === '/settings';
+  const isDashboardPage = location.pathname === '/dashboard';
 
   return (
     <header
@@ -35,7 +37,9 @@ const PrivateHeaderComponent = () => {
         )}
       >
         <div className={cn('flex', 'items-center', 'gap-2')}>
-          {!isProfilePage && <MobileMenu />}
+          {!isProfilePage && !isSettingsPage && !isDashboardPage && (
+            <MobileMenu />
+          )}
           <Link
             to='/main'
             className={cn('flex', 'items-center')}
@@ -45,18 +49,42 @@ const PrivateHeaderComponent = () => {
               src={logo}
               alt={t('common:header.logoAlt')}
               className={cn(
-                'h-10',
-                'w-10',
-                'md:h-14',
-                'md:w-14',
-                'lg:h-18',
-                'lg:w-18'
+                'h-12',
+                'w-12',
+                'min-h-12',
+                'min-w-12',
+                'max-h-12',
+                'max-w-12'
               )}
               loading='lazy'
             />
-            <div className={cn('flex', 'items-baseline', 'gap-1')}>
-              <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
-              <h1 className={cn('text-primary')}>Notes</h1>
+            <div
+              className={cn('flex', 'items-baseline', 'gap-1')}
+              style={{ minHeight: '48px', alignItems: 'center' }}
+            >
+              <h1
+                className={cn(
+                  'text-text',
+                  'dark:text-dark-text',
+                  'text-xl',
+                  'leading-none',
+                  'font-bold'
+                )}
+                style={{ lineHeight: '48px', height: '48px' }}
+              >
+                Walrus
+              </h1>
+              <h1
+                className={cn(
+                  'text-primary',
+                  'text-xl',
+                  'leading-none',
+                  'font-bold'
+                )}
+                style={{ lineHeight: '48px', height: '48px' }}
+              >
+                Notes
+              </h1>
             </div>
           </Link>
         </div>

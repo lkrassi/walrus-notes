@@ -1,7 +1,6 @@
 import { useGetUnposedNotesQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
-import { RenderWithState, Skeleton } from '@/shared/ui';
 import { useDndMonitor, useDroppable } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -41,7 +40,6 @@ export const UnposedNotesList = ({
   const [orderedIds, setOrderedIds] = useState<string[]>([]);
 
   const unposedNotes = unposedNotesResponse?.data || [];
-  const isInitialLoading = isLoading && !unposedNotesResponse;
 
   const noteMap = useMemo(
     () => new Map(unposedNotes.map(note => [note.id, note])),
@@ -61,6 +59,12 @@ export const UnposedNotesList = ({
     () => orderedIds.map(id => noteMap.get(id)).filter(Boolean) as Note[],
     [orderedIds, noteMap]
   );
+
+  useEffect(() => {
+    if (!isLoading && orderedNotes.length === 0 && isOpen) {
+      onOpenChange(false);
+    }
+  }, [isLoading, orderedNotes.length, isOpen, onOpenChange]);
 
   useDndMonitor({
     onDragEnd: event => {
@@ -148,69 +152,53 @@ export const UnposedNotesList = ({
         />
       </motion.button>
 
-      <RenderWithState
-        isInitialLoading={isInitialLoading}
-        skeleton={
-          <div className='absolute top-0 right-0 bottom-0 z-30 w-100 max-w-[45vw] overflow-hidden border-l p-3'>
-            <div className='grid grid-cols-3 content-start gap-2'>
-              <Skeleton className='h-24 w-full rounded-xl' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-            </div>
-          </div>
-        }
-        className='h-full'
+      <div
+        ref={setPanelDropRef}
+        className={cn(
+          'absolute',
+          'top-0',
+          'right-0',
+          'bottom-0',
+          'z-30',
+          isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        )}
       >
-        <div
-          ref={setPanelDropRef}
+        <motion.aside
+          initial={false}
+          animate={{ x: isOpen ? '0%' : '100%' }}
+          transition={{ duration: 0.28, ease: 'easeInOut' }}
           className={cn(
-            'absolute',
-            'top-0',
-            'right-0',
-            'bottom-0',
-            'z-30',
-            isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+            'border-border dark:border-dark-border bg-surface dark:bg-dark-surface',
+            'h-full',
+            'w-100',
+            'max-w-[45vw]',
+            'overflow-hidden',
+            'border-l',
+            'shadow-xl'
           )}
         >
-          <motion.aside
-            initial={false}
-            animate={{ x: isOpen ? '0%' : '100%' }}
-            transition={{ duration: 0.28, ease: 'easeInOut' }}
-            className={cn(
-              'border-border dark:border-dark-border bg-surface dark:bg-dark-surface',
-              'h-auto',
-              'w-100',
-              'max-w-[45vw]',
-              'overflow-hidden',
-              'border-l',
-              'shadow-xl'
-            )}
+          <SortableContext
+            items={orderedNotes.map(note => `unposed-${note.id}`)}
+            strategy={rectSortingStrategy}
           >
-            <SortableContext
-              items={orderedNotes.map(note => `unposed-${note.id}`)}
-              strategy={rectSortingStrategy}
+            <div
+              className={cn(
+                'h-[calc(100%-53px)] overflow-y-auto p-3',
+                'grid grid-cols-3 content-start gap-2'
+              )}
             >
-              <div
-                className={cn(
-                  'h-[calc(100%-53px)] overflow-y-auto p-3',
-                  'grid grid-cols-3 content-start gap-2'
-                )}
-              >
-                {orderedNotes.map(note => (
-                  <SortableNoteCard
-                    key={note.id}
-                    note={note}
-                    onClick={handleNoteClick}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </motion.aside>
-        </div>
-      </RenderWithState>
+              {orderedNotes.map(note => (
+                <SortableNoteCard
+                  key={note.id}
+                  note={note}
+                  onClick={handleNoteClick}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </motion.aside>
+      </div>
+      {/* RenderWithState removed, just fragment */}
     </>
   );
 };

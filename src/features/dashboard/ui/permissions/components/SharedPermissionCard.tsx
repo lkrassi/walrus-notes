@@ -74,6 +74,12 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
         </button>
       </div>
 
+      <div className={cn('min-w-0')}>
+        <p className={cn('muted-text text-xs')}>
+          {t('share:permissionsDashboard.sharedTo')}
+        </p>
+      </div>
+
       <div className={cn('mb-4 flex items-center gap-3')}>
         <PermissionAvatar
           name={toUserName || t('share:permissionsDashboard.user.unknown')}
@@ -82,9 +88,6 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
         <div className={cn('min-w-0')}>
           <p className={cn('truncate text-sm font-medium')}>
             {toUserName || t('share:permissionsDashboard.user.unknown')}
-          </p>
-          <p className={cn('muted-text text-xs')}>
-            {t('share:permissionsDashboard.sharedTo')}
           </p>
         </div>
       </div>
