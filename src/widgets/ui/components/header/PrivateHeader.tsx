@@ -34,7 +34,7 @@ const PrivateHeaderComponent = () => {
           'md:px-0'
         )}
       >
-        <div className={cn('flex', 'items-center')}>
+        <div className={cn('flex', 'items-center', 'gap-2')}>
           {!isProfilePage && <MobileMenu />}
           <Link
             to='/main'
@@ -44,7 +44,14 @@ const PrivateHeaderComponent = () => {
             <img
               src={logo}
               alt={t('common:header.logoAlt')}
-              className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
+              className={cn(
+                'h-10',
+                'w-10',
+                'md:h-14',
+                'md:w-14',
+                'lg:h-18',
+                'lg:w-18'
+              )}
               loading='lazy'
             />
             <div className={cn('flex', 'items-baseline', 'gap-1')}>

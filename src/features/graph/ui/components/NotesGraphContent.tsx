@@ -1,5 +1,7 @@
 import { getLayoutAccess, useGetMyLayoutsQuery } from '@/entities';
 import type { Note } from '@/entities/note';
+import { Skeleton } from '@/shared';
+import { cn } from '@/shared/lib/core';
 import { memo } from 'react';
 import { useGraphContentHandlers, useGraphState } from '../../lib/hooks';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
@@ -28,6 +30,8 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     : { canRead: true, canWrite: true, canEdit: true };
   const canWrite = access.canWrite;
   const {
+    isInitialLoading,
+    isRefreshing,
     initialNodes,
     initialEdges,
     selectedNodeId,
@@ -114,9 +118,27 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     onNoteOpen: handleNoteOpen,
   });
 
+  if (isInitialLoading) {
+    return (
+      <div
+        className={cn(
+          'h-full',
+          'border-border dark:border-dark-border',
+          'space-y-3 rounded-xl border p-4'
+        )}
+      >
+        <Skeleton className='h-7 w-2/5' />
+        <Skeleton className='h-4 w-full' />
+        <Skeleton className='h-4 w-3/4' />
+        <Skeleton className='h-[60%] w-full rounded-xl' />
+      </div>
+    );
+  }
+
   return (
     <NotesGraphView
       layoutId={layoutId}
+      isRefreshing={isRefreshing}
       allowNodeDrag={allowNodeDrag && canWrite}
       nodes={nodes}
       edges={edges}

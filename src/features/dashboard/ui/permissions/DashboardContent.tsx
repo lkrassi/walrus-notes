@@ -19,7 +19,12 @@ export const DashboardContent = () => {
   return (
     <div className={cn('mx-auto w-full max-w-6xl p-4 md:p-8')}>
       <div className={cn('grid gap-6 xl:grid-cols-2')}>
-        <ReceivedPermissionsSection received={received} t={t} />
+        <ReceivedPermissionsSection
+          received={received}
+          t={t}
+          isDeleting={isDeleting}
+          onDelete={handleDelete}
+        />
         <SharedPermissionsSection
           mergedShared={mergedShared}
           t={t}

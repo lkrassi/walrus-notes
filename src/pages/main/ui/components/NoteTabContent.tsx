@@ -1,6 +1,7 @@
 import type { DashboardTab } from '@/entities';
 import type { Note } from '@/entities/note';
 import { NoteViewer } from '@/features/notes';
+import { Skeleton } from '@/shared';
 import { cn } from '@/shared/lib/core';
 
 interface NoteTabContentProps {
@@ -18,12 +19,17 @@ export const NoteTabContent = ({
 
   if (!note) {
     return (
-      <div className={cn('flex', 'h-full', 'items-center', 'justify-center')}>
-        <div className={cn('text-center')}>
-          <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
-            Загрузка заметки...
-          </p>
-        </div>
+      <div
+        className={cn(
+          'h-full',
+          'border-border dark:border-dark-border',
+          'space-y-3 rounded-xl border p-4'
+        )}
+      >
+        <Skeleton className='h-7 w-2/5' />
+        <Skeleton className='h-4 w-full' />
+        <Skeleton className='h-4 w-11/12' />
+        <Skeleton className='h-[65%] w-full rounded-xl' />
       </div>
     );
   }

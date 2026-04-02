@@ -34,6 +34,7 @@ import { UnposedNotesList } from './UnposedNotesList';
 
 interface NotesGraphViewProps {
   layoutId: string;
+  isRefreshing?: boolean;
   nodes: Node[];
   edges: Edge[];
   nodesWithSelection: Node[];
@@ -73,6 +74,7 @@ interface NotesGraphViewProps {
 export const NotesGraphView: FC<NotesGraphViewProps> = memo(
   function NotesGraphView({
     layoutId,
+    isRefreshing = false,
     screenToFlowPosition,
     nodesWithSelection,
     edgesWithSelection,
@@ -191,6 +193,14 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
               disabled={!isMobile || allowNodeDrag === false || !canEdit}
             >
               <div className='relative h-full w-full'>
+                {isRefreshing && (
+                  <div
+                    className='pointer-events-none absolute top-2 left-1/2 z-20 -translate-x-1/2'
+                    aria-hidden
+                  >
+                    <div className='bg-bg/90 dark:bg-dark-bg/90 border-border dark:border-dark-border h-1.5 w-40 animate-pulse rounded-full border' />
+                  </div>
+                )}
                 <GraphReactFlowCore
                   layoutId={layoutId}
                   nodesWithSelection={nodesWithSelection}

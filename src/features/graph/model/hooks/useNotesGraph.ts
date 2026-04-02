@@ -5,6 +5,7 @@ import {
   useUpdateNotePositionMutation,
 } from '@/entities';
 import type { Note } from '@/entities/note';
+import { getLoadingState } from '@/shared/lib/core';
 import { useCallback, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
@@ -13,14 +14,18 @@ interface UseNotesGraphProps {
   layoutId: string;
 }
 
-const DEBUG_GRAPH_DND = true;
-
 export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const palette = graphTheme();
 
-  const { data: posedNotesResponse, isLoading } = useGetPosedNotesQuery({
-    layoutId,
-  });
+  const {
+    data: posedNotesResponse,
+    isLoading,
+    isFetching,
+  } = useGetPosedNotesQuery({ layoutId });
+  const { isInitialLoading, isRefreshing } = getLoadingState(
+    isFetching,
+    posedNotesResponse
+  );
 
   const { data: layoutsResponse } = useGetMyLayoutsQuery();
   const layouts = layoutsResponse?.data || [];
@@ -181,6 +186,8 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   return {
     isLoading,
+    isInitialLoading,
+    isRefreshing,
     initialNodes,
     initialEdges,
     selectedNodeId,

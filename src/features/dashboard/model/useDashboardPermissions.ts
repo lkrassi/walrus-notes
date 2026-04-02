@@ -10,13 +10,20 @@ import {
 } from '@/entities';
 import { useNotifications } from '@/entities/notification';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { initialFromPermission } from '../lib/utils';
+import { initialFromPermission, isPermissionDraftDirty } from '../lib/utils';
 import type { EditablePermissionState } from '../model';
 
 interface ResolvedUserInfo {
   username?: string;
   imgUrl?: string;
 }
+
+type SharedPermissionView = PermissionItem & {
+  draft: EditablePermissionState;
+  isDirty: boolean;
+  toUserName?: string;
+  toUserAvatar?: string;
+};
 
 export function useDashboardPermissions() {
   const { showError, showSuccess } = useNotifications();
@@ -160,20 +167,24 @@ export function useDashboardPermissions() {
     [receivedRaw, targetTitlesById, usersById]
   );
 
-  const mergedShared = useMemo(() => {
-    const source = sharedRaw.map(permission => {
-      const toUser = usersById[permission.toUserId] || {};
-      return {
-        ...enrichPermission(permission),
-        toUserName: toUser.username,
-        toUserAvatar: toUser.imgUrl,
-      };
-    });
-    return source.map(permission => ({
-      permission,
-      draft: drafts[permission.id] || initialFromPermission(permission),
-    }));
-  }, [drafts, sharedRaw, targetTitlesById, usersById]);
+  const mergedShared = useMemo<SharedPermissionView[]>(
+    () =>
+      sharedRaw.map(permission => {
+        const toUser = usersById[permission.toUserId] || {};
+        const draft =
+          drafts[permission.id] || initialFromPermission(permission);
+        const enrichedPermission = enrichPermission(permission);
+
+        return {
+          ...enrichedPermission,
+          toUserName: toUser.username,
+          toUserAvatar: toUser.imgUrl,
+          draft,
+          isDirty: isPermissionDraftDirty(enrichedPermission, draft),
+        };
+      }),
+    [drafts, sharedRaw, targetTitlesById, usersById]
+  );
 
   const setDraftValue = (
     permissionId: string,
@@ -184,10 +195,9 @@ export function useDashboardPermissions() {
     setDrafts(prev => {
       const current = prev[permissionId] || initialFromPermission(fallback);
       let next: EditablePermissionState = { ...current, [field]: value };
+      next = { ...next, canRead: true };
       if (field === 'canEdit' && value) next = { ...next, canRead: true };
       if (field === 'canWrite' && value) next = { ...next, canRead: true };
-      if (field === 'canRead' && !value)
-        next = { ...next, canWrite: false, canEdit: false };
       return { ...prev, [permissionId]: next };
     });
   };
@@ -208,7 +218,7 @@ export function useDashboardPermissions() {
     try {
       await updatePermission({
         permissionsId: permissionId,
-        canRead: draft.canRead,
+        canRead: true,
         canWrite: draft.canWrite,
         canEdit: draft.canEdit,
       }).unwrap();

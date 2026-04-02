@@ -93,8 +93,6 @@ export const useShareModalState = (targetId: string) => {
     closeModal();
   };
 
-  const modalTitle = t('share:modal.permissions.title');
-
   return {
     generatedLink,
     copied,
@@ -102,6 +100,5 @@ export const useShareModalState = (targetId: string) => {
     handleSubmit,
     handleCopy,
     handleClose,
-    modalTitle,
   };
 };

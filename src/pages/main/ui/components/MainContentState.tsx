@@ -1,6 +1,6 @@
 import { useGetMyLayoutsQuery } from '@/entities';
-import { cn } from '@/shared/lib/core';
-import { Button } from '@/shared/ui';
+import { cn, getLoadingState } from '@/shared/lib/core';
+import { Button, Skeleton } from '@/shared/ui';
 import { FileText } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,9 +30,14 @@ export const MainContentState = ({
   onFolderClick,
 }: MainContentStateProps) => {
   const { t } = useTranslation();
-  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined, {
-    skip: !isMobile || variant !== 'empty',
-  });
+  const { data: layoutsResponse, isLoading: isLayoutsLoading } =
+    useGetMyLayoutsQuery(undefined, {
+      skip: !isMobile || variant !== 'empty',
+    });
+  const { isInitialLoading: isInitialLayoutsLoading } = getLoadingState(
+    isLayoutsLoading,
+    layoutsResponse
+  );
 
   const nonMainLayouts = (layoutsResponse?.data || []).filter(l => !l.isMain);
 
@@ -49,6 +54,31 @@ export const MainContentState = ({
   }
 
   if (variant === 'empty' && isMobile) {
+    if (isInitialLayoutsLoading) {
+      return (
+        <div
+          className={cn(
+            'bg-bg',
+            'dark:bg-dark-bg',
+            'h-full',
+            'overflow-y-auto',
+            'p-3',
+            'space-y-3',
+            'flex',
+            'flex-col',
+            'justify-center'
+          )}
+        >
+          <Skeleton className='h-11 w-full rounded-lg' />
+          <div className='space-y-2'>
+            <Skeleton className='h-22 w-full rounded-xl' />
+            <Skeleton className='h-22 w-full rounded-xl' />
+            <Skeleton className='h-22 w-full rounded-xl' />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
         className={cn(

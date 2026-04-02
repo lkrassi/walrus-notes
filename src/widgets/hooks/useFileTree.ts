@@ -1,6 +1,7 @@
 import { useGetMyLayoutsQuery } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import type { Note } from '@/entities/note';
+import { getLoadingState } from '@/shared/lib/core';
 import { useCallback, useEffect, useReducer } from 'react';
 import { fileTreeReducer, initialFileTreeState } from './fileTreeReducer';
 
@@ -30,7 +31,12 @@ export const useFileTree = () => {
   });
 
   const { fileTree, expandedItems } = state;
-  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
+  const { data: layoutsResponse, isLoading: isLayoutsLoading } =
+    useGetMyLayoutsQuery(undefined);
+  const { isInitialLoading: isInitialLayoutsLoading } = getLoadingState(
+    isLayoutsLoading,
+    layoutsResponse
+  );
 
   useEffect(() => {
     saveExpandedItems(expandedItems);
@@ -97,6 +103,8 @@ export const useFileTree = () => {
   return {
     fileTree,
     expandedItems,
+    isLayoutsLoading,
+    isInitialLayoutsLoading,
     moveNoteInTree,
     toggleExpanded,
     addNoteToTree,

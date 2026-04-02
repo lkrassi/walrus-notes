@@ -156,7 +156,20 @@ const tabsSlice = createSlice({
           tab.item.type === 'note' &&
           tab.item.note
         ) {
-          tab.item.note = { ...tab.item.note, ...updates };
+          const prevDraft = tab.item.note.draft;
+          // draft удаляется только если updates.draft === '', иначе сохраняется серверный draft
+          const newNote = { ...tab.item.note, ...updates };
+          if (updates.draft === '') {
+            delete newNote.draft;
+          }
+          console.log('[draft-trace][updateTabNote]', {
+            noteId,
+            updates,
+            prevDraft,
+            nextDraft: newNote.draft,
+            tab,
+          });
+          tab.item.note = newNote;
           tab.item.title = updates.title || tab.item.title;
         }
       });

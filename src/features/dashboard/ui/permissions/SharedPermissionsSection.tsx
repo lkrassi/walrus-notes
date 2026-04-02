@@ -6,10 +6,10 @@ import type { EditablePermissionState } from '../../model';
 import { SharedPermissionCard } from './components/SharedPermissionCard';
 
 interface SharedPermissionsSectionProps {
-  mergedShared: {
-    permission: PermissionItem;
+  mergedShared: ({
     draft: EditablePermissionState;
-  }[];
+    isDirty: boolean;
+  } & PermissionItem)[];
   t: (key: string, options?: Record<string, unknown>) => string;
   isDeleting: boolean;
   isUpdating: boolean;
@@ -34,7 +34,7 @@ export const SharedPermissionsSection: FC<SharedPermissionsSectionProps> = ({
 }) => (
   <section
     className={cn(
-      'group relative overflow-hidden border',
+      'relative overflow-hidden border',
       'border-border dark:border-dark-border',
       'dark:bg-dark-bg bg-white',
       'p-5',
@@ -80,11 +80,12 @@ export const SharedPermissionsSection: FC<SharedPermissionsSectionProps> = ({
     )}
 
     <div className='space-y-3'>
-      {mergedShared.map(({ permission, draft }) => (
+      {mergedShared.map(({ draft, isDirty, ...permission }) => (
         <SharedPermissionCard
           key={permission.id}
           permission={permission}
           draft={draft}
+          canUpdate={isDirty}
           toUserName={permission.toUserName}
           toUserAvatar={permission.toUserAvatar}
           disabledDelete={isDeleting}

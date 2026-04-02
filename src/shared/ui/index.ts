@@ -5,6 +5,7 @@ export { DropdownContent } from './components/dropdown/DropdownContent';
 export type { DropdownContentState } from './components/dropdown/DropdownContent';
 export { ImageUploadModal } from './components/ImageUploadModal';
 export { Input } from './components/Input';
+export { RenderWithState } from './components/RenderWithState';
 export { Skeleton } from './components/Skeleton';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps } from './components/Textarea';

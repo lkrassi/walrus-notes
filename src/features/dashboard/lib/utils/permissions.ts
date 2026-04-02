@@ -1,6 +1,8 @@
 import type { PermissionItem } from '@/entities';
 import type { EditablePermissionState } from '../../model';
 
+export type PermissionRight = 'read' | 'write' | 'edit';
+
 export const initialFromPermission = (
   permission: PermissionItem
 ): EditablePermissionState => ({
@@ -47,11 +49,26 @@ export const createFriendlyTargetName = (
 };
 
 export const rightsList = (state: EditablePermissionState) => {
-  const values: Array<'read' | 'write' | 'edit'> = [];
+  const values: PermissionRight[] = [];
+
+  if (state.canWrite || state.canEdit) {
+    if (state.canWrite) values.push('write');
+    if (state.canEdit) values.push('edit');
+    return values;
+  }
 
   if (state.canRead) values.push('read');
-  if (state.canWrite) values.push('write');
-  if (state.canEdit) values.push('edit');
 
   return values;
 };
+
+export const rightTooltipKey = (right: PermissionRight) =>
+  `share:permissionsDashboard.rightsDescriptions.${right}`;
+
+export const isPermissionDraftDirty = (
+  permission: PermissionItem,
+  draft: EditablePermissionState
+) =>
+  permission.canRead !== draft.canRead ||
+  permission.canWrite !== draft.canWrite ||
+  permission.canEdit !== draft.canEdit;

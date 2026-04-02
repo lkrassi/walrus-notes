@@ -59,7 +59,7 @@
     "sharedTitle": "Shared permissions",
     "emptyReceived": "No received permissions yet",
     "emptyShared": "No shared permissions yet",
-    "receivedFrom": "Access granted by",
+    "receivedFrom": "Access granted by:",
     "sharedTo": "Access granted to",
     "targetLabel": "Access target",
     "target": "Target",
@@ -75,9 +75,15 @@
     },
     "rights": {
       "none": "No access",
-      "read": "Read only",
-      "write": "Can edit content",
-      "edit": "Full access"
+      "read": "Read",
+      "write": "Write",
+      "edit": "Edit",
+      "active": "active"
+    },
+    "rightsDescriptions": {
+      "read": "View notes inside a folder and open the graph",
+      "write": "Create notes, delete them, edit note body, add graph links, and drag notes",
+      "edit": "Rename the folder and change its color"
     },
     "flagsLabel": {
       "read": "Read",
@@ -91,11 +97,29 @@
     },
     "actions": {
       "update": "Save",
-      "delete": "Delete"
+      "delete": "Delete",
+      "revokeReceived": "Revoke",
+      "revokeShared": "Revoke"
+    },
+    "deletePermission": {
+      "cancel": "Cancel",
+      "deleting": "Processing...",
+      "received": {
+        "modalTitle": "Revoke access",
+        "title": "Revoke received access?",
+        "description": "You will no longer have access to {{title}}.",
+        "confirm": "Revoke"
+      },
+      "shared": {
+        "modalTitle": "Remove access",
+        "title": "Remove shared access?",
+        "description": "The user will lose access to {{title}}.",
+        "confirm": "Remove"
+      }
     },
     "notifications": {
       "updated": "Permissions updated",
-      "deleted": "Permission removed",
+      "deleted": "Access revoked",
       "updateError": "Failed to update permission",
       "deleteError": "Failed to delete permission"
     }

@@ -62,7 +62,7 @@
 }
 
 .feature-card {
-  @apply border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70 rounded-xl border p-4;
+  @apply border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70 border p-4;
 }
 
 .feature-title {

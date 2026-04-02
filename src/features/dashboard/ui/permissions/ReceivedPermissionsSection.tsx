@@ -7,14 +7,16 @@ import { ReceivedPermissionCard } from './components/ReceivedPermissionCard';
 interface ReceivedPermissionsSectionProps {
   received: PermissionItem[];
   t: (key: string, options?: Record<string, unknown>) => string;
+  isDeleting: boolean;
+  onDelete: (permissionId: string) => void;
 }
 
 export const ReceivedPermissionsSection: FC<
   ReceivedPermissionsSectionProps
-> = ({ received, t }) => (
+> = ({ received, t, isDeleting, onDelete }) => (
   <section
     className={cn(
-      'group relative overflow-hidden border',
+      'relative overflow-hidden border',
       'border-border dark:border-dark-border',
       'dark:bg-dark-bg bg-white',
       'p-5'
@@ -51,7 +53,7 @@ export const ReceivedPermissionsSection: FC<
         className={cn(
           'flex h-24 items-center justify-center border',
           'border-border border-dashed',
-          'text-secondary dark:text-dark-secondary text-sm'
+          'muted-text text-sm'
         )}
       >
         {t('share:permissionsDashboard.emptyReceived')}
@@ -60,7 +62,13 @@ export const ReceivedPermissionsSection: FC<
 
     <div className='space-y-3'>
       {received.map(item => (
-        <ReceivedPermissionCard key={item.id} permission={item} t={t} />
+        <ReceivedPermissionCard
+          key={item.id}
+          permission={item}
+          t={t}
+          onDelete={onDelete}
+          disabledDelete={isDeleting}
+        />
       ))}
     </div>
   </section>

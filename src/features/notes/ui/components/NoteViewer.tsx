@@ -31,7 +31,6 @@ export const NoteViewer = memo(function NoteViewer({
     noteId,
     isEditing,
     title,
-    payload,
     isLoading,
     setPayload,
     handleEdit,
@@ -51,7 +50,11 @@ export const NoteViewer = memo(function NoteViewer({
     handleSaveAction,
     handleCancelAction,
     handleDiscardAction,
+    payload,
   } = useNoteViewerState({ note, canWrite, onNoteUpdated });
+
+  // Получаем payload только через selectEffectiveNoteContent
+  // payload теперь берём из useNoteEditor, а не из глобального селектора
 
   return (
     <div
@@ -66,7 +69,6 @@ export const NoteViewer = memo(function NoteViewer({
         isFullscreen && 'fixed inset-0 z-100'
       )}
     >
-      {' '}
       <NoteHeader
         noteId={noteId}
         isEditing={isEditing}

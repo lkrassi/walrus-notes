@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
+import { PublicPageFrameSkeleton } from './PageFrameSkeletons';
 import { ProtectedRoute } from './ProtectedRoute';
 import {
   AuthPageSkeleton,
@@ -7,7 +8,6 @@ import {
   FirstPageSkeleton,
   MainPageSkeleton,
   SettingsPageSkeleton,
-  UnavailablePageSkeleton,
 } from './RouteSkeletons';
 
 const FirstPage = lazy(() =>
@@ -107,7 +107,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.UNAVAILABLE,
     element: (
-      <Suspense fallback={<UnavailablePageSkeleton />}>
+      <Suspense fallback={<PublicPageFrameSkeleton />}>
         <UnavailablePage />
       </Suspense>
     ),
@@ -115,7 +115,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.APPLY_LINK,
     element: (
-      <Suspense fallback={<UnavailablePageSkeleton />}>
+      <Suspense fallback={<PublicPageFrameSkeleton />}>
         <ApplyLinkPage />
       </Suspense>
     ),

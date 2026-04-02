@@ -70,7 +70,6 @@ export const FolderCard = ({
         onClick={() => onFolderClick?.(layout.id, layout.title || 'Untitled')}
         className={cn(
           'w-full',
-          'rounded-xl',
           'bg-white',
           'dark:bg-gray-800',
           'p-4',

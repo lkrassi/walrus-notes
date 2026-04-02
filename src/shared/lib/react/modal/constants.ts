@@ -7,4 +7,4 @@ export const MODAL_SIZE_MAP = {
 } as const;
 
 export const MODAL_PANEL_BASE_CLASS =
-  'border-border bg-surface-2/90 flex max-h-[90vh] flex-col overflow-hidden rounded-xl border shadow-lg backdrop-blur-sm';
+  'border-border bg-surface-2/90 flex max-h-[90vh] flex-col overflow-hidden border shadow-lg backdrop-blur-sm';

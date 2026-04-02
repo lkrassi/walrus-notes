@@ -129,13 +129,6 @@ const recordNotFoundMiddleware: Middleware = storeAPI => next => action => {
     lastLayoutRecordNotFoundAt = Date.now();
 
     storeAPI.dispatch(closeLayoutTabs(layoutId));
-    storeAPI.dispatch(
-      layoutApi.util.updateQueryData('getMyLayouts', undefined, draft => {
-        draft.data = (draft.data || []).filter(
-          layout => layout.id !== layoutId
-        );
-      })
-    );
     storeAPI.dispatch(layoutApi.util.invalidateTags(['Layouts', 'Notes']));
     storeAPI.dispatch(
       addNotification({
@@ -172,39 +165,21 @@ const recordNotFoundMiddleware: Middleware = storeAPI => next => action => {
 
       if (!queryEndpoint || queryArgs === undefined) continue;
 
+      storeAPI.dispatch(notesApi.util.invalidateTags(['Notes']));
+
       if (
-        queryEndpoint === 'getNotes' ||
-        queryEndpoint === 'getPosedNotes' ||
-        queryEndpoint === 'getUnposedNotes' ||
-        queryEndpoint === 'searchNotes'
+        Date.now() - lastLayoutRecordNotFoundAt >
+        NOTE_NOTIFICATION_SUPPRESS_AFTER_LAYOUT_MS
       ) {
         storeAPI.dispatch(
-          notesApi.util.updateQueryData(
-            queryEndpoint,
-            queryArgs as never,
-            draft => {
-              if (!draft || !Array.isArray(draft.data)) return;
-              draft.data = draft.data.filter(note => note.id !== noteId);
-            }
-          )
+          addNotification({
+            type: 'warning',
+            message: i18n.t('notes:recordNotFoundDeleted'),
+            duration: 6000,
+            origin: 'api-record-not-found',
+          })
         );
       }
-    }
-
-    storeAPI.dispatch(notesApi.util.invalidateTags(['Notes']));
-
-    if (
-      Date.now() - lastLayoutRecordNotFoundAt >
-      NOTE_NOTIFICATION_SUPPRESS_AFTER_LAYOUT_MS
-    ) {
-      storeAPI.dispatch(
-        addNotification({
-          type: 'warning',
-          message: i18n.t('notes:recordNotFoundDeleted'),
-          duration: 6000,
-          origin: 'api-record-not-found',
-        })
-      );
     }
   }
 
@@ -229,7 +204,3 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-
-export type NotificationsState = RootState['notifications'];
-export type UserProfileState = RootState['user'];

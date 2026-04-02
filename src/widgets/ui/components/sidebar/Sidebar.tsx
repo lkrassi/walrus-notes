@@ -2,9 +2,9 @@ import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
 import { CreateLayoutForm } from '@/features/layout';
 import { ProfileButton } from '@/features/profile';
-import { logoImage as logo } from '@/shared/assets';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
+import { Skeleton } from '@/shared/ui';
 import {
   useFileTree,
   useIsMobile,
@@ -35,8 +35,13 @@ const SidebarComponent = (
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
-  const { fileTree, expandedItems, toggleExpanded, updateNoteInTree } =
-    useFileTree();
+  const {
+    fileTree,
+    expandedItems,
+    isInitialLayoutsLoading,
+    toggleExpanded,
+    updateNoteInTree,
+  } = useFileTree();
 
   const { openModalFromTrigger } = useModalActions();
 
@@ -116,41 +121,16 @@ const SidebarComponent = (
           className={cn(
             'border-border',
             'border-b',
-            'p-3',
+            'px-4',
+            'py-5',
+            'max-md:py-5',
             'flex',
             'flex-col',
             'gap-3'
           )}
         >
-          <div
-            className={cn(
-              'flex',
-              'items-center',
-              'gap-2',
-              'md:gap-3',
-              'md:hidden'
-            )}
-          >
+          <div className={cn('flex', 'items-center', 'gap-2', 'md:hidden')}>
             <MobileMenu iconClassName={cn('h-6', 'w-6')} />
-
-            <Link
-              to='/main'
-              className={cn('flex', 'items-center')}
-              aria-label={t('common:header.goToHomepage')}
-            >
-              <img
-                src={logo}
-                alt={t('common:header.logoAlt')}
-                className={cn('h-14', 'w-14', 'md:h-18', 'md:w-18')}
-                loading='lazy'
-              />
-              <div className={cn('flex', 'items-baseline', 'gap-1')}>
-                <h1 className={cn('text-text', 'dark:text-dark-text')}>
-                  Walrus
-                </h1>
-                <h1 className={cn('text-primary')}>Notes</h1>
-              </div>
-            </Link>
           </div>
 
           <div className={cn('flex', 'items-center', 'justify-between')}>
@@ -169,13 +149,23 @@ const SidebarComponent = (
         </div>
 
         <div className={cn('flex-1 overflow-y-auto')}>
-          <FileTree
-            expandedItems={expandedItems}
-            toggleExpanded={toggleExpanded}
-            onItemSelect={handleItemSelect}
-            selectedItemId={currentSelectedItemId}
-            onOpenGraph={handleOpenGraph}
-          />
+          {isInitialLayoutsLoading ? (
+            <div className='space-y-2 p-2'>
+              <Skeleton className='h-9 w-full rounded-lg' />
+              <Skeleton className='h-8 w-full rounded-md' />
+              <Skeleton className='h-8 w-full rounded-md' />
+              <Skeleton className='h-8 w-full rounded-md' />
+              <Skeleton className='h-8 w-full rounded-md' />
+            </div>
+          ) : (
+            <FileTree
+              expandedItems={expandedItems}
+              toggleExpanded={toggleExpanded}
+              onItemSelect={handleItemSelect}
+              selectedItemId={currentSelectedItemId}
+              onOpenGraph={handleOpenGraph}
+            />
+          )}
         </div>
 
         <div className={cn('border-t', 'border-border', 'p-4', 'mt-auto')}>
