@@ -103,6 +103,8 @@ export const UnposedNotesList = ({
     onOpenChange(false);
   };
 
+  const panelShift = 'calc(-1 * min(400px, 45vw))';
+
   if (!isLoading && orderedNotes.length === 0) {
     return null;
   }
@@ -112,11 +114,11 @@ export const UnposedNotesList = ({
       <motion.button
         type='button'
         initial={false}
-        animate={{ x: isOpen ? '-400px' : '0px' }}
+        animate={{ x: isOpen ? panelShift : '0px' }}
         transition={{ duration: 0.28, ease: 'easeInOut' }}
         onClick={() => onOpenChange(!isOpen)}
         className={cn(
-          'border-border dark:border-dark-border bg-surface dark:bg-dark-surface',
+          'border-border dark:border-dark-border bg-bg dark:bg-dark-surface',
           'absolute',
           'top-1/2',
           'right-0',
@@ -168,7 +170,7 @@ export const UnposedNotesList = ({
           animate={{ x: isOpen ? '0%' : '100%' }}
           transition={{ duration: 0.28, ease: 'easeInOut' }}
           className={cn(
-            'border-border dark:border-dark-border bg-surface dark:bg-dark-surface',
+            'border-border dark:border-dark-border bg-bg dark:bg-dark-surface',
             'h-full',
             'w-100',
             'max-w-[45vw]',
@@ -184,7 +186,7 @@ export const UnposedNotesList = ({
             <div
               className={cn(
                 'h-[calc(100%-53px)] overflow-y-auto p-3',
-                'grid grid-cols-3 content-start gap-2'
+                'grid grid-cols-2 content-start gap-2 sm:grid-cols-3'
               )}
             >
               {orderedNotes.map(note => (

@@ -1,6 +1,5 @@
 import { makeUpdateDraft, removeDraft, setDraft } from '@/entities';
 import { useCallback } from 'react';
-import { createDraftWsSnapshot, logDraftWs } from './log';
 import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftSenderOpts {
@@ -67,19 +66,6 @@ export const useDraftSender = ({
 
         const event = makeUpdateDraft(noteId, value);
         const ok = ws.send(event);
-        logDraftWs(
-          'SEND',
-          'UPDATE_DRAFT_REQUEST',
-          {
-            noteId,
-            status: ok ? 'sent' : 'buffered',
-          },
-          createDraftWsSnapshot(refs, {
-            noteId,
-            isConnected: true,
-          })
-        );
-
         if (ok) {
           refs.awaitingAckRef.current = value;
           refs.pendingRef.current = null;
@@ -102,19 +88,6 @@ export const useDraftSender = ({
             const toSend = refs.pendingRef.current;
             if (toSend != null) {
               const res = ws.send(makeUpdateDraft(noteId, toSend));
-              logDraftWs(
-                'RECONNECT',
-                'UPDATE_DRAFT_REQUEST',
-                {
-                  noteId,
-                  status: res ? 'resent' : 'failed',
-                },
-                createDraftWsSnapshot(refs, {
-                  noteId,
-                  reason: 'on-open-resend',
-                  isConnected: true,
-                })
-              );
               if (res) {
                 refs.awaitingAckRef.current = toSend;
                 refs.pendingRef.current = null;

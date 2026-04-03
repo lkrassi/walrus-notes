@@ -22,11 +22,6 @@ export const RenderWithState = ({
 }: RenderWithStateProps) => {
   const showOverlay = isRefreshing && !isInitialLoading;
 
-  if (import.meta.env.DEV && isInitialLoading && !skeleton) {
-    // eslint-disable-next-line no-console
-    console.warn('RenderWithState: skeleton is missing');
-  }
-
   return (
     <div className={cn('relative h-full w-full', className)}>
       {isInitialLoading ? (

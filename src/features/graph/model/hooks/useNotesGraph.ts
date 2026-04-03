@@ -50,7 +50,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const notesWithPositions = useMemo(
     () =>
       posedNotes.filter(
-        note =>
+        (note: Note) =>
           note.position?.xPos !== undefined && note.position?.yPos !== undefined
       ),
     [posedNotes]
@@ -72,7 +72,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
   const initialEdges: Edge[] = useMemo(() => {
     const edges: Edge[] = [];
-    notesWithPositions.forEach(sourceNote => {
+    notesWithPositions.forEach((sourceNote: Note) => {
       const outgoingLinks = Array.isArray(sourceNote.linkedWithOut)
         ? sourceNote.linkedWithOut
         : Array.isArray(
@@ -84,7 +84,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
 
       outgoingLinks.forEach((targetNoteId: string) => {
         const targetNoteExists = notesWithPositions.some(
-          n => n.id === targetNoteId
+          (n: Note) => n.id === targetNoteId
         );
 
         if (targetNoteExists) {
@@ -103,7 +103,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
               sourceHandle: (() => {
                 try {
                   const target = notesWithPositions.find(
-                    n => n.id === targetNoteId
+                    (n: Note) => n.id === targetNoteId
                   )!;
                   const sx = sourceNote.position!.xPos;
                   const sy = sourceNote.position!.yPos;
@@ -122,7 +122,7 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
               targetHandle: (() => {
                 try {
                   const target = notesWithPositions.find(
-                    n => n.id === targetNoteId
+                    (n: Note) => n.id === targetNoteId
                   )!;
                   const sx = sourceNote.position!.xPos;
                   const sy = sourceNote.position!.yPos;

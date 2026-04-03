@@ -3,7 +3,7 @@
 }
 
 .form-input {
-  @apply border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary bg-bg dark:bg-dark-bg w-full resize-none border p-4 transition-all duration-200 focus:border-transparent focus:ring-2;
+  @apply border-border dark:border-dark-border text-text dark:text-dark-text placeholder-input-placeholder dark:placeholder-dark-input-placeholder focus:ring-primary dark:focus:ring-dark-primary bg-bg dark:bg-dark-bg w-full resize-none border p-4 focus:border-transparent focus:ring-2;
 }
 
 .no-border {

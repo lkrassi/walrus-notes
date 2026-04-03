@@ -32,8 +32,7 @@ const ApplyLinkPage: React.FC = () => {
       sessionStorage.setItem(applyGuardKey, '1');
       showSuccess('Доступ успешно предоставлен.');
       navigate('/main');
-    } catch (error: unknown) {
-      console.error('Error applying link:', error);
+    } catch (_e) {
       showError('Ошибка при получении доступа.');
       navigate('/main');
     }

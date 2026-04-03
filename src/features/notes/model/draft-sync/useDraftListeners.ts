@@ -8,7 +8,6 @@ import {
 } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import { useEffect } from 'react';
-import { createDraftWsSnapshot, logDraftWs } from './log';
 import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftListenersOpts {
@@ -63,12 +62,6 @@ export const useDraftListeners = ({
           if (!data || data.noteId !== noteId) {
             return;
           }
-          logDraftWs(
-            'RECV',
-            'UPDATE_DRAFT_REQUEST',
-            { noteId },
-            createDraftWsSnapshot(refs, { noteId, reason: 'remote-update' })
-          );
           const nd = data.newDraft ?? '';
 
           if (
@@ -112,16 +105,6 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
-          logDraftWs(
-            'RECV',
-            'UPDATE_DRAFT_RESPONSE',
-            {
-              noteId,
-              status: !!data.status,
-            },
-            createDraftWsSnapshot(refs, { noteId, reason: 'update-ack' })
-          );
-
           if (data.status) {
             const acked = refs.awaitingAckRef.current;
             if (acked != null) {
@@ -146,13 +129,6 @@ export const useDraftListeners = ({
           if (!data || data.noteId !== noteId) {
             return;
           }
-          logDraftWs(
-            'RECV',
-            'COMMIT_DRAFT_REQUEST',
-            { noteId },
-            createDraftWsSnapshot(refs, { noteId, reason: 'remote-commit' })
-          );
-
           try {
             dispatch(removeDraft({ noteId }));
           } catch (_e) {}
@@ -167,19 +143,6 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
-          logDraftWs(
-            'RECV',
-            'COMMIT_DRAFT_RESPONSE',
-            {
-              noteId,
-              status: !!data.status,
-            },
-            createDraftWsSnapshot(refs, {
-              noteId,
-              reason: 'commit-ack',
-            })
-          );
-
           if (data.status) {
             onCommitRetryResolved?.();
 

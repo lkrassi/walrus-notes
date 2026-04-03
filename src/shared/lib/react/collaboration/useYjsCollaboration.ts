@@ -64,17 +64,6 @@ export const useYjsCollaboration = (
       head,
       updatedAt: now,
     } as CursorInfo);
-
-    if (isPresenceDebug) {
-      console.info('[PresenceDebug][sendCursorNow]', {
-        noteId,
-        userId,
-        selectionStart: payload.selectionStart,
-        selectionEnd: payload.selectionEnd,
-        localClientId: providerRef.current.awareness.clientID,
-        connected: providerRef.current.wsconnected,
-      });
-    }
   }, [isPresenceDebug, noteId, userId]);
 
   const resolveAbsoluteIndex = useCallback(
@@ -335,31 +324,6 @@ export const useYjsCollaboration = (
 
         lastOnlineUsersKeyRef.current = usersKey;
         setOnlineUsers(normalizedStates);
-
-        if (isPresenceDebug) {
-          const dump = Array.from(normalizedStates.values()).map(state => ({
-            clientId: state.clientId,
-            isLocal: state.isLocal,
-            userId: state.user?.id,
-            userName: state.user?.name,
-            hasCursor: Boolean(state.cursor),
-            cursor: state.cursor
-              ? {
-                  start: state.cursor.selectionStart,
-                  end: state.cursor.selectionEnd,
-                  index: state.cursor.index,
-                  updatedAt: state.cursor.updatedAt,
-                }
-              : null,
-          }));
-
-          console.info('[PresenceDebug][awareness:normalized]', {
-            noteId,
-            userId,
-            localClientId,
-            users: dump,
-          });
-        }
       });
     };
 

@@ -21,9 +21,9 @@ export const NotePreview = memo(function NotePreview({
   const palette = graphTheme();
   const resolvedColor = layoutColor ?? palette.edge;
 
-  const size = isSmall ? 'max-w-32 min-w-32' : 'max-w-40 min-w-40';
-  const padding = isSmall ? 'p-1.5' : 'p-2';
-  const textSize = isSmall ? 'text-xs' : 'text-sm';
+  const size = isSmall ? 'w-full min-w-0 max-w-none' : 'max-w-40 min-w-40';
+  const padding = isSmall ? 'p-1.5 sm:p-2' : 'p-2';
+  const textSize = isSmall ? 'text-[10px] leading-tight sm:text-xs' : 'text-sm';
 
   return (
     <div
@@ -34,9 +34,11 @@ export const NotePreview = memo(function NotePreview({
         'rounded-xl',
         padding,
         'text-left',
-        'bg-surface',
+        'bg-bg',
         'text-foreground',
-        'border-2',
+        'border',
+        'border-border',
+        'dark:border-dark-border',
         'flex items-center justify-center',
         isDrag ? 'ring-primary opacity-95 shadow-lg ring-2' : '',
         className

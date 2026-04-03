@@ -594,7 +594,9 @@ export const notesApi = apiSlice.injectEndpoints({
                   const idx = draft.data.findIndex(
                     note => note.id === arg.noteId
                   );
-                  if (idx === -1) return;
+                  if (idx === -1) {
+                    return;
+                  }
 
                   draft.data[idx] = {
                     ...draft.data[idx],
@@ -608,6 +610,15 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
+
+          dispatch(
+            notesApi.util.invalidateTags(
+              allLayoutIds.map(layoutId => ({
+                type: 'Notes' as const,
+                id: `posed-${layoutId}`,
+              }))
+            )
+          );
         } catch {
           patches.forEach(patch => patch.undo());
         }

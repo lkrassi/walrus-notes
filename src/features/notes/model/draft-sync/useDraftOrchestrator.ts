@@ -1,7 +1,6 @@
 import { makeCommitDraft } from '@/entities';
 import { useDebounced } from '@/shared/lib/react/hooks';
 import { useCallback, useEffect, useRef } from 'react';
-import { createDraftWsSnapshot, logDraftWs } from './log';
 import type { UseDraftSyncDeps, UseDraftSyncReturn } from './types';
 import { useDraftListeners } from './useDraftListeners';
 import { useDraftSender } from './useDraftSender';
@@ -77,19 +76,6 @@ export const useDraftOrchestrator = ({
         30_000,
         1000 * Math.pow(2, Math.max(0, attempt - 1))
       );
-
-      logDraftWs(
-        'STATE',
-        'COMMIT_RETRY_SCHEDULED',
-        { noteId, reason, attempt, delayMs: delay },
-        createDraftWsSnapshot(refs, {
-          noteId,
-          draftPhase,
-          reason,
-          isConnected: !!ws?.isConnected,
-        })
-      );
-
       refs.commitRetryTimerRef.current = setTimeout(() => {
         refs.commitRetryTimerRef.current = null;
 
@@ -110,23 +96,6 @@ export const useDraftOrchestrator = ({
         refs.awaitingCommitPayloadRef.current = latestPayload;
 
         const ok = ws.send(makeCommitDraft(noteId));
-        logDraftWs(
-          ok ? 'RECONNECT' : 'STATE',
-          'COMMIT_DRAFT_REQUEST',
-          {
-            noteId,
-            reason: 'retry-timer',
-            attempt: refs.commitRetryCountRef.current,
-            status: ok ? 'resent' : 'retry-failed',
-          },
-          createDraftWsSnapshot(refs, {
-            noteId,
-            draftPhase,
-            reason: 'retry-timer',
-            isConnected: !!ws?.isConnected,
-          })
-        );
-
         if (ok) {
           refs.pendingCommitPayloadRef.current = null;
           setDraftPhase('COMMITTING');
@@ -167,12 +136,6 @@ export const useDraftOrchestrator = ({
       }
 
       const ok = ws.send(makeCommitDraft(noteId));
-      logDraftWs('RECONNECT', 'COMMIT_DRAFT_REQUEST', {
-        noteId,
-        attempt: refs.commitRetryCountRef.current,
-        status: ok ? 'resent' : 'failed',
-      });
-
       if (ok) {
         refs.awaitingCommitRef.current = true;
         refs.awaitingCommitPayloadRef.current = pendingCommit;
@@ -207,23 +170,6 @@ export const useDraftOrchestrator = ({
       }
 
       const ok = ws.send(makeCommitDraft(noteId));
-      logDraftWs(
-        ok ? 'RECONNECT' : 'STATE',
-        'COMMIT_DRAFT_REQUEST',
-        {
-          noteId,
-          reason,
-          attempt: refs.commitRetryCountRef.current,
-          status: ok ? 'resent' : 'failed',
-        },
-        createDraftWsSnapshot(refs, {
-          noteId,
-          draftPhase,
-          reason,
-          isConnected: !!ws?.isConnected,
-        })
-      );
-
       if (ok) {
         refs.awaitingCommitRef.current = true;
         refs.awaitingCommitPayloadRef.current =
@@ -370,12 +316,6 @@ export const useDraftOrchestrator = ({
         }
 
         const ok = ws.send(makeCommitDraft(noteId));
-        logDraftWs('SEND', 'COMMIT_DRAFT_REQUEST', {
-          noteId,
-          attempt: refs.commitRetryCountRef.current,
-          status: ok ? 'sent' : 'buffered',
-        });
-
         if (!ok) {
           refs.pendingCommitPayloadRef.current =
             refs.awaitingCommitPayloadRef.current;
@@ -388,11 +328,6 @@ export const useDraftOrchestrator = ({
       } catch (_e) {
         refs.pendingCommitPayloadRef.current =
           refs.awaitingCommitPayloadRef.current;
-        logDraftWs('SEND', 'COMMIT_DRAFT_REQUEST', {
-          noteId,
-          attempt: refs.commitRetryCountRef.current,
-          status: 'error-buffered',
-        });
         scheduleCommitRetry('exception');
         return false;
       }

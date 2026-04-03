@@ -172,7 +172,7 @@ export const useGraphContentHandlers = ({
       if (!canEdit) return;
       handleAddNoteToGraphOrig?.(note, dropPosition);
     },
-    [canEdit, handleAddNoteToGraphOrig]
+    [canEdit, handleAddNoteToGraphOrig, layoutId]
   );
 
   const handleNodeMouseEnterWrapped = useCallback(
@@ -180,7 +180,7 @@ export const useGraphContentHandlers = ({
       if (isNodeDraggingRef.current) return;
       handleNodeMouseEnter(e, node);
     },
-    [handleNodeMouseEnter, isNodeDraggingRef]
+    [handleNodeMouseEnter, isNodeDraggingRef, layoutId]
   );
 
   const handleNodeMouseLeaveWrapped = useCallback(
@@ -188,7 +188,7 @@ export const useGraphContentHandlers = ({
       if (isNodeDraggingRef.current) return;
       handleNodeMouseLeave(e, node);
     },
-    [handleNodeMouseLeave, isNodeDraggingRef]
+    [handleNodeMouseLeave, isNodeDraggingRef, layoutId]
   );
 
   return {

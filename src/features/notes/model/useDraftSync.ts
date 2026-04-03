@@ -25,9 +25,6 @@ export const useDraftSync = ({
 
   useEffect(() => {
     if (import.meta.env.DEV && !ws && !warnedMissingProviderRef.current) {
-      console.warn(
-        'useDraftSync is used without WebSocketProvider; realtime draft sync is disabled.'
-      );
       warnedMissingProviderRef.current = true;
     }
   }, [ws]);

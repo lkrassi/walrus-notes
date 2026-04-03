@@ -5,7 +5,6 @@ import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import ReactFlow from 'reactflow';
 import { GraphBackground } from './GraphBackground';
 import { GraphControls } from './GraphControls';
-import { GraphMiniMap } from './GraphMiniMap';
 import { MultiColorEdge } from './multi-color-edge';
 import { NoteNodeComponent } from './NoteNode';
 import { OffscreenArrows } from './OffscreenArrows';
@@ -110,7 +109,6 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
     >
       <GraphBackground />
       <GraphControls graphHistory={graphHistory} />
-      <GraphMiniMap xOffset={minimapOffset} />
       <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
       <ViewportTracker onViewportChange={onViewportChange} />
     </ReactFlow>
