@@ -1,10 +1,11 @@
 import {
-  type CommitDraftPayload,
-  type UpdateDraftPayload,
+  addNotification,
   notesApi,
   removeDraft,
   setDraft,
   updateTabNote,
+  type CommitDraftPayload,
+  type UpdateDraftPayload,
 } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import { useEffect } from 'react';
@@ -240,18 +241,6 @@ export const useDraftListeners = ({
               }
             } catch (_e) {}
 
-            try {
-              dispatch(
-                updateTabNote({
-                  noteId,
-                  updates: {
-                    payload: confirmed as string,
-                    updatedAt: new Date().toISOString(),
-                  },
-                })
-              );
-            } catch (_e) {}
-
             refs.awaitingCommitRef.current = false;
             refs.awaitingCommitPayloadRef.current = null;
             setLastCommitAt(Date.now());
@@ -266,6 +255,14 @@ export const useDraftListeners = ({
             refs.awaitingCommitRef.current = false;
             setIsSaving(false);
             setDraftPhase('PENDING_UPDATE');
+            dispatch(
+              addNotification({
+                type: 'error',
+                message: 'Не удалось сохранить черновик. Попробуйте ещё раз.',
+                duration: 6000,
+                origin: 'ui',
+              })
+            );
             onCommitRetryRequired?.('commit-response-error');
           }
         } catch (_e) {}

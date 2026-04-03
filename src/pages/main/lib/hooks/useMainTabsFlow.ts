@@ -26,7 +26,6 @@ export const useMainTabsFlow = ({
   onNoteTreeUpdate,
 }: UseMainTabsFlowProps) => {
   const dispatch = useDispatch();
-
   const confirmIfUnsaved = useCallback(
     (action: () => void) => {
       if (!activeTab) {
@@ -87,7 +86,6 @@ export const useMainTabsFlow = ({
     (item: FileTreeItem) => {
       const tabId = createTabId(item.type, item.id);
       const existingTab = openTabs.find(tab => tab.id === tabId);
-
       if (existingTab) {
         confirmIfUnsaved(() => dispatch(switchTab(tabId)));
         return;

@@ -26,7 +26,6 @@ export const useDraftSender = ({
       if (!ws || !noteId) {
         return false;
       }
-
       try {
         if (
           lastCommitAt != null &&

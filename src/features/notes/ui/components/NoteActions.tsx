@@ -36,9 +36,9 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   isEditing,
   isLoading,
   isFullscreen,
-  hasLocalChanges,
+  hasLocalChanges: _hasLocalChanges,
   onSave,
-  onCancel,
+  onCancel: _onCancel,
   onEdit,
   onOpenImageUpload,
   onOpenImport,
@@ -83,10 +83,6 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
 
             <Button
               onClick={e => {
-                if (!hasLocalChanges) {
-                  onCancel();
-                  return;
-                }
                 onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
               }}
               className={cn(

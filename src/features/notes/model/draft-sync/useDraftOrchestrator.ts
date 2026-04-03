@@ -49,7 +49,7 @@ export const useDraftOrchestrator = ({
   }, [refs]);
 
   const scheduleCommitRetry = useCallback(
-    (reason: string) => {
+    (_reason: string) => {
       if (!noteId || !ws) {
         return;
       }
@@ -203,13 +203,13 @@ export const useDraftOrchestrator = ({
     refs.skipInitialSendRef.current = true;
 
     try {
-      if (storedDraft != null) {
-        refs.pendingRef.current = storedDraft;
-      }
-      try {
-        refs.initialPayloadRef.current = refs.draftRef.current ?? null;
-      } catch (_e) {
-        refs.initialPayloadRef.current = null;
+      const normalizedStoredDraft = storedDraft ?? '';
+
+      if (normalizedStoredDraft.length > 0) {
+        refs.pendingRef.current = null;
+        refs.awaitingAckRef.current = null;
+        refs.prevSentRef.current = normalizedStoredDraft;
+        refs.initialPayloadRef.current = normalizedStoredDraft;
       }
     } catch (_e) {}
 
@@ -274,6 +274,10 @@ export const useDraftOrchestrator = ({
     }
 
     if (debounced === refs.prevSentRef.current) {
+      return;
+    }
+
+    if (debounced !== refs.draftRef.current) {
       return;
     }
 

@@ -20,13 +20,43 @@ export interface TabsState {
 
 const TABS_STORAGE_KEY = 'dashboard:tabs';
 
+const sanitizeNoteForTab = (note: Note): Note => {
+  const { payload, draft: _draft, ...rest } = note;
+  return {
+    ...rest,
+    payload: payload ?? '',
+    draft: undefined,
+  };
+};
+
+const sanitizeTabForStorage = (tab: DashboardTab): DashboardTab => {
+  if (tab.item.type !== 'note' || !tab.item.note) {
+    return tab;
+  }
+
+  return {
+    ...tab,
+    item: {
+      ...tab.item,
+      note: sanitizeNoteForTab(tab.item.note),
+    },
+  };
+};
+
+const sanitizeTabsState = (state: TabsState): TabsState => ({
+  ...state,
+  openTabs: state.openTabs.map(sanitizeTabForStorage),
+});
+
 const loadTabsFromStorage = (): TabsState => {
   try {
     const stored = localStorage.getItem(TABS_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored) as TabsState;
       if (Array.isArray(parsed.openTabs)) {
-        return parsed;
+        const sanitized = sanitizeTabsState(parsed);
+
+        return sanitized;
       }
     }
   } catch (_e) {}
@@ -35,7 +65,8 @@ const loadTabsFromStorage = (): TabsState => {
 
 export const saveTabsToStorage = (state: TabsState) => {
   try {
-    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(state));
+    const sanitized = sanitizeTabsState(state);
+    localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(sanitized));
   } catch (_e) {}
 };
 
@@ -53,6 +84,10 @@ const updateActiveTab = (state: TabsState) => {
       state.activeTabId = null;
     }
   }
+
+  state.openTabs.forEach(tab => {
+    tab.isActive = tab.id === state.activeTabId;
+  });
 };
 
 const tabsSlice = createSlice({
@@ -62,12 +97,12 @@ const tabsSlice = createSlice({
     initializeTabs: (state, action: PayloadAction<TabsState>) => {
       state.openTabs = action.payload.openTabs;
       state.activeTabId = action.payload.activeTabId;
+      updateActiveTab(state);
     },
 
     openTab: (state, action: PayloadAction<FileTreeItem>) => {
       const item = action.payload;
       const tabId = createTabId(item.type, item.id);
-
       const existingTab = state.openTabs.find(tab => tab.id === tabId);
       if (existingTab) return;
 
@@ -76,14 +111,14 @@ const tabsSlice = createSlice({
         item,
         isActive: false,
       });
+
+      updateActiveTab(state);
     },
 
     switchTab: (state, action: PayloadAction<string>) => {
       const tabId = action.payload;
-      state.openTabs.forEach(tab => {
-        tab.isActive = tab.id === tabId;
-      });
       state.activeTabId = tabId;
+      updateActiveTab(state);
     },
 
     closeTab: (state, action: PayloadAction<string>) => {
@@ -139,6 +174,7 @@ const tabsSlice = createSlice({
 
     reorderTabs: (state, action: PayloadAction<DashboardTab[]>) => {
       state.openTabs = action.payload;
+      updateActiveTab(state);
     },
 
     updateTabNote: (

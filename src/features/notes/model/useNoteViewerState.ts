@@ -47,7 +47,7 @@ export const useNoteViewerState = ({
       handleEdit();
       autoOpenedRef.current = true;
     }
-  }, [hasLocalChanges, hasServerDraft, handleEdit]);
+  }, [handleEdit, hasLocalChanges, hasServerDraft, note.id]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(

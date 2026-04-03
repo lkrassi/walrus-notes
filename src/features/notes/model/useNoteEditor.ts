@@ -1,11 +1,12 @@
 import {
   addNotification,
+  notesApi,
   removeDraft,
   useUpdateNoteMutation,
 } from '@/entities';
 import type { Note } from '@/entities/note';
 import { i18n } from '@/shared/config/i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDraftSync } from './useDraftSync';
 
@@ -18,14 +19,23 @@ type RootStateLike = {
   };
 };
 
+type DispatchLike = (action: unknown) => unknown;
+
 export const useNoteEditor = (
   note: Note,
   canWrite: boolean,
   onNoteUpdated?: (note: Note) => void
 ) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(() => {
+    if (!canWrite) {
+      return false;
+    }
+
+    const initialHasDraft = !!note.draft?.trim();
+    return initialHasDraft;
+  });
   const [title, setTitle] = useState<string>(note.title ?? '');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch() as DispatchLike;
 
   const storeDraft = useSelector(
     (s: RootStateLike) => s.drafts?.[note.id] ?? null
@@ -34,13 +44,18 @@ export const useNoteEditor = (
 
   const originalPayload = note.payload ?? '';
   const ignoreDraftRef = useRef(false);
+  const serverDraft = note.draft?.trim() ?? '';
+
+  const hasServerDraft = !!serverDraft.length;
+  const storedDraftText = storeDraft?.trim() ?? '';
+  const hasStoreDraft = !!storedDraftText.length && hasServerDraft;
 
   let initialPayload = originalPayload;
   if (!ignoreDraftRef.current) {
-    if (storeDraft && storeDraft.length) {
-      initialPayload = storeDraft;
-    } else if (note.draft && note.draft.length) {
-      initialPayload = note.draft;
+    if (hasStoreDraft) {
+      initialPayload = storedDraftText;
+    } else if (hasServerDraft) {
+      initialPayload = serverDraft;
     }
   }
 
@@ -62,6 +77,7 @@ export const useNoteEditor = (
 
   const lastLocalCommitRef = useRef<number | null>(null);
   const lastLocalUpdateRef = useRef<number | null>(null);
+  const hydratedServerPayloadRef = useRef<string>(note.payload ?? '');
 
   const setPayload = (value: string | ((prev: string) => string)) => {
     try {
@@ -73,16 +89,17 @@ export const useNoteEditor = (
     } catch (_e) {}
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTitle(note.title ?? '');
     const incoming =
-      !ignoreDraftRef.current && storeDraft && storeDraft.length
-        ? storeDraft
-        : !ignoreDraftRef.current && note.draft && note.draft.length
-          ? note.draft
+      !ignoreDraftRef.current && hasStoreDraft
+        ? storedDraftText
+        : !ignoreDraftRef.current && hasServerDraft
+          ? serverDraft
           : note.payload;
     setPayloadState(prev => {
       const incomingSafe = incoming ?? '';
+      hydratedServerPayloadRef.current = incomingSafe;
       try {
         if (
           lastLocalCommitRef.current != null &&
@@ -92,26 +109,44 @@ export const useNoteEditor = (
           return prev;
         }
       } catch (_e) {}
-      if (prev === originalPayload) {
+      if (lastLocalUpdateRef.current == null) {
         return incomingSafe;
       }
       return prev;
     });
-  }, [note.id, note.title, note.payload, note.draft, storeDraft]);
+  }, [
+    hasServerDraft,
+    hasStoreDraft,
+    note.id,
+    note.title,
+    note.payload,
+    serverDraft,
+    storeDraft,
+  ]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
-      if (!ignoreDraftRef.current && storeDraft && storeDraft.length) {
+      if (!ignoreDraftRef.current && hasStoreDraft) {
         if (
           lastLocalUpdateRef.current != null &&
           Date.now() - lastLocalUpdateRef.current < 2000
         ) {
           return;
         }
-        setPayloadState(storeDraft);
+        setPayloadState(storedDraftText);
       }
     } catch (_e) {}
-  }, [storeDraft, note.id]);
+  }, [hasStoreDraft, note.id, storedDraftText]);
+
+  useLayoutEffect(() => {
+    if (!canWrite) {
+      return;
+    }
+
+    if (hasStoreDraft || hasServerDraft) {
+      setIsEditing(true);
+    }
+  }, [canWrite, hasServerDraft, hasStoreDraft, note.id]);
 
   useEffect(() => {
     ignoreDraftRef.current = false;
@@ -205,9 +240,6 @@ export const useNoteEditor = (
       } catch (_e) {}
       try {
         setPayloadState(finalPayload);
-        try {
-          dispatch(removeDraft({ noteId: note.id }));
-        } catch (_e) {}
       } catch (_e) {}
 
       const updatedNote: Note = {
@@ -236,12 +268,62 @@ export const useNoteEditor = (
   const handleDiscard = async () => {
     try {
       ignoreDraftRef.current = true;
-      setPayload(originalPayload);
+      try {
+        setPayloadState(originalPayload);
+        hydratedServerPayloadRef.current = originalPayload;
+        lastLocalUpdateRef.current = null;
+      } catch (_e) {}
+
+      setIsEditing(false);
+
       try {
         sendUpdateDraft('');
       } catch (_e) {}
       try {
         dispatch(removeDraft({ noteId: note.id }));
+      } catch (_e) {}
+
+      try {
+        if (note.layoutId) {
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId: note.layoutId, page: 1 },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: note.layoutId },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getUnposedNotes',
+              { layoutId: note.layoutId },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+        }
       } catch (_e) {}
 
       if (onNoteUpdated) {
@@ -251,7 +333,6 @@ export const useNoteEditor = (
         });
       }
     } catch (_e) {}
-    setIsEditing(false);
     return true;
   };
 
@@ -264,7 +345,9 @@ export const useNoteEditor = (
     isPending,
     isSynced,
     lastSavedAt,
-    hasLocalChanges: payload !== originalPayload,
+    hasLocalChanges:
+      lastLocalUpdateRef.current != null &&
+      payload !== hydratedServerPayloadRef.current,
     hasServerDraft: !!(
       note.draft &&
       note.draft.length &&

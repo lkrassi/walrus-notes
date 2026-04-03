@@ -1,3 +1,4 @@
+import { removeDraft, setDraft } from '@/entities/draft';
 import { layoutApi } from '@/entities/layout';
 import type { Note } from '@/entities/note';
 import { updateTabNote } from '@/entities/tab';
@@ -9,6 +10,37 @@ type LocalRootState = {
 };
 
 type UndoPatch = { undo: () => void };
+
+type DraftStateLike = {
+  drafts?: Record<string, string>;
+};
+
+const hydrateServerDrafts = (
+  dispatch: (action: unknown) => unknown,
+  getState: () => unknown,
+  source: string,
+  notes: Note[]
+) => {
+  const state = getState() as DraftStateLike;
+  const currentDrafts = state.drafts ?? {};
+
+  for (const note of notes) {
+    const serverDraft = note.draft?.trim() ?? '';
+
+    if (!serverDraft.length) {
+      if (currentDrafts[note.id]) {
+        dispatch(removeDraft({ noteId: note.id }));
+      }
+      continue;
+    }
+
+    if (currentDrafts[note.id] === serverDraft) {
+      continue;
+    }
+
+    dispatch(setDraft({ noteId: note.id, text: serverDraft }));
+  }
+};
 
 interface GetNotesRequest {
   layoutId: string;
@@ -218,6 +250,12 @@ export const notesApi = apiSlice.injectEndpoints({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
       query: ({ layoutId, page = 1 }) =>
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          hydrateServerDrafts(dispatch, getState, 'getNotes', data.data);
+        } catch (_e) {}
+      },
       providesTags: (result, _e, arg) => [
         { type: 'Notes', id: arg.layoutId },
         ...(result?.data?.map(note => ({
@@ -490,6 +528,12 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          hydrateServerDrafts(dispatch, getState, 'getPosedNotes', data.data);
+        } catch (_e) {}
+      },
       providesTags: (_result, _error, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
       ],
@@ -501,6 +545,12 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          hydrateServerDrafts(dispatch, getState, 'getUnposedNotes', data.data);
+        } catch (_e) {}
+      },
       providesTags: (_result, _error, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
       ],
@@ -807,6 +857,12 @@ export const notesApi = apiSlice.injectEndpoints({
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({
       query: ({ search }) =>
         `/notes/search?search=${encodeURIComponent(search)}`,
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          hydrateServerDrafts(dispatch, getState, 'searchNotes', data.data);
+        } catch (_e) {}
+      },
     }),
   }),
 });
