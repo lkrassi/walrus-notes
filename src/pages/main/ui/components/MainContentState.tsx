@@ -13,16 +13,6 @@ interface MainContentStateProps {
   onFolderClick?: (layoutId: string, title: string) => void;
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const cardHoverVariants = {
-  rest: { scale: 1, boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)' },
-  hover: { scale: 1.01, boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)' },
-};
-
 export const MainContentState = ({
   variant,
   isMobile = false,
@@ -116,8 +106,6 @@ export const MainContentState = ({
                   key={layout.id}
                   layout={layout}
                   onFolderClick={onFolderClick}
-                  itemVariants={itemVariants}
-                  cardHoverVariants={cardHoverVariants}
                 />
               ))}
             </div>

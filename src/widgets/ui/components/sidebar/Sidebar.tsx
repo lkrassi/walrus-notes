@@ -34,13 +34,8 @@ const SidebarComponent = (
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
-  const {
-    fileTree,
-    expandedItems,
-    isInitialLayoutsLoading,
-    toggleExpanded,
-    updateNoteInTree,
-  } = useFileTree();
+  const { fileTree, expandedItems, toggleExpanded, updateNoteInTree } =
+    useFileTree();
 
   const { openModalFromTrigger } = useModalActions();
 
@@ -124,7 +119,6 @@ const SidebarComponent = (
             'border-border',
             'border-b',
             'px-4',
-            'py-2',
             'flex',
             'flex-col',
             'gap-3'
@@ -174,10 +168,7 @@ const SidebarComponent = (
               )}
               loading='lazy'
             />
-            <div
-              className={cn('flex', 'items-baseline', 'gap-1', 'flex-1')}
-              style={{ minHeight: '48px', alignItems: 'center' }}
-            >
+            <div className={cn('flex', 'items-baseline', 'gap-1', 'flex-1')}>
               <h1
                 className={cn(
                   'text-text',
@@ -186,7 +177,6 @@ const SidebarComponent = (
                   'leading-none',
                   'font-bold'
                 )}
-                style={{ lineHeight: '48px', height: '48px' }}
               >
                 Walrus
               </h1>

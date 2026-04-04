@@ -4,24 +4,15 @@ import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react/modal';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
-import type { Variants } from 'framer-motion';
-import { motion } from 'framer-motion';
 import { Network, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface FolderCardProps {
   layout: Layout;
   onFolderClick?: (layoutId: string, title: string) => void;
-  itemVariants: Variants;
-  cardHoverVariants: Record<string, { scale: number; boxShadow: string }>;
 }
 
-export const FolderCard = ({
-  layout,
-  onFolderClick,
-  itemVariants,
-  cardHoverVariants,
-}: FolderCardProps) => {
+export const FolderCard = ({ layout, onFolderClick }: FolderCardProps) => {
   const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
   const { data: notesResponse } = useGetNotesQuery({
@@ -57,16 +48,8 @@ export const FolderCard = ({
   );
 
   return (
-    <motion.div
-      key={layout.id}
-      variants={itemVariants}
-      initial='hidden'
-      animate='visible'
-    >
-      <motion.div
-        variants={cardHoverVariants}
-        initial='rest'
-        whileHover='hover'
+    <div key={layout.id}>
+      <div
         onClick={() => onFolderClick?.(layout.id, layout.title || 'Untitled')}
         className={cn(
           'w-full',
@@ -85,15 +68,7 @@ export const FolderCard = ({
         )}
       >
         <div className={cn('flex', 'items-start', 'gap-3')}>
-          <motion.div
-            animate={{ rotate: [0, -5, 5, 0] }}
-            transition={{
-              repeat: Infinity,
-              duration: 4,
-              delay: Math.random() * 2,
-            }}
-            className={cn('mt-1', 'shrink-0')}
-          >
+          <div className={cn('mt-1', 'shrink-0')}>
             {layout.isMain ? (
               <Network className='text-primary dark:text-dark-primary h-6 w-6' />
             ) : (
@@ -102,7 +77,7 @@ export const FolderCard = ({
                 className='h-6 w-6'
               />
             )}
-          </motion.div>
+          </div>
 
           <div className={cn('min-w-0', 'flex-1')}>
             <h3
@@ -119,7 +94,7 @@ export const FolderCard = ({
             {!layout.isMain && (
               <p
                 className={cn(
-                  'text-secondary',
+                  'muted-text',
                   'dark:text-dark-secondary',
                   'text-xs',
                   'mt-1'
@@ -142,9 +117,7 @@ export const FolderCard = ({
               'duration-200'
             )}
           >
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
               onClick={e => {
                 e.stopPropagation();
                 handleEdit(e);
@@ -163,11 +136,9 @@ export const FolderCard = ({
               title={t('layout:editLayout') || 'Редактировать'}
             >
               <Pencil className='h-3.5 w-3.5' />
-            </motion.button>
+            </button>
 
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
               onClick={e => {
                 e.stopPropagation();
                 handleDelete(e);
@@ -186,10 +157,10 @@ export const FolderCard = ({
               title={t('layout:deleteLayout') || 'Удалить'}
             >
               <Trash2 className='h-3.5 w-3.5' />
-            </motion.button>
+            </button>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };

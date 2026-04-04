@@ -20,7 +20,6 @@ export const First = () => {
   const isMobile = useIsMobile();
 
   const featureKeys = [
-    'visualThinking',
     'fastOrganization',
     'smartConnections',
     'secureStorage',

@@ -22,9 +22,7 @@ const PrivateHeaderComponent = () => {
         'flex',
         'flex-col',
         'gap-3',
-        'border-b',
-        'max-md:py-5',
-        'md:px-5'
+        'border-b'
       )}
     >
       <div
@@ -58,10 +56,7 @@ const PrivateHeaderComponent = () => {
               )}
               loading='lazy'
             />
-            <div
-              className={cn('flex', 'items-baseline', 'gap-1')}
-              style={{ minHeight: '48px', alignItems: 'center' }}
-            >
+            <div className={cn('flex', 'items-baseline', 'gap-1')}>
               <h1
                 className={cn(
                   'text-text',
@@ -70,7 +65,6 @@ const PrivateHeaderComponent = () => {
                   'leading-none',
                   'font-bold'
                 )}
-                style={{ lineHeight: '48px', height: '48px' }}
               >
                 Walrus
               </h1>
@@ -81,7 +75,6 @@ const PrivateHeaderComponent = () => {
                   'leading-none',
                   'font-bold'
                 )}
-                style={{ lineHeight: '48px', height: '48px' }}
               >
                 Notes
               </h1>
