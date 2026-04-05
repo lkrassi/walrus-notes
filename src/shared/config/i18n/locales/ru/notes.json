@@ -43,6 +43,8 @@
   "deleting": "Удаление...",
   "delete": "Удалить",
   "editorHelp": "Подсказки по редактору",
+  "fullscreen": "На весь экран",
+  "exitFullscreen": "Выйти из полноэкранного режима",
   "editorHelp_heading": "Подсказки по редактору",
   "editorHelp_tab_before": "Используйте ",
   "editorHelp_tab_after": " для отступов.",

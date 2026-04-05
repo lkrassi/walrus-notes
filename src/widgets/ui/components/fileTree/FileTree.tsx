@@ -35,7 +35,7 @@ import { SearchInput } from './SearchInput';
 interface FileTreeProps {
   expandedItems: Set<string>;
   toggleExpanded: (itemId: string) => void;
-  onItemSelect?: (item: FileTreeItemType) => void;
+  onItemSelect?: (item: FileTreeItemType, mode?: 'preview' | 'pinned') => void;
   selectedItemId?: string;
   onOpenGraph?: (layoutId: string) => void;
 }
@@ -392,7 +392,7 @@ export const FileTree = memo(
           setFocusedLayoutId(item.parentId);
         }
 
-        onItemSelect?.(item);
+        onItemSelect?.(item, item.type === 'note' ? 'preview' : 'pinned');
       },
       [
         expandedItems,
@@ -401,6 +401,18 @@ export const FileTree = memo(
         onOpenGraph,
         toggleExpanded,
       ]
+    );
+
+    const handleItemDoubleClick = useCallback(
+      (item: FileTreeItemType) => {
+        if (item.type === 'note') {
+          if (item.parentId) {
+            setFocusedLayoutId(item.parentId);
+          }
+          onItemSelect?.(item, 'pinned');
+        }
+      },
+      [onItemSelect]
     );
 
     const renderTreeItem = useCallback(
@@ -425,6 +437,7 @@ export const FileTree = memo(
             hasSelection={!!selectedItemId || !!focusedLayoutId}
             hasChildren={!!item.children?.length}
             onItemClick={handleItemClick}
+            onItemDoubleClick={handleItemDoubleClick}
             onOpenGraph={onOpenGraph}
             renderChild={renderTreeItem}
             toggleExpanded={toggleExpanded}

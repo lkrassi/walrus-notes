@@ -2,6 +2,8 @@ export interface MultiColorStepEdgeData {
   isRelatedToSelected?: boolean;
   isSelected?: boolean;
   edgeColor?: string;
+  isBidirectional?: boolean;
+  reverseEdgeColor?: string;
 }
 export type { EdgeDeleteEventDetail } from '../../../model/types';
 

@@ -104,7 +104,7 @@ export const FirstPageSkeleton = () => {
 
           <section className='min-w-0 flex-1 max-lg:w-full'>
             <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-              {Array.from({ length: 5 }).map((_, index) => (
+              {Array.from({ length: 4 }).map((_, index) => (
                 <div
                   key={index}
                   className={cn(

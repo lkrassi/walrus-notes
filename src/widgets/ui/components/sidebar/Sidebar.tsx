@@ -17,10 +17,10 @@ import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';
 import { Plus, ShieldCheck, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type SidebarProps = {
-  onItemSelect?: (item: FileTreeItem) => void;
+  onItemSelect?: (item: FileTreeItem, mode?: 'preview' | 'pinned') => void;
   selectedItemId?: string;
 };
 
@@ -52,8 +52,11 @@ const SidebarComponent = (
     size: MODAL_SIZE_PRESETS.layoutCreate,
   });
 
-  const handleItemSelect = (item: FileTreeItem) => {
-    onItemSelect?.(item);
+  const handleItemSelect = (
+    item: FileTreeItem,
+    mode: 'preview' | 'pinned' = 'preview'
+  ) => {
+    onItemSelect?.(item, mode);
     setIsMobileOpen(false);
   };
 
@@ -61,20 +64,20 @@ const SidebarComponent = (
     const layout = fileTree.find(item => item.id === layoutId);
     const graphTitle = layout ? `${layout.title}` : 'Граф заметок';
 
-    onItemSelect?.({
-      id: `graph-${layoutId}`,
-      type: 'graph',
-      title: graphTitle,
-      layoutId,
-      isMain: layout?.isMain === true,
-    });
+    onItemSelect?.(
+      {
+        id: `graph-${layoutId}`,
+        type: 'graph',
+        title: graphTitle,
+        layoutId,
+        isMain: layout?.isMain === true,
+      },
+      'pinned'
+    );
 
     setIsMobileOpen(false);
   };
 
-  const location = useLocation();
-  const isSettingsPage = location.pathname === '/settings';
-  const isDashboardPage = location.pathname === '/dashboard';
   return (
     <>
       {isMobileOpen && (

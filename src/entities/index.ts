@@ -15,9 +15,9 @@ export type {
 export {
   CreateEdgeCommand,
   DeleteEdgeCommand,
+  generateColorFromId,
   MoveEdgeCommand,
   MoveNodeCommand,
-  generateColorFromId,
   useGraphHistory,
 } from './graph';
 export type { UseGraphHistoryReturn } from './graph';
@@ -77,8 +77,10 @@ export {
   closeTabsByItemId,
   createTabId,
   initializeTabs,
+  openPreviewTab,
   openTab,
   parseTabId,
+  pinTab,
   reorderTabs,
   saveTabsToStorage,
   switchTab,
@@ -90,8 +92,8 @@ export type {
   DashboardTab,
   FileTreeItem,
   FileTreeItemType,
-  TabType,
   TabsState,
+  TabType,
 } from './tab';
 export {
   clearUserProfile,
@@ -106,8 +108,8 @@ export {
   useLoginMutation,
   useRefreshMutation,
   useRegisterMutation,
+  userReducer,
   useSendConfirmCodeMutation,
   useUser,
-  userReducer,
 } from './user';
 export type { UserProfileState } from './user';

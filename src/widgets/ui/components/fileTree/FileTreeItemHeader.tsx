@@ -20,6 +20,7 @@ type FileTreeItemHeaderProps = {
   isAnyNoteDragging?: boolean;
   hasSelection?: boolean;
   onItemClick: (item: FileTreeItemType) => void;
+  onItemDoubleClick?: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
@@ -34,6 +35,7 @@ export const FileTreeItemHeader = ({
   isAnyNoteDragging,
   hasSelection: _hasSelection,
   onItemClick,
+  onItemDoubleClick,
   onOpenGraph,
   onDeleteNote,
   onDeleteLayout,
@@ -49,6 +51,7 @@ export const FileTreeItemHeader = ({
   const canEdit = item.access ? !!item.access.canEdit : true;
 
   const handleItemClick = () => onItemClick(item);
+  const handleItemDoubleClick = () => onItemDoubleClick?.(item);
 
   const renderHighlighted = (text: string, query?: string) => {
     if (!query) return text;
@@ -178,6 +181,7 @@ export const FileTreeItemHeader = ({
           paddingRight: '8px',
         }}
         onClick={handleItemClick}
+        onDoubleClick={handleItemDoubleClick}
       >
         {item.type === 'layout' && item.isMain !== true && (
           <button

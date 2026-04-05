@@ -43,6 +43,8 @@
   "deleting": "Deleting...",
   "delete": "Delete",
   "editorHelp": "Editor Hints",
+  "fullscreen": "Fullscreen",
+  "exitFullscreen": "Exit fullscreen",
   "editorHelp_heading": "Editor Hints",
   "editorHelp_tab_before": "Use ",
   "editorHelp_tab_after": " to indent.",

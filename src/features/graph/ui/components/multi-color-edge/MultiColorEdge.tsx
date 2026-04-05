@@ -10,6 +10,11 @@ import { useEdgeGeometry } from './useEdgeGeometry';
 import { useEdgePath } from './useEdgePath';
 import { useViewportTracking } from './useViewportTracking';
 
+const createMarkerId = (base: string, suffix: string) => {
+  const safeBase = base.replace(/[^a-zA-Z0-9_-]/g, '-');
+  return `edge-arrow-${safeBase}-${suffix}`;
+};
+
 export const MultiColorEdge = memo(function MultiColorEdge(
   props: EdgeProps<MultiColorStepEdgeData>
 ) {
@@ -30,6 +35,10 @@ export const MultiColorEdge = memo(function MultiColorEdge(
   const [deleteNoteLink] = useDeleteNoteLinkMutation();
 
   const strokeColor = data?.edgeColor || edgeColors.STROKE;
+  const isSelected = Boolean(data?.isSelected);
+  const isRelated = Boolean(data?.isRelatedToSelected);
+  const isBidirectional = Boolean(data?.isBidirectional);
+  const reverseColor = data?.reverseEdgeColor;
 
   const { getNodeFlowInfo, chooseClosestAnchor, findNodeUnderCursor } =
     useEdgeGeometry(source);
@@ -95,18 +104,75 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     return strokeColor;
   };
 
-  const markerEnd = undefined;
+  const dragStrokeColor = getDragStrokeColor();
+
+  const markerSize = isSelected ? 12 : isRelated ? 10 : 9;
+  const markerRefX = markerSize - 1;
+  const markerRefY = markerSize / 2;
+  const markerPath = `M 0 0 L ${markerSize} ${markerSize / 2} L 0 ${markerSize} z`;
+
+  const staticMarkerId = createMarkerId(id, 'static');
+  const dragMarkerId = createMarkerId(id, 'drag');
+  const bidirectionalGradientId = createMarkerId(id, 'bidirectional-gradient');
+  const markerEnd = `url(#${staticMarkerId})`;
+  const dragMarkerEnd = `url(#${dragMarkerId})`;
   const markerStart = undefined;
+
+  // Для двунаправленной связи используем градиент как цвет
+  const edgeColor = isBidirectional
+    ? `url(#${bidirectionalGradientId})`
+    : strokeColor;
 
   return (
     <>
+      <defs>
+        {isBidirectional && reverseColor && (
+          <linearGradient
+            id={bidirectionalGradientId}
+            x1='0%'
+            y1='0%'
+            x2='100%'
+            y2='0%'
+          >
+            <stop offset='0%' stopColor={strokeColor} stopOpacity='1' />
+            <stop offset='50%' stopColor={strokeColor} stopOpacity='1' />
+            <stop offset='50%' stopColor={reverseColor} stopOpacity='1' />
+            <stop offset='100%' stopColor={reverseColor} stopOpacity='1' />
+          </linearGradient>
+        )}
+        <marker
+          id={staticMarkerId}
+          viewBox={`0 0 ${markerSize} ${markerSize}`}
+          markerWidth={String(markerSize)}
+          markerHeight={String(markerSize)}
+          refX={String(markerRefX)}
+          refY={String(markerRefY)}
+          orient='auto'
+          markerUnits='userSpaceOnUse'
+        >
+          <path d={markerPath} fill={strokeColor} />
+        </marker>
+        <marker
+          id={dragMarkerId}
+          viewBox={`0 0 ${markerSize} ${markerSize}`}
+          markerWidth={String(markerSize)}
+          markerHeight={String(markerSize)}
+          refX={String(markerRefX)}
+          refY={String(markerRefY)}
+          orient='auto'
+          markerUnits='userSpaceOnUse'
+        >
+          <path d={markerPath} fill={dragStrokeColor} />
+        </marker>
+      </defs>
+
       {!isDragging && (
         <BaseEdge
           path={edgePath}
           markerStart={markerStart}
           markerEnd={markerEnd}
           style={{
-            stroke: strokeColor,
+            stroke: edgeColor,
             fill: 'none',
             transition:
               'stroke-width 180ms ease, opacity 180ms ease, stroke-dasharray 180ms ease',
@@ -119,9 +185,9 @@ export const MultiColorEdge = memo(function MultiColorEdge(
         <path
           d={getDragEdgePath()}
           markerStart={markerStart}
-          markerEnd={markerEnd}
+          markerEnd={dragMarkerEnd}
           fill='none'
-          stroke={getDragStrokeColor()}
+          stroke={dragStrokeColor}
           strokeWidth={EDGE_INTERACTION.DRAG_STROKE_WIDTH}
           strokeDasharray='5,5'
           className={cn('animate-pulse')}

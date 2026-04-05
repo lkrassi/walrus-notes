@@ -11,6 +11,7 @@ type RootStateLike = {
 };
 
 type DispatchLike = (action: unknown) => unknown;
+const EMPTY_LAYOUTS: Layout[] = [];
 
 export const useDraftSync = ({
   noteId,
@@ -37,7 +38,7 @@ export const useDraftSync = ({
   const selectLayouts = layoutApi.endpoints.getMyLayouts.select();
   const layouts = useSelector(
     (state: Parameters<typeof selectLayouts>[0]) =>
-      selectLayouts(state)?.data?.data ?? []
+      selectLayouts(state)?.data?.data ?? EMPTY_LAYOUTS
   ) as Layout[];
 
   return useDraftOrchestrator({

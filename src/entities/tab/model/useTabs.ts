@@ -4,7 +4,9 @@ import {
   clearTabs,
   closeLayoutTabs,
   closeTab,
+  openPreviewTab,
   openTab,
+  pinTab,
   switchTab,
   type DashboardTab,
 } from './slice';
@@ -26,6 +28,20 @@ export const useTabs = () => {
   const open = useCallback(
     (item: FileTreeItem) => {
       dispatch(openTab(item));
+    },
+    [dispatch]
+  );
+
+  const openPreview = useCallback(
+    (item: FileTreeItem) => {
+      dispatch(openPreviewTab(item));
+    },
+    [dispatch]
+  );
+
+  const pin = useCallback(
+    (tabId: string) => {
+      dispatch(pinTab(tabId));
     },
     [dispatch]
   );
@@ -59,6 +75,8 @@ export const useTabs = () => {
     openTabs,
     activeTabId,
     open,
+    openPreview,
+    pin,
     switchTo,
     close,
     closeByLayout,

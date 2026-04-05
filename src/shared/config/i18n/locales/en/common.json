@@ -22,7 +22,8 @@
     "close": "Close"
   },
   "menu": {
-    "open": "Open menu"
+    "open": "Open menu",
+    "close": "Close menu"
   },
   "password": {
     "hide": "Hide password",

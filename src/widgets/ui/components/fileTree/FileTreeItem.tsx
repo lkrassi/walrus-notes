@@ -15,6 +15,7 @@ type FileTreeItemProps = {
   hasSelection?: boolean;
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
+  onItemDoubleClick?: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
@@ -31,6 +32,7 @@ export const FileTreeItem = ({
   isAnyNoteDragging,
   hasSelection,
   onItemClick,
+  onItemDoubleClick,
   onOpenGraph,
   onDeleteNote,
   renderChild,
@@ -74,6 +76,7 @@ export const FileTreeItem = ({
         isAnyNoteDragging={isAnyNoteDragging}
         hasSelection={hasSelection}
         onItemClick={onItemClick}
+        onItemDoubleClick={onItemDoubleClick}
         onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}
         toggleExpanded={toggleExpanded}

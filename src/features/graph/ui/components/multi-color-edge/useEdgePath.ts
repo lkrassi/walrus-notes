@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getBezierPath, useReactFlow } from 'reactflow';
+import { getBezierPath, Position, useReactFlow } from 'reactflow';
 
 interface UseEdgePathProps {
   source: string;
@@ -50,6 +50,48 @@ export const useEdgePath = ({
 }: UseEdgePathProps) => {
   const { screenToFlowPosition, getNodes } = useReactFlow();
 
+  const resolvePositionFromAnchor = (
+    anchor: { x: number; y: number },
+    anchors: {
+      top: { x: number; y: number };
+      right: { x: number; y: number };
+      bottom: { x: number; y: number };
+      left: { x: number; y: number };
+    }
+  ): Position => {
+    const eps = 0.0001;
+
+    if (
+      Math.abs(anchor.x - anchors.left.x) < eps &&
+      Math.abs(anchor.y - anchors.left.y) < eps
+    ) {
+      return Position.Left;
+    }
+
+    if (
+      Math.abs(anchor.x - anchors.right.x) < eps &&
+      Math.abs(anchor.y - anchors.right.y) < eps
+    ) {
+      return Position.Right;
+    }
+
+    if (
+      Math.abs(anchor.x - anchors.top.x) < eps &&
+      Math.abs(anchor.y - anchors.top.y) < eps
+    ) {
+      return Position.Top;
+    }
+
+    if (
+      Math.abs(anchor.x - anchors.bottom.x) < eps &&
+      Math.abs(anchor.y - anchors.bottom.y) < eps
+    ) {
+      return Position.Bottom;
+    }
+
+    return Position.Right;
+  };
+
   const edgePath = useMemo(() => {
     const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
     const targetInfo = getNodeFlowInfo(target, targetX, targetY);
@@ -63,11 +105,22 @@ export const useEdgePath = ({
       sourceInfo.center
     );
 
+    const sourcePosition = resolvePositionFromAnchor(
+      sourceAnchor,
+      sourceInfo.anchors
+    );
+    const targetPosition = resolvePositionFromAnchor(
+      targetAnchor,
+      targetInfo.anchors
+    );
+
     return getBezierPath({
       sourceX: sourceAnchor.x,
       sourceY: sourceAnchor.y,
       targetX: targetAnchor.x,
       targetY: targetAnchor.y,
+      sourcePosition,
+      targetPosition,
     })[0];
   }, [
     source,

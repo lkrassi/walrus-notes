@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { NotePreview } from './NotePreview';
 
@@ -146,7 +146,7 @@ export const UnposedNotesList = ({
         >
           {orderedNotes.length}
         </span>
-        <ChevronLeft
+        <ChevronRight
           className={cn(
             'text-foreground transition-transform duration-300',
             isOpen ? '' : 'rotate-180'

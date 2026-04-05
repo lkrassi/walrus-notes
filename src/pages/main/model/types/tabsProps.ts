@@ -4,6 +4,7 @@ interface Tab {
   id: string;
   item: FileTreeItem;
   isActive: boolean;
+  isPinned: boolean;
 }
 
 export interface TabsProps {

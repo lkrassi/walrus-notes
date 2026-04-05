@@ -96,6 +96,26 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
           if (!edgeExists) {
             const sourceColor =
               layoutsMap.get(sourceNote.layoutId || '') || palette.edge;
+
+            // Проверяем наличие обратной связи
+            const targetNote = notesWithPositions.find(
+              (n: Note) => n.id === targetNoteId
+            );
+            const getReverseLinks = (note: Note | undefined): string[] => {
+              if (Array.isArray(note?.linkedWithOut)) {
+                return note!.linkedWithOut;
+              }
+              const legacyNote = note as unknown as { linkedWith?: string[] };
+              if (Array.isArray(legacyNote?.linkedWith)) {
+                return legacyNote.linkedWith;
+              }
+              return [];
+            };
+            const reverseLinkedOut = getReverseLinks(targetNote);
+            const hasReverseLink = reverseLinkedOut.includes(sourceNote.id);
+            const reverseColor = hasReverseLink
+              ? layoutsMap.get(targetNote?.layoutId || '') || palette.edge
+              : undefined;
             const newEdge: Edge = {
               id: `edge-${sourceNote.id}-${targetNoteId}`,
               source: sourceNote.id,
@@ -141,6 +161,8 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
               type: 'multiColor' as const,
               data: {
                 edgeColor: sourceColor,
+                isBidirectional: hasReverseLink,
+                reverseEdgeColor: reverseColor,
               },
             };
 

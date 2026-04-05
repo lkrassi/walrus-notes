@@ -82,7 +82,15 @@ export const SortableTab = ({
           <Folder className='mr-2 h-4 w-4' />
         )}
         <div className='min-w-0 flex-1 overflow-hidden'>
-          <div className='truncate text-sm font-medium'>{tab.item.title}</div>
+          <div
+            className={cn(
+              'truncate text-sm font-medium',
+              !tab.isPinned && 'italic opacity-85'
+            )}
+          >
+            {!tab.isPinned}
+            {tab.item.title}
+          </div>
         </div>
       </div>
 

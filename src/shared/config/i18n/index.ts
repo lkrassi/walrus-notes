@@ -4,20 +4,20 @@ import { initReactI18next } from 'react-i18next';
 
 import enAuth from './locales/en/auth.json';
 import enCommon from './locales/en/common.json';
-import enMain from './locales/en/main.json';
 import enFileTree from './locales/en/fileTree.json';
-import enLayout from './locales/en/layout.json';
 import enFirst from './locales/en/first.json';
+import enLayout from './locales/en/layout.json';
+import enMain from './locales/en/main.json';
 import enNotes from './locales/en/notes.json';
 import enProfile from './locales/en/profile.json';
 import enSettings from './locales/en/settings.json';
 import enShare from './locales/en/share.json';
 import ruAuth from './locales/ru/auth.json';
 import ruCommon from './locales/ru/common.json';
-import ruMain from './locales/ru/main.json';
 import ruFileTree from './locales/ru/fileTree.json';
-import ruLayout from './locales/ru/layout.json';
 import ruFirst from './locales/ru/first.json';
+import ruLayout from './locales/ru/layout.json';
+import ruMain from './locales/ru/main.json';
 import ruNotes from './locales/ru/notes.json';
 import ruProfile from './locales/ru/profile.json';
 import ruSettings from './locales/ru/settings.json';
@@ -65,7 +65,9 @@ i18n
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
     },
-    debug: import.meta.env.MODE === 'development',
+    debug:
+      import.meta.env.DEV &&
+      String(import.meta.env.VITE_I18N_DEBUG ?? '').toLowerCase() === 'true',
   });
 
 export { i18n };

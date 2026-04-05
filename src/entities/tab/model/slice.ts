@@ -11,6 +11,7 @@ export interface DashboardTab {
   id: string;
   item: FileTreeItem;
   isActive: boolean;
+  isPinned: boolean;
 }
 
 export interface TabsState {
@@ -30,15 +31,20 @@ const sanitizeNoteForTab = (note: Note): Note => {
 };
 
 const sanitizeTabForStorage = (tab: DashboardTab): DashboardTab => {
-  if (tab.item.type !== 'note' || !tab.item.note) {
-    return tab;
+  const tabWithDefaults: DashboardTab = {
+    ...tab,
+    isPinned: tab.isPinned ?? true,
+  };
+
+  if (tabWithDefaults.item.type !== 'note' || !tabWithDefaults.item.note) {
+    return tabWithDefaults;
   }
 
   return {
-    ...tab,
+    ...tabWithDefaults,
     item: {
-      ...tab.item,
-      note: sanitizeNoteForTab(tab.item.note),
+      ...tabWithDefaults.item,
+      note: sanitizeNoteForTab(tabWithDefaults.item.note),
     },
   };
 };
@@ -46,6 +52,21 @@ const sanitizeTabForStorage = (tab: DashboardTab): DashboardTab => {
 const sanitizeTabsState = (state: TabsState): TabsState => ({
   ...state,
   openTabs: state.openTabs.map(sanitizeTabForStorage),
+});
+
+const cloneNoteForState = (note: Note): Note => ({
+  ...note,
+  draft: note.draft,
+  payload: note.payload,
+});
+
+const cloneTabForState = (tab: DashboardTab): DashboardTab => ({
+  ...tab,
+  isPinned: tab.isPinned ?? true,
+  item: {
+    ...tab.item,
+    ...(tab.item.note ? { note: cloneNoteForState(tab.item.note) } : {}),
+  },
 });
 
 const loadTabsFromStorage = (): TabsState => {
@@ -95,7 +116,7 @@ const tabsSlice = createSlice({
   initialState,
   reducers: {
     initializeTabs: (state, action: PayloadAction<TabsState>) => {
-      state.openTabs = action.payload.openTabs;
+      state.openTabs = action.payload.openTabs.map(cloneTabForState);
       state.activeTabId = action.payload.activeTabId;
       updateActiveTab(state);
     },
@@ -104,14 +125,70 @@ const tabsSlice = createSlice({
       const item = action.payload;
       const tabId = createTabId(item.type, item.id);
       const existingTab = state.openTabs.find(tab => tab.id === tabId);
-      if (existingTab) return;
+      if (existingTab) {
+        existingTab.item = item;
+        existingTab.isPinned = true;
+        state.activeTabId = tabId;
+        updateActiveTab(state);
+        return;
+      }
 
       state.openTabs.push({
         id: tabId,
         item,
         isActive: false,
+        isPinned: true,
       });
 
+      state.activeTabId = tabId;
+
+      updateActiveTab(state);
+    },
+
+    openPreviewTab: (state, action: PayloadAction<FileTreeItem>) => {
+      const item = action.payload;
+      const tabId = createTabId(item.type, item.id);
+      const existingTab = state.openTabs.find(tab => tab.id === tabId);
+
+      if (existingTab) {
+        existingTab.item = item;
+        state.activeTabId = tabId;
+        updateActiveTab(state);
+        return;
+      }
+
+      const previewIndex = state.openTabs.findIndex(tab => !tab.isPinned);
+
+      if (previewIndex >= 0) {
+        state.openTabs[previewIndex] = {
+          id: tabId,
+          item,
+          isActive: false,
+          isPinned: false,
+        };
+      } else {
+        state.openTabs.push({
+          id: tabId,
+          item,
+          isActive: false,
+          isPinned: false,
+        });
+      }
+
+      state.activeTabId = tabId;
+      updateActiveTab(state);
+    },
+
+    pinTab: (state, action: PayloadAction<string>) => {
+      const tabId = action.payload;
+      const tab = state.openTabs.find(t => t.id === tabId);
+
+      if (!tab) {
+        return;
+      }
+
+      tab.isPinned = true;
+      state.activeTabId = tabId;
       updateActiveTab(state);
     },
 
@@ -173,7 +250,7 @@ const tabsSlice = createSlice({
     },
 
     reorderTabs: (state, action: PayloadAction<DashboardTab[]>) => {
-      state.openTabs = action.payload;
+      state.openTabs = action.payload.map(cloneTabForState);
       updateActiveTab(state);
     },
 
@@ -212,6 +289,8 @@ const tabsSlice = createSlice({
 export const {
   initializeTabs,
   openTab,
+  openPreviewTab,
+  pinTab,
   switchTab,
   closeTab,
   closeTabsByItemId,

@@ -6,7 +6,7 @@ import { useDashboardNavigation } from '../lib/hooks';
 
 export const useMainWorkspace = () => {
   const { userId } = useUser();
-  const { openTabs, activeTabId, open, switchTo } = useTabs();
+  const { openTabs, activeTabId, open, openPreview, pin, switchTo } = useTabs();
   const { drafts } = useDrafts();
 
   const { updateUrlForTab } = useDashboardNavigation({
@@ -40,7 +40,10 @@ export const useMainWorkspace = () => {
     action();
   };
 
-  const handleItemSelect = (item: FileTreeItem) => {
+  const handleItemSelect = (
+    item: FileTreeItem,
+    mode: 'preview' | 'pinned' = 'preview'
+  ) => {
     const tabId = `${item.type}::${item.id}`;
     const existingTab = openTabs.find(tab => tab.id === tabId);
     const activeTab = openTabs.find(tab => tab.isActive) ?? null;
@@ -65,9 +68,16 @@ export const useMainWorkspace = () => {
 
     if (!hasUnsaved) {
       if (existingTab) {
+        if (mode === 'pinned' && !existingTab.isPinned) {
+          pin(tabId);
+        }
         switchTo(tabId);
       } else {
-        open({ ...item, openedFromSidebar: true });
+        if (item.type === 'note' && mode === 'preview') {
+          openPreview({ ...item, openedFromSidebar: true });
+        } else {
+          open({ ...item, openedFromSidebar: true });
+        }
         switchTo(tabId);
       }
       return;
@@ -75,9 +85,16 @@ export const useMainWorkspace = () => {
 
     const deferredAction = () => {
       if (existingTab) {
+        if (mode === 'pinned' && !existingTab.isPinned) {
+          pin(tabId);
+        }
         switchTo(tabId);
       } else {
-        open({ ...item, openedFromSidebar: false });
+        if (item.type === 'note' && mode === 'preview') {
+          openPreview({ ...item, openedFromSidebar: false });
+        } else {
+          open({ ...item, openedFromSidebar: false });
+        }
         switchTo(tabId);
       }
     };
