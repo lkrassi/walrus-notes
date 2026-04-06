@@ -225,7 +225,7 @@ export const ShareModal = memo(function ShareModal({
               </label>
 
               <div className={cn('space-y-3')}>
-                <div className='flex gap-x-5'>
+                <div className='flex max-sm:flex-col max-sm:gap-y-3 sm:gap-x-5'>
                   <label
                     className={cn('flex cursor-pointer items-center gap-3')}
                   >

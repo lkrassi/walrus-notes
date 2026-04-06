@@ -78,7 +78,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
   }
 
   return (
-    <div className='flex gap-x-2'>
+    <div className='flex max-sm:flex-col max-sm:gap-y-2 sm:gap-x-2'>
       {rightMeta
         .filter(({ right }) => visibleRights.includes(right))
         .map(({ field, right, labelKey }) => {
@@ -134,7 +134,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
                   type='button'
                   onClick={() => onChange(field, !isActive, permission)}
                   disabled={disabled}
-                  className='block w-full text-left disabled:cursor-not-allowed disabled:opacity-60'
+                  className='block text-left disabled:cursor-not-allowed disabled:opacity-60 max-sm:w-full'
                 >
                   {block}
                 </button>
@@ -144,7 +144,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
 
           return (
             <Tooltip key={field} title={t(rightTooltipKey(right))}>
-              <div>{block}</div>
+              <div className='max-sm:w-full'>{block}</div>
             </Tooltip>
           );
         })}

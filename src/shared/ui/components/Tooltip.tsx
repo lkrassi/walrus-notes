@@ -3,6 +3,7 @@ import {
   useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type FC,
   type ReactNode,
@@ -24,30 +25,120 @@ export const Tooltip: FC<TooltipProps> = ({
 }) => {
   const tooltipId = useId();
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
+  const tooltipRef = useRef<HTMLSpanElement>(null);
 
   const portal = useMemo(() => {
     if (typeof document === 'undefined') return null;
     return document.body;
   }, []);
 
+  // Динамическое вычисление позиции с учётом границ экрана
+  const getPosition = (anchorRect: DOMRect) => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Зарезервируем место для тултипа (ширину и высоту узнаем после рендера)
+    // Но сначала используем дефолтные оценки, а после рендера скорректируем
+    // Для простоты — пересчитываем после монтирования тултипа
+    // Здесь вернём базовые координаты без учёта размеров, а окончательную позицию применим в useEffect
+    let left = anchorRect.left + anchorRect.width / 2;
+    let top = anchorRect.top;
+    let transform = 'translate(-50%, calc(-100% - 8px))';
+
+    switch (placement) {
+      case 'top':
+        left = anchorRect.left + anchorRect.width / 2;
+        top = anchorRect.top;
+        transform = 'translate(-50%, calc(-100% - 8px))';
+        break;
+      case 'bottom':
+        left = anchorRect.left + anchorRect.width / 2;
+        top = anchorRect.bottom;
+        transform = 'translate(-50%, 8px)';
+        break;
+      case 'left':
+        left = anchorRect.left;
+        top = anchorRect.top + anchorRect.height / 2;
+        transform = 'translate(calc(-100% - 8px), -50%)';
+        break;
+      case 'right':
+        left = anchorRect.right;
+        top = anchorRect.top + anchorRect.height / 2;
+        transform = 'translate(8px, -50%)';
+        break;
+    }
+
+    return { left, top, transform };
+  };
+
+  // Корректировка позиции, чтобы тултип не выходил за границы
+  const adjustPosition = (
+    left: number,
+    top: number,
+    transform: string,
+    tooltipRect: DOMRect
+  ) => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    let newLeft = left;
+    let newTop = top;
+    const newTransform = transform;
+
+    // Определяем текущее выравнивание по transform
+    const isHorizontal =
+      transform.includes('translateX') || transform.includes('(-50%');
+    const isTopBottom = transform.includes('Y') || transform.includes('(-100%');
+
+    // Проверка по горизонтали
+    const tooltipRight = newLeft + tooltipRect.width / 2;
+    const tooltipLeft = newLeft - tooltipRect.width / 2;
+    if (tooltipLeft < 0) {
+      // Сдвигаем вправо
+      newLeft = newLeft + Math.abs(tooltipLeft) + 8;
+    } else if (tooltipRight > viewportWidth) {
+      // Сдвигаем влево
+      newLeft = newLeft - (tooltipRight - viewportWidth) - 8;
+    }
+
+    // Проверка по вертикали
+    const tooltipBottom = newTop + (isTopBottom ? tooltipRect.height : 0);
+    const tooltipTop = newTop - (isTopBottom ? tooltipRect.height : 0);
+    if (tooltipTop < 0) {
+      newTop = newTop + Math.abs(tooltipTop) + 8;
+    } else if (tooltipBottom > viewportHeight) {
+      newTop = newTop - (tooltipBottom - viewportHeight) - 8;
+    }
+
+    return { left: newLeft, top: newTop, transform: newTransform };
+  };
+
+  // Состояние для финальных стилей
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+
+  // Эффект для измерения и корректировки позиции
   useEffect(() => {
-    if (!anchor) return;
+    if (!anchor || !tooltipRef.current) return;
 
-    const update = () => {
-      const el = document.getElementById(tooltipId);
-      if (!el) return;
-      const rect = el.parentElement?.getBoundingClientRect();
-      if (rect) setAnchor(rect);
-    };
+    const tooltipEl = tooltipRef.current;
+    const { left, top, transform } = getPosition(anchor);
+    const {
+      left: adjustedLeft,
+      top: adjustedTop,
+      transform: adjustedTransform,
+    } = adjustPosition(left, top, transform, tooltipEl.getBoundingClientRect());
 
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [anchor, tooltipId]);
+    setTooltipStyle({
+      position: 'fixed',
+      left: adjustedLeft,
+      top: adjustedTop,
+      transform: adjustedTransform,
+      whiteSpace: 'normal',
+      maxWidth: 'min(90vw, 280px)',
+      wordBreak: 'break-word',
+      textAlign: 'center',
+      zIndex: 200,
+    });
+  }, [anchor, placement]);
 
   if (disabled) {
     return <>{children}</>;
@@ -65,45 +156,23 @@ export const Tooltip: FC<TooltipProps> = ({
       onBlur={() => setAnchor(null)}
     >
       {children}
-      {portal && anchor
-        ? createPortal(
-            <span
-              id={tooltipId}
-              role='tooltip'
-              className={cn(
-                'pointer-events-none z-200 rounded-md px-2 py-1 text-xs whitespace-nowrap',
-                'bg-foreground text-background border-border border opacity-100'
-              )}
-              style={{
-                position: 'fixed',
-                left:
-                  placement === 'left'
-                    ? anchor.left
-                    : placement === 'right'
-                      ? anchor.right
-                      : anchor.left + anchor.width / 2,
-                top:
-                  placement === 'top'
-                    ? anchor.top
-                    : placement === 'bottom'
-                      ? anchor.bottom
-                      : anchor.top + anchor.height / 2,
-                transform:
-                  placement === 'top'
-                    ? 'translate(-50%, calc(-100% - 8px))'
-                    : placement === 'bottom'
-                      ? 'translate(-50%, 8px)'
-                      : placement === 'left'
-                        ? 'translate(calc(-100% - 8px), -50%)'
-                        : 'translate(8px, -50%)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {title}
-            </span>,
-            portal
-          )
-        : null}
+      {portal &&
+        anchor &&
+        createPortal(
+          <span
+            ref={tooltipRef}
+            id={tooltipId}
+            role='tooltip'
+            className={cn(
+              'pointer-events-none rounded-md px-2 py-1 text-xs',
+              'bg-foreground text-background border-border border'
+            )}
+            style={tooltipStyle}
+          >
+            {title}
+          </span>,
+          portal
+        )}
     </span>
   );
 };

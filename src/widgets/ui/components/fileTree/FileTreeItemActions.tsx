@@ -57,7 +57,6 @@ export const FileTreeItemActions: FC<Props> = ({
           e.stopPropagation();
           if (!mounted) {
             setMounted(true);
-            // next tick to allow mount -> animate
             requestAnimationFrame(() => setOpen(true));
             return;
           }
@@ -70,6 +69,7 @@ export const FileTreeItemActions: FC<Props> = ({
           }
         }}
         className={cn(
+          'flex h-5 w-5 items-center justify-center',
           isMobile
             ? 'text-gray-600 dark:text-white'
             : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
@@ -155,30 +155,6 @@ export const FileTreeItemActions: FC<Props> = ({
             <span>{titleEdit}</span>
           </button>
 
-          <button
-            role='menuitem'
-            onClick={e => {
-              e.stopPropagation();
-              setOpen(false);
-              onDelete(e);
-            }}
-            className={cn(
-              'w-full',
-              'text-left',
-              'px-3',
-              'py-1.5',
-              'flex',
-              'items-center',
-              'gap-2',
-              'text-xs',
-              'transition-colors',
-              'hover:bg-muted-foreground/10'
-            )}
-            title={titleDelete}
-          >
-            <span>{titleDelete}</span>
-          </button>
-
           {onOpenGraph && (
             <button
               role='menuitem'
@@ -204,6 +180,30 @@ export const FileTreeItemActions: FC<Props> = ({
               <span>{titleOpenGraph}</span>
             </button>
           )}
+
+          <button
+            role='menuitem'
+            onClick={e => {
+              e.stopPropagation();
+              setOpen(false);
+              onDelete(e);
+            }}
+            className={cn(
+              'w-full',
+              'text-left',
+              'px-3',
+              'py-1.5',
+              'flex',
+              'items-center',
+              'gap-2',
+              'text-xs',
+              'transition-colors',
+              'hover:bg-muted-foreground/10'
+            )}
+            title={titleDelete}
+          >
+            <span>{titleDelete}</span>
+          </button>
         </div>
       )}
     </div>
