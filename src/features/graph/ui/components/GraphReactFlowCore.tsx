@@ -2,7 +2,7 @@ import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { useIsMobile } from '@/shared/lib/react/hooks';
 import { memo, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
-import ReactFlow from 'reactflow';
+import ReactFlow, { MiniMap } from 'reactflow';
 import { GraphBackground } from './GraphBackground';
 import { GraphControls } from './GraphControls';
 import { MultiColorEdge } from './multi-color-edge';
@@ -96,21 +96,39 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       fitView
+      fitViewOptions={{ padding: 0.22, duration: 500 }}
       attributionPosition='bottom-left'
       nodesDraggable={canEdit && allowNodeDrag !== false}
       nodesConnectable={canEdit}
       elementsSelectable={canEdit}
       selectNodesOnDrag={false}
       minZoom={0.1}
-      maxZoom={2}
+      maxZoom={2.3}
       proOptions={{ hideAttribution: true }}
       onNodeDoubleClick={onNodeDoubleClick}
       zoomOnScroll={!disableZoomDuringDrag}
       zoomOnPinch={!disableZoomDuringDrag}
+      panOnScroll={false}
+      panOnDrag
+      elevateEdgesOnSelect
       connectionRadius={isMobile ? 30 : 20}
       key={layoutId}
     >
       <GraphBackground />
+      <MiniMap
+        pannable
+        zoomable
+        position='bottom-right'
+        style={{
+          width: 160,
+          height: 108,
+          borderRadius: 0,
+          border: '1px solid rgba(120,120,120,0.28)',
+          background: 'rgba(255,255,255,0.72)',
+          backdropFilter: 'blur(6px)',
+        }}
+        nodeStrokeWidth={3}
+      />
       <GraphControls graphHistory={graphHistory} />
       <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
       <ViewportTracker onViewportChange={onViewportChange} />

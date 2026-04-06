@@ -9,8 +9,7 @@ export const GraphContainer: FC<GraphContainerProps> = ({ children }) => {
   return (
     <div
       className={cn(
-        'bg-bg',
-        'dark:bg-dark-bg',
+        'bg-bg dark:bg-dark-bg',
         'relative',
         'flex',
         'h-full',

@@ -1,5 +1,5 @@
 import { useCreateNoteLinkMutation } from '@/entities';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
 
@@ -39,6 +39,7 @@ export const useGraphConnections = ({
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [tempEdge, setTempEdge] = useState<Connection | null>(null);
   const [tempEdges, setTempEdges] = useState<Edge[]>([]);
+  const hasHandledConnectRef = useRef(false);
 
   const allEdges = useMemo(() => {
     return [...edges, ...tempEdges];
@@ -111,6 +112,12 @@ export const useGraphConnections = ({
 
   const onConnectEnd = useCallback(
     async (event: unknown) => {
+      if (hasHandledConnectRef.current) {
+        hasHandledConnectRef.current = false;
+        setTempEdge(null);
+        return;
+      }
+
       if (!canEdit) {
         setTempEdge(null);
         return;
@@ -204,6 +211,11 @@ export const useGraphConnections = ({
           }
 
           if (isValidNoteId(targetNodeId) && tempEdge?.source) {
+            if (tempEdge.source === targetNodeId) {
+              setTempEdge(null);
+              return;
+            }
+
             const edgeExists = allEdges.some(
               edge =>
                 edge.source === tempEdge.source && edge.target === targetNodeId
@@ -277,8 +289,12 @@ export const useGraphConnections = ({
       const target = connection.target;
 
       if (source === target) {
+        hasHandledConnectRef.current = true;
+        setTempEdge(null);
         return;
       }
+
+      hasHandledConnectRef.current = true;
 
       const edgeExists = allEdges.some(
         edge => edge.source === source && edge.target === target
@@ -311,6 +327,8 @@ export const useGraphConnections = ({
         setTempEdges(prev =>
           prev.filter(edge => edge.id !== `temp-${source}-${target}`)
         );
+      } finally {
+        setTempEdge(null);
       }
     },
     [layoutId, canEdit, createNoteLink, allEdges, createEdge]

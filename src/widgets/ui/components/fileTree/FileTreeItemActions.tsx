@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/core';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Network, Pencil, Share2, Trash2 } from 'lucide-react';
 import {
   useEffect,
   useRef,
@@ -92,8 +92,6 @@ export const FileTreeItemActions: FC<Props> = ({
             'z-50',
             'mt-1',
             'w-40',
-            'rounded-none',
-            'shadow-md',
             'border-border',
             'dark:border-dark-border',
             'bg-bg',
@@ -105,7 +103,6 @@ export const FileTreeItemActions: FC<Props> = ({
               ? 'pointer-events-auto translate-y-0 opacity-100'
               : 'pointer-events-none translate-y-1 opacity-0'
           )}
-          style={{ transformOrigin: 'top right' }}
         >
           <button
             role='menuitem'
@@ -128,6 +125,7 @@ export const FileTreeItemActions: FC<Props> = ({
             )}
             title={titleShare}
           >
+            <Share2 className={cn('h-3.5', 'w-3.5')} />
             <span>{titleShare}</span>
           </button>
 
@@ -152,6 +150,7 @@ export const FileTreeItemActions: FC<Props> = ({
             )}
             title={titleEdit}
           >
+            <Pencil className={cn('h-3.5', 'w-3.5')} />
             <span>{titleEdit}</span>
           </button>
 
@@ -177,6 +176,7 @@ export const FileTreeItemActions: FC<Props> = ({
               )}
               title={titleOpenGraph}
             >
+              <Network className={cn('h-3.5', 'w-3.5')} />
               <span>{titleOpenGraph}</span>
             </button>
           )}
@@ -197,11 +197,13 @@ export const FileTreeItemActions: FC<Props> = ({
               'items-center',
               'gap-2',
               'text-xs',
+              'text-danger',
               'transition-colors',
               'hover:bg-muted-foreground/10'
             )}
             title={titleDelete}
           >
+            <Trash2 className={cn('h-3.5', 'w-3.5')} />
             <span>{titleDelete}</span>
           </button>
         </div>

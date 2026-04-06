@@ -12,8 +12,8 @@ export const GraphControls: FC<GraphControlsProps> = ({ graphHistory }) => {
 
   const handleFitView = () => {
     fitView({
-      duration: 800,
-      padding: 0.1,
+      duration: 420,
+      padding: 0.2,
     });
   };
 

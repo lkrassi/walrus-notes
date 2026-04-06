@@ -11,10 +11,12 @@ import {
   type CollisionDetection,
 } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
+import { Eye, Grip, Network, Trash2 } from 'lucide-react';
 import {
   memo,
   useCallback,
   useEffect,
+  useMemo,
   useState,
   type DragEvent,
   type FC,
@@ -83,6 +85,8 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
     layoutId,
     isRefreshing = false,
     screenToFlowPosition,
+    nodes: _nodes,
+    edges,
     nodesWithSelection,
     edgesWithSelection,
     onNodesChange,
@@ -145,6 +149,13 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
       note: Note;
     } | null>(null);
     const unposedOffset = isUnposedListOpen ? 'min(400px, 45vw)' : '0px';
+    const summary = useMemo(
+      () => ({
+        nodesCount: nodesWithSelection.length,
+        edgesCount: edges.length,
+      }),
+      [nodesWithSelection.length, edges.length]
+    );
 
     useEffect(() => {
       setIsUnposedListOpen(false);
@@ -294,6 +305,22 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
               disabled={!isMobile || allowNodeDrag === false || !canEdit}
             >
               <div className='relative h-full w-full'>
+                <div className='pointer-events-none absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2'>
+                  <div className='border-border/75 dark:border-dark-border/70 bg-bg/80 dark:bg-dark-bg/80 text-text dark:text-dark-text inline-flex items-center gap-1.5 border px-2 py-1 text-xs font-medium tracking-widest uppercase'>
+                    <Network className='h-3.5 w-3.5' />
+                    {t('notes:graphStatsNotes', { count: summary.nodesCount })}
+                  </div>
+                  <div className='border-border/75 dark:border-dark-border/70 bg-bg/80 dark:bg-dark-bg/80 text-text dark:text-dark-text inline-flex items-center gap-1.5 border px-2 py-1 text-xs font-medium tracking-widest uppercase'>
+                    <Grip className='h-3.5 w-3.5' />
+                    {t('notes:graphStatsLinks', { count: summary.edgesCount })}
+                  </div>
+                  {!canEdit && (
+                    <div className='border-border/75 dark:border-dark-border/70 bg-bg/80 dark:bg-dark-bg/80 text-muted-foreground dark:text-dark-muted-foreground inline-flex items-center gap-1.5 border px-2 py-1 text-[11px] font-medium tracking-widest uppercase'>
+                      {t('notes:graphViewOnly')}
+                    </div>
+                  )}
+                </div>
+
                 {isRefreshing && (
                   <div
                     className='pointer-events-none absolute top-3 right-3 z-20'
@@ -340,8 +367,15 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                     data-graph-node-context-menu='true'
                     role='menu'
                     className={cn(
-                      'border-border dark:border-dark-border bg-bg dark:bg-dark-bg text-text dark:text-dark-text',
-                      'fixed z-50 w-44 border shadow-md'
+                      'w-40',
+                      'border-border',
+                      'dark:border-dark-border',
+                      'bg-bg',
+                      'dark:bg-dark-bg',
+                      'text-text',
+                      'dark:text-dark-text',
+                      'border',
+                      'fixed z-50 w-48 border'
                     )}
                     style={{
                       left: contextMenu.x,
@@ -353,10 +387,11 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                       type='button'
                       onClick={handleOpenNoteFromMenu}
                       className={cn(
-                        'hover:bg-muted-foreground/10 flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors'
+                        'hover:bg-muted-foreground/10 flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors'
                       )}
                       title={t('notes:openNote')}
                     >
+                      <Eye className='h-3.5 w-3.5' />
                       <span>{t('notes:openNote')}</span>
                     </button>
 
@@ -366,10 +401,11 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                         type='button'
                         onClick={handleDeleteNoteFromMenu}
                         className={cn(
-                          'hover:bg-muted-foreground/10 flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors'
+                          'hover:bg-muted-foreground/10 text-danger flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors'
                         )}
                         title={t('notes:deleteNote')}
                       >
+                        <Trash2 className='h-3.5 w-3.5' />
                         <span>{t('notes:deleteNote')}</span>
                       </button>
                     )}

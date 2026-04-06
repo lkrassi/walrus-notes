@@ -21,9 +21,11 @@ export const NotePreview = memo(function NotePreview({
   const palette = graphTheme();
   const resolvedColor = layoutColor ?? palette.edge;
 
-  const size = isSmall ? 'w-full min-w-0 max-w-none' : 'max-w-40 min-w-40';
-  const padding = isSmall ? 'p-1.5 sm:p-2' : 'p-2';
-  const textSize = isSmall ? 'text-[10px] leading-tight sm:text-xs' : 'text-sm';
+  const size = isSmall ? 'w-full min-w-0 max-w-none' : 'max-w-52 min-w-48';
+  const padding = isSmall ? 'p-2 sm:p-2.5' : 'p-2.5';
+  const textSize = isSmall
+    ? 'text-[10px] leading-tight sm:text-xs'
+    : 'text-[13px] leading-5';
 
   return (
     <div
@@ -33,26 +35,31 @@ export const NotePreview = memo(function NotePreview({
         'active:cursor-grabbing',
         padding,
         'text-left',
-        'bg-bg',
-        'text-foreground',
+        'bg-bg/95 dark:bg-dark-bg/90',
+        'text-foreground dark:text-dark-text',
         'border',
-        'border-border',
-        'dark:border-dark-border',
-        'flex items-center justify-center',
-        isDrag ? 'ring-primary opacity-95 shadow-lg ring-2' : '',
+        'border-border/70 dark:border-dark-border/80',
+        'relative overflow-hidden',
+        'flex flex-col justify-center gap-1',
+        isDrag ? 'ring-primary/65 opacity-95 ring-2' : '',
         className
       )}
-      style={{
-        borderColor: resolvedColor,
-      }}
+      style={{ borderColor: resolvedColor }}
     >
+      <div
+        className='absolute inset-y-0 left-0 w-1.5 opacity-90'
+        style={{ background: resolvedColor }}
+        aria-hidden
+      />
+
       <h3
         className={cn(
           'line-clamp-2',
           'overflow-hidden',
-          'text-center',
-          'font-semibold',
+          'text-left',
+          'font-semibold tracking-[0.01em]',
           'text-ellipsis',
+          'pl-2',
           textSize
         )}
       >
