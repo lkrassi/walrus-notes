@@ -51,7 +51,6 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
               className={cn(
                 'w-full',
                 'min-w-0',
-                'rounded-lg',
                 'border',
                 'border-border',
                 'dark:border-dark-border',
@@ -91,10 +90,7 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
                 {emptyMessage}
               </div>
             }
-            className={cn(
-              'dark:bg-dark-bg rounded-lg bg-white shadow-lg',
-              'w-full'
-            )}
+            className={cn('dark:bg-dark-bg bg-white shadow-lg', 'w-full')}
           >
             {visibleItems.map(note => (
               <LinkedNoteItem

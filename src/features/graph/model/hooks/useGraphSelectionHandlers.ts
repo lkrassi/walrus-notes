@@ -133,8 +133,6 @@ export const useGraphSelectionHandlers = ({
   const handleNodeDoubleClick = useCallback(
     (event: MouseEvent, node?: Node | null) => {
       event.stopPropagation();
-      if (!node?.id) return;
-      node.data?.onNoteClick?.(node.id);
     },
     []
   );

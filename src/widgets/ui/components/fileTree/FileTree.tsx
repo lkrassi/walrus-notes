@@ -28,6 +28,7 @@ import {
 } from '@dnd-kit/modifiers';
 import { FileText } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { FileTreeItem } from './FileTreeItem';
 import { SearchInput } from './SearchInput';
@@ -77,6 +78,7 @@ export const FileTree = memo(
     onOpenGraph,
   }: FileTreeProps) => {
     const sensors = useDndSensors({ mouseDistance: 5 });
+    const { t } = useTranslation();
     const { showError } = useNotifications();
 
     const { moveNoteInTree } = useFileTree();
@@ -486,6 +488,24 @@ export const FileTree = memo(
       },
       []
     );
+    const renderSectionHeader = useCallback((title: string) => {
+      return (
+        <div className={cn('mb-1 flex items-center gap-2 px-1')}>
+          <span
+            className={cn(
+              'text-muted-foreground shrink-0 text-[10px] font-medium tracking-[0.16em] uppercase'
+            )}
+          >
+            {title}
+          </span>
+          <div
+            className={cn(
+              'border-border dark:border-dark-border flex-1 border-t'
+            )}
+          />
+        </div>
+      );
+    }, []);
 
     return (
       <DndContext
@@ -535,11 +555,18 @@ export const FileTree = memo(
               </div>
             ) : (
               <div>
-                {ownedTreeItems.map(item => renderTreeItem(item, 0))}
-                {ownedTreeItems.length > 0 && sharedTreeItems.length > 0 && (
-                  <div className='border-border dark:border-dark-border my-1 border-t' />
+                {ownedTreeItems.length > 0 && (
+                  <div className='mb-2'>
+                    {renderSectionHeader(t('fileTree:myFolders'))}
+                    {ownedTreeItems.map(item => renderTreeItem(item, 0))}
+                  </div>
                 )}
-                {sharedTreeItems.map(item => renderTreeItem(item, 0))}
+                {sharedTreeItems.length > 0 && (
+                  <div>
+                    {renderSectionHeader(t('fileTree:sharedFolders'))}
+                    {sharedTreeItems.map(item => renderTreeItem(item, 0))}
+                  </div>
+                )}
               </div>
             )}
           </div>

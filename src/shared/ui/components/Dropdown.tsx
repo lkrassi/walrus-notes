@@ -134,7 +134,7 @@ export const Dropdown = ({
         aria-haspopup='menu'
         aria-expanded={isOpen}
         className={cn(
-          'focus-visible:ring-ring rounded-md outline-none focus-visible:ring-2',
+          'focus-visible:ring-ring outline-none focus-visible:ring-2',
           'cursor-pointer',
           disabled ? 'cursor-not-allowed opacity-60' : ''
         )}
@@ -145,7 +145,7 @@ export const Dropdown = ({
       {isOpen && (
         <div
           className={cn(
-            'absolute z-50 rounded-lg shadow-lg backdrop-blur-sm',
+            'absolute z-50',
             'border-border bg-surface/95 border',
             getPositionClasses(),
             contentClassName

@@ -1,7 +1,7 @@
+import type { Note } from '@/entities/note';
 import type { DragEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
-import type { Note } from '@/entities/note';
 
 interface UseGraphEventHandlersProps {
   handleAddNoteToGraph: (
@@ -38,7 +38,6 @@ export const useGraphEventHandlers = ({
 
   const handleNodeDoubleClick = useCallback((event: MouseEvent, node: Node) => {
     event.stopPropagation();
-    node.data?.onNoteClick?.(node.id);
   }, []);
 
   return {

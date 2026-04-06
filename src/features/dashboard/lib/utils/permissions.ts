@@ -51,13 +51,9 @@ export const createFriendlyTargetName = (
 export const rightsList = (state: EditablePermissionState) => {
   const values: PermissionRight[] = [];
 
-  if (state.canWrite || state.canEdit) {
-    if (state.canWrite) values.push('write');
-    if (state.canEdit) values.push('edit');
-    return values;
-  }
-
   if (state.canRead) values.push('read');
+  if (state.canWrite) values.push('write');
+  if (state.canEdit) values.push('edit');
 
   return values;
 };

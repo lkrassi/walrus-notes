@@ -12,6 +12,8 @@
   "tryDifferentQuery": "Try a different search query",
   "folderEmpty": "Folder is empty",
   "loading": "Loading",
+  "myFolders": "My folders",
+  "sharedFolders": "Accessible folders",
   "clearSearch": "Clear search field",
   "searchPlaceholder": "Search..."
 }

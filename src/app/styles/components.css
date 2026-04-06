@@ -44,15 +44,6 @@
   @apply border-border dark:border-dark-border text-text dark:text-dark-text bg-bg dark:bg-dark-bg border px-3 py-2;
 }
 
-.form-card {
-  @apply border-border dark:border-dark-border rounded-2xl border p-8 shadow-sm backdrop-blur-sm;
-  background: var(--color-bg);
-}
-
-.dark .form-card {
-  background: var(--color-dark-bg);
-}
-
 .hero-title {
   @apply text-text dark:text-dark-text mb-8 text-center text-3xl font-light tracking-tight;
 }

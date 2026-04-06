@@ -79,7 +79,6 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     handleNodeClick,
     handleNodeMouseEnterWrapped,
     handleNodeMouseLeaveWrapped,
-    handleNoteOpen,
     isDraggingEdge,
     tempEdges,
     allEdges,
@@ -116,7 +115,6 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     selectedNodeId,
     hoveredNodeId,
     allEdges,
-    onNoteOpen: handleNoteOpen,
   });
 
   if (isInitialLoading) {

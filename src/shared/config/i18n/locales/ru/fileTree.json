@@ -12,6 +12,8 @@
   "tryDifferentQuery": "Попробуйте другой запрос",
   "folderEmpty": "Папка пуста",
   "loading": "Загрузка",
+  "myFolders": "Свои папки",
+  "sharedFolders": "Доступные папки",
   "showMore": "Показать ещё",
   "searchPlaceholder": "Поиск...",
   "clearSearch": "Очистить поле поиска"

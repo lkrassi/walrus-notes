@@ -2,7 +2,7 @@ import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { useIsMobile } from '@/shared/lib/react/hooks';
 import { motion } from 'framer-motion';
-import { memo, useRef, useState } from 'react';
+import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
 import { NotePreview } from './NotePreview';
@@ -10,7 +10,6 @@ import { NotePreview } from './NotePreview';
 interface NoteNodeProps {
   data: {
     note: Note;
-    onNoteClick?: (noteId: string) => void;
     selected?: boolean;
     layoutColor?: string;
     isRelatedToSelected?: boolean;
@@ -24,16 +23,6 @@ export const NoteNodeComponent = memo(
     const resolvedColor = data.layoutColor ?? palette.edge;
     const isMobile = useIsMobile();
 
-    const [isDragging, setIsDragging] = useState(false);
-    const btnRef = useRef<HTMLDivElement | null>(null);
-    const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
-    const pointerMoveHandlerRef = useRef<((e: PointerEvent) => void) | null>(
-      null
-    );
-    const pointerUpHandlerRef = useRef<((e: PointerEvent) => void) | null>(
-      null
-    );
-
     const handleSize = isMobile ? 20 : 15;
     const handleStyle = {
       background: resolvedColor,
@@ -44,60 +33,6 @@ export const NoteNodeComponent = memo(
 
     return (
       <motion.div
-        onPointerDown={e => {
-          if (e.button !== 0) {
-            return;
-          }
-
-          pointerStartRef.current = { x: e.clientX, y: e.clientY };
-
-          const moveHandler = (moveEvent: PointerEvent) => {
-            if (!pointerStartRef.current) return;
-            const dx = Math.abs(moveEvent.clientX - pointerStartRef.current.x);
-            const dy = Math.abs(moveEvent.clientY - pointerStartRef.current.y);
-            const threshold = 6;
-            if (dx > threshold || dy > threshold) {
-              setIsDragging(true);
-            }
-          };
-          const upHandler = (upEvent: PointerEvent) => {
-            if (pointerStartRef.current) {
-              const dx = Math.abs(upEvent.clientX - pointerStartRef.current.x);
-              const dy = Math.abs(upEvent.clientY - pointerStartRef.current.y);
-              const threshold = 6;
-              const moved = dx > threshold || dy > threshold;
-              if (!isDragging && !moved) {
-                data.onNoteClick?.(data.note.id);
-              }
-            }
-
-            pointerStartRef.current = null;
-            setIsDragging(false);
-            try {
-              try {
-                btnRef.current?.getBoundingClientRect();
-              } catch (_e) {}
-            } catch (_e) {}
-            if (pointerMoveHandlerRef.current)
-              window.removeEventListener(
-                'pointermove',
-                pointerMoveHandlerRef.current
-              );
-            if (pointerUpHandlerRef.current)
-              window.removeEventListener(
-                'pointerup',
-                pointerUpHandlerRef.current
-              );
-            pointerMoveHandlerRef.current = null;
-            pointerUpHandlerRef.current = null;
-          };
-
-          pointerMoveHandlerRef.current = moveHandler;
-          pointerUpHandlerRef.current = upHandler;
-          window.addEventListener('pointermove', moveHandler);
-          window.addEventListener('pointerup', upHandler);
-        }}
-        ref={btnRef}
         className={cn('relative')}
         animate={{
           opacity: data.isRelatedToSelected !== false ? 1 : 0.5,

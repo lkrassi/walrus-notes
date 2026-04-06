@@ -13,7 +13,6 @@ type AnyNode = Node & {
   data?: {
     selected?: boolean;
     isRelatedToSelected?: boolean;
-    onNoteClick?: (id: string) => void;
     [key: string]: unknown;
   };
   style?: { opacity?: number; [key: string]: unknown };
@@ -26,7 +25,6 @@ interface UseGraphSelectionProps {
   selectedNodeId: string | null;
   hoveredNodeId?: string | null;
   allEdges: Edge[];
-  onNoteOpen: (noteId: string) => void;
 }
 
 interface StyledEdge extends Omit<Edge, 'style' | 'data'> {
@@ -46,7 +44,6 @@ interface StyledNode extends Omit<Node, 'data' | 'style'> {
   data: {
     selected: boolean;
     isRelatedToSelected: boolean;
-    onNoteClick: (noteId: string) => void;
     [key: string]: unknown;
   };
   style?: {
@@ -63,7 +60,6 @@ export const useGraphSelection = ({
   selectedNodeId,
   hoveredNodeId,
   allEdges,
-  onNoteOpen,
 }: UseGraphSelectionProps): {
   edgesWithSelection: StyledEdge[];
   nodesWithSelection: StyledNode[];
@@ -87,7 +83,7 @@ export const useGraphSelection = ({
           multiSelectedIds.has(edge.target);
         const newStyle = {
           strokeWidth: isRelated ? 3 : 2,
-          strokeDasharray: isSelected ? '0' : '5,5',
+          strokeDasharray: isRelated ? '0' : '5,5',
           opacity: isRelated ? 1 : 0.3,
         };
         const newData = {
@@ -188,7 +184,6 @@ export const useGraphSelection = ({
           ...node.data,
           selected: isSelected,
           isRelatedToSelected: isRelated,
-          onNoteClick: onNoteOpen,
         };
         const newStyle = {
           ...node.style,
@@ -220,7 +215,6 @@ export const useGraphSelection = ({
           ...node.data,
           selected: false,
           isRelatedToSelected: true,
-          onNoteClick: onNoteOpen,
         };
         const newStyle = {
           ...node.style,
@@ -255,7 +249,6 @@ export const useGraphSelection = ({
         ...node.data,
         selected: isSelected,
         isRelatedToSelected: isRelated,
-        onNoteClick: onNoteOpen,
       };
       const newStyle = {
         ...node.style,
@@ -277,7 +270,7 @@ export const useGraphSelection = ({
         style: newStyle,
       } as StyledNode;
     });
-  }, [nodes, selectedNodeId, hoveredNodeId, allEdges, onNoteOpen]);
+  }, [nodes, selectedNodeId, hoveredNodeId, allEdges]);
 
   return {
     edgesWithSelection,

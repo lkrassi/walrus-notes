@@ -48,7 +48,7 @@ export const EditNoteModal: FC<Props> = ({ title = '', onSaved }) => {
           type='text'
           value={value}
           onChange={e => setValue(e.target.value)}
-          className={cn('form-input', 'rounded-md')}
+          className={cn('form-input')}
           disabled={isLoading}
         />
       </div>

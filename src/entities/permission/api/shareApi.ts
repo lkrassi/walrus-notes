@@ -153,7 +153,7 @@ export const shareApi = apiSlice.injectEndpoints({
         const baseUrl = window.location.origin;
         return {
           linkId: response.data.linkId,
-          fullUrl: `${baseUrl}/apply?linkId=${response.data.linkId}`,
+          fullUrl: `${baseUrl}/main?linkId=${response.data.linkId}`,
         };
       },
     }),
