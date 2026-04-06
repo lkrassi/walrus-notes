@@ -1,5 +1,5 @@
-import { useGetMyLayoutsQuery } from '@/entities';
 import type { Layout } from '@/entities/layout';
+import { useGetMyLayoutsQuery } from '@/entities/layout';
 import type { Note } from '@/entities/note';
 import {
   createContext,

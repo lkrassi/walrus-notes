@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://walrus-notes-1.onrender.com/sitemap.xml

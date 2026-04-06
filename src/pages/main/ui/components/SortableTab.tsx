@@ -49,7 +49,7 @@ export const SortableTab = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex max-w-50 min-w-30 cursor-grab items-center px-4 py-1 whitespace-nowrap select-none'
+        'relative flex max-w-50 min-w-30 cursor-grab items-stretch px-4 whitespace-nowrap select-none'
       )}
       title={tab.item.title}
       animate={{
@@ -85,7 +85,7 @@ export const SortableTab = ({
           <div
             className={cn(
               'truncate text-sm font-medium',
-              !tab.isPinned && 'italic opacity-85'
+              !tab.isPinned && 'italic'
             )}
           >
             {!tab.isPinned}
@@ -99,16 +99,18 @@ export const SortableTab = ({
           e.stopPropagation();
           onClose();
         }}
+        aria-label={`Close tab ${tab.item.title}`}
+        title={`Close tab ${tab.item.title}`}
         className={cn(
-          'relative z-10 ml-2',
+          'relative z-10 ml-1 inline-flex h-full w-8 items-center justify-center',
           isActive ? 'text-primary-foreground' : 'text-foreground'
         )}
       >
         <X
           className={cn(
             isActive
-              ? 'hover:bg-interactive-hover hover:text-primary-foreground'
-              : 'hover:bg-interactive-hover hover:text-foreground',
+              ? 'hover:bg-interactive-hover hover:text-text'
+              : 'hover:bg-primary/50 hover:text-foreground',
             'h-3 w-3'
           )}
         />

@@ -1,16 +1,15 @@
+import { draftsReducer } from '@/entities/draft';
+import { layoutApi } from '@/entities/layout';
+import { notesApi } from '@/entities/note';
+import { addNotification, notificationsReducer } from '@/entities/notification';
+import { permissionsReducer } from '@/entities/permission';
 import {
-  addNotification,
   closeLayoutTabs,
   closeTabsByItemId,
-  draftsReducer,
-  layoutApi,
-  notesApi,
-  notificationsReducer,
-  permissionsReducer,
   saveTabsToStorage,
   tabsReducer,
-  userReducer,
-} from '@/entities';
+} from '@/entities/tab';
+import { userReducer } from '@/entities/user';
 import { apiSlice } from '@/shared/api';
 import { i18n } from '@/shared/config/i18n';
 import {

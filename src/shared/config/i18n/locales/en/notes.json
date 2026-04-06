@@ -42,6 +42,7 @@
   "recordNotFoundDeleted": "The note was deleted",
   "deleting": "Deleting...",
   "delete": "Delete",
+  "openNote": "Open note",
   "editorHelp": "Editor Hints",
   "fullscreen": "Fullscreen",
   "exitFullscreen": "Exit fullscreen",

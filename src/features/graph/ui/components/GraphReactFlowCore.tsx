@@ -32,6 +32,7 @@ interface GraphReactFlowCoreProps {
   onNodeClick: ReactFlowProps['onNodeClick'];
   onNodeMouseEnter: ReactFlowProps['onNodeMouseEnter'];
   onNodeMouseLeave: ReactFlowProps['onNodeMouseLeave'];
+  onNodeContextMenu?: ReactFlowProps['onNodeContextMenu'];
   onPaneClick: (event: MouseEvent) => void;
   onNodeDoubleClick: (event: MouseEvent, node: Node) => void;
   disableZoomDuringDrag?: boolean;
@@ -61,6 +62,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
   onNodeClick,
   onNodeMouseEnter,
   onNodeMouseLeave,
+  onNodeContextMenu,
   onPaneClick,
   onNodeDoubleClick,
   disableZoomDuringDrag,
@@ -70,7 +72,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
   graphHistory,
   ViewportTracker,
   onViewportChange,
-  minimapOffset = '0px',
+  minimapOffset: _minimapOffset = '0px',
 }: GraphReactFlowCoreProps) {
   const isMobile = useIsMobile();
 
@@ -89,6 +91,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       onNodeClick={onNodeClick}
       onNodeMouseEnter={onNodeMouseEnter}
       onNodeMouseLeave={onNodeMouseLeave}
+      onNodeContextMenu={onNodeContextMenu}
       onPaneClick={onPaneClick}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}

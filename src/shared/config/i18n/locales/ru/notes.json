@@ -42,6 +42,7 @@
   "recordNotFoundDeleted": "Заметка была удалена",
   "deleting": "Удаление...",
   "delete": "Удалить",
+  "openNote": "Открыть заметку",
   "editorHelp": "Подсказки по редактору",
   "fullscreen": "На весь экран",
   "exitFullscreen": "Выйти из полноэкранного режима",

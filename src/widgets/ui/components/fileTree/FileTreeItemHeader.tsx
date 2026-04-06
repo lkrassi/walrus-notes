@@ -192,6 +192,16 @@ export const FileTreeItemHeader = ({
         {item.type === 'layout' && item.isMain !== true && (
           <button
             type='button'
+            aria-label={
+              isExpanded
+                ? t('fileTree:collapseFolder') || 'Collapse folder'
+                : t('fileTree:expandFolder') || 'Expand folder'
+            }
+            title={
+              isExpanded
+                ? t('fileTree:collapseFolder') || 'Collapse folder'
+                : t('fileTree:expandFolder') || 'Expand folder'
+            }
             onClick={e => {
               e.stopPropagation();
               toggleExpanded?.(item.id);

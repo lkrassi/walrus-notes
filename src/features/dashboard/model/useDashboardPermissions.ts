@@ -53,6 +53,41 @@ export function useDashboardPermissions() {
   const receivedRaw = data?.received || [];
 
   useEffect(() => {
+    if (!sharedRaw.length) {
+      setDrafts(prev => (Object.keys(prev).length ? {} : prev));
+      return;
+    }
+
+    setDrafts(prev => {
+      let changed = false;
+      const next = { ...prev };
+      const sharedById = new Map(
+        sharedRaw.map(permission => [permission.id, permission])
+      );
+
+      for (const permissionId of Object.keys(next)) {
+        const serverPermission = sharedById.get(permissionId);
+
+        if (!serverPermission) {
+          delete next[permissionId];
+          changed = true;
+          continue;
+        }
+
+        const draft = next[permissionId];
+        if (!draft) continue;
+
+        if (!isPermissionDraftDirty(serverPermission, draft)) {
+          delete next[permissionId];
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [sharedRaw]);
+
+  useEffect(() => {
     const layouts = layoutsResponse?.data || [];
     if (!layouts.length) return;
     setTargetTitlesById(prev => {
@@ -224,9 +259,7 @@ export function useDashboardPermissions() {
       }).unwrap();
       showSuccess('Доступ обновлён');
       setDrafts(prev => {
-        const copy = { ...prev };
-        delete copy[permissionId];
-        return copy;
+        return { ...prev, [permissionId]: draft };
       });
     } catch {
       showError('Ошибка обновления');

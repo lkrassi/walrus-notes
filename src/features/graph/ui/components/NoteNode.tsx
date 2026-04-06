@@ -25,7 +25,7 @@ export const NoteNodeComponent = memo(
     const isMobile = useIsMobile();
 
     const [isDragging, setIsDragging] = useState(false);
-    const btnRef = useRef<HTMLButtonElement | null>(null);
+    const btnRef = useRef<HTMLDivElement | null>(null);
     const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
     const pointerMoveHandlerRef = useRef<((e: PointerEvent) => void) | null>(
       null
@@ -37,7 +37,6 @@ export const NoteNodeComponent = memo(
     const handleSize = isMobile ? 20 : 15;
     const handleStyle = {
       background: resolvedColor,
-      border: `2px solid ${palette.surface}`,
       width: handleSize,
       height: handleSize,
       cursor: 'crosshair',
@@ -46,6 +45,10 @@ export const NoteNodeComponent = memo(
     return (
       <motion.div
         onPointerDown={e => {
+          if (e.button !== 0) {
+            return;
+          }
+
           pointerStartRef.current = { x: e.clientX, y: e.clientY };
 
           const moveHandler = (moveEvent: PointerEvent) => {
@@ -99,7 +102,7 @@ export const NoteNodeComponent = memo(
         animate={{
           opacity: data.isRelatedToSelected !== false ? 1 : 0.5,
         }}
-        transition={{ duration: 0.18 }}
+        transition={{ duration: 0 }}
       >
         <div className={cn('cursor-pointer', 'pointer-events-none')}>
           <NotePreview note={data.note} layoutColor={data.layoutColor} />

@@ -103,12 +103,8 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
         setNodeRef(node);
         containerRef.current = node;
       }}
-      className={`relative flex-1 ${
-        isDraggingEdge ? 'bg-surface-2 ring-ring cursor-no-drop ring-2' : ''
-      } transition-all duration-200`}
+      className={`bg-surface-2 ring-ring relative flex-1 cursor-no-drop ring-2`}
       onDrop={e => {
-        // If dnd-kit is active and handling the drag, or we just handled a dnd-kit drop,
-        // skip native drop handling to avoid double-adding notes.
         const now = Date.now();
         if (activeDragNote) return;
         if (lastDndDropAt && now - lastDndDropAt < 500) return;
@@ -130,7 +126,6 @@ export const GraphDropZone: FC<GraphDropZoneProps> = ({
           style={{
             position: 'fixed',
             pointerEvents: 'none',
-            border: '1px solid var(--primary)',
             background: 'color-mix(in oklch, var(--primary) 12%, transparent)',
             left: rectStyle.left,
             top: rectStyle.top,

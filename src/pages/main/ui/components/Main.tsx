@@ -1,16 +1,21 @@
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { WebSocketProvider } from '@/shared/lib/react/websocket';
-import { Sidebar } from '@/widgets';
 import { FileTreeProvider } from '@/widgets/hooks/FileTreeContext';
+import { PrivateHeader } from '@/widgets/ui/components/header/PrivateHeader';
+import { Sidebar } from '@/widgets/ui/components/sidebar';
 import { useCallback, useRef } from 'react';
 import { useMainWorkspace } from '../../model';
 import { MainContent } from './MainContent';
-import { PrivateHeader } from '@/widgets/ui';
 
 export const Main = () => {
-  const { userId, activeTabId, handleItemSelect, handleNoteOpenFromGraph } =
-    useMainWorkspace();
+  const {
+    userId,
+    activeTabId,
+    handleItemSelect,
+    handleNoteOpenFromGraph,
+    handleNoteOpenFromGraphPinned,
+  } = useMainWorkspace();
   const sidebarRef = useRef<{
     updateNoteInTree: (noteId: string, updates: Partial<Note>) => void;
   }>(null);
@@ -36,6 +41,7 @@ export const Main = () => {
           </FileTreeProvider>
           <MainContent
             onNoteOpen={handleNoteOpenFromGraph}
+            onNoteOpenPinned={handleNoteOpenFromGraphPinned}
             onNoteTreeUpdate={handleNoteTreeUpdate}
           />
         </div>

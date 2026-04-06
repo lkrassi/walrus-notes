@@ -1,8 +1,19 @@
-import { ShareModal } from '@/features/dashboard';
 import { ShareModalProviderContext } from '@/features/share';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
-import { useLocalization } from '@/widgets';
-import { useCallback, type MouseEvent, type ReactNode } from 'react';
+import { useLocalization } from '@/widgets/hooks/useLocalization';
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
+
+const ShareModal = lazy(() =>
+  import('@/features/dashboard/ui/ShareModal').then(m => ({
+    default: m.ShareModal,
+  }))
+);
 
 export const ShareModalProvider = ({ children }: { children: ReactNode }) => {
   const { openModalFromTrigger } = useModalActions();
@@ -11,7 +22,9 @@ export const ShareModalProvider = ({ children }: { children: ReactNode }) => {
   const openShareLinkModal = useCallback(
     (targetId: string) => {
       const handleOpen = openModalFromTrigger(
-        <ShareModal targetId={targetId} />,
+        <Suspense fallback={<div />}>
+          <ShareModal targetId={targetId} />
+        </Suspense>,
         {
           title: t('share:modal.permissions.head'),
           size: MODAL_SIZE_PRESETS.shareAccess,

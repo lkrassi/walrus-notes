@@ -9,11 +9,13 @@ import { Tabs } from './Tabs';
 
 interface MainContentProps {
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteOpenPinned?: (noteData: { noteId: string; note: Note }) => void;
   onNoteTreeUpdate?: (noteId: string, updates: Partial<Note>) => void;
 }
 
 export const MainContent = memo(function DashboardContent({
   onNoteOpen,
+  onNoteOpenPinned,
   onNoteTreeUpdate,
 }: MainContentProps) {
   const {
@@ -27,8 +29,10 @@ export const MainContent = memo(function DashboardContent({
     handleNoteUpdated,
     handleFolderClickFromGallery,
     handleNoteOpenFromGraph,
+    handleNoteOpenPinnedFromGraph,
   } = useMainContentState({
     onNoteOpen,
+    onNoteOpenPinned,
     onNoteTreeUpdate,
   });
 
@@ -59,6 +63,7 @@ export const MainContent = memo(function DashboardContent({
         <GraphTabContent
           activeTab={activeTab}
           onNoteOpen={handleNoteOpenFromGraph}
+          onNoteOpenPinned={handleNoteOpenPinnedFromGraph}
         />
       );
     }

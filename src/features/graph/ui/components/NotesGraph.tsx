@@ -5,6 +5,7 @@ import { NotesGraphContent } from './NotesGraphContent';
 interface NotesGraphProps {
   layoutId: string;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteOpenPinned?: (noteData: { noteId: string; note: Note }) => void;
   allowNodeDrag?: boolean;
   isMain?: boolean;
 }
@@ -12,6 +13,7 @@ interface NotesGraphProps {
 export const NotesGraph = ({
   layoutId,
   onNoteOpen,
+  onNoteOpenPinned,
   allowNodeDrag,
   isMain,
 }: NotesGraphProps) => {
@@ -21,6 +23,7 @@ export const NotesGraph = ({
         <NotesGraphContent
           layoutId={layoutId}
           onNoteOpen={onNoteOpen}
+          onNoteOpenPinned={onNoteOpenPinned}
           allowNodeDrag={allowNodeDrag}
           isMain={isMain}
         />

@@ -10,6 +10,7 @@ import { NotesGraphView } from './NotesGraphView';
 interface NotesGraphContentProps {
   layoutId: string;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteOpenPinned?: (noteData: { noteId: string; note: Note }) => void;
   allowNodeDrag?: boolean;
   isMain?: boolean;
 }
@@ -17,6 +18,7 @@ interface NotesGraphContentProps {
 export const NotesGraphContent = memo(function NotesGraphContent({
   layoutId,
   onNoteOpen,
+  onNoteOpenPinned,
   allowNodeDrag,
   isMain,
 }: NotesGraphContentProps) {
@@ -118,17 +120,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   });
 
   if (isInitialLoading) {
-    return (
-      <div
-        className={cn(
-          'h-full',
-          'border-border dark:border-dark-border',
-          'space-y-3 rounded-xl border p-4'
-        )}
-      >
-        {/* Skeletons removed as they are not needed in graph view */}
-      </div>
-    );
+    return <div className={cn('h-full', 'space-y-3 p-4')}></div>;
   }
 
   return (
@@ -161,6 +153,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
       isMain={isMain}
       graphHistory={graphHistory}
       canEdit={canWrite}
+      onNoteOpenPinned={onNoteOpenPinned}
     />
   );
 });

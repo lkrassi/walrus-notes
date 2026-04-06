@@ -1,5 +1,7 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
 import type { Note } from '@/entities/note';
+import { cn } from '@/shared/lib/core';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { useDndSensors, useIsMobile } from '@/shared/lib/react/hooks';
 import {
   DndContext,
@@ -17,7 +19,9 @@ import {
   type DragEvent,
   type FC,
   type MouseEvent,
+  type MouseEvent as ReactMouseEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 import 'reactflow/dist/style.css';
 import {
@@ -27,6 +31,7 @@ import {
 } from '../../lib/hooks';
 import { CoordinateOverlay } from './CoordinateOverlay';
 import { GraphContainer } from './GraphContainer';
+import { GraphDeleteNoteForm } from './GraphDeleteNoteForm';
 import { GraphDropZone } from './GraphDropZone';
 import { GraphReactFlowCore } from './GraphReactFlowCore';
 import { NoteDragOverlay } from './NoteDragOverlay';
@@ -70,6 +75,7 @@ interface NotesGraphViewProps {
   isMain?: boolean;
   graphHistory?: UseGraphHistoryReturn;
   canEdit?: boolean;
+  onNoteOpenPinned?: (noteData: { noteId: string; note: Note }) => void;
 }
 
 export const NotesGraphView: FC<NotesGraphViewProps> = memo(
@@ -100,7 +106,10 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
     isMain,
     graphHistory,
     canEdit = true,
+    onNoteOpenPinned,
   }: NotesGraphViewProps) {
+    const { t } = useTranslation();
+    const { openModalFromTrigger } = useModalActions();
     const isMobile = useIsMobile();
 
     const { centerCoords, setCenterCoords, ViewportTracker } =
@@ -130,11 +139,44 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
 
     const [lastDndDropAt, setLastDndDropAt] = useState<number | null>(null);
     const [isUnposedListOpen, setIsUnposedListOpen] = useState(false);
+    const [contextMenu, setContextMenu] = useState<{
+      x: number;
+      y: number;
+      note: Note;
+    } | null>(null);
     const unposedOffset = isUnposedListOpen ? 'min(400px, 45vw)' : '0px';
 
     useEffect(() => {
       setIsUnposedListOpen(false);
     }, [layoutId]);
+
+    useEffect(() => {
+      if (!contextMenu) {
+        return;
+      }
+
+      const onDocPointerDown = (event: globalThis.MouseEvent) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest('[data-graph-node-context-menu="true"]')) {
+          return;
+        }
+        setContextMenu(null);
+      };
+
+      const onEsc = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          setContextMenu(null);
+        }
+      };
+
+      document.addEventListener('mousedown', onDocPointerDown);
+      document.addEventListener('keydown', onEsc);
+
+      return () => {
+        document.removeEventListener('mousedown', onDocPointerDown);
+        document.removeEventListener('keydown', onEsc);
+      };
+    }, [contextMenu]);
 
     const collisionDetection = useCallback<CollisionDetection>(args => {
       const pointerCollisions = pointerWithin(args);
@@ -166,6 +208,60 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
 
       return pointerCollisions;
     }, []);
+
+    const handleNodeContextMenu = useCallback(
+      (event: MouseEvent, node: Node) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const note = (node.data as { note?: Note } | undefined)?.note;
+        if (!note) {
+          setContextMenu(null);
+          return;
+        }
+
+        setContextMenu({
+          x: event.clientX,
+          y: event.clientY,
+          note,
+        });
+      },
+      []
+    );
+
+    const handleOpenNoteFromMenu = useCallback(() => {
+      if (!contextMenu) return;
+      const noteData = { noteId: contextMenu.note.id, note: contextMenu.note };
+      onNoteOpenPinned?.(noteData);
+      setContextMenu(null);
+    }, [contextMenu, onNoteOpenPinned]);
+
+    const handleDeleteNoteFromMenu = useCallback(
+      (event: ReactMouseEvent<HTMLButtonElement>) => {
+        if (!contextMenu) return;
+
+        const note = contextMenu.note;
+        openModalFromTrigger(
+          <GraphDeleteNoteForm noteId={note.id} noteTitle={note.title} />,
+          {
+            title: t('notes:deleteNote'),
+            size: MODAL_SIZE_PRESETS.noteDelete,
+            showCloseButton: true,
+          }
+        )(event);
+
+        setContextMenu(null);
+      },
+      [contextMenu, openModalFromTrigger, t]
+    );
+
+    const handlePaneClick = useCallback(
+      (event: MouseEvent) => {
+        setContextMenu(null);
+        onPaneClick(event);
+      },
+      [onPaneClick]
+    );
 
     return (
       <GraphContainer>
@@ -200,10 +296,10 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
               <div className='relative h-full w-full'>
                 {isRefreshing && (
                   <div
-                    className='pointer-events-none absolute top-2 left-1/2 z-20 -translate-x-1/2'
+                    className='pointer-events-none absolute top-3 right-3 z-20'
                     aria-hidden
                   >
-                    <div className='bg-bg/90 dark:bg-dark-bg/90 border-border dark:border-dark-border h-1.5 w-40 animate-pulse rounded-full border' />
+                    <div className='bg-secondary/70 dark:bg-dark-secondary/70 h-2 w-2 animate-pulse rounded-full' />
                   </div>
                 )}
                 <GraphReactFlowCore
@@ -221,7 +317,8 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                   onNodeClick={onNodeClick}
                   onNodeMouseEnter={onNodeMouseEnter}
                   onNodeMouseLeave={onNodeMouseLeave}
-                  onPaneClick={onPaneClick}
+                  onNodeContextMenu={handleNodeContextMenu}
+                  onPaneClick={handlePaneClick}
                   onNodeDoubleClick={onNodeDoubleClick}
                   disableZoomDuringDrag={disableZoomDuringDrag}
                   allowNodeDrag={allowNodeDrag}
@@ -237,6 +334,47 @@ export const NotesGraphView: FC<NotesGraphViewProps> = memo(
                   centerCoords={centerCoords}
                   rightOffset={unposedOffset}
                 />
+
+                {contextMenu && (
+                  <div
+                    data-graph-node-context-menu='true'
+                    role='menu'
+                    className={cn(
+                      'border-border dark:border-dark-border bg-bg dark:bg-dark-bg text-text dark:text-dark-text',
+                      'fixed z-50 w-44 border shadow-md'
+                    )}
+                    style={{
+                      left: contextMenu.x,
+                      top: contextMenu.y,
+                    }}
+                  >
+                    <button
+                      role='menuitem'
+                      type='button'
+                      onClick={handleOpenNoteFromMenu}
+                      className={cn(
+                        'hover:bg-muted-foreground/10 flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors'
+                      )}
+                      title={t('notes:openNote')}
+                    >
+                      <span>{t('notes:openNote')}</span>
+                    </button>
+
+                    {canEdit && (
+                      <button
+                        role='menuitem'
+                        type='button'
+                        onClick={handleDeleteNoteFromMenu}
+                        className={cn(
+                          'hover:bg-muted-foreground/10 flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs transition-colors'
+                        )}
+                        title={t('notes:deleteNote')}
+                      >
+                        <span>{t('notes:deleteNote')}</span>
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </TouchEnabledGraph>
           </GraphDropZone>

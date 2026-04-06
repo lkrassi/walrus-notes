@@ -12,11 +12,13 @@ const NotesGraph = lazy(() =>
 interface GraphTabContentProps {
   activeTab: DashboardTab;
   onNoteOpen: (noteData: { noteId: string; note: Note }) => void;
+  onNoteOpenPinned: (noteData: { noteId: string; note: Note }) => void;
 }
 
 export const GraphTabContent = ({
   activeTab,
   onNoteOpen,
+  onNoteOpenPinned,
 }: GraphTabContentProps) => {
   const layoutId =
     activeTab.item.type === 'layout'
@@ -40,6 +42,7 @@ export const GraphTabContent = ({
       <NotesGraph
         layoutId={layoutId}
         onNoteOpen={onNoteOpen}
+        onNoteOpenPinned={onNoteOpenPinned}
         allowNodeDrag={activeTab.item.isMain !== true}
         isMain={activeTab.item.isMain === true}
       />

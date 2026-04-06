@@ -1,4 +1,3 @@
-import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import {
   CircleQuestionMark,
@@ -11,7 +10,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import { memo, type FC, type MouseEvent } from 'react';
+import { memo, type FC, type MouseEvent, type ReactNode } from 'react';
 
 interface NoteActionsProps {
   noteId?: string;
@@ -32,6 +31,76 @@ interface NoteActionsProps {
   canWrite?: boolean;
   t: (key: string) => string;
 }
+
+interface ActionIconButtonProps {
+  title: string;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  icon: ReactNode;
+  disabled?: boolean;
+  tone?: 'default' | 'success' | 'danger';
+}
+
+const ActionIconButton: FC<ActionIconButtonProps> = ({
+  title,
+  onClick,
+  icon,
+  disabled = false,
+  tone = 'default',
+}) => {
+  const toneClass =
+    tone === 'success'
+      ? cn(
+          'text-green-800',
+          'hover:bg-green-500/15',
+          'dark:text-green-300',
+          'dark:hover:bg-green-400/20'
+        )
+      : tone === 'danger'
+        ? cn(
+            'text-red-800',
+            'hover:bg-red-500/15',
+            'dark:text-red-300',
+            'dark:hover:bg-red-400/20'
+          )
+        : cn(
+            'text-text',
+            'hover:bg-secondary/15',
+            'hover:text-text',
+            'dark:text-dark-secondary',
+            'dark:hover:bg-dark-secondary/20',
+            'dark:hover:text-dark-text'
+          );
+
+  return (
+    <button
+      type='button'
+      aria-label={title}
+      title={title}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        'inline-flex',
+        'h-8',
+        'w-8',
+        'items-center',
+        'justify-center',
+        'border',
+        'border-border',
+        'bg-bg',
+        'focus-visible:ring-ring',
+        'focus-visible:ring-2',
+        'focus-visible:outline-none',
+        'dark:border-dark-border/70',
+        'dark:bg-dark-bg/95',
+        'disabled:cursor-not-allowed',
+        'disabled:opacity-50',
+        toneClass
+      )}
+    >
+      {icon}
+    </button>
+  );
+};
 
 export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   isEditing,
@@ -59,37 +128,31 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
       className={cn(
         'flex',
         'items-center',
-        'gap-2',
-        'gap-y-4',
-        'flex-wrap',
-        'justify-center',
-        'sm:justify-end',
-        'sm:flex-nowrap'
+        'gap-1.5',
+        'overflow-x-auto',
+        'pb-0.5',
+        'pr-0.5',
+        'sm:overflow-visible'
       )}
     >
       {canWrite &&
         (isEditing ? (
-          <>
-            <Button
+          <div className={cn('flex', 'items-center', 'gap-1')}>
+            <ActionIconButton
+              title={t('notes:save')}
+              tone='success'
+              disabled={isBusy}
               onClick={() => {
                 if (isBusy) return;
                 onSave();
               }}
-              className={cn(
-                'flex',
-                'h-8',
-                'w-14',
-                'items-center',
-                'justify-center',
-                isBusy && 'cursor-not-allowed opacity-70'
-              )}
-              title={t('notes:save')}
-              variant='submit'
-            >
-              <Save className={cn('h-4', 'w-4')} />
-            </Button>
+              icon={<Save className={cn('h-4', 'w-4')} />}
+            />
 
-            <Button
+            <ActionIconButton
+              title={t('notes:cancel')}
+              tone='danger'
+              disabled={isBusy}
               onClick={e => {
                 if (isBusy) return;
                 if (hasUnsaved) {
@@ -99,128 +162,75 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
 
                 onCancel();
               }}
-              className={cn(
-                'flex',
-                'h-8',
-                'w-14',
-                'items-center',
-                'justify-center',
-                isBusy && 'cursor-not-allowed opacity-70'
-              )}
-              title={t('notes:cancel')}
-              variant='escape'
-            >
-              <X className={cn('h-4', 'w-4')} />
-            </Button>
+              icon={<X className={cn('h-4', 'w-4')} />}
+            />
 
-            <Button
+            <ActionIconButton
+              title={t('notes:uploadImage') || 'Upload image'}
+              disabled={isBusy}
               onClick={e => {
                 if (isBusy) return;
                 onOpenImageUpload(e as MouseEvent<HTMLElement>);
               }}
-              className={cn(
-                'flex',
-                'h-8',
-                'w-14',
-                'items-center',
-                'justify-center',
-                isBusy && 'cursor-not-allowed opacity-70'
-              )}
-              title={t('notes:uploadImage') || 'Upload image'}
-              variant='default'
-            >
-              <ImageIcon className={cn('h-4', 'w-4')} />
-            </Button>
-          </>
+              icon={<ImageIcon className={cn('h-4', 'w-4')} />}
+            />
+          </div>
         ) : (
-          <Button
-            onClick={onEdit}
-            className={cn(
-              'flex',
-              'h-8',
-              'w-14',
-              'items-center',
-              'justify-center'
-            )}
+          <ActionIconButton
             title={t('notes:edit')}
-            variant='default'
-          >
-            <Edit3 className={cn('h-4', 'w-4')} />
-          </Button>
+            onClick={() => {
+              onEdit();
+            }}
+            icon={<Edit3 className={cn('h-4', 'w-4')} />}
+          />
         ))}
 
       {canWrite && onExport && (
-        <>
-          <Button
-            onClick={onExport}
-            className={cn(
-              'flex',
-              'h-8',
-              'w-14',
-              'items-center',
-              'justify-center'
-            )}
-            title={t('notes:export')}
-            variant='default'
-          >
-            <Upload className={cn('h-4', 'w-4')} />
-          </Button>
-
-          <Button
-            onClick={onOpenImport}
-            className={cn(
-              'flex',
-              'h-8',
-              'w-14',
-              'items-center',
-              'justify-center'
-            )}
-            title={t('notes:import')}
-            variant='default'
-          >
-            <Download className={cn('h-4', 'w-4')} />
-          </Button>
-        </>
+        <ActionIconButton
+          title={t('notes:export')}
+          onClick={() => {
+            onExport();
+          }}
+          icon={<Upload className={cn('h-4', 'w-4')} />}
+        />
       )}
 
       {canWrite && (
-        <Button
-          onClick={onOpenHelp}
-          className={cn(
-            'flex',
-            'h-8',
-            'w-14',
-            'items-center',
-            'justify-center'
-          )}
+        <ActionIconButton
+          title={t('notes:import')}
+          onClick={e => {
+            onOpenImport(e as MouseEvent<HTMLElement>);
+          }}
+          icon={<Download className={cn('h-4', 'w-4')} />}
+        />
+      )}
+
+      {canWrite && (
+        <ActionIconButton
           title={t('notes:editorHelp')}
-          variant='default'
-        >
-          <CircleQuestionMark className={cn('h-4', 'w-4')} />
-        </Button>
+          onClick={e => {
+            onOpenHelp(e as MouseEvent<HTMLElement>);
+          }}
+          icon={<CircleQuestionMark className={cn('h-4', 'w-4')} />}
+        />
       )}
 
       {onToggleFullscreen && (
-        <Button
-          onClick={onToggleFullscreen}
-          className={cn(
-            'flex',
-            'h-8',
-            'w-14',
-            'items-center',
-            'justify-center'
-          )}
+        <ActionIconButton
           title={
             isFullscreen ? t('notes:exitFullscreen') : t('notes:fullscreen')
           }
-          variant='default'
-        >
-          {isFullscreen ? (
-            <Minimize2 className={cn('h-4', 'w-4')} />
-          ) : (
-            <Maximize2 className={cn('h-4', 'w-4')} />
-          )}
-        </Button>
+          onClick={() => {
+            onToggleFullscreen();
+          }}
+          icon={
+            isFullscreen ? (
+              <Minimize2 className={cn('h-4', 'w-4')} />
+            ) : (
+              <Maximize2 className={cn('h-4', 'w-4')} />
+            )
+          }
+        />
       )}
     </div>
   );

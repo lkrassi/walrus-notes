@@ -1,4 +1,5 @@
-import type { DashboardTab } from '@/entities';
+import type { Note } from '@/entities/note';
+import type { DashboardTab, FileTreeItem } from '@/entities/tab';
 import {
   closeTab,
   createTabId,
@@ -6,9 +7,7 @@ import {
   reorderTabs,
   switchTab,
   updateTabNote,
-} from '@/entities';
-import type { Note } from '@/entities/note';
-import type { FileTreeItem } from '@/entities/tab';
+} from '@/entities/tab';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -16,6 +15,7 @@ interface UseMainTabsFlowProps {
   openTabs: DashboardTab[];
   activeTab?: DashboardTab;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
+  onNoteOpenPinned?: (noteData: { noteId: string; note: Note }) => void;
   onNoteTreeUpdate?: (noteId: string, updates: Partial<Note>) => void;
 }
 
@@ -23,6 +23,7 @@ export const useMainTabsFlow = ({
   openTabs,
   activeTab,
   onNoteOpen,
+  onNoteOpenPinned,
   onNoteTreeUpdate,
 }: UseMainTabsFlowProps) => {
   const dispatch = useDispatch();
@@ -156,6 +157,36 @@ export const useMainTabsFlow = ({
     [handleItemSelect, handleTabClick, onNoteOpen, openTabs]
   );
 
+  const handleNoteOpenPinnedFromGraph = useCallback(
+    (noteData: { noteId: string; note: Note }) => {
+      if (onNoteOpenPinned) {
+        onNoteOpenPinned(noteData);
+        return;
+      }
+
+      const existingTab = openTabs.find(
+        tab => tab.item.type === 'note' && tab.item.id === noteData.noteId
+      );
+
+      if (existingTab) {
+        handleTabClick(existingTab.id);
+        return;
+      }
+
+      const noteItem: FileTreeItem = {
+        id: noteData.noteId,
+        type: 'note',
+        title: noteData.note.title,
+        parentId: noteData.note.layoutId,
+        note: noteData.note,
+        isMain: false,
+      };
+
+      handleItemSelect(noteItem);
+    },
+    [handleItemSelect, handleTabClick, onNoteOpenPinned, openTabs]
+  );
+
   return {
     handleTabClick,
     handleTabClose,
@@ -163,5 +194,6 @@ export const useMainTabsFlow = ({
     handleNoteUpdated,
     handleFolderClickFromGallery,
     handleNoteOpenFromGraph,
+    handleNoteOpenPinnedFromGraph,
   };
 };

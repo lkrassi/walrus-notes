@@ -169,7 +169,8 @@ const SidebarComponent = (
                 'max-h-12',
                 'max-w-12'
               )}
-              loading='lazy'
+              loading='eager'
+              decoding='async'
             />
             <div className={cn('flex', 'items-baseline', 'gap-1', 'flex-1')}>
               <h1

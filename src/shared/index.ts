@@ -4,7 +4,6 @@ export {
   ModalContentContext,
   ModalContext,
   ThemeContext,
-  WebSocketProvider,
   useDebounced,
   useDeviceType,
   useDndSensors,
@@ -19,19 +18,13 @@ export {
   useModalContext,
   useResizableBase,
   useResizableSplit,
-  useWSContext,
-  useWebSocket,
-  useYjsCollaboration,
 } from './lib/react';
 export type {
-  AwarenessUser,
-  CursorInfo,
   DeviceType,
   ModalContextType,
   ModalOptions,
   ModalState,
   TriggerPosition,
-  UserInfo,
 } from './lib/react';
 export { normalizeMessage } from './model';
 export type {

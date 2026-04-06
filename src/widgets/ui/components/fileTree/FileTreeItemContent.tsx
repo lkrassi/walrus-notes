@@ -177,7 +177,18 @@ export const FileTreeItemContent = ({
       state={contentState}
       className={cn('overflow-hidden')}
       emptyContent={
-        <div className={cn('mt-1', 'ml-8', 'pb-1', 'text-xs', 'muted-text')}>
+        <div
+          className={cn(
+            'mt-1',
+            'ml-8',
+            'pb-1',
+            'text-xs',
+            'muted-text',
+            'min-h-5',
+            'flex',
+            'items-center'
+          )}
+        >
           {canWrite && (
             <button
               type='button'
@@ -186,8 +197,9 @@ export const FileTreeItemContent = ({
                 handleCreateNote(e);
               }}
               className={cn(
-                'text-primary dark:text-dark-primary font-medium',
-                'transition-opacity duration-150 hover:opacity-80'
+                'text-foreground dark:text-dark-text font-semibold',
+                'transition-colors duration-150',
+                'hover:text-primary dark:hover:text-dark-primary'
               )}
               title={createNoteLabel}
             >
@@ -217,7 +229,9 @@ export const FileTreeItemContent = ({
           </div>
         ))}
         {isInitialLoadDone && canWrite && (
-          <div className={cn('mt-1', 'ml-8')}>
+          <div
+            className={cn('mt-1', 'ml-8', 'min-h-5', 'flex', 'items-center')}
+          >
             <button
               type='button'
               onClick={e => {
@@ -226,12 +240,13 @@ export const FileTreeItemContent = ({
               }}
               className={cn(
                 'text-xs',
-                'font-medium',
-                'text-primary',
-                'dark:text-primary-dark',
-                'hover:opacity-80',
-                'transition-opacity',
-                'duration-150'
+                'font-semibold',
+                'text-foreground',
+                'dark:text-dark-text',
+                'transition-colors',
+                'duration-150',
+                'hover:text-primary',
+                'dark:hover:text-dark-primary'
               )}
               title={createNoteLabel}
             >
@@ -240,18 +255,28 @@ export const FileTreeItemContent = ({
           </div>
         )}
         {hasMore && isInitialLoadDone && (
-          <div className={cn('mt-1', 'ml-6', 'pb-1')}>
+          <div
+            className={cn(
+              'mt-1',
+              'ml-6',
+              'pb-1',
+              'min-h-5',
+              'flex',
+              'items-center'
+            )}
+          >
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
               className={cn(
                 'text-xs',
-                'font-medium',
-                'text-primary',
-                'dark:text-primary-dark',
-                'hover:opacity-80',
-                'transition-opacity',
+                'font-semibold',
+                'text-foreground',
+                'dark:text-dark-text',
+                'transition-colors',
                 'duration-150',
+                'hover:text-primary',
+                'dark:hover:text-dark-primary',
                 isLoading && 'cursor-not-allowed opacity-50'
               )}
             >

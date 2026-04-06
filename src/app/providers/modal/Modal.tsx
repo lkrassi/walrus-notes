@@ -114,7 +114,7 @@ export const Modal: FC<ModalProps> = ({ modalState, onClose }) => {
         >
           <motion.div
             key='modal-overlay'
-            className='bg-foreground/20 fixed inset-0 backdrop-blur-sm'
+            className='bg-foreground/20 dark:bg-foreground/30 fixed inset-0 backdrop-blur-sm'
             onPointerDown={handleBackdropPointerDown}
             aria-hidden='true'
             initial={{ opacity: 0 }}

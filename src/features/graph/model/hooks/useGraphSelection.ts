@@ -193,7 +193,6 @@ export const useGraphSelection = ({
         const newStyle = {
           ...node.style,
           opacity: isRelated ? 1 : 0.5,
-          transition: 'opacity 0.3s ease-in-out',
         };
 
         const n = node as AnyNode;
@@ -261,7 +260,6 @@ export const useGraphSelection = ({
       const newStyle = {
         ...node.style,
         opacity: isRelated ? 1 : 0.5,
-        transition: 'opacity 0.3s ease-in-out',
       };
 
       const n = node as AnyNode;

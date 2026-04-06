@@ -1,6 +1,6 @@
 import { useUser } from '@/entities';
 import { cn } from '@/shared/lib/core';
-import { type FC } from 'react';
+import { useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,11 @@ export const ProfileButton: FC = () => {
   };
 
   const displayName = profile?.username || 'User';
-  const firstLetter = displayName.charAt(0).toUpperCase();
+
+  const normalizedAvatarUrl = useMemo(() => {
+    if (!profile?.imgUrl) return '';
+    return `https://${profile.imgUrl}`;
+  }, [profile?.imgUrl]);
 
   return (
     <button
@@ -36,27 +40,16 @@ export const ProfileButton: FC = () => {
       title={t('profile:title')}
     >
       <div className={cn('overflow-hidden', 'rounded-full', 'h-10', 'w-10')}>
-        {profile?.imgUrl ? (
+        {normalizedAvatarUrl ? (
           <img
-            src={`https://${profile.imgUrl}`}
+            src={normalizedAvatarUrl}
             alt='Аватар'
             className={cn('h-full', 'w-full', 'object-cover')}
+            loading='lazy'
+            decoding='async'
           />
         ) : (
-          <div
-            className={cn(
-              'flex',
-              'h-full',
-              'w-full',
-              'items-center',
-              'justify-center',
-              'bg-surface-2',
-              'font-semibold',
-              'text-muted-foreground'
-            )}
-          >
-            {firstLetter}
-          </div>
+          <div className={cn('bg-muted h-full w-full')} />
         )}
       </div>
       <span

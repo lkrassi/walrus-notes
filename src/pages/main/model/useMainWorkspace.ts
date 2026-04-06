@@ -118,10 +118,27 @@ export const useMainWorkspace = () => {
     handleItemSelect(noteItem);
   };
 
+  const handleNoteOpenFromGraphPinned = (noteData: {
+    noteId: string;
+    note: Note;
+  }) => {
+    const noteItem: FileTreeItem = {
+      id: noteData.noteId,
+      type: 'note',
+      title: noteData.note.title,
+      parentId: noteData.note.layoutId,
+      note: noteData.note,
+      isMain: false,
+    };
+
+    handleItemSelect(noteItem, 'pinned');
+  };
+
   return {
     userId,
     activeTabId,
     handleItemSelect,
     handleNoteOpenFromGraph,
+    handleNoteOpenFromGraphPinned,
   };
 };

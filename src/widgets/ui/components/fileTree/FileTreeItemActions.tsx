@@ -70,9 +70,6 @@ export const FileTreeItemActions: FC<Props> = ({
           }
         }}
         className={cn(
-          'transition-opacity',
-          'duration-150',
-          'opacity-100',
           isMobile
             ? 'text-gray-600 dark:text-white'
             : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
@@ -97,14 +94,14 @@ export const FileTreeItemActions: FC<Props> = ({
             'w-40',
             'rounded-none',
             'shadow-md',
-            'backdrop-blur-sm',
             'border-border',
-            'bg-surface/95',
+            'dark:border-dark-border',
+            'bg-bg',
+            'dark:bg-dark-bg',
+            'text-text',
+            'dark:text-dark-text',
             'border',
             'py-0.5',
-            'transition-all',
-            'duration-150',
-            'ease-out',
             open
               ? 'pointer-events-auto translate-y-0 opacity-100'
               : 'pointer-events-none translate-y-1 opacity-0'
@@ -127,8 +124,8 @@ export const FileTreeItemActions: FC<Props> = ({
               'items-center',
               'gap-2',
               'text-xs',
-              'hover:bg-muted-foreground/10',
-              'dark:hover:bg-dark-bg'
+              'transition-colors',
+              'hover:bg-muted-foreground/10'
             )}
             title={titleShare}
           >
@@ -151,8 +148,8 @@ export const FileTreeItemActions: FC<Props> = ({
               'items-center',
               'gap-2',
               'text-xs',
-              'hover:bg-muted-foreground/10',
-              'dark:hover:bg-dark-bg'
+              'transition-colors',
+              'hover:bg-muted-foreground/10'
             )}
             title={titleEdit}
           >
@@ -175,8 +172,8 @@ export const FileTreeItemActions: FC<Props> = ({
               'items-center',
               'gap-2',
               'text-xs',
-              'hover:bg-muted-foreground/10',
-              'dark:hover:bg-dark-bg'
+              'transition-colors',
+              'hover:bg-muted-foreground/10'
             )}
             title={titleDelete}
           >
@@ -200,8 +197,8 @@ export const FileTreeItemActions: FC<Props> = ({
                 'items-center',
                 'gap-2',
                 'text-xs',
-                'hover:bg-muted-foreground/10',
-                'dark:hover:bg-dark-bg'
+                'transition-colors',
+                'hover:bg-muted-foreground/10'
               )}
               title={titleOpenGraph}
             >

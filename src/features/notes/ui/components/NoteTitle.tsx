@@ -13,33 +13,41 @@ export const NoteTitle: FC<NoteTitleProps> = memo(function NoteTitle({
   canWrite = true,
 }) {
   return (
-    <div className={cn('min-w-0', 'flex-1')}>
+    <div className={cn('min-w-0', 'flex', 'items-center', 'flex-1')}>
       <div
         className={cn(
           'flex',
           'items-center',
           'justify-between',
-          'gap-3',
-          'flex-wrap'
+          'w-full',
+          'min-w-0'
         )}
       >
         <button
           onClick={onEdit}
           disabled={!canWrite}
           className={cn(
-            'note-title',
+            'text-text',
+            'dark:text-dark-text',
+            'truncate',
+            'text-base',
+            'font-semibold',
+            'leading-tight',
             'flex',
             'items-center',
             'gap-2',
             'text-left',
-            'hover:opacity-75',
-            'transition-opacity',
+            'transition-colors',
+            'hover:text-primary',
+            'dark:hover:text-dark-primary',
             canWrite ? 'cursor-pointer' : 'cursor-default',
             'bg-transparent',
             'border-none',
             'padding-0',
-            'min-w-0'
+            'min-w-0',
+            'max-w-full'
           )}
+          title={title}
         >
           {title}
         </button>

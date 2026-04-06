@@ -1,4 +1,4 @@
-import { useGetMyLayoutsQuery } from '@/entities';
+import { useGetMyLayoutsQuery } from '@/entities/layout';
 import { cn, getLoadingState } from '@/shared/lib/core';
 import { Button, Skeleton } from '@/shared/ui';
 import { FileText } from 'lucide-react';

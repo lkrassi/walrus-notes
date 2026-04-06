@@ -23,7 +23,6 @@ export const Settings: FC = () => {
   const {
     profile,
     renderAvatar,
-    renderSectionIcon,
     getSectionActionType,
     openImageViewer,
     openChangePhotoModal,
@@ -155,18 +154,8 @@ export const Settings: FC = () => {
                     'max-sm:p-4'
                   )}
                 >
-                  <div className='flex w-full items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-3'>
+                  <div className='flex w-full items-center justify-between gap-x-2 max-sm:flex-col max-sm:items-start max-sm:gap-3'>
                     <div className='flex flex-1 items-center gap-4 max-sm:w-full'>
-                      <div
-                        className={cn(
-                          'p-2 max-sm:rounded-md max-sm:p-1.5',
-                          'bg-primary/10 dark:bg-dark-primary/10',
-                          'text-primary dark:text-dark-primary'
-                        )}
-                      >
-                        {renderSectionIcon(section.icon)}
-                      </div>
-
                       <div className='flex-1 max-sm:flex-initial'>
                         <h3 className='section-title'>
                           {t(`settings:sections.${section.id}.title`)}

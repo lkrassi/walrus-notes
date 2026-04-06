@@ -1,5 +1,5 @@
-import { useGetMyLayoutsQuery } from '@/entities';
 import type { Layout } from '@/entities/layout';
+import { useGetMyLayoutsQuery } from '@/entities/layout';
 import { cn } from '@/shared/lib/core';
 import { useModalContentContext } from '@/shared/lib/react/modal';
 import { Button, RenderWithState, Skeleton } from '@/shared/ui';

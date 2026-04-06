@@ -1,5 +1,5 @@
-import { useGetNotesQuery } from '@/entities';
 import type { Layout } from '@/entities/layout';
+import { useGetNotesQuery } from '@/entities/note';
 import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react/modal';

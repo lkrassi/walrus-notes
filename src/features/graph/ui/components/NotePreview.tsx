@@ -31,7 +31,6 @@ export const NotePreview = memo(function NotePreview({
         size,
         'cursor-grab',
         'active:cursor-grabbing',
-        'rounded-xl',
         padding,
         'text-left',
         'bg-bg',

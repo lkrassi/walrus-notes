@@ -2,49 +2,35 @@ import { useDeleteNoteMutation } from '@/entities/note';
 import { closeTabsByItemId } from '@/entities/tab';
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import {
-  useLocalization,
-  useModalContentContext,
-  useNotifications,
-} from '@/widgets/hooks';
-import { useAppDispatch } from '@/widgets/hooks/redux';
+import { useModalContentContext } from '@/shared/lib/react/modal';
 import { Trash2 } from 'lucide-react';
 import { type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
-interface DeleteNoteFormProps {
+interface GraphDeleteNoteFormProps {
   noteId: string;
   noteTitle: string;
-  onNoteDeleted?: (noteId: string) => void;
 }
 
-export const DeleteNoteForm = ({
+export const GraphDeleteNoteForm = ({
   noteId,
   noteTitle,
-  onNoteDeleted,
-}: DeleteNoteFormProps) => {
-  const { t } = useLocalization();
-  const { showError } = useNotifications();
+}: GraphDeleteNoteFormProps) => {
+  const { t } = useTranslation();
   const { closeModal } = useModalContentContext();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [deleteNote, { isLoading }] = useDeleteNoteMutation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      await deleteNote({
-        noteId,
-      }).unwrap();
-
+      await deleteNote({ noteId }).unwrap();
       dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
-
-      if (onNoteDeleted) {
-        onNoteDeleted(noteId);
-      }
-
       closeModal();
-    } catch {
-      showError(t('notes:noteDeletionError'));
+    } catch (_e) {
+      // Keep modal opened so user can retry or cancel.
     }
   };
 
@@ -53,21 +39,11 @@ export const DeleteNoteForm = ({
       <div className={cn('text-center')}>
         <div
           className={cn(
-            'mx-auto',
-            'mb-4',
-            'flex',
-            'h-12',
-            'w-12',
-            'items-center',
-            'justify-center',
-            'rounded-full',
-            'bg-red-100',
-            'dark:bg-red-900/20'
+            'mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full',
+            'bg-red-100 dark:bg-red-900/20'
           )}
         >
-          <Trash2
-            className={cn('h-6', 'w-6', 'text-red-600', 'dark:text-red-400')}
-          />
+          <Trash2 className={cn('h-6 w-6 text-red-600 dark:text-red-400')} />
         </div>
 
         <p className={cn('muted-text mt-2 text-sm')}>
@@ -79,7 +55,7 @@ export const DeleteNoteForm = ({
         </p>
       </div>
 
-      <div className={cn('flex', 'justify-center', 'gap-3')}>
+      <div className={cn('flex justify-center gap-3')}>
         <Button
           type='button'
           onClick={closeModal}
@@ -89,6 +65,7 @@ export const DeleteNoteForm = ({
         >
           {t('notes:cancel')}
         </Button>
+
         <Button
           type='submit'
           variant='escape'

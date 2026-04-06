@@ -5,7 +5,7 @@ import { ShareModalProvider } from '@/app/providers/share/ShareModalProvider';
 import { appRoutesConfig } from '@/app/router/config';
 import { store } from '@/app/store';
 import { cn } from '@/shared/lib/core';
-import { SidebarProvider } from '@/widgets/hooks';
+import { SidebarProvider } from '@/widgets/hooks/sidebarContext';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 

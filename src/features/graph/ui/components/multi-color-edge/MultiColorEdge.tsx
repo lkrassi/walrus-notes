@@ -3,7 +3,6 @@ import { cn } from '@/shared/lib/core';
 import { memo, useCallback } from 'react';
 import { BaseEdge, useReactFlow, type EdgeProps } from 'reactflow';
 import { EDGE_INTERACTION, getEdgeColors } from './constants';
-import { EdgeDeleteButton } from './EdgeDeleteButton';
 import type { MultiColorStepEdgeData } from './types';
 import { useEdgeDrag } from './useEdgeDrag';
 import { useEdgeGeometry } from './useEdgeGeometry';
@@ -174,8 +173,6 @@ export const MultiColorEdge = memo(function MultiColorEdge(
           style={{
             stroke: edgeColor,
             fill: 'none',
-            transition:
-              'stroke-width 180ms ease, opacity 180ms ease, stroke-dasharray 180ms ease',
             ...style,
           }}
         />
@@ -202,18 +199,6 @@ export const MultiColorEdge = memo(function MultiColorEdge(
         className={cn('react-flow__edge-interaction cursor-crosshair')}
         onMouseDown={handleMouseDown}
       />
-
-      {!isDragging && (
-        <EdgeDeleteButton
-          sourceX={sourceX}
-          sourceY={sourceY}
-          targetX={targetX}
-          targetY={targetY}
-          onMouseDown={handleMouseDown}
-          onClick={handleClick}
-        />
-      )}
-
       <title>Перетащите связь для удаления или переподключения</title>
     </>
   );

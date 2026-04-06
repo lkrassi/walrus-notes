@@ -135,32 +135,52 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   }, [onSave]);
 
   return (
-    <div className={cn('panel-header')}>
-      <NoteTitle
-        title={title}
-        onEdit={handleOpenEditTitle}
-        canWrite={canWrite}
-      />
+    <div
+      className={cn(
+        'flex',
+        'min-h-12',
+        'items-center',
+        'justify-between',
+        'gap-2',
+        'border-b',
+        'border-border',
+        'bg-bg/90',
+        'px-3',
+        'py-1.5',
+        'backdrop-blur-sm',
+        'dark:border-dark-border',
+        'dark:bg-dark-bg/90'
+      )}
+    >
+      <div className={cn('min-w-0', 'flex-1')}>
+        <NoteTitle
+          title={title}
+          onEdit={handleOpenEditTitle}
+          canWrite={canWrite}
+        />
+      </div>
 
-      <NoteActions
-        noteId={noteId}
-        isEditing={isEditing}
-        isLoading={isLoading}
-        isFullscreen={isFullscreen}
-        hasLocalChanges={hasLocalChanges}
-        hasServerDraft={_hasServerDraft}
-        onSave={handleSave}
-        onCancel={onCancel}
-        onEdit={onEdit}
-        onOpenImageUpload={handleOpenImageUpload}
-        onOpenImport={handleOpenImport}
-        onOpenHelp={handleOpenHelp}
-        onOpenCancelConfirmation={handleOpenCancelConfirmation}
-        onExport={onExport}
-        onToggleFullscreen={onToggleFullscreen}
-        canWrite={canWrite}
-        t={t}
-      />
+      <div className={cn('shrink-0')}>
+        <NoteActions
+          noteId={noteId}
+          isEditing={isEditing}
+          isLoading={isLoading}
+          isFullscreen={isFullscreen}
+          hasLocalChanges={hasLocalChanges}
+          hasServerDraft={_hasServerDraft}
+          onSave={handleSave}
+          onCancel={onCancel}
+          onEdit={onEdit}
+          onOpenImageUpload={handleOpenImageUpload}
+          onOpenImport={handleOpenImport}
+          onOpenHelp={handleOpenHelp}
+          onOpenCancelConfirmation={handleOpenCancelConfirmation}
+          onExport={onExport}
+          onToggleFullscreen={onToggleFullscreen}
+          canWrite={canWrite}
+          t={t}
+        />
+      </div>
     </div>
   );
 });
