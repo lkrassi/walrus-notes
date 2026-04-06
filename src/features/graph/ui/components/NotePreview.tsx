@@ -1,6 +1,6 @@
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
-import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphTheme } from '../../lib/utils';
 
 interface NotePreviewProps {
@@ -8,63 +8,77 @@ interface NotePreviewProps {
   layoutColor?: string;
   isDrag?: boolean;
   isSmall?: boolean;
+  linkCount?: number;
   className?: string;
 }
 
-export const NotePreview = memo(function NotePreview({
+const getLinkCount = (note: Note) => {
+  const links = new Set([
+    ...(note.linkedWithIn ?? []),
+    ...(note.linkedWithOut ?? []),
+  ]);
+
+  return links.size;
+};
+
+export const NotePreview = ({
   note,
   layoutColor,
   isDrag = false,
-  isSmall = false,
+  linkCount,
   className,
-}: NotePreviewProps) {
+}: NotePreviewProps) => {
+  const { t } = useTranslation();
   const palette = graphTheme();
   const resolvedColor = layoutColor ?? palette.edge;
+  const resolvedLinkCount = linkCount ?? getLinkCount(note);
 
-  const size = isSmall ? 'w-full min-w-0 max-w-none' : 'max-w-52 min-w-48';
-  const padding = isSmall ? 'p-2 sm:p-2.5' : 'p-2.5';
-  const textSize = isSmall
-    ? 'text-[10px] leading-tight sm:text-xs'
-    : 'text-[13px] leading-5';
+  const title = note.title?.trim() || t('notes:untitled');
 
   return (
     <div
       className={cn(
-        size,
-        'cursor-grab',
-        'active:cursor-grabbing',
-        padding,
+        'cursor-grab active:cursor-grabbing',
         'text-left',
-        'bg-bg/95 dark:bg-dark-bg/90',
-        'text-foreground dark:text-dark-text',
-        'border',
-        'border-border/70 dark:border-dark-border/80',
-        'relative overflow-hidden',
-        'flex flex-col justify-center gap-1',
-        isDrag ? 'ring-primary/65 opacity-95 ring-2' : '',
+        'relative flex flex-col gap-1 overflow-hidden py-2 pr-5 pl-2',
+        'bg-bg/94 text-text border-border/75 border',
+        'transition-[transform,border-color,opacity] duration-200 ease-out',
+        'dark:border-dark-border/80 dark:bg-dark-bg/92 dark:text-dark-text',
+        isDrag && 'scale-[1.015]',
         className
       )}
-      style={{ borderColor: resolvedColor }}
+      style={{
+        borderColor: resolvedColor,
+      }}
     >
       <div
-        className='absolute inset-y-0 left-0 w-1.5 opacity-90'
+        className='absolute inset-y-0 left-0 w-1.5 opacity-95'
         style={{ background: resolvedColor }}
         aria-hidden
       />
-
-      <h3
+      <div
+        className='absolute inset-x-0 top-0 h-px opacity-70'
+        style={{ background: resolvedColor }}
+        aria-hidden
+      />
+      <div
+        className='absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_42%)] opacity-80 dark:opacity-100'
+        aria-hidden
+      />
+      <p
         className={cn(
-          'line-clamp-2',
-          'overflow-hidden',
-          'text-left',
-          'font-semibold tracking-[0.01em]',
-          'text-ellipsis',
-          'pl-2',
-          textSize
+          'relative z-10 line-clamp-2 overflow-hidden pr-2 text-left font-semibold'
         )}
       >
-        {note.title}
-      </h3>
+        {title}
+      </p>
+      <div className='text-muted-foreground dark:text-dark-muted-foreground relative z-10 mt-auto flex items-center justify-between gap-1 text-[8px] leading-none'>
+        <span className='inline-flex items-center gap-1 uppercase'>
+          {resolvedLinkCount > 0
+            ? t('notes:graphNodeLinks', { count: resolvedLinkCount })
+            : t('notes:graphNodeIsolated')}
+        </span>
+      </div>
     </div>
   );
-});
+};

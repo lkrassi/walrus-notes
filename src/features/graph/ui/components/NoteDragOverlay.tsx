@@ -27,8 +27,8 @@ export const NoteDragOverlay = memo(function NoteDragOverlay({
         }
       : isCompact
         ? {
-            width: '124px',
-            height: '96px',
+            width: '112px',
+            height: '84px',
           }
         : undefined;
 

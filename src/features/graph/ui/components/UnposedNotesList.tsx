@@ -13,6 +13,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NotePreview } from './NotePreview';
 
 type DragCardSize = {
@@ -33,6 +34,8 @@ export const UnposedNotesList = ({
   isOpen,
   onOpenChange,
 }: UnposedNotesListProps) => {
+  const { t } = useTranslation();
+
   const { data: unposedNotesResponse, isLoading } = useGetUnposedNotesQuery({
     layoutId,
   });
@@ -132,9 +135,7 @@ export const UnposedNotesList = ({
           'hover:bg-interactive-hover'
         )}
         title={
-          isOpen
-            ? 'Скрыть непозиционированные заметки'
-            : 'Показать непозиционированные заметки'
+          isOpen ? t('notes:graphUnposedHide') : t('notes:graphUnposedShow')
         }
       >
         <span
@@ -211,6 +212,8 @@ const SortableNoteCard = ({
   note: Note;
   onClick: (note: Note) => void;
 }) => {
+  const { t } = useTranslation();
+
   const cardRef = useRef<HTMLButtonElement | null>(null);
   const [dragSize, setDragSize] = useState<DragCardSize | null>(null);
 
@@ -273,13 +276,15 @@ const SortableNoteCard = ({
       {...listeners}
       onClick={() => onClick(note)}
       className={cn('w-full', 'cursor-grab', 'active:cursor-grabbing')}
-      title={`Перетаскиваемая заметка: ${note.title}`}
+      title={t('notes:graphDraggableNoteTitle', {
+        title: note.title,
+      })}
     >
       <div className={cn('pointer-events-none w-full')}>
         <NotePreview
           note={note}
           isSmall={true}
-          className={cn('h-24 w-full max-w-none min-w-0')}
+          className={cn('h-20 w-full max-w-none min-w-0')}
         />
       </div>
     </button>
