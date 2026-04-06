@@ -44,6 +44,16 @@ export const useDraftListeners = ({
   onCommitRetryRequired,
   onCommitRetryResolved,
 }: UseDraftListenersOpts) => {
+  const isDraftDebug = import.meta.env.DEV;
+  const logDraft = (message: string, extra?: Record<string, unknown>) => {
+    if (!isDraftDebug || !noteId) return;
+    if (extra) {
+      console.log(`[draft-ws][${noteId}] ${message}`, extra);
+      return;
+    }
+    console.log(`[draft-ws][${noteId}] ${message}`);
+  };
+
   useEffect(() => {
     if (!ws || !noteId) {
       return;
@@ -64,6 +74,12 @@ export const useDraftListeners = ({
             return;
           }
           const nd = data.newDraft ?? '';
+
+          logDraft('UPDATE_DRAFT_REQUEST', {
+            newDraftLength: nd.length,
+            pending: refs.pendingRef.current != null,
+            awaitingAck: refs.awaitingAckRef.current != null,
+          });
 
           if (
             refs.pendingRef.current != null ||
@@ -106,6 +122,12 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
+
+          logDraft('UPDATE_DRAFT_RESPONSE', {
+            status: !!data.status,
+            hasAwaitingAck: refs.awaitingAckRef.current != null,
+          });
+
           if (data.status) {
             const acked = refs.awaitingAckRef.current;
             if (acked != null) {
@@ -130,6 +152,9 @@ export const useDraftListeners = ({
           if (!data || data.noteId !== noteId) {
             return;
           }
+
+          logDraft('COMMIT_DRAFT_REQUEST');
+
           try {
             dispatch(removeDraft({ noteId }));
           } catch (_e) {}
@@ -144,6 +169,13 @@ export const useDraftListeners = ({
           const data = payload as { noteId?: string; status?: boolean };
           if (!data) return;
           if (data.noteId && data.noteId !== noteId) return;
+
+          logDraft('COMMIT_DRAFT_RESPONSE', {
+            status: !!data.status,
+            awaitingCommitPayloadLength:
+              refs.awaitingCommitPayloadRef.current?.length ?? 0,
+          });
+
           if (data.status) {
             onCommitRetryResolved?.();
 
@@ -163,6 +195,7 @@ export const useDraftListeners = ({
                   noteId,
                   updates: {
                     payload: confirmed as string,
+                    draft: '',
                     updatedAt: new Date().toISOString(),
                   },
                 })

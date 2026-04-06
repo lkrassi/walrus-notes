@@ -101,7 +101,8 @@ export const AllNotesButton = ({
           ? cn(
               'bg-interactive-selected',
               'text-foreground',
-              'dark:text-foreground'
+              'dark:bg-primary/45',
+              'dark:text-white'
             )
           : cn('hover:bg-interactive-hover')
       )}

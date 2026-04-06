@@ -26,12 +26,25 @@ export const useNoteEditor = (
   canWrite: boolean,
   onNoteUpdated?: (note: Note) => void
 ) => {
+  const isDraftDebug = import.meta.env.DEV;
+  const logDraft = (message: string, extra?: Record<string, unknown>) => {
+    if (!isDraftDebug) return;
+    if (extra) {
+      console.log(`[draft-flow][${note.id}] ${message}`, extra);
+      return;
+    }
+    console.log(`[draft-flow][${note.id}] ${message}`);
+  };
+
   const [isEditing, setIsEditing] = useState(() => {
     if (!canWrite) {
       return false;
     }
 
-    const initialHasDraft = !!note.draft?.trim();
+    const initialServerDraft = note.draft?.trim() ?? '';
+    const initialHasDraft =
+      !!initialServerDraft.length &&
+      initialServerDraft !== (note.payload ?? '');
     return initialHasDraft;
   });
   const [title, setTitle] = useState<string>(note.title ?? '');
@@ -46,9 +59,12 @@ export const useNoteEditor = (
   const ignoreDraftRef = useRef(false);
   const serverDraft = note.draft?.trim() ?? '';
 
-  const hasServerDraft = !!serverDraft.length;
+  const hasServerDraft =
+    !!serverDraft.length && serverDraft !== (note.payload ?? '');
   const storedDraftText = storeDraft?.trim() ?? '';
-  const hasStoreDraft = !!storedDraftText.length && hasServerDraft;
+  const hasStoreDraft =
+    !!storedDraftText.length && storedDraftText !== (note.payload ?? '');
+  const hasAnyDraftMarker = !!storedDraftText.length || !!serverDraft.length;
 
   let initialPayload = originalPayload;
   if (!ignoreDraftRef.current) {
@@ -114,6 +130,14 @@ export const useNoteEditor = (
       }
       return prev;
     });
+
+    logDraft('hydrate payload from note/store draft', {
+      hasServerDraft,
+      hasStoreDraft,
+      notePayloadLength: (note.payload ?? '').length,
+      noteDraftLength: (note.draft ?? '').length,
+      storeDraftLength: (storeDraft ?? '').length,
+    });
   }, [
     hasServerDraft,
     hasStoreDraft,
@@ -144,12 +168,24 @@ export const useNoteEditor = (
     }
 
     if (hasStoreDraft || hasServerDraft) {
+      logDraft('force edit mode because draft detected', {
+        hasStoreDraft,
+        hasServerDraft,
+        notePayloadLength: (note.payload ?? '').length,
+        noteDraftLength: (note.draft ?? '').length,
+        storeDraftLength: (storeDraft ?? '').length,
+      });
       setIsEditing(true);
     }
   }, [canWrite, hasServerDraft, hasStoreDraft, note.id]);
 
   useEffect(() => {
     ignoreDraftRef.current = false;
+    logDraft('note context switched, reset ignoreDraftRef', {
+      notePayloadLength: (note.payload ?? '').length,
+      noteDraftLength: (note.draft ?? '').length,
+      storeDraftLength: (storeDraft ?? '').length,
+    });
   }, [note.id]);
 
   const isRecordNotFound422 = (error: unknown): boolean => {
@@ -197,8 +233,18 @@ export const useNoteEditor = (
   };
 
   const handleSave = async (overrideTitle?: string) => {
+    logDraft('save clicked', {
+      canWrite,
+      currentIsEditing: isEditing,
+      notePayloadLength: (note.payload ?? '').length,
+      noteDraftLength: (note.draft ?? '').length,
+      storeDraftLength: (storeDraft ?? '').length,
+      localPayloadLength: (payload ?? '').length,
+    });
+
     if (!canWrite) {
       setIsEditing(false);
+      logDraft('save ignored: no write access');
       return false;
     }
     const safeTitle =
@@ -207,6 +253,7 @@ export const useNoteEditor = (
 
     if (!safeTitle.trim()) {
       showError('notes:enterNoteTitle');
+      logDraft('save blocked: empty title');
       return;
     }
 
@@ -214,7 +261,76 @@ export const useNoteEditor = (
     const newPayload = safePayload;
 
     if (newTitle === note.title && newPayload === note.payload) {
+      // If note arrived with draft marker but content is unchanged, we still
+      // need to commit draft cleanup; otherwise it will reopen in edit mode.
+      if (hasAnyDraftMarker) {
+        try {
+          const res = commitDraft(newPayload);
+          if (res) {
+            lastLocalCommitRef.current = Date.now();
+          }
+          logDraft('save no-op, sent commit to clear draft marker', {
+            commitSent: !!res,
+            hasAnyDraftMarker,
+            serverDraftLength: serverDraft.length,
+            storeDraftLength: storedDraftText.length,
+          });
+        } catch (_e) {
+          logDraft('save no-op, commitDraft threw while clearing marker');
+        }
+
+        try {
+          ignoreDraftRef.current = true;
+          dispatch(removeDraft({ noteId: note.id }));
+        } catch (_e) {}
+
+        try {
+          const targetLayoutId = note.layoutId;
+          if (targetLayoutId) {
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getNotes',
+                { layoutId: targetLayoutId, page: 1 },
+                draftState => {
+                  const idx = draftState.data.findIndex(n => n.id === note.id);
+                  if (idx !== -1) {
+                    draftState.data[idx].draft = '';
+                  }
+                }
+              )
+            );
+
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getPosedNotes',
+                { layoutId: targetLayoutId },
+                draftState => {
+                  const idx = draftState.data.findIndex(n => n.id === note.id);
+                  if (idx !== -1) {
+                    draftState.data[idx].draft = '';
+                  }
+                }
+              )
+            );
+
+            dispatch(
+              notesApi.util.updateQueryData(
+                'getUnposedNotes',
+                { layoutId: targetLayoutId },
+                draftState => {
+                  const idx = draftState.data.findIndex(n => n.id === note.id);
+                  if (idx !== -1) {
+                    draftState.data[idx].draft = '';
+                  }
+                }
+              )
+            );
+          }
+        } catch (_e) {}
+      }
+
       setIsEditing(false);
+      logDraft('save short-circuited: no content changes');
       return true;
     }
 
@@ -237,9 +353,72 @@ export const useNoteEditor = (
             lastLocalCommitRef.current = Date.now();
           }
         } catch (_e) {}
+
+        logDraft('commitDraft requested after updateNote', {
+          commitSent: !!res,
+          finalPayloadLength: finalPayload.length,
+        });
       } catch (_e) {}
       try {
         setPayloadState(finalPayload);
+      } catch (_e) {}
+
+      try {
+        ignoreDraftRef.current = true;
+      } catch (_e) {}
+
+      try {
+        dispatch(removeDraft({ noteId: note.id }));
+      } catch (_e) {}
+
+      try {
+        const targetLayoutId = note.layoutId || serverNote?.layoutId;
+        if (targetLayoutId) {
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getNotes',
+              { layoutId: targetLayoutId, page: 1 },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].title = finalTitle;
+                  draftState.data[idx].payload = finalPayload;
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getPosedNotes',
+              { layoutId: targetLayoutId },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].title = finalTitle;
+                  draftState.data[idx].payload = finalPayload;
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+
+          dispatch(
+            notesApi.util.updateQueryData(
+              'getUnposedNotes',
+              { layoutId: targetLayoutId },
+              draftState => {
+                const idx = draftState.data.findIndex(n => n.id === note.id);
+                if (idx !== -1) {
+                  draftState.data[idx].title = finalTitle;
+                  draftState.data[idx].payload = finalPayload;
+                  draftState.data[idx].draft = '';
+                }
+              }
+            )
+          );
+        }
       } catch (_e) {}
 
       const updatedNote: Note = {
@@ -247,6 +426,7 @@ export const useNoteEditor = (
         ...serverNote,
         title: finalTitle,
         payload: finalPayload,
+        draft: '',
         updatedAt: finalUpdatedAt,
       };
 
@@ -254,13 +434,22 @@ export const useNoteEditor = (
       setIsEditing(false);
       onNoteUpdated?.(updatedNote);
 
+      logDraft('save succeeded and edit mode closed', {
+        finalPayloadLength: finalPayload.length,
+        finalTitleLength: finalTitle.length,
+      });
+
       return true;
     } catch (error) {
       if (isRecordNotFound422(error)) {
+        setIsEditing(true);
+        logDraft('save failed with 422 record_not_found');
         return false;
       }
 
       showError('notes:noteUpdateError');
+      setIsEditing(true);
+      logDraft('save failed with generic error');
       return false;
     }
   };
@@ -332,6 +521,8 @@ export const useNoteEditor = (
           draft: '',
         });
       }
+
+      logDraft('discard completed');
     } catch (_e) {}
     return true;
   };

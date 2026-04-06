@@ -19,6 +19,7 @@ interface NoteActionsProps {
   isLoading: boolean;
   isFullscreen?: boolean;
   hasLocalChanges?: boolean;
+  hasServerDraft?: boolean;
   onSave: () => void;
   onCancel: () => void;
   onEdit: () => void;
@@ -36,9 +37,10 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   isEditing,
   isLoading,
   isFullscreen,
-  hasLocalChanges: _hasLocalChanges,
+  hasLocalChanges,
+  hasServerDraft,
   onSave,
-  onCancel: _onCancel,
+  onCancel,
   onEdit,
   onOpenImageUpload,
   onOpenImport,
@@ -49,6 +51,9 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   canWrite = true,
   t,
 }) {
+  const hasUnsaved = !!hasLocalChanges || !!hasServerDraft;
+  const isBusy = isLoading;
+
   return (
     <div
       className={cn(
@@ -66,15 +71,18 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
         (isEditing ? (
           <>
             <Button
-              onClick={onSave}
+              onClick={() => {
+                if (isBusy) return;
+                onSave();
+              }}
               className={cn(
                 'flex',
                 'h-8',
                 'w-14',
                 'items-center',
-                'justify-center'
+                'justify-center',
+                isBusy && 'cursor-not-allowed opacity-70'
               )}
-              disabled={isLoading}
               title={t('notes:save')}
               variant='submit'
             >
@@ -83,16 +91,22 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
 
             <Button
               onClick={e => {
-                onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
+                if (isBusy) return;
+                if (hasUnsaved) {
+                  onOpenCancelConfirmation(e as MouseEvent<HTMLElement>);
+                  return;
+                }
+
+                onCancel();
               }}
               className={cn(
                 'flex',
                 'h-8',
                 'w-14',
                 'items-center',
-                'justify-center'
+                'justify-center',
+                isBusy && 'cursor-not-allowed opacity-70'
               )}
-              disabled={isLoading}
               title={t('notes:cancel')}
               variant='escape'
             >
@@ -100,15 +114,18 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
             </Button>
 
             <Button
-              onClick={onOpenImageUpload}
+              onClick={e => {
+                if (isBusy) return;
+                onOpenImageUpload(e as MouseEvent<HTMLElement>);
+              }}
               className={cn(
                 'flex',
                 'h-8',
                 'w-14',
                 'items-center',
-                'justify-center'
+                'justify-center',
+                isBusy && 'cursor-not-allowed opacity-70'
               )}
-              disabled={isLoading}
               title={t('notes:uploadImage') || 'Upload image'}
               variant='default'
             >

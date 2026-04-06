@@ -353,7 +353,7 @@ export const useYjsCollaboration = (
         cursorTimeoutRef.current = null;
       }
     };
-  }, [isPresenceDebug, noteId, resolveAbsoluteIndex, userId, userName]);
+  }, [noteId, resolveAbsoluteIndex, userId]);
 
   useEffect(() => {
     if (provider && userId) {

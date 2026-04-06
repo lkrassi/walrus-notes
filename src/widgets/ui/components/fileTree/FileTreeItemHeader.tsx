@@ -171,10 +171,16 @@ export const FileTreeItemHeader = ({
           'text-text',
           'dark:text-dark-text',
           item.type === 'layout'
-            ? 'hover:bg-primary/12 dark:hover:bg-interactive-hover'
+            ? 'hover:bg-primary/12 dark:hover:bg-primary/50'
             : !isAnyNoteDragging &&
-                'hover:bg-primary/12 dark:hover:bg-interactive-hover',
-          isSelected && 'bg-primary/20 dark:bg-interactive-selected'
+                'hover:bg-primary/12 dark:hover:bg-primary/50',
+          isSelected &&
+            cn(
+              'bg-primary/20',
+              'dark:bg-primary/45',
+              'dark:text-white',
+              'before:bg-primary before:absolute before:top-0 before:left-0 before:h-full before:w-0.5'
+            )
         )}
         style={{
           paddingLeft: `${paddingLeft}px`,

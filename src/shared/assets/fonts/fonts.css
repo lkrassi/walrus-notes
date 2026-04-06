@@ -1,12 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@100..900,0&display=swap');
-
-
 @font-face {
   font-family: 'Podkova';
-  src: url('./Podkova-VariableFont_wght.woff2') format('woff2-variations');
+  src: url('/fonts/Podkova-VariableFont_wght.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 html,

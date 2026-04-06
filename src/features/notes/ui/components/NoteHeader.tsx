@@ -148,6 +148,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
         isLoading={isLoading}
         isFullscreen={isFullscreen}
         hasLocalChanges={hasLocalChanges}
+        hasServerDraft={_hasServerDraft}
         onSave={handleSave}
         onCancel={onCancel}
         onEdit={onEdit}
