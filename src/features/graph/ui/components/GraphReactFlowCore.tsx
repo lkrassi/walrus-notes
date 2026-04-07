@@ -2,9 +2,10 @@ import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { useIsMobile } from '@/shared/lib/react/hooks';
 import { memo, type FC, type MouseEvent } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
-import ReactFlow, { MiniMap } from 'reactflow';
+import ReactFlow from 'reactflow';
 import { GraphBackground } from './GraphBackground';
 import { GraphControls } from './GraphControls';
+import { GraphMiniMap } from './GraphMiniMap';
 import { MultiColorEdge } from './multi-color-edge';
 import { NoteNodeComponent } from './NoteNode';
 import { OffscreenArrows } from './OffscreenArrows';
@@ -115,20 +116,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       key={layoutId}
     >
       <GraphBackground />
-      <MiniMap
-        pannable
-        zoomable
-        position='bottom-right'
-        style={{
-          width: 160,
-          height: 108,
-          borderRadius: 0,
-          border: '1px solid rgba(120,120,120,0.28)',
-          background: 'rgba(255,255,255,0.72)',
-          backdropFilter: 'blur(6px)',
-        }}
-        nodeStrokeWidth={3}
-      />
+      <GraphMiniMap rightOffset={_minimapOffset} />
       <GraphControls graphHistory={graphHistory} />
       <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
       <ViewportTracker onViewportChange={onViewportChange} />

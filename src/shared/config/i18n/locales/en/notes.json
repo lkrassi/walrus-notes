@@ -46,7 +46,6 @@
   "graphStatsNotes": "{{count}} notes",
   "graphStatsLinks": "{{count}} links",
   "graphNodeLinks": "{{count}} links",
-  "graphNodeIsolated": "isolated",
   "graphUnposedHide": "Hide unpositioned notes",
   "graphUnposedShow": "Show unpositioned notes",
   "graphDraggableNoteTitle": "Draggable note: {{title}}",

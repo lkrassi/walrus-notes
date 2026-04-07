@@ -46,7 +46,6 @@
   "graphStatsNotes": "{{count}} заметок",
   "graphStatsLinks": "связей: {{count}}",
   "graphNodeLinks": "связей: {{count}}",
-  "graphNodeIsolated": "изолировано",
   "graphUnposedHide": "Скрыть непозиционированные заметки",
   "graphUnposedShow": "Показать непозиционированные заметки",
   "graphDraggableNoteTitle": "Перетаскиваемая заметка: {{title}}",

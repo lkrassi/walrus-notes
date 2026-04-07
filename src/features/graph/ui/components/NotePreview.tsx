@@ -74,9 +74,7 @@ export const NotePreview = ({
       </p>
       <div className='text-muted-foreground dark:text-dark-muted-foreground relative z-10 mt-auto flex items-center justify-between gap-1 text-[8px] leading-none'>
         <span className='inline-flex items-center gap-1 uppercase'>
-          {resolvedLinkCount > 0
-            ? t('notes:graphNodeLinks', { count: resolvedLinkCount })
-            : t('notes:graphNodeIsolated')}
+          {t('notes:graphNodeLinks', { count: resolvedLinkCount })}
         </span>
       </div>
     </div>
