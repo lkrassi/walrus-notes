@@ -97,7 +97,6 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
             const sourceColor =
               layoutsMap.get(sourceNote.layoutId || '') || palette.edge;
 
-            // Проверяем наличие обратной связи
             const targetNote = notesWithPositions.find(
               (n: Note) => n.id === targetNoteId
             );

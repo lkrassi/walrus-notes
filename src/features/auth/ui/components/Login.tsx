@@ -127,7 +127,7 @@ export const Login: FC<LoginProps> = () => {
       }
       navigate('/main');
     } catch {
-      showError(t('auth:login.error'));
+      showError(t('auth:login.error.invalid'));
     }
   };
 

@@ -51,7 +51,6 @@ export const useShareModalState = (targetId: string) => {
   const { closeModal } = useModalContentContext();
   const [copied, setCopied] = useState(false);
 
-  // Очищаем старую ссылку при смене targetId
   useEffect(() => {
     resetLink();
   }, [targetId, resetLink]);

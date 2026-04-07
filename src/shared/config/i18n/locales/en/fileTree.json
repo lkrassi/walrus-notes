@@ -1,19 +1,15 @@
 {
   "fileStructure": "File structure",
   "createNewLayout": "Create new layout",
-  "createNote": "Create note",
-  "actions": "Actions",
-  "noLayouts": "No layouts",
-  "createFirstLayout": "Create your first layout",
   "createNewNote": "Create new note",
   "addNote": "Add note",
   "addMore": "Add more",
-  "noSearchResults": "No results found",
-  "tryDifferentQuery": "Try a different search query",
-  "folderEmpty": "Folder is empty",
   "loading": "Loading",
   "myFolders": "My folders",
   "sharedFolders": "Accessible folders",
+  "expandFolder": "Expand folder",
+  "collapseFolder": "Collapse folder",
+  "showMore": "Show more",
   "clearSearch": "Clear search field",
   "searchPlaceholder": "Search..."
 }

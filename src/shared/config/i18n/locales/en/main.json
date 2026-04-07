@@ -1,7 +1,6 @@
 {
   "selectFileOrFolder": "Select a file or folder",
   "selectItemDescription": "Select an item in the file tree on the left to view its contents",
-  "selectNoteHint": "Select a note to view layout folder contents.",
   "whatToCreate": "What to create?",
   "folderOrNote": "Select create folder or note",
   "createFolder": "Create folder",
@@ -12,9 +11,6 @@
   "createFolderFirst": "Create a folder first",
   "noFolders": "No folders",
   "createFolderDescription": "Create your first folder to start organizing notes",
-  "myFolders": "My folders",
-  "folder": "folder",
-  "folders": "folders",
   "note": "note",
   "notes": "notes",
   "allNotes": "All Notes Graph",

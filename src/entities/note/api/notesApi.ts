@@ -435,7 +435,6 @@ export const notesApi = apiSlice.injectEndpoints({
                   const responseTitle = data.data.title?.trim();
                   draft.data[i] = {
                     ...data.data,
-                    // Keep optimistic title if API response is temporarily empty.
                     title: responseTitle?.length ? responseTitle : temp.title,
                   };
                 }

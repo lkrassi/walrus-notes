@@ -81,9 +81,6 @@ export const NoteViewer = memo(function NoteViewer({
     payload,
   } = useNoteViewerState({ note: effectiveNote, canWrite, onNoteUpdated });
 
-  // Получаем payload только через selectEffectiveNoteContent
-  // payload теперь берём из useNoteEditor, а не из глобального селектора
-
   return (
     <div
       className={cn(

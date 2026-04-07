@@ -1,60 +1,31 @@
 {
   "modal": {
     "permissions": {
-      "head": "Configure Access",
-      "title": "Configure Folder Access",
-      "label": "Access Level",
-      "read": "Read",
-      "write": "Write",
-      "edit": "Edit"
+      "head": "Configure Access"
     },
     "expiration": {
       "label": "Expiration",
-      "placeholder": "Select date and time",
-      "unlimited": "Unlimited",
-      "custom": "Enter minutes",
       "customPlaceholder": "Enter minutes (5-43200)",
       "options": {
         "fiveMinutes": "5 minutes",
         "thirtyMinutes": "30 minutes",
         "oneHour": "1 hour",
         "custom": "Enter minutes"
-      },
-      "validation": {
-        "minDate": "Minimum duration: 5 minutes from now",
-        "maxDate": "Maximum duration: 30 days from now"
       }
     },
     "submit": "Create Link",
     "submitting": "Creating...",
     "cancel": "Cancel",
     "success": {
-      "title": "Link Created",
       "description": "Copy the link and send it to anyone you want to give access to",
       "copy": "Copy",
       "copied": "Copied!"
     },
     "error": {
-      "generic": "Failed to create link. Please try later",
-      "bad_kind": "Cannot create a link for this type of element",
-      "premissions_not_enough": "You don't have enough permissions to grant this access level"
-    }
-  },
-  "apply": {
-    "notifications": {
-      "granted_layout": "You have been granted access to folder (ID: {{targetId}})",
-      "granted_note": "You have been granted access to note (ID: {{targetId}})",
-      "error": {
-        "already_exists": "This link has already been used",
-        "invalid": "Invalid link",
-        "generic": "Error applying link. Please try later"
-      }
+      "generic": "Failed to create link. Please try later"
     }
   },
   "permissionsDashboard": {
-    "title": "Access dashboard",
-    "subtitle": "Manage granted and received permissions",
-    "updating": "Updating...",
     "receivedTitle": "Received permissions",
     "sharedTitle": "Shared permissions",
     "emptyReceived": "No received permissions yet",
@@ -62,9 +33,6 @@
     "receivedFrom": "Access granted by:",
     "sharedTo": "Access granted to",
     "targetLabel": "Access target",
-    "target": "Target",
-    "fromUser": "From user",
-    "flags": "Permissions",
     "targetType": {
       "layout": "Folder",
       "note": "Note",
@@ -74,11 +42,7 @@
       "unknown": "User"
     },
     "rights": {
-      "none": "No access",
-      "read": "Read",
-      "write": "Write",
-      "edit": "Edit",
-      "active": "active"
+      "none": "No access"
     },
     "rightsDescriptions": {
       "read": "View notes inside a folder and open the graph",
@@ -90,38 +54,10 @@
       "write": "Write",
       "edit": "Edit"
     },
-    "kind": {
-      "layout": "Layout",
-      "note": "Note",
-      "unknown": "Unknown"
-    },
     "actions": {
       "update": "Save",
-      "delete": "Delete",
       "revokeReceived": "Revoke",
       "revokeShared": "Revoke"
-    },
-    "deletePermission": {
-      "cancel": "Cancel",
-      "deleting": "Processing...",
-      "received": {
-        "modalTitle": "Revoke access",
-        "title": "Revoke received access?",
-        "description": "You will no longer have access to {{title}}.",
-        "confirm": "Revoke"
-      },
-      "shared": {
-        "modalTitle": "Remove access",
-        "title": "Remove shared access?",
-        "description": "The user will lose access to {{title}}.",
-        "confirm": "Remove"
-      }
-    },
-    "notifications": {
-      "updated": "Permissions updated",
-      "deleted": "Access revoked",
-      "updateError": "Failed to update permission",
-      "deleteError": "Failed to delete permission"
     }
   }
 }

@@ -1,17 +1,10 @@
 {
-  "welcome": "Добро пожаловать в наше приложение!",
-  "description": "Это пример приложения с интернационализацией",
   "cancel": "Отмена",
   "confirm": "Подтвердить",
   "buttons": {
-    "save": "Сохранить",
-    "cancel": "Отмена",
-    "delete": "Удалить"
+    "cancel": "Отмена"
   },
   "navigation": {
-    "home": "Главная",
-    "about": "О нас",
-    "contact": "Контакты",
     "dashboard": "Доступы"
   },
   "theme": {
@@ -29,25 +22,10 @@
     "hide": "Скрыть пароль",
     "show": "Показать пароль"
   },
-  "createLayout": "Создать layout",
   "header": {
     "goToHomepage": "Перейти на главную",
     "logoAlt": "Логотип Walrus Notes",
-    "switchTheme": "Переключить тему",
     "changeLanguage": "Изменить язык"
-  },
-  "search": {
-    "placeholder": "Поиск заметок и папок..."
-  },
-  "profile": {
-    "title": "Профиль",
-    "username": "Имя пользователя",
-    "email": "Email",
-    "role": "Роль",
-    "changePhoto": "Изменить фото",
-    "selectFile": "Выбрать файл",
-    "upload": "Загрузить",
-    "cancel": "Отмена"
   },
   "unavailable": {
     "title": "Страница потерялась в океане",
@@ -55,10 +33,6 @@
     "goHome": "Вернуться домой",
     "goBack": "Назад",
     "helpText": "Если вы считаете, что это ошибка, свяжитесь с поддержкой"
-  },
-  "errors": {
-    "requestTitle": "Ошибка запроса",
-    "requestFallback": "Произошла ошибка при выполнении операции"
   },
   "links": {
     "incoming": "Входящие ({{count}})",

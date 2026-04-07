@@ -18,10 +18,5 @@
     "secureStorageDesc": "Your data is protected and synced across devices",
     "collaboration": "Collaboration",
     "collaborationDesc": "Work together on projects in real time"
-  },
-  "demo": {
-    "title": "See it in action",
-    "subtitle": "Video demonstration of the main features of our application",
-    "videoNotSupported": "Your browser does not support video playback"
   }
 }

@@ -1,17 +1,10 @@
 {
-  "welcome": "Welcome to our application!",
-  "description": "This is a sample application with internationalization",
   "cancel": "Cancel",
   "confirm": "Confirm",
   "buttons": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete"
+    "cancel": "Cancel"
   },
   "navigation": {
-    "home": "Home",
-    "about": "About",
-    "contact": "Contact",
     "dashboard": "Access Dashboard"
   },
   "theme": {
@@ -29,25 +22,10 @@
     "hide": "Hide password",
     "show": "Show password"
   },
-  "createLayout": "Create layout",
   "header": {
     "goToHomepage": "Go to homepage",
     "logoAlt": "Walrus Notes logo",
-    "switchTheme": "Switch theme",
     "changeLanguage": "Change language"
-  },
-  "search": {
-    "placeholder": "Search notes and layouts..."
-  },
-  "profile": {
-    "title": "Profile",
-    "username": "Username",
-    "email": "Email",
-    "role": "Role",
-    "changePhoto": "Change Photo",
-    "selectFile": "Select File",
-    "upload": "Upload",
-    "cancel": "Cancel"
   },
   "unavailable": {
     "title": "Page lost in the ocean",
@@ -55,10 +33,6 @@
     "goHome": "Return home",
     "goBack": "Go back",
     "helpText": "If you believe this is an error, please contact support"
-  },
-  "errors": {
-    "requestTitle": "Request error",
-    "requestFallback": "An error occurred while performing the operation"
   },
   "links": {
     "incoming": "Incoming ({{count}})",

@@ -1,4 +1,5 @@
 import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
+import type { Note } from '@/entities/note';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -116,7 +117,7 @@ export const useLinkedNotes = ({
     return notesById.get(noteId);
   }, [noteId, notesById]);
 
-  const effectiveLinkedInIds = useMemo(() => {
+  const effectiveLinkedInIds = useMemo<string[]>(() => {
     if (currentNoteFromCache) {
       return Array.from(new Set(currentNoteFromCache.linkedWithIn ?? []));
     }
@@ -124,7 +125,7 @@ export const useLinkedNotes = ({
     return linkedInUnique;
   }, [currentNoteFromCache, linkedInUnique]);
 
-  const effectiveLinkedOutIds = useMemo(() => {
+  const effectiveLinkedOutIds = useMemo<string[]>(() => {
     if (currentNoteFromCache) {
       return Array.from(new Set(currentNoteFromCache.linkedWithOut ?? []));
     }
@@ -174,9 +175,7 @@ export const useLinkedNotes = ({
           requestedPagesRef.current.add(page);
           try {
             await getNotesPage({ layoutId, page }, true).unwrap();
-          } catch {
-            // no-op: keep already loaded pages
-          }
+          } catch (_e) {}
         }
       } finally {
         if (!isCancelled) {

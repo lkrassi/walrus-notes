@@ -16,8 +16,6 @@ type DragCardSize = {
   height: number;
 };
 
-const DEBUG_GRAPH_DND = true;
-
 export const useGraphDragAndDrop = ({
   onAddNoteToGraph,
   screenToFlowPosition,
@@ -158,7 +156,6 @@ export const useGraphDragAndDrop = ({
       lastClientCoords,
       screenToFlowPosition,
       resolveNoteFromDragData,
-      resolveDragSizeFromData,
     ]
   );
 

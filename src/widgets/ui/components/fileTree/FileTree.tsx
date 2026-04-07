@@ -19,7 +19,6 @@ import {
   DragOverlay,
   pointerWithin,
   type DragEndEvent,
-  type DragOverEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
 import {
@@ -118,10 +117,6 @@ export const FileTree = memo(
       dragStartLayoutIdRef.current = null;
     }, []);
 
-    const handleDragOver = useCallback((_event: DragOverEvent) => {
-      // No preview or reorder
-    }, []);
-
     const handleDragEnd = useCallback(
       async (event: DragEndEvent) => {
         const { active, over } = event;
@@ -177,9 +172,7 @@ export const FileTree = memo(
             noteId: activeData.noteId,
             toLayoutId,
           }).unwrap();
-        } catch (_error) {
-          // API call made, local state already updated
-        }
+        } catch (_e) {}
 
         dragStartLayoutIdRef.current = null;
       },
@@ -512,7 +505,6 @@ export const FileTree = memo(
         sensors={sensors}
         collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
         onDragCancel={handleDragCancel}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToFirstScrollableAncestor]}

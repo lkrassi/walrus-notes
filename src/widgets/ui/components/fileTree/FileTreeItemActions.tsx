@@ -41,7 +41,6 @@ export const FileTreeItemActions: FC<Props> = ({
       if (e.target instanceof Node && !ref.current.contains(e.target)) {
         if (open) {
           setOpen(false);
-          // wait for animation then unmount
           setTimeout(() => setMounted(false), 150);
         }
       }

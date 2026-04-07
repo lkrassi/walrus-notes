@@ -27,7 +27,7 @@ interface GraphDropZoneProps {
 export const GraphDropZone: FC<GraphDropZoneProps> = ({
   onDrop,
   children,
-  isDraggingEdge = false,
+  isDraggingEdge: _isDraggingEdge = false,
   onBoxSelect,
   activeDragNote = null,
   lastDndDropAt = null,

@@ -39,7 +39,6 @@ export const FileTreeItem = ({
   onNotesLoaded,
   toggleExpanded,
 }: FileTreeItemProps) => {
-  // DnD: layout droppable
   let droppableClassName = '';
   let dropRef = undefined;
   if (item.type === 'layout' && item.isMain !== true) {

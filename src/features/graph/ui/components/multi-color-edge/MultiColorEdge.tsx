@@ -1,7 +1,6 @@
-import { useDeleteNoteLinkMutation } from '@/entities';
 import { cn } from '@/shared/lib/core';
-import { memo, useCallback } from 'react';
-import { BaseEdge, useReactFlow, type EdgeProps } from 'reactflow';
+import { memo } from 'react';
+import { BaseEdge, type EdgeProps } from 'reactflow';
 import { EDGE_INTERACTION, getEdgeColors } from './constants';
 import type { MultiColorStepEdgeData } from './types';
 import { useEdgeDrag } from './useEdgeDrag';
@@ -28,10 +27,7 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     style = {},
     data,
   } = props;
-  const { setEdges } = useReactFlow();
   const edgeColors = getEdgeColors();
-
-  const [deleteNoteLink] = useDeleteNoteLinkMutation();
 
   const strokeColor = data?.edgeColor || edgeColors.STROKE;
   const isSelected = Boolean(data?.isSelected);
@@ -71,31 +67,6 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     currentTargetNode,
   });
 
-  const handleDeleteEdge = useCallback(async () => {
-    try {
-      const edgeParts = id.split('-');
-      const layoutId = edgeParts[2] || 'default';
-
-      await deleteNoteLink({
-        layoutId,
-        firstNoteId: source,
-        secondNoteId: target,
-      }).unwrap();
-
-      setEdges(eds => eds.filter(e => e.id !== id));
-    } catch (_error) {}
-  }, [id, source, target, deleteNoteLink, setEdges]);
-
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (confirm('Удалить связь между заметками?')) {
-        handleDeleteEdge();
-      }
-    },
-    [handleDeleteEdge]
-  );
-
   const getDragStrokeColor = () => {
     if (currentTargetNode) {
       return isConnectionExists() ? edgeColors.INVALID : edgeColors.VALID;
@@ -117,7 +88,6 @@ export const MultiColorEdge = memo(function MultiColorEdge(
   const dragMarkerEnd = `url(#${dragMarkerId})`;
   const markerStart = undefined;
 
-  // Для двунаправленной связи используем градиент как цвет
   const edgeColor = isBidirectional
     ? `url(#${bidirectionalGradientId})`
     : strokeColor;

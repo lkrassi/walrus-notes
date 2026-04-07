@@ -1,9 +1,4 @@
 {
-  "title": "Settings",
-  "welcome": {
-    "title": "Welcome to Settings",
-    "subtitle": "Customize Walrus Notes to fit your needs"
-  },
   "sections": {
     "profile": {
       "title": "Profile",
@@ -54,17 +49,7 @@
       "description": "Sign out from your account"
     }
   },
-  "about": {
-    "title": "About",
-    "version": "Version",
-    "license": "License",
-    "support": "Support",
-    "supportEmail": "support@walrus-notes.com"
-  },
   "buttons": {
-    "configure": "Configure",
-    "manage": "Manage",
-    "protect": "Protect",
     "goTo": "Go to"
   },
   "backup": {
@@ -84,25 +69,8 @@
       "error": "Unable to import data",
       "helper": "Choose the Walrus Notes backup JSON file",
       "modalTitle": "Import backup",
-      "warningTitle": "Replace all data",
       "warningText": "Current layouts, notes and links will be deleted and replaced with the backup file. This action cannot be undone. Folders shared with you by other users will not be affected.",
-      "dropOrClick": "Drop a JSON file here or click to select",
-      "confirm": "Yes, replace",
-      "cancel": "Cancel"
+      "dropOrClick": "Drop a JSON file here or click to select"
     }
-  },
-  "holiday": {
-    "title": "Holiday decorations",
-    "description": "Enable snow and garland decorations in the UI",
-    "garland": "Garland",
-    "garlandLabel": "Show garland decorations in the UI",
-    "snow": "Snow",
-    "snowLabel": "Show snow decorations in the UI",
-    "on": "On",
-    "off": "Off",
-    "clearSnow": "Clear snow",
-    "settingsButton": "Settings",
-    "save": "Save",
-    "cancel": "Cancel"
   }
 }

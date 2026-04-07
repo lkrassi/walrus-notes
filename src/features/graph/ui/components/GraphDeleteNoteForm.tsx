@@ -29,9 +29,7 @@ export const GraphDeleteNoteForm = ({
       await deleteNote({ noteId }).unwrap();
       dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
       closeModal();
-    } catch (_e) {
-      // Keep modal opened so user can retry or cancel.
-    }
+    } catch (_e) {}
   };
 
   return (

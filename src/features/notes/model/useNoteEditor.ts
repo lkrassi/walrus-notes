@@ -261,8 +261,6 @@ export const useNoteEditor = (
     const newPayload = safePayload;
 
     if (newTitle === note.title && newPayload === note.payload) {
-      // If note arrived with draft marker but content is unchanged, we still
-      // need to commit draft cleanup; otherwise it will reopen in edit mode.
       if (hasAnyDraftMarker) {
         try {
           const res = commitDraft(newPayload);

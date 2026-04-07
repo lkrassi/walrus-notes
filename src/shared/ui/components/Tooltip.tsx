@@ -32,15 +32,7 @@ export const Tooltip: FC<TooltipProps> = ({
     return document.body;
   }, []);
 
-  // Динамическое вычисление позиции с учётом границ экрана
   const getPosition = (anchorRect: DOMRect) => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    // Зарезервируем место для тултипа (ширину и высоту узнаем после рендера)
-    // Но сначала используем дефолтные оценки, а после рендера скорректируем
-    // Для простоты — пересчитываем после монтирования тултипа
-    // Здесь вернём базовые координаты без учёта размеров, а окончательную позицию применим в useEffect
     let left = anchorRect.left + anchorRect.width / 2;
     let top = anchorRect.top;
     let transform = 'translate(-50%, calc(-100% - 8px))';
@@ -71,7 +63,6 @@ export const Tooltip: FC<TooltipProps> = ({
     return { left, top, transform };
   };
 
-  // Корректировка позиции, чтобы тултип не выходил за границы
   const adjustPosition = (
     left: number,
     top: number,
@@ -84,23 +75,16 @@ export const Tooltip: FC<TooltipProps> = ({
     let newTop = top;
     const newTransform = transform;
 
-    // Определяем текущее выравнивание по transform
-    const isHorizontal =
-      transform.includes('translateX') || transform.includes('(-50%');
     const isTopBottom = transform.includes('Y') || transform.includes('(-100%');
 
-    // Проверка по горизонтали
     const tooltipRight = newLeft + tooltipRect.width / 2;
     const tooltipLeft = newLeft - tooltipRect.width / 2;
     if (tooltipLeft < 0) {
-      // Сдвигаем вправо
       newLeft = newLeft + Math.abs(tooltipLeft) + 8;
     } else if (tooltipRight > viewportWidth) {
-      // Сдвигаем влево
       newLeft = newLeft - (tooltipRight - viewportWidth) - 8;
     }
 
-    // Проверка по вертикали
     const tooltipBottom = newTop + (isTopBottom ? tooltipRect.height : 0);
     const tooltipTop = newTop - (isTopBottom ? tooltipRect.height : 0);
     if (tooltipTop < 0) {
@@ -112,10 +96,8 @@ export const Tooltip: FC<TooltipProps> = ({
     return { left: newLeft, top: newTop, transform: newTransform };
   };
 
-  // Состояние для финальных стилей
   const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
 
-  // Эффект для измерения и корректировки позиции
   useEffect(() => {
     if (!anchor || !tooltipRef.current) return;
 
