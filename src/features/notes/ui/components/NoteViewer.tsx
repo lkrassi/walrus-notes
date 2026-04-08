@@ -15,15 +15,12 @@ interface NoteViewerProps {
   note: Note;
   layoutId?: string;
   onNoteUpdated?: (note: Note) => void;
-  onNoteDeleted?: (noteId: string) => void;
-  openedFromSidebar?: boolean;
 }
 
 export const NoteViewer = memo(function NoteViewer({
   note,
   layoutId,
   onNoteUpdated,
-  openedFromSidebar: _openedFromSidebar,
 }: NoteViewerProps) {
   const resolvedLayoutId = layoutId || note.layoutId || '';
   const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);

@@ -100,33 +100,3 @@ export const createAuthValidationSchemas = (t: (key: string) => string) => {
     registerValidationSchema: schemas.register,
   };
 };
-
-export const loginValidationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email('auth:validation.emailInvalid')
-    .required('auth:validation.emailRequired'),
-  password: yup
-    .string()
-    .min(6, 'auth:validation.passwordMinLength')
-    .required('auth:validation.passwordRequired'),
-});
-
-export const registerValidationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email('auth:validation.emailInvalid')
-    .required('auth:validation.emailRequired'),
-  username: yup
-    .string()
-    .min(3, 'auth:validation.usernameMinLength')
-    .required('auth:validation.usernameRequired'),
-  password: yup
-    .string()
-    .min(6, 'auth:validation.passwordMinLength')
-    .required('auth:validation.passwordRequired'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'auth:validation.passwordsMustMatch')
-    .required('auth:validation.confirmPasswordRequired'),
-});

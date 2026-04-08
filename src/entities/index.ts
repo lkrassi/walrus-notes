@@ -38,6 +38,7 @@ export {
   useCreateNoteMutation,
   useDeleteNoteLinkMutation,
   useDeleteNoteMutation,
+  useGetLinkedNotesQuery,
   useGetNotesQuery,
   useGetPosedNotesQuery,
   useGetUnposedNotesQuery,

@@ -200,7 +200,6 @@ export const UnposedNotesList = ({
           </SortableContext>
         </motion.aside>
       </div>
-      {/* RenderWithState removed, just fragment */}
     </>
   );
 };

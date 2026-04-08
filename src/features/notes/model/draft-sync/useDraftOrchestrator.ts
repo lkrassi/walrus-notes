@@ -1,6 +1,7 @@
 import { makeCommitDraft } from '@/entities';
 import { useDebounced } from '@/shared/lib/react/hooks';
 import { useCallback, useEffect, useRef } from 'react';
+import { reportDraftSyncError } from './errors';
 import type { UseDraftSyncDeps, UseDraftSyncReturn } from './types';
 import { useDraftListeners } from './useDraftListeners';
 import { useDraftSender } from './useDraftSender';
@@ -149,7 +150,9 @@ export const useDraftOrchestrator = ({
     return () => {
       try {
         if (unsubscribe) unsubscribe();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('onOpen:unsubscribe', error, { noteId });
+      }
     };
   }, [noteId, refs, scheduleCommitRetry, setDraftPhase, ws]);
 
@@ -211,7 +214,9 @@ export const useDraftOrchestrator = ({
         refs.prevSentRef.current = normalizedStoredDraft;
         refs.initialPayloadRef.current = normalizedStoredDraft;
       }
-    } catch (_e) {}
+    } catch (error) {
+      reportDraftSyncError('storedDraft:hydrate', error, { noteId });
+    }
 
     return () => {};
   }, [noteId, refs, storedDraft]);
@@ -263,7 +268,9 @@ export const useDraftOrchestrator = ({
       ) {
         return;
       }
-    } catch (_e) {}
+    } catch (error) {
+      reportDraftSyncError('debounce:initial-guard', error, { noteId });
+    }
 
     if (
       refs.lastManualSendAtRef.current != null &&
@@ -304,18 +311,29 @@ export const useDraftOrchestrator = ({
 
         try {
           refs.suppressRemoteUntilRef.current = Date.now() + 3500;
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('commitDraft:suppress-remote-window', error, {
+            noteId,
+          });
+        }
 
         try {
           refs.lastManualSendAtRef.current = Date.now();
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('commitDraft:last-manual-send-at', error, {
+            noteId,
+          });
+        }
 
         try {
           refs.awaitingCommitPayloadRef.current =
             value ?? refs.draftRef.current ?? null;
           if (refs.awaitingCommitPayloadRef.current != null)
             refs.prevSentRef.current = refs.awaitingCommitPayloadRef.current;
-        } catch (_e) {
+        } catch (error) {
+          reportDraftSyncError('commitDraft:prepare-awaiting-payload', error, {
+            noteId,
+          });
           refs.awaitingCommitPayloadRef.current = null;
         }
 
@@ -329,7 +347,8 @@ export const useDraftOrchestrator = ({
         }
 
         return true;
-      } catch (_e) {
+      } catch (error) {
+        reportDraftSyncError('commitDraft:handler', error, { noteId });
         refs.pendingCommitPayloadRef.current =
           refs.awaitingCommitPayloadRef.current;
         scheduleCommitRetry('exception');
@@ -354,7 +373,11 @@ export const useDraftOrchestrator = ({
 
       try {
         refs.lastManualSendAtRef.current = Date.now();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('sendUpdateDraft:last-manual-send-at', error, {
+          noteId,
+        });
+      }
 
       return send(value);
     },

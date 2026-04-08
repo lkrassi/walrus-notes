@@ -138,7 +138,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
       <div className='mx-auto flex w-full max-w-[320px] justify-center gap-1'>
         {code.map((digit, index) => (
           <Input
-            key={index}
+            key={`reset-otp-${index}`}
             ref={el => {
               inputRefs.current[index] = el;
             }}

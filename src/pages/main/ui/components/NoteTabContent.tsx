@@ -5,13 +5,11 @@ import { NoteViewer } from '@/features/notes';
 interface NoteTabContentProps {
   activeTab: DashboardTab;
   onNoteUpdated: (noteId: string, updates: Partial<Note>) => void;
-  onTabClose: (tabId: string) => void;
 }
 
 export const NoteTabContent = ({
   activeTab,
   onNoteUpdated,
-  onTabClose,
 }: NoteTabContentProps) => {
   const note = activeTab.item.note;
 
@@ -24,7 +22,6 @@ export const NoteTabContent = ({
       key={note.id}
       note={note}
       layoutId={activeTab.item.parentId || note.layoutId || ''}
-      openedFromSidebar={!!activeTab.item.openedFromSidebar}
       onNoteUpdated={updatedNote =>
         onNoteUpdated(updatedNote.id, {
           title: updatedNote.title,
@@ -32,9 +29,6 @@ export const NoteTabContent = ({
           draft: updatedNote.draft,
         })
       }
-      onNoteDeleted={() => {
-        onTabClose(activeTab.id);
-      }}
     />
   );
 };

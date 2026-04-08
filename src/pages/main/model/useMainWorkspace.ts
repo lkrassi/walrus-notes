@@ -74,9 +74,9 @@ export const useMainWorkspace = () => {
         switchTo(tabId);
       } else {
         if (item.type === 'note' && mode === 'preview') {
-          openPreview({ ...item, openedFromSidebar: true });
+          openPreview(item);
         } else {
-          open({ ...item, openedFromSidebar: true });
+          open(item);
         }
         switchTo(tabId);
       }
@@ -91,9 +91,9 @@ export const useMainWorkspace = () => {
         switchTo(tabId);
       } else {
         if (item.type === 'note' && mode === 'preview') {
-          openPreview({ ...item, openedFromSidebar: false });
+          openPreview(item);
         } else {
-          open({ ...item, openedFromSidebar: false });
+          open(item);
         }
         switchTo(tabId);
       }

@@ -1,6 +1,5 @@
 import {
   addNotification,
-  notesApi,
   removeDraft,
   setDraft,
   updateTabNote,
@@ -9,6 +8,8 @@ import {
 } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import { useEffect } from 'react';
+import { applyCommittedPayloadToNoteCaches } from './cacheUpdates';
+import { reportDraftSyncError } from './errors';
 import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
 interface UseDraftListenersOpts {
@@ -67,7 +68,11 @@ export const useDraftListeners = ({
             if (until != null && Date.now() < until) {
               return;
             }
-          } catch (_e) {}
+          } catch (error) {
+            reportDraftSyncError('UPDATE_DRAFT_REQUEST:suppress-check', error, {
+              noteId,
+            });
+          }
 
           const data = payload as UpdateDraftPayload;
           if (!data || data.noteId !== noteId) {
@@ -98,7 +103,15 @@ export const useDraftListeners = ({
             ) {
               return;
             }
-          } catch (_e) {}
+          } catch (error) {
+            reportDraftSyncError(
+              'UPDATE_DRAFT_REQUEST:last-commit-check',
+              error,
+              {
+                noteId,
+              }
+            );
+          }
 
           refs.prevSentRef.current = nd;
           refs.pendingRef.current = null;
@@ -109,11 +122,23 @@ export const useDraftListeners = ({
             } else {
               dispatch(removeDraft({ noteId }));
             }
-          } catch (_e) {}
+          } catch (error) {
+            reportDraftSyncError(
+              'UPDATE_DRAFT_REQUEST:apply-remote-draft',
+              error,
+              {
+                noteId,
+              }
+            );
+          }
 
           if (onRemoteDraft) onRemoteDraft(nd);
           setLastSavedAt(new Date().toISOString());
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('UPDATE_DRAFT_REQUEST:handler', error, {
+            noteId,
+          });
+        }
       }) ?? (() => {});
 
     const unsubUpdateResp =
@@ -142,7 +167,11 @@ export const useDraftListeners = ({
             setIsSaving(false);
             setDraftPhase('PENDING_UPDATE');
           }
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('UPDATE_DRAFT_RESPONSE:handler', error, {
+            noteId,
+          });
+        }
       }) ?? (() => {});
 
     const unsubCommit =
@@ -157,10 +186,22 @@ export const useDraftListeners = ({
 
           try {
             dispatch(removeDraft({ noteId }));
-          } catch (_e) {}
+          } catch (error) {
+            reportDraftSyncError(
+              'COMMIT_DRAFT_REQUEST:remove-local-draft',
+              error,
+              {
+                noteId,
+              }
+            );
+          }
 
           if (onRemoteCommit) onRemoteCommit();
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('COMMIT_DRAFT_REQUEST:handler', error, {
+            noteId,
+          });
+        }
       }) ?? (() => {});
 
     const unsubCommitResp =
@@ -200,79 +241,70 @@ export const useDraftListeners = ({
                   },
                 })
               );
-            } catch (_e) {}
+            } catch (error) {
+              reportDraftSyncError(
+                'COMMIT_DRAFT_RESPONSE:update-tab-note',
+                error,
+                {
+                  noteId,
+                }
+              );
+            }
 
             try {
               dispatch(removeDraft({ noteId }));
-            } catch (_e) {}
+            } catch (error) {
+              reportDraftSyncError(
+                'COMMIT_DRAFT_RESPONSE:remove-local-draft',
+                error,
+                {
+                  noteId,
+                }
+              );
+            }
 
             try {
               refs.lastCommittedPayloadRef.current = confirmed as string;
-            } catch (_e) {}
+            } catch (error) {
+              reportDraftSyncError(
+                'COMMIT_DRAFT_RESPONSE:set-last-committed-payload',
+                error,
+                {
+                  noteId,
+                }
+              );
+            }
 
             try {
               refs.suppressRemoteUntilRef.current = Date.now() + 3500;
-            } catch (_e) {}
+            } catch (error) {
+              reportDraftSyncError(
+                'COMMIT_DRAFT_RESPONSE:suppress-remote-window',
+                error,
+                {
+                  noteId,
+                }
+              );
+            }
 
             try {
               if (confirmed != null) {
-                for (const l of layouts) {
-                  try {
-                    dispatch(
-                      notesApi.util.updateQueryData(
-                        'getNotes',
-                        { layoutId: l.id, page: 1 },
-                        draft => {
-                          const idx = draft.data.findIndex(
-                            n => n.id === noteId
-                          );
-                          if (idx !== -1) {
-                            draft.data[idx].payload = confirmed as string;
-                            draft.data[idx].draft = undefined;
-                          }
-                        }
-                      )
-                    );
-                  } catch (_e) {}
-
-                  try {
-                    dispatch(
-                      notesApi.util.updateQueryData(
-                        'getPosedNotes',
-                        { layoutId: l.id },
-                        draft => {
-                          const idx = draft.data.findIndex(
-                            n => n.id === noteId
-                          );
-                          if (idx !== -1) {
-                            draft.data[idx].payload = confirmed as string;
-                            draft.data[idx].draft = undefined;
-                          }
-                        }
-                      )
-                    );
-                  } catch (_e) {}
-
-                  try {
-                    dispatch(
-                      notesApi.util.updateQueryData(
-                        'getUnposedNotes',
-                        { layoutId: l.id },
-                        draft => {
-                          const idx = draft.data.findIndex(
-                            n => n.id === noteId
-                          );
-                          if (idx !== -1) {
-                            draft.data[idx].payload = confirmed as string;
-                            draft.data[idx].draft = undefined;
-                          }
-                        }
-                      )
-                    );
-                  } catch (_e) {}
-                }
+                applyCommittedPayloadToNoteCaches({
+                  dispatch,
+                  layouts,
+                  noteId,
+                  payload: confirmed,
+                });
               }
-            } catch (_e) {}
+            } catch (error) {
+              reportDraftSyncError(
+                'COMMIT_DRAFT_RESPONSE:update-query-caches',
+                error,
+                {
+                  noteId,
+                }
+              );
+            }
 
             refs.awaitingCommitRef.current = false;
             refs.awaitingCommitPayloadRef.current = null;
@@ -298,22 +330,42 @@ export const useDraftListeners = ({
             );
             onCommitRetryRequired?.('commit-response-error');
           }
-        } catch (_e) {}
+        } catch (error) {
+          reportDraftSyncError('COMMIT_DRAFT_RESPONSE:handler', error, {
+            noteId,
+          });
+        }
       }) ?? (() => {});
 
     return () => {
       try {
         if (unsubUpdate) unsubUpdate();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('unsubscribe:UPDATE_DRAFT_REQUEST', error, {
+          noteId,
+        });
+      }
       try {
         if (unsubUpdateResp) unsubUpdateResp();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('unsubscribe:UPDATE_DRAFT_RESPONSE', error, {
+          noteId,
+        });
+      }
       try {
         if (unsubCommit) unsubCommit();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('unsubscribe:COMMIT_DRAFT_REQUEST', error, {
+          noteId,
+        });
+      }
       try {
         if (unsubCommitResp) unsubCommitResp();
-      } catch (_e) {}
+      } catch (error) {
+        reportDraftSyncError('unsubscribe:COMMIT_DRAFT_RESPONSE', error, {
+          noteId,
+        });
+      }
     };
   }, [
     ws,

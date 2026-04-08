@@ -19,6 +19,5 @@ export type FileTreeItem = {
   updatedAt?: string;
   note?: Note;
   layoutId?: string;
-  openedFromSidebar?: boolean;
   access?: LayoutAccess;
 };

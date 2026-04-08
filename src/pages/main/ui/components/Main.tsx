@@ -6,6 +6,7 @@ import { PrivateHeader } from '@/widgets/ui/components/header/PrivateHeader';
 import { Sidebar } from '@/widgets/ui/components/sidebar';
 import { useCallback, useRef } from 'react';
 import { useMainWorkspace } from '../../model';
+import { GraphNoteOpenProvider } from './GraphNoteOpenContext';
 import { MainContent } from './MainContent';
 
 export const Main = () => {
@@ -39,11 +40,14 @@ export const Main = () => {
               selectedItemId={activeTabId || undefined}
             />
           </FileTreeProvider>
-          <MainContent
-            onNoteOpen={handleNoteOpenFromGraph}
-            onNoteOpenPinned={handleNoteOpenFromGraphPinned}
-            onNoteTreeUpdate={handleNoteTreeUpdate}
-          />
+          <GraphNoteOpenProvider
+            value={{
+              onNoteOpen: handleNoteOpenFromGraph,
+              onNoteOpenPinned: handleNoteOpenFromGraphPinned,
+            }}
+          >
+            <MainContent onNoteTreeUpdate={handleNoteTreeUpdate} />
+          </GraphNoteOpenProvider>
         </div>
       </div>
     </WebSocketProvider>

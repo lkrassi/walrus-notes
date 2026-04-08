@@ -144,41 +144,20 @@ const recordNotFoundMiddleware: Middleware = storeAPI => next => action => {
   if (looksLikeNoteError && noteId) {
     storeAPI.dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
 
-    const state = storeAPI.getState() as {
-      api: {
-        queries: Record<
-          string,
-          {
-            endpointName?: string;
-            originalArgs?: unknown;
-          }
-        >;
-      };
-    };
+    storeAPI.dispatch(notesApi.util.invalidateTags(['Notes']));
 
-    const queries = Object.values(state.api?.queries || {});
-
-    for (const query of queries) {
-      const queryEndpoint = query.endpointName;
-      const queryArgs = query.originalArgs;
-
-      if (!queryEndpoint || queryArgs === undefined) continue;
-
-      storeAPI.dispatch(notesApi.util.invalidateTags(['Notes']));
-
-      if (
-        Date.now() - lastLayoutRecordNotFoundAt >
-        NOTE_NOTIFICATION_SUPPRESS_AFTER_LAYOUT_MS
-      ) {
-        storeAPI.dispatch(
-          addNotification({
-            type: 'warning',
-            message: i18n.t('notes:recordNotFoundDeleted'),
-            duration: 6000,
-            origin: 'api-record-not-found',
-          })
-        );
-      }
+    if (
+      Date.now() - lastLayoutRecordNotFoundAt >
+      NOTE_NOTIFICATION_SUPPRESS_AFTER_LAYOUT_MS
+    ) {
+      storeAPI.dispatch(
+        addNotification({
+          type: 'warning',
+          message: i18n.t('notes:recordNotFoundDeleted'),
+          duration: 6000,
+          origin: 'api-record-not-found',
+        })
+      );
     }
   }
 

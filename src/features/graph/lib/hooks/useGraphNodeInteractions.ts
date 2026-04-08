@@ -1,9 +1,9 @@
 import { useCallback, useState, type MouseEvent } from 'react';
-import type { Node } from 'reactflow';
+import type { Node, ReactFlowProps } from 'reactflow';
 
 interface UseGraphNodeInteractionsProps {
   nodesWithSelection: Node[];
-  onNodeDragStop?: (event: MouseEvent, node: Node, nodes?: Node[]) => void;
+  onNodeDragStop?: ReactFlowProps['onNodeDragStop'];
   onTouchNodePositionChange?: (
     nodeId: string,
     position: { x: number; y: number }

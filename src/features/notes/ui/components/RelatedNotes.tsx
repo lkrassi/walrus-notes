@@ -16,11 +16,6 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
 }) {
   const { open, switchTo } = useTabs();
   const effectiveLayoutId = layoutId || note?.layoutId || '';
-  const linkedOutIds =
-    note?.linkedWithOut ??
-    (note as unknown as { linkedWith?: string[] })?.linkedWith ??
-    [];
-  const linkedInIds = note?.linkedWithIn ?? [];
 
   const handleNoteSelect = useCallback(
     (selected: Note) => {
@@ -46,8 +41,6 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
         <LinkedNotesList
           layoutId={effectiveLayoutId}
           noteId={note.id}
-          linkedOutIds={linkedOutIds}
-          linkedInIds={linkedInIds}
           onNoteSelect={handleNoteSelect}
         />
       </div>

@@ -1,7 +1,7 @@
 import type { DashboardTab } from '@/entities';
-import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { lazy, Suspense } from 'react';
+import { useGraphNoteOpenContext } from './GraphNoteOpenContext';
 
 const NotesGraph = lazy(() =>
   import('@/features/graph').then(m => ({
@@ -11,15 +11,10 @@ const NotesGraph = lazy(() =>
 
 interface GraphTabContentProps {
   activeTab: DashboardTab;
-  onNoteOpen: (noteData: { noteId: string; note: Note }) => void;
-  onNoteOpenPinned: (noteData: { noteId: string; note: Note }) => void;
 }
 
-export const GraphTabContent = ({
-  activeTab,
-  onNoteOpen,
-  onNoteOpenPinned,
-}: GraphTabContentProps) => {
+export const GraphTabContent = ({ activeTab }: GraphTabContentProps) => {
+  const { onNoteOpen, onNoteOpenPinned } = useGraphNoteOpenContext();
   const layoutId =
     activeTab.item.type === 'layout'
       ? activeTab.item.id

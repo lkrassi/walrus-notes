@@ -136,7 +136,7 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
       <div className='mx-auto flex w-full max-w-[320px] justify-center gap-1'>
         {code.map((digit, index) => (
           <Input
-            key={index}
+            key={`confirm-otp-${index}`}
             ref={el => {
               inputRefs.current[index] = el;
             }}

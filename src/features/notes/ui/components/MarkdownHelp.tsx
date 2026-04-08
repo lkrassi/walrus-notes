@@ -7,8 +7,8 @@ export const MarkdownHelp: FC = () => {
   return (
     <div className={cn('max-w-4xl')}>
       <div className={cn('space-y-8')}>
-        {markdownHelpSections.map((section, index) => (
-          <HelpSection key={index} section={section} />
+        {markdownHelpSections.map(section => (
+          <HelpSection key={section.titleKey} section={section} />
         ))}
       </div>
     </div>

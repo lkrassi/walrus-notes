@@ -15,9 +15,9 @@ export {
   useResizableBase,
   useResizableSplit,
 } from '@/shared/lib/react/hooks';
+export { useFileTree } from './FileTreeContext';
 export { useAppDispatch, useAppSelector, useUser } from './redux';
 export { SidebarProvider, useSidebar } from './sidebarContext';
-export { useFileTree } from './useFileTree';
 export { useLocalization } from './useLocalization';
 export {
   useLocalStorage,

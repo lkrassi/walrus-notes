@@ -2,7 +2,7 @@ import type { RootState } from '@/app/store';
 import { type ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { AppRoutes } from './config';
+import { AppRoutes } from './routes';
 
 type GuestRouteProps = {
   children: ReactElement;

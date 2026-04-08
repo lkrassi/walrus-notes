@@ -1,11 +1,14 @@
-import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { useIsMobile } from '@/shared/lib/react/hooks';
-import { memo, type FC, type MouseEvent } from 'react';
-import type { Edge, Node, ReactFlowProps } from 'reactflow';
+import { memo } from 'react';
 import ReactFlow from 'reactflow';
+import {
+  useGraphContextActions,
+  useGraphContextState,
+} from '../../lib/context';
 import { GraphBackground } from './GraphBackground';
 import { GraphControls } from './GraphControls';
 import { GraphMiniMap } from './GraphMiniMap';
+import { useGraphViewContext } from './GraphViewContext';
 import { MultiColorEdge } from './multi-color-edge';
 import { NoteNodeComponent } from './NoteNode';
 import { OffscreenArrows } from './OffscreenArrows';
@@ -18,64 +21,40 @@ const nodeTypes = {
   note: NoteNodeComponent,
 };
 
-interface GraphReactFlowCoreProps {
-  layoutId: string;
-  nodesWithSelection: Node[];
-  edgesWithSelection: Edge[];
-  onNodesChange: ReactFlowProps['onNodesChange'];
-  onEdgesChange: ReactFlowProps['onEdgesChange'];
-  onConnect: ReactFlowProps['onConnect'];
-  onConnectStart: ReactFlowProps['onConnectStart'];
-  onConnectEnd: ReactFlowProps['onConnectEnd'];
-  onNodeDragStart?: ReactFlowProps['onNodeDragStart'];
-  onNodeDragStop: (event: MouseEvent, node: Node) => void;
-  onNodeDrag: (event: MouseEvent, node: Node) => void;
-  onNodeClick: ReactFlowProps['onNodeClick'];
-  onNodeMouseEnter: ReactFlowProps['onNodeMouseEnter'];
-  onNodeMouseLeave: ReactFlowProps['onNodeMouseLeave'];
-  onNodeContextMenu?: ReactFlowProps['onNodeContextMenu'];
-  onPaneClick: (event: MouseEvent) => void;
-  onNodeDoubleClick: (event: MouseEvent, node: Node) => void;
-  disableZoomDuringDrag?: boolean;
-  allowNodeDrag?: boolean;
-  canEdit?: boolean;
-  isMain?: boolean;
-  graphHistory?: UseGraphHistoryReturn;
-  ViewportTracker: FC<{
-    onViewportChange: (c: { x: number; y: number } | null) => void;
-  }>;
-  onViewportChange: (c: { x: number; y: number } | null) => void;
-  minimapOffset?: string;
-}
-
-export const GraphReactFlowCore = memo(function GraphReactFlowCore({
-  layoutId,
-  nodesWithSelection,
-  edgesWithSelection,
-  onNodesChange,
-  onEdgesChange,
-  onConnect,
-  onConnectStart,
-  onConnectEnd,
-  onNodeDragStart,
-  onNodeDragStop,
-  onNodeDrag,
-  onNodeClick,
-  onNodeMouseEnter,
-  onNodeMouseLeave,
-  onNodeContextMenu,
-  onPaneClick,
-  onNodeDoubleClick,
-  disableZoomDuringDrag,
-  allowNodeDrag,
-  canEdit = true,
-  isMain,
-  graphHistory,
-  ViewportTracker,
-  onViewportChange,
-  minimapOffset: _minimapOffset = '0px',
-}: GraphReactFlowCoreProps) {
+export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
   const isMobile = useIsMobile();
+  const {
+    onNodeDragStop,
+    onNodeDrag,
+    onNodeContextMenu,
+    onPaneClick: onPaneClickProp,
+    ViewportTracker,
+    onViewportChange,
+    minimapOffset: _minimapOffset = '0px',
+  } = useGraphViewContext();
+  const {
+    layoutId,
+    nodesWithSelection,
+    edgesWithSelection,
+    disableZoomDuringDrag,
+    allowNodeDrag,
+    canEdit,
+    isMain,
+    graphHistory,
+  } = useGraphContextState();
+  const {
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    onConnectStart,
+    onConnectEnd,
+    onNodeDragStart,
+    onNodeClick,
+    onNodeMouseEnter,
+    onNodeMouseLeave,
+    onPaneClick,
+    onNodeDoubleClick,
+  } = useGraphContextActions();
 
   return (
     <ReactFlow
@@ -93,7 +72,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore({
       onNodeMouseEnter={onNodeMouseEnter}
       onNodeMouseLeave={onNodeMouseLeave}
       onNodeContextMenu={onNodeContextMenu}
-      onPaneClick={onPaneClick}
+      onPaneClick={onPaneClickProp ?? onPaneClick}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       fitView

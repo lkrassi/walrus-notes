@@ -1,4 +1,3 @@
-import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem as UseFileTreeItem } from '@/entities/tab';
 import { CreateNoteForm } from '@/features/notes';
@@ -6,18 +5,8 @@ import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS } from '@/shared/lib/react';
 import { DropdownContent } from '@/shared/ui';
 import { useLocalization, useModalActions } from '@/widgets/hooks';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
-import { useSelector } from 'react-redux';
-
-type NotesApiRootState = Parameters<
-  ReturnType<typeof notesApi.endpoints.getNotes.select>
->[0];
+import { type ReactNode } from 'react';
+import { useFileTreeLayoutNotesData } from './model/useFileTreeLayoutNotesData';
 
 type FileTreeItemContentProps = {
   item: UseFileTreeItem;
@@ -34,15 +23,22 @@ export const FileTreeItemContent = ({
   renderChild,
   onNotesLoaded,
 }: FileTreeItemContentProps) => {
-  const [loadedPages, setLoadedPages] = useState<Set<number>>(new Set([1]));
-  const [hasMore, setHasMore] = useState(true);
-  const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-
   const { t } = useLocalization();
   const { openModalFromTrigger } = useModalActions();
   const canWrite = item.access ? !!item.access.canWrite : true;
+
+  const {
+    allNotes,
+    hasMore,
+    isLoading,
+    isInitialLoadDone,
+    isQueryLoading,
+    handleLoadMore,
+  } = useFileTreeLayoutNotesData({
+    layoutId: item.id,
+    isExpanded: isExpanded && item.type === 'layout',
+    onNotesLoaded,
+  });
 
   const handleCreateNote = openModalFromTrigger(
     <CreateNoteForm layoutId={item.id} />,
@@ -51,110 +47,6 @@ export const FileTreeItemContent = ({
       size: MODAL_SIZE_PRESETS.noteCreate,
     }
   );
-
-  const { data: notesResponse, isLoading: isQueryLoading } = useGetNotesQuery(
-    { layoutId: item.id, page: 1 },
-    {
-      skip: !isExpanded || item.type !== 'layout',
-    }
-  );
-
-  const [triggerGetNotes, { isLoading: _isLoadMoreLoading }] =
-    useLazyGetNotesQuery();
-
-  useEffect(() => {
-    setLoadedPages(new Set([1]));
-    setHasMore(true);
-    setIsInitialLoadDone(false);
-    setTotalPages(1);
-  }, [item.id]);
-
-  useEffect(() => {
-    if (!isExpanded || item.type !== 'layout' || !notesResponse) return;
-
-    const notes = Array.isArray(notesResponse.data) ? notesResponse.data : [];
-    const pagination = notesResponse.pagination;
-
-    if (pagination) {
-      setTotalPages(pagination.pages);
-      const more = 1 < pagination.pages;
-      setHasMore(more);
-    }
-
-    setIsInitialLoadDone(true);
-
-    if (onNotesLoaded && notes.length > 0) {
-      const notesWithLayout = notes.map(note => ({
-        ...note,
-        layoutId: item.id,
-      }));
-      onNotesLoaded(item.id, notesWithLayout);
-    }
-  }, [notesResponse, isExpanded, item.id, onNotesLoaded]);
-
-  const apiState = useSelector((state: NotesApiRootState) => state.api);
-
-  const allNotes = useMemo(() => {
-    const notesMap = new Map<string, Note>();
-
-    loadedPages.forEach(page => {
-      const cachedData = notesApi.endpoints.getNotes.select({
-        layoutId: item.id,
-        page,
-      })({ api: apiState } as NotesApiRootState);
-
-      if (cachedData?.data?.data) {
-        cachedData.data.data.forEach(note => {
-          if (!notesMap.has(note.id)) {
-            notesMap.set(note.id, note);
-          }
-        });
-      }
-    });
-
-    return Array.from(notesMap.values());
-  }, [loadedPages, apiState, item.id]);
-
-  const loadMoreNotes = useCallback(
-    async (page: number) => {
-      if (!hasMore || page <= 1) {
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        const result = await triggerGetNotes({
-          layoutId: item.id,
-          page,
-        }).unwrap();
-
-        if (result.data) {
-          setLoadedPages(prev => new Set([...prev, page]));
-
-          const more = page < totalPages;
-          setHasMore(more);
-
-          if (onNotesLoaded && result.data.length > 0) {
-            const notesWithLayout = result.data.map(note => ({
-              ...note,
-              layoutId: item.id,
-            }));
-            onNotesLoaded(item.id, notesWithLayout);
-          }
-        }
-      } catch (_error) {
-        setHasMore(false);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [hasMore, triggerGetNotes, item.id, totalPages, onNotesLoaded]
-  );
-
-  const handleLoadMore = useCallback(() => {
-    const nextPage = Math.max(...loadedPages) + 1;
-    loadMoreNotes(nextPage);
-  }, [loadedPages, loadMoreNotes]);
 
   let contentState: 'loading' | 'content' | 'empty' = 'empty';
 

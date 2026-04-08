@@ -4,6 +4,8 @@ export {
   useCreateNoteMutation,
   useDeleteNoteLinkMutation,
   useDeleteNoteMutation,
+  useDragNoteMutation,
+  useGetLinkedNotesQuery,
   useGetNotesQuery,
   useGetPosedNotesQuery,
   useGetUnposedNotesQuery,
@@ -12,5 +14,4 @@ export {
   useSearchNotesQuery,
   useUpdateNoteMutation,
   useUpdateNotePositionMutation,
-  useDragNoteMutation,
 } from './notesApi';

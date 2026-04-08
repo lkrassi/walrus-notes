@@ -45,8 +45,16 @@ export const useMainTabsFlow = ({
         return;
       }
 
-      action();
-      return;
+      const hasUnsavedServerDraft = !!(
+        note.draft &&
+        note.draft.length > 0 &&
+        note.draft !== note.payload
+      );
+
+      if (!hasUnsavedServerDraft) {
+        action();
+        return;
+      }
     },
     [activeTab]
   );
@@ -93,7 +101,7 @@ export const useMainTabsFlow = ({
       }
 
       confirmIfUnsaved(() => {
-        dispatch(openTab({ ...item, openedFromSidebar: false }));
+        dispatch(openTab(item));
         dispatch(switchTab(tabId));
       });
     },
@@ -117,7 +125,6 @@ export const useMainTabsFlow = ({
             type: 'layout',
             title,
             color: '',
-            openedFromSidebar: false,
             isMain: false,
           } as FileTreeItem)
         );

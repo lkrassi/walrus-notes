@@ -1,7 +1,7 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
 import type { Note } from '@/entities/note';
 import { useCallback, useEffect, type MouseEvent, type RefObject } from 'react';
-import type { Edge, EdgeChange, Node, NodeChange } from 'reactflow';
+import type { Edge, Node, NodeChange } from 'reactflow';
 import { useGraphConnectionHandlers } from '../../model/hooks/useGraphConnectionHandlers';
 import { useGraphConnections } from '../../model/hooks/useGraphConnections';
 import { useGraphDragHandlers } from '../../model/hooks/useGraphDragHandlers';
@@ -17,7 +17,6 @@ interface UseGraphContentHandlersProps {
   edges: Edge[];
   setEdgesState: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
   onNodesChange: (changes: NodeChange[]) => void;
-  onEdgesChange: (changes: EdgeChange[]) => void;
   selectedNodeId: string | null;
   hoveredNodeId: string | null;
   updatePositionCallback: (
@@ -28,7 +27,6 @@ interface UseGraphContentHandlersProps {
   onNodeClick: (nodeId: string) => void;
   onNodeMouseEnter: (nodeId: string) => void;
   onNodeMouseLeave: () => void;
-  onPaneClick: (event: MouseEvent) => void;
   onNoteOpen?: (noteData: { noteId: string; note: Note }) => void;
   screenToFlowPosition: (position: { x: number; y: number }) => {
     x: number;
@@ -50,14 +48,12 @@ export const useGraphContentHandlers = ({
   edges,
   setEdgesState,
   onNodesChange,
-  onEdgesChange: _onEdgesChange,
   selectedNodeId,
   hoveredNodeId,
   updatePositionCallback,
   onNodeClick,
   onNodeMouseEnter,
   onNodeMouseLeave,
-  onPaneClick: _onPaneClick,
   onNoteOpen,
   screenToFlowPosition,
   graphHistory,
@@ -136,14 +132,10 @@ export const useGraphContentHandlers = ({
 
   useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
 
-  const { handleNodeDoubleClick, handleNoteDrop, handleBoxSelect } =
-    useGraphSelectionHandlers({
-      nodes,
-      setNodes,
-      lastBoxSelectedIdsRef: { current: new Set() },
-      screenToFlowPosition,
-      handleAddNoteToGraph: undefined,
-    });
+  const { handleNodeDoubleClick, handleNoteDrop } = useGraphSelectionHandlers({
+    screenToFlowPosition,
+    handleAddNoteToGraph: undefined,
+  });
 
   const { handleNoteOpen } = useGraphSyncHandlers({
     nodes,
@@ -172,7 +164,7 @@ export const useGraphContentHandlers = ({
       if (!canEdit) return;
       handleAddNoteToGraphOrig?.(note, dropPosition);
     },
-    [canEdit, handleAddNoteToGraphOrig, layoutId]
+    [canEdit, handleAddNoteToGraphOrig]
   );
 
   const handleNodeMouseEnterWrapped = useCallback(
@@ -180,7 +172,7 @@ export const useGraphContentHandlers = ({
       if (isNodeDraggingRef.current) return;
       handleNodeMouseEnter(e, node);
     },
-    [handleNodeMouseEnter, isNodeDraggingRef, layoutId]
+    [handleNodeMouseEnter, isNodeDraggingRef]
   );
 
   const handleNodeMouseLeaveWrapped = useCallback(
@@ -188,26 +180,29 @@ export const useGraphContentHandlers = ({
       if (isNodeDraggingRef.current) return;
       handleNodeMouseLeave(e, node);
     },
-    [handleNodeMouseLeave, isNodeDraggingRef, layoutId]
+    [handleNodeMouseLeave, isNodeDraggingRef]
   );
 
   return {
-    handleNodeDragStart,
-    handleNodeDragStop,
-    handleNodesChange: _handleNodesChange,
-    onConnect,
-    onConnectStart,
-    onConnectEnd,
-    handleNodeDoubleClick,
-    handleNoteDrop,
-    handleBoxSelect,
-    handleAddNoteToGraph,
-    handleNodeClick,
-    handleNodeMouseEnterWrapped,
-    handleNodeMouseLeaveWrapped,
-    handleNoteOpen,
-    isDraggingEdge,
-    tempEdges,
-    allEdges,
+    state: {
+      isDraggingEdge,
+      tempEdges,
+      allEdges,
+    },
+    actions: {
+      handleNodeDragStart,
+      handleNodeDragStop,
+      handleNodesChange: _handleNodesChange,
+      onConnect,
+      onConnectStart,
+      onConnectEnd,
+      handleNodeDoubleClick,
+      handleNoteDrop,
+      handleAddNoteToGraph,
+      handleNodeClick,
+      handleNodeMouseEnterWrapped,
+      handleNodeMouseLeaveWrapped,
+      handleNoteOpen,
+    },
   };
 };

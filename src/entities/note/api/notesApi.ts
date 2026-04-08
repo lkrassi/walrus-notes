@@ -18,7 +18,7 @@ type DraftStateLike = {
 const hydrateServerDrafts = (
   dispatch: (action: unknown) => unknown,
   getState: () => unknown,
-  source: string,
+  _source: string,
   notes: Note[]
 ) => {
   const state = getState() as DraftStateLike;
@@ -219,6 +219,15 @@ interface SearchNotesRequest {
   search: string;
 }
 
+interface GetLinkedNotesRequest {
+  noteId: string;
+}
+
+interface GetLinkedNotesResponse {
+  linkedNotesIn: Note[];
+  linkedNotesOut: Note[];
+}
+
 interface SearchNotesResponse {
   data: Note[];
   meta: {
@@ -245,12 +254,65 @@ const createTempNote = (title: string = 'Новая заметка'): Note => ({
   linkedWithOut: [],
 });
 
+const LINKED_NOTE_SOURCE_ENDPOINTS = new Set([
+  'getNotes',
+  'getPosedNotes',
+  'getUnposedNotes',
+]);
+
+const collectLinkedNotes = (state: LocalRootState, noteId: string) => {
+  const notesById = new Map<string, Note>();
+
+  for (const queryEntry of Object.values(state.api?.queries || {})) {
+    const entry = queryEntry as {
+      endpointName?: string;
+      data?: { data?: Note[] };
+    };
+
+    if (!LINKED_NOTE_SOURCE_ENDPOINTS.has(entry.endpointName || '')) {
+      continue;
+    }
+
+    const notes = entry.data?.data;
+    if (!Array.isArray(notes)) {
+      continue;
+    }
+
+    for (const note of notes) {
+      if (!notesById.has(note.id)) {
+        notesById.set(note.id, note);
+      }
+    }
+  }
+
+  const currentNote = notesById.get(noteId);
+  if (!currentNote) {
+    return {
+      linkedNotesIn: [] as Note[],
+      linkedNotesOut: [] as Note[],
+    };
+  }
+
+  const linkedNotesIn = (currentNote.linkedWithIn ?? [])
+    .map(id => notesById.get(id))
+    .filter((note): note is Note => !!note);
+
+  const linkedNotesOut = (currentNote.linkedWithOut ?? [])
+    .map(id => notesById.get(id))
+    .filter((note): note is Note => !!note);
+
+  return {
+    linkedNotesIn,
+    linkedNotesOut,
+  };
+};
+
 export const notesApi = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getNotes: builder.query<GetNotesResponse, GetNotesRequest>({
       query: ({ layoutId, page = 1 }) =>
         `/notes/layout?layoutId=${layoutId}&page=${page}`,
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getNotes', data.data);
@@ -263,6 +325,21 @@ export const notesApi = apiSlice.injectEndpoints({
           id: note.id,
         })) || []),
         'Notes',
+      ],
+    }),
+
+    getLinkedNotes: builder.query<
+      GetLinkedNotesResponse,
+      GetLinkedNotesRequest
+    >({
+      queryFn: async (arg, { getState }) => {
+        const state = getState() as unknown as LocalRootState;
+        const linkedNotes = collectLinkedNotes(state, arg.noteId);
+
+        return { data: linkedNotes };
+      },
+      providesTags: (_result, _error, arg) => [
+        { type: 'Notes', id: `linked-${arg.noteId}` },
       ],
     }),
 
@@ -527,7 +604,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
     getPosedNotes: builder.query<GetPosedNotesResponse, GetPosedNotesRequest>({
       query: ({ layoutId }) => `/notes/layout/graph/posed?layoutId=${layoutId}`,
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getPosedNotes', data.data);
@@ -544,7 +621,7 @@ export const notesApi = apiSlice.injectEndpoints({
     >({
       query: ({ layoutId }) =>
         `/notes/layout/graph/unposed?layoutId=${layoutId}`,
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getUnposedNotes', data.data);
@@ -763,6 +840,8 @@ export const notesApi = apiSlice.injectEndpoints({
       invalidatesTags: (_result, _error, arg) => [
         { type: 'Notes', id: arg.layoutId },
         { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: `linked-${arg.firstNoteId}` },
+        { type: 'Notes', id: `linked-${arg.secondNoteId}` },
       ],
     }),
 
@@ -850,13 +929,15 @@ export const notesApi = apiSlice.injectEndpoints({
       invalidatesTags: (_result, _error, arg) => [
         { type: 'Notes', id: arg.layoutId },
         { type: 'Notes', id: `posed-${arg.layoutId}` },
+        { type: 'Notes', id: `linked-${arg.firstNoteId}` },
+        { type: 'Notes', id: `linked-${arg.secondNoteId}` },
       ],
     }),
 
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({
       query: ({ search }) =>
         `/notes/search?search=${encodeURIComponent(search)}`,
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'searchNotes', data.data);
@@ -868,6 +949,7 @@ export const notesApi = apiSlice.injectEndpoints({
 
 export const {
   useGetNotesQuery,
+  useGetLinkedNotesQuery,
   useLazyGetNotesQuery,
   useCreateNoteMutation,
   useUpdateNoteMutation,

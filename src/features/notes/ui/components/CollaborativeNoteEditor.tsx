@@ -57,12 +57,6 @@ export const CollaborativeNoteEditor = memo(
             setReconnectAttempts(0);
           } else if (status === 'disconnected') {
             setReconnectAttempts(prev => prev + 1);
-            try {
-              showError(
-                t('notes:connectionLostRetrying') ||
-                  'Потеряно соединение. Попытка восстановления...'
-              );
-            } catch (_e) {}
           }
         },
         [showError, t]

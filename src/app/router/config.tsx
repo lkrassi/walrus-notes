@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
 import { PublicPageFrameSkeleton } from './PageFrameSkeletons';
 import { ProtectedRoute } from './ProtectedRoute';
+import { AppRoutes } from './routes';
 import {
   AuthPageSkeleton,
   DashboardPageSkeleton,
@@ -35,16 +36,6 @@ const UnavailablePage = lazy(() =>
   }))
 );
 
-export const AppRoutes = {
-  FIRST: '/',
-  AUTH: '/auth',
-  MAIN: '/main/:layoutId?/:noteId?',
-  DASHBOARD: '/dashboard',
-  PROFILE: '/profile',
-  UNAVAILABLE: '*',
-  RANDOM: '/random',
-};
-
 export const appRoutesConfig = [
   {
     path: AppRoutes.FIRST,
@@ -53,10 +44,6 @@ export const appRoutesConfig = [
         <FirstPage />
       </Suspense>
     ),
-  },
-  {
-    path: AppRoutes.RANDOM,
-    element: <MainPageSkeleton />,
   },
   {
     path: AppRoutes.AUTH,
@@ -107,3 +94,5 @@ export const appRoutesConfig = [
     ),
   },
 ];
+
+export { AppRoutes };

@@ -6,18 +6,14 @@ import { useLinkedNotes } from '../../lib/hooks';
 import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {
-  layoutId?: string | null;
   noteId?: string;
-  linkedInIds?: string[];
-  linkedOutIds?: string[];
+  layoutId?: string | null;
   onNoteSelect?: (note: Note) => void;
 }
 
 export const LinkedNotesList = ({
-  layoutId,
   noteId,
-  linkedInIds = [],
-  linkedOutIds = [],
+  layoutId,
   onNoteSelect,
 }: LinkedNotesListProps) => {
   const { t } = useTranslation();
@@ -25,10 +21,7 @@ export const LinkedNotesList = ({
   const [isExpandedOut, setIsExpandedOut] = useState(false);
 
   const { linkedNotesIn, linkedNotesOut, isLoading } = useLinkedNotes({
-    layoutId,
     noteId,
-    linkedInIds,
-    linkedOutIds,
   });
 
   const handleNoteClick = useCallback(

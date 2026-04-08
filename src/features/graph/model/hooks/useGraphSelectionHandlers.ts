@@ -1,12 +1,9 @@
 import type { Note } from '@/entities/note';
-import type { DragEvent, MouseEvent, RefObject } from 'react';
+import type { DragEvent, MouseEvent } from 'react';
 import { useCallback } from 'react';
 import type { Node } from 'reactflow';
 
 interface UseGraphSelectionHandlersProps {
-  nodes: Node[];
-  setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-  lastBoxSelectedIdsRef: RefObject<Set<string>>;
   screenToFlowPosition: (point: { x: number; y: number }) => {
     x: number;
     y: number;
@@ -18,56 +15,12 @@ interface UseGraphSelectionHandlersProps {
 }
 
 export const useGraphSelectionHandlers = ({
-  nodes,
-  setNodes,
-  lastBoxSelectedIdsRef,
   screenToFlowPosition,
   handleAddNoteToGraph,
 }: UseGraphSelectionHandlersProps) => {
   const toFlowCoords = useCallback(
-    (clientX: number, clientY: number) => {
-      try {
-        const wrapper = document.querySelector(
-          '.react-flow'
-        ) as HTMLElement | null;
-        const viewport = document.querySelector(
-          '.react-flow__viewport'
-        ) as HTMLElement | null;
-        if (!wrapper || !viewport) {
-          return screenToFlowPosition({ x: clientX, y: clientY });
-        }
-
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const style = window.getComputedStyle(viewport);
-        const transform = style.transform || '';
-
-        let scale = 1;
-        let tx = 0;
-        let ty = 0;
-
-        if (transform && transform !== 'none') {
-          const m = transform.match(/matrix\(([^)]+)\)/);
-          if (m && m[1]) {
-            const parts = m[1].split(',').map(s => parseFloat(s.trim()));
-            if (parts.length >= 6) {
-              scale = parts[0];
-              tx = parts[4];
-              ty = parts[5];
-            }
-          }
-        }
-
-        const localX = clientX - wrapperRect.left;
-        const localY = clientY - wrapperRect.top;
-
-        const flowX = (localX - tx) / scale;
-        const flowY = (localY - ty) / scale;
-
-        return { x: flowX, y: flowY };
-      } catch (_e) {
-        return screenToFlowPosition({ x: clientX, y: clientY });
-      }
-    },
+    (clientX: number, clientY: number) =>
+      screenToFlowPosition({ x: clientX, y: clientY }),
     [screenToFlowPosition]
   );
 
@@ -86,50 +39,6 @@ export const useGraphSelectionHandlers = ({
     [toFlowCoords, handleAddNoteToGraph]
   );
 
-  const handleBoxSelect = useCallback(
-    (rect: { x1: number; y1: number; x2: number; y2: number }) => {
-      try {
-        const topLeft = toFlowCoords(rect.x1, rect.y1);
-        const bottomRight = toFlowCoords(rect.x2, rect.y2);
-
-        const fx1 = Math.min(topLeft.x, bottomRight.x);
-        const fx2 = Math.max(topLeft.x, bottomRight.x);
-        const fy1 = Math.min(topLeft.y, bottomRight.y);
-        const fy2 = Math.max(topLeft.y, bottomRight.y);
-
-        const nodesToSelect = nodes
-          .filter(n => {
-            const nx = n.position?.x ?? 0;
-            const ny = n.position?.y ?? 0;
-            const width = (n?.width as number) || 160;
-            const height = (n?.height as number) || 80;
-            const cx = nx + width / 2;
-            const cy = ny + height / 2;
-            return cx >= fx1 && cx <= fx2 && cy >= fy1 && cy <= fy2;
-          })
-          .map(n => n.id);
-
-        if (nodesToSelect.length === 0) return;
-
-        setNodes(prev => {
-          const res = prev.map(n => ({
-            ...n,
-            selected: nodesToSelect.includes(n.id),
-          }));
-          lastBoxSelectedIdsRef.current = new Set(nodesToSelect);
-          setTimeout(() => {
-            setNodes(curr =>
-              curr.map(n => ({ ...n, selected: nodesToSelect.includes(n.id) }))
-            );
-            setTimeout(() => lastBoxSelectedIdsRef.current.clear(), 300);
-          }, 50);
-          return res;
-        });
-      } catch (_e) {}
-    },
-    [nodes, toFlowCoords, setNodes, lastBoxSelectedIdsRef]
-  );
-
   const handleNodeDoubleClick = useCallback(
     (event: MouseEvent, _node?: Node | null) => {
       event.stopPropagation();
@@ -139,7 +48,6 @@ export const useGraphSelectionHandlers = ({
 
   return {
     handleNoteDrop,
-    handleBoxSelect,
     handleNodeDoubleClick,
   };
 };

@@ -40,7 +40,6 @@ export const useGraphDragHandlers = ({
   const nodePositionsAtDragStartRef = useRef<
     Map<string, { x: number; y: number }>
   >(new Map());
-  const lastBoxSelectedIdsRef = useRef<Set<string>>(new Set());
 
   const handleNodeDragStart = useCallback(
     (_event: MouseEvent, node: Node) => {
@@ -187,16 +186,7 @@ export const useGraphDragHandlers = ({
                   };
                 }
                 if (ch.type === 'select' && typeof ch.selected === 'boolean') {
-                  const changingId = ch.id as string;
-                  const requested = ch.selected as boolean;
-                  if (
-                    !requested &&
-                    lastBoxSelectedIdsRef.current.has(changingId)
-                  ) {
-                    (updated[idx] as NodeExt).selected = true;
-                  } else {
-                    (updated[idx] as NodeExt).selected = requested;
-                  }
+                  (updated[idx] as NodeExt).selected = ch.selected as boolean;
                 }
               }
             }
@@ -236,16 +226,7 @@ export const useGraphDragHandlers = ({
                 };
               }
               if (ch.type === 'select' && typeof ch.selected === 'boolean') {
-                const changingId = ch.id as string;
-                const requested = ch.selected as boolean;
-                if (
-                  !requested &&
-                  lastBoxSelectedIdsRef.current.has(changingId)
-                ) {
-                  (updated[idx] as NodeExt).selected = true;
-                } else {
-                  (updated[idx] as NodeExt).selected = requested;
-                }
+                (updated[idx] as NodeExt).selected = ch.selected as boolean;
               }
             }
           }
@@ -262,6 +243,5 @@ export const useGraphDragHandlers = ({
     handleNodeDragStop,
     handleNodesChange,
     nodePositionsAtDragStartRef,
-    lastBoxSelectedIdsRef,
   };
 };

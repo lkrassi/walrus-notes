@@ -5,6 +5,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useState,
   type ReactNode,
@@ -15,7 +16,26 @@ import {
   type FileTreeState,
 } from './fileTreeReducer';
 import { useAppSelector } from './redux';
-import { useNotifications } from './useNotifications';
+
+const EXPANDED_ITEMS_KEY = 'fileTree:expandedItems';
+
+const loadExpandedItems = (): Set<string> => {
+  try {
+    const stored = localStorage.getItem(EXPANDED_ITEMS_KEY);
+    if (stored) {
+      const arr = JSON.parse(stored) as string[];
+      return new Set(arr);
+    }
+  } catch (_e) {}
+
+  return new Set();
+};
+
+const saveExpandedItems = (items: Set<string>) => {
+  try {
+    localStorage.setItem(EXPANDED_ITEMS_KEY, JSON.stringify([...items]));
+  } catch (_e) {}
+};
 
 const FileTreeContext = createContext<{
   moveNoteInTree: (
@@ -26,8 +46,6 @@ const FileTreeContext = createContext<{
   fileTree: FileTreeState['fileTree'];
   expandedItems: FileTreeState['expandedItems'];
   isLoading: boolean;
-  loadLayoutsOnly: () => Promise<void>;
-  reloadLayouts: () => void;
   toggleExpanded: (itemId: string) => void;
   addNoteToTree: (layoutId: string, note: Note) => void;
   removeNoteFromTree: (noteId: string) => void;
@@ -38,17 +56,20 @@ const FileTreeContext = createContext<{
     layoutId: string,
     updatedLayout: Partial<Layout>
   ) => void;
-  loadMoreNotes: (layoutId: string) => Promise<void>;
 } | null>(null);
 
 export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatchFileTree] = useReducer(
     fileTreeReducer,
-    initialFileTreeState
+    undefined,
+    () => ({
+      ...initialFileTreeState,
+      expandedItems: loadExpandedItems(),
+    })
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { showSuccess } = useNotifications();
   const { accessToken } = useAppSelector(state => state.user);
+  const openTabs = useAppSelector(state => state.tabs.openTabs);
 
   const { fileTree, expandedItems } = state;
 
@@ -58,27 +79,51 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     setHasToken(!!accessToken);
   }, [accessToken]);
 
-  const {
-    data: layoutsResponse,
-    isLoading: isLayoutsLoading,
-    refetch: _refetch,
-  } = useGetMyLayoutsQuery(undefined, {
-    skip: !hasToken,
-  });
+  const { data: layoutsResponse, isLoading: isLayoutsLoading } =
+    useGetMyLayoutsQuery(undefined, { skip: !hasToken });
 
   useEffect(() => {
     if (layoutsResponse?.data && Array.isArray(layoutsResponse.data)) {
       dispatchFileTree({ type: 'LOAD_LAYOUTS', payload: layoutsResponse.data });
     }
-  }, [layoutsResponse, showSuccess]);
+  }, [layoutsResponse]);
+
+  useEffect(() => {
+    saveExpandedItems(expandedItems);
+  }, [expandedItems]);
+
+  const noteTabLayoutIds = useMemo(() => {
+    const ids = new Set<string>();
+
+    for (const tab of openTabs) {
+      if (tab.item.type !== 'note') {
+        continue;
+      }
+
+      const layoutId = tab.item.parentId || tab.item.note?.layoutId;
+      if (layoutId) {
+        ids.add(layoutId);
+      }
+    }
+
+    return ids;
+  }, [openTabs]);
+
+  useEffect(() => {
+    if (noteTabLayoutIds.size === 0) {
+      return;
+    }
+
+    for (const layoutId of noteTabLayoutIds) {
+      if (!expandedItems.has(layoutId)) {
+        dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: layoutId });
+      }
+    }
+  }, [noteTabLayoutIds, expandedItems]);
 
   useEffect(() => {
     setIsLoading(isLayoutsLoading);
   }, [isLayoutsLoading]);
-
-  const loadLayoutsOnly = async () => {};
-
-  const loadMoreNotes = async () => {};
 
   const toggleExpanded = (itemId: string) => {
     dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: itemId });
@@ -129,15 +174,11 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     dispatchFileTree({ type: 'CLEAN_EXPANDED' });
   }, [fileTree]);
 
-  const reloadLayouts = () => {};
-
   const value = {
     moveNoteInTree,
     fileTree,
     expandedItems,
     isLoading,
-    loadLayoutsOnly,
-    reloadLayouts,
     toggleExpanded,
     addNoteToTree,
     removeNoteFromTree,
@@ -145,7 +186,6 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     addLayoutToTree,
     removeLayoutFromTree,
     updateLayoutInTree,
-    loadMoreNotes,
   };
 
   return (

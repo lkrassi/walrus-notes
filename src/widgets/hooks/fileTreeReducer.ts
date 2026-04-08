@@ -1,5 +1,5 @@
-import { getLayoutAccess } from '@/entities/layout';
 import type { Layout } from '@/entities/layout';
+import { getLayoutAccess } from '@/entities/layout';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
 
@@ -13,16 +13,6 @@ export type FileTreeAction =
   | {
       type: 'MOVE_NOTE';
       payload: { noteId: string; fromLayoutId: string; toLayoutId: string };
-    }
-  | {
-      type: 'LOAD_NOTES';
-      payload: {
-        layoutId: string;
-        notes: Note[];
-        hasMore?: boolean;
-        currentPage?: number;
-        append?: boolean;
-      };
     }
   | { type: 'TOGGLE_EXPANDED'; payload: string }
   | { type: 'ADD_NOTE'; payload: { layoutId: string; note: Note } }
@@ -60,57 +50,10 @@ export const fileTreeReducer = (
         createdAt: layout.createdAt,
         updatedAt: layout.updatedAt,
         color: layout.color,
-        isNotesLoaded: false,
       }));
       return {
         ...state,
         fileTree: treeItems,
-      };
-    }
-    case 'LOAD_NOTES': {
-      const {
-        layoutId,
-        notes,
-        hasMore = false,
-        currentPage = 1,
-        append = false,
-      } = action.payload;
-      return {
-        ...state,
-        fileTree: state.fileTree.map(layout =>
-          layout.id === layoutId
-            ? {
-                ...layout,
-                children: append
-                  ? [
-                      ...(layout.children || []),
-                      ...notes.map((note: Note) => ({
-                        id: note.id,
-                        type: 'note' as const,
-                        title: note.title,
-                        parentId: layoutId,
-                        isMain: false,
-                        createdAt: note.createdAt,
-                        updatedAt: note.updatedAt,
-                        note: note,
-                      })),
-                    ]
-                  : notes.map((note: Note) => ({
-                      id: note.id,
-                      type: 'note' as const,
-                      title: note.title,
-                      parentId: layoutId,
-                      isMain: false,
-                      createdAt: note.createdAt,
-                      updatedAt: note.updatedAt,
-                      note: note,
-                    })),
-                isNotesLoaded: true,
-                hasMoreNotes: hasMore,
-                currentPage: currentPage,
-              }
-            : layout
-        ),
       };
     }
     case 'TOGGLE_EXPANDED': {

@@ -103,8 +103,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
     [readyState, sendJsonMessage]
   );
 
-  const connect = useCallback(() => {}, []);
-
   const subscribe = useCallback(
     (eventName: WSEventName, listener: Listener) => {
       let set = listenersRef.current.get(eventName);
@@ -139,7 +137,6 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
     send: trySendOrQueue,
     subscribe,
     isConnected: readyState === ReadyState.OPEN,
-    connect,
     onOpen,
     wsRef,
   } as const;

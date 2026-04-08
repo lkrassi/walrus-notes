@@ -5,6 +5,7 @@ export {
   useDeleteNoteLinkMutation,
   useDeleteNoteMutation,
   useDragNoteMutation,
+  useGetLinkedNotesQuery,
   useGetNotesQuery,
   useGetPosedNotesQuery,
   useGetUnposedNotesQuery,
