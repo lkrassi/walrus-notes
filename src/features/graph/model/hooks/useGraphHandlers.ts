@@ -87,7 +87,9 @@ export const useGraphHandlers = ({
             y: event.clientY,
           });
           handleAddNoteToGraph(note, dropPosition);
-        } catch (_error) {}
+        } catch (error) {
+          console.warn('Failed to parse dragged note payload', error);
+        }
       }
     },
     [handleAddNoteToGraph, screenToFlowPosition]

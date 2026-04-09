@@ -33,7 +33,9 @@ export const useGraphSelectionHandlers = ({
           const note = JSON.parse(noteData);
           const dropPosition = toFlowCoords(event.clientX, event.clientY);
           handleAddNoteToGraph?.(note, dropPosition);
-        } catch (_error) {}
+        } catch (error) {
+          console.error('Failed to parse dropped note payload', error);
+        }
       }
     },
     [toFlowCoords, handleAddNoteToGraph]

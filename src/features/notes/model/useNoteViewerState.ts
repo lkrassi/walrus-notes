@@ -30,24 +30,13 @@ export const useNoteViewerState = ({
     hasServerDraft,
     isSaving,
     isPending,
+    isSynced,
+    lastSavedAt,
     handleDiscard,
   } = useNoteEditor(note, canWrite, onNoteUpdated);
 
   const { exportNote } = useExportNote();
   const collaborativeEditorRef = useRef<CollaborativeNoteEditorHandle>(null);
-
-  const autoOpenedRef = useRef(false);
-  useEffect(() => {
-    autoOpenedRef.current = false;
-  }, [note.id]);
-
-  useEffect(() => {
-    if (autoOpenedRef.current) return;
-    if (hasLocalChanges || hasServerDraft) {
-      handleEdit();
-      autoOpenedRef.current = true;
-    }
-  }, [handleEdit, hasLocalChanges, hasServerDraft, note.id]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
@@ -142,6 +131,8 @@ export const useNoteViewerState = ({
     hasServerDraft,
     isSaving,
     isPending,
+    isSynced,
+    lastSavedAt,
     isFullscreen,
     onlineUsers,
     currentUserId,

@@ -1,12 +1,10 @@
-import { useDeleteNoteMutation } from '@/entities/note';
-import { closeTabsByItemId } from '@/entities/tab';
+import { useDeleteNoteFlow } from '@/features/notes/model';
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { useModalContentContext } from '@/shared/lib/react/modal';
 import { Trash2 } from 'lucide-react';
 import { type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 
 interface GraphDeleteNoteFormProps {
   noteId: string;
@@ -19,17 +17,13 @@ export const GraphDeleteNoteForm = ({
 }: GraphDeleteNoteFormProps) => {
   const { t } = useTranslation();
   const { closeModal } = useModalContentContext();
-  const dispatch = useDispatch();
-  const [deleteNote, { isLoading }] = useDeleteNoteMutation();
+  const { removeNote, isLoading } = useDeleteNoteFlow();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      await deleteNote({ noteId }).unwrap();
-      dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
-      closeModal();
-    } catch (_e) {}
+    await removeNote(noteId);
+    closeModal();
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useDrafts, useTabs, useUser } from '@/entities';
 import type { Note } from '@/entities/note';
 import type { FileTreeItem } from '@/entities/tab';
+import { hasUnsavedChanges } from '@/shared/lib/notes/hasUnsavedChanges';
 import { useEffect } from 'react';
 import { useDashboardNavigation } from '../lib/hooks';
 
@@ -52,18 +53,8 @@ export const useMainWorkspace = () => {
     if (activeTab && activeTab.item.type === 'note' && activeTab.item.note) {
       const note = activeTab.item.note;
       const noteId = note.id;
-      const storeDraft = drafts[noteId];
-      const hasUnsavedLocal =
-        typeof storeDraft === 'string' &&
-        storeDraft.length > 0 &&
-        storeDraft !== (note.payload ?? '');
-      const hasServerDraft = !!(
-        note.draft &&
-        note.draft.length &&
-        note.draft !== note.payload
-      );
-
-      hasUnsaved = hasUnsavedLocal || hasServerDraft;
+      const storeDraft = drafts[noteId] ?? null;
+      hasUnsaved = hasUnsavedChanges(note, storeDraft);
     }
 
     if (!hasUnsaved) {

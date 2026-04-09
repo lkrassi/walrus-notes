@@ -30,7 +30,9 @@ export const RelatedNotes: FC<RelatedNotesProps> = memo(function RelatedNotes({
         };
         open(item);
         switchTo(`note::${selected.id}`);
-      } catch (_e) {}
+      } catch (error) {
+        console.warn('Failed to open related note tab', error);
+      }
     },
     [note.layoutId, open, switchTo]
   );

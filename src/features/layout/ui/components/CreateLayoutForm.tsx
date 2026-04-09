@@ -1,10 +1,8 @@
-import { useCreateLayoutMutation } from '@/entities';
-import { useNotifications } from '@/entities/notification';
 import { Button, Input } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import { useModalContentContext } from '@/shared/lib/react';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCreateLayoutForm } from '../../model/useCreateLayoutForm';
 import { ColorSelector } from './ColorSelector';
 
 interface CreateLayoutFormProps {
@@ -15,43 +13,21 @@ export const CreateLayoutForm = ({
   onLayoutCreated,
 }: CreateLayoutFormProps) => {
   const { t } = useTranslation();
-  const [title, setTitle] = useState('');
-  const DEFAULT_COLOR = '#3b82f6';
-  const [color, setColor] = useState<string | undefined>(DEFAULT_COLOR);
-  const { showError } = useNotifications();
-  const { closeModal } = useModalContentContext();
-  const [createLayout, { isLoading }] = useCreateLayoutMutation();
+  const {
+    title,
+    color,
+    isLoading,
+    closeModal,
+    setTitle,
+    setColor,
+    handleSubmit,
+    isSubmitDisabled,
+  } = useCreateLayoutForm({ onLayoutCreated });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!title.trim()) {
-      showError(t('layout:enterLayoutTitle'));
-      return;
-    }
-
-    try {
-      await createLayout({
-        title: title.trim(),
-        color: color || DEFAULT_COLOR,
-      }).unwrap();
-
-      setTitle('');
-      if (onLayoutCreated) {
-        onLayoutCreated();
-      }
-      closeModal();
-    } catch {
-      showError(t('layout:layoutCreationError'));
-    }
-  };
-
-  const isSubmitDisabled = isLoading || !title.trim() || !color;
 
   return (
     <form onSubmit={handleSubmit} className={cn('space-y-6', 'p-6')}>

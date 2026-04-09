@@ -33,7 +33,8 @@ export const useLocalStorage = <T>(
         return item;
       }
       return JSON.parse(item);
-    } catch (_error) {
+    } catch (error) {
+      console.warn('Failed to read localStorage value', { key, error });
       return initialValue;
     }
   });
@@ -61,7 +62,9 @@ export const useLocalStorage = <T>(
 
           return valueToStore;
         });
-      } catch (_e) {}
+      } catch (error) {
+        console.warn('Failed to write localStorage value', { key, error });
+      }
     },
     [key]
   );
@@ -81,7 +84,9 @@ export const useLocalStorage = <T>(
           })
         );
       }
-    } catch (_e) {}
+    } catch (error) {
+      console.warn('Failed to remove localStorage value', { key, error });
+    }
   }, [key, initialValue]);
 
   useEffect(() => {
@@ -89,7 +94,12 @@ export const useLocalStorage = <T>(
       if (e.key === key && e.newValue !== null) {
         try {
           setStoredValue(JSON.parse(e.newValue));
-        } catch (_e) {}
+        } catch (error) {
+          console.warn('Failed to parse storage event payload', {
+            key,
+            error,
+          });
+        }
       }
     };
 
@@ -110,7 +120,12 @@ export const useLocalStorage = <T>(
 
       try {
         setStoredValue(JSON.parse(e.detail.newValue));
-      } catch (_e) {}
+      } catch (error) {
+        console.warn('Failed to parse local-storage custom event payload', {
+          key,
+          error,
+        });
+      }
     };
 
     if (typeof window !== 'undefined') {

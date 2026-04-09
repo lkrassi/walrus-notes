@@ -19,10 +19,13 @@ export interface EditorSplitProps {
   enterFromLeft?: boolean;
   isEditing?: boolean;
   isResizing?: boolean;
+  canWrite?: boolean;
   hasLocalChanges?: boolean;
   hasServerDraft?: boolean;
   isSaving?: boolean;
   isPending?: boolean;
+  isSynced?: boolean;
+  lastSavedAt?: string | null;
   isFullscreen?: boolean;
   onEdit?: () => void;
   onSave?: () => void;
@@ -81,6 +84,13 @@ export interface PreviewPanelProps {
   note?: Note;
   layoutId?: string;
   previewRef: RefObject<HTMLDivElement | null>;
+  canWrite?: boolean;
+  hasLocalChanges?: boolean;
+  hasServerDraft?: boolean;
+  isSaving?: boolean;
+  isPending?: boolean;
+  isSynced?: boolean;
+  lastSavedAt?: string | null;
 }
 
 export interface DividerProps {

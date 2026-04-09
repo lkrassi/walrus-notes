@@ -8,7 +8,10 @@ import {
 } from '@/entities';
 import type { Layout } from '@/entities/layout';
 import { useEffect } from 'react';
-import { applyCommittedPayloadToNoteCaches } from './cacheUpdates';
+import {
+  applyCommittedPayloadToNoteCaches,
+  applyDraftToNoteCaches,
+} from './cacheUpdates';
 import { reportDraftSyncError } from './errors';
 import type { DraftPhase, DraftRefs, DraftWebSocketClient } from './types';
 
@@ -27,6 +30,7 @@ interface UseDraftListenersOpts {
   onRemoteCommit?: () => void;
   onCommitRetryRequired?: (reason: string) => void;
   onCommitRetryResolved?: () => void;
+  onCommitSettled?: () => void;
 }
 
 export const useDraftListeners = ({
@@ -44,6 +48,7 @@ export const useDraftListeners = ({
   onRemoteCommit,
   onCommitRetryRequired,
   onCommitRetryResolved,
+  onCommitSettled,
 }: UseDraftListenersOpts) => {
   const isDraftDebug = import.meta.env.DEV;
   const logDraft = (message: string, extra?: Record<string, unknown>) => {
@@ -122,6 +127,13 @@ export const useDraftListeners = ({
             } else {
               dispatch(removeDraft({ noteId }));
             }
+
+            applyDraftToNoteCaches({
+              dispatch,
+              layouts,
+              noteId,
+              draft: nd,
+            });
           } catch (error) {
             reportDraftSyncError(
               'UPDATE_DRAFT_REQUEST:apply-remote-draft',
@@ -157,6 +169,23 @@ export const useDraftListeners = ({
             const acked = refs.awaitingAckRef.current;
             if (acked != null) {
               refs.prevSentRef.current = acked;
+
+              try {
+                applyDraftToNoteCaches({
+                  dispatch,
+                  layouts,
+                  noteId,
+                  draft: acked,
+                });
+              } catch (error) {
+                reportDraftSyncError(
+                  'UPDATE_DRAFT_RESPONSE:update-query-caches',
+                  error,
+                  {
+                    noteId,
+                  }
+                );
+              }
             }
             refs.awaitingAckRef.current = null;
             refs.pendingRef.current = null;
@@ -228,7 +257,6 @@ export const useDraftListeners = ({
 
             if (confirmed != null) refs.prevSentRef.current = confirmed;
             refs.awaitingAckRef.current = null;
-            refs.pendingRef.current = null;
 
             try {
               dispatch(
@@ -312,6 +340,7 @@ export const useDraftListeners = ({
             setIsSaving(false);
             setDraftPhase('IDLE');
             setLastSavedAt(new Date().toISOString());
+            onCommitSettled?.();
 
             if (onRemoteCommit) onRemoteCommit();
           } else {
@@ -329,6 +358,7 @@ export const useDraftListeners = ({
               })
             );
             onCommitRetryRequired?.('commit-response-error');
+            onCommitSettled?.();
           }
         } catch (error) {
           reportDraftSyncError('COMMIT_DRAFT_RESPONSE:handler', error, {
@@ -372,6 +402,7 @@ export const useDraftListeners = ({
     noteId,
     refs,
     lastCommitAt,
+    layouts,
     dispatch,
     setIsSaving,
     setDraftPhase,
@@ -381,5 +412,6 @@ export const useDraftListeners = ({
     onRemoteCommit,
     onCommitRetryRequired,
     onCommitRetryResolved,
+    onCommitSettled,
   ]);
 };

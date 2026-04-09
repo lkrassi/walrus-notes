@@ -1,13 +1,7 @@
-import { useDeleteNoteMutation } from '@/entities/note';
-import { closeTabsByItemId } from '@/entities/tab';
+import { useDeleteNoteFlow } from '@/features/notes/model';
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import {
-  useLocalization,
-  useModalContentContext,
-  useNotifications,
-} from '@/widgets/hooks';
-import { useAppDispatch } from '@/widgets/hooks/redux';
+import { useLocalization, useModalContentContext } from '@/widgets/hooks';
 import { Trash2 } from 'lucide-react';
 import { type FormEvent } from 'react';
 
@@ -23,29 +17,15 @@ export const DeleteNoteForm = ({
   onNoteDeleted,
 }: DeleteNoteFormProps) => {
   const { t } = useLocalization();
-  const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
-  const dispatch = useAppDispatch();
-  const [deleteNote, { isLoading }] = useDeleteNoteMutation();
+  const { removeNote, isLoading } = useDeleteNoteFlow();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    try {
-      await deleteNote({
-        noteId,
-      }).unwrap();
-
-      dispatch(closeTabsByItemId({ itemId: noteId, itemType: 'note' }));
-
-      if (onNoteDeleted) {
-        onNoteDeleted(noteId);
-      }
-
-      closeModal();
-    } catch {
-      showError(t('notes:noteDeletionError'));
-    }
+    await removeNote(noteId);
+    onNoteDeleted?.(noteId);
+    closeModal();
   };
 
   return (

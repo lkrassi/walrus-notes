@@ -15,10 +15,13 @@ interface NoteContentProps {
   onPayloadChange: (payload: string) => void;
   note?: Note;
   layoutId?: string;
+  canWrite?: boolean;
   hasLocalChanges?: boolean;
   hasServerDraft?: boolean;
   isSaving?: boolean;
   isPending?: boolean;
+  isSynced?: boolean;
+  lastSavedAt?: string | null;
   isFullscreen?: boolean;
   onEdit?: () => void;
   onSave?: () => void;
@@ -40,10 +43,13 @@ export const NoteContent: FC<NoteContentProps> = ({
   onPayloadChange,
   note,
   layoutId,
+  canWrite,
   hasLocalChanges,
   hasServerDraft,
   isSaving,
   isPending,
+  isSynced,
+  lastSavedAt,
   isFullscreen,
   onEdit,
   onSave,
@@ -130,10 +136,13 @@ export const NoteContent: FC<NoteContentProps> = ({
       enterFromLeft={openingEditor}
       isEditing={isEditing}
       isResizing={isResizing}
+      canWrite={canWrite}
       hasLocalChanges={hasLocalChanges}
       hasServerDraft={hasServerDraft}
       isSaving={isSaving}
       isPending={isPending}
+      isSynced={isSynced}
+      lastSavedAt={lastSavedAt}
       isFullscreen={isFullscreen}
       onEdit={onEdit}
       onSave={onSave}

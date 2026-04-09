@@ -1,6 +1,5 @@
-import { useGetMyLayoutsQuery } from '@/entities';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import { FileTreeView } from './FileTreeView';
 import { useFileTreeController } from './model/useFileTreeController';
 
@@ -20,8 +19,6 @@ export const FileTree = memo(
     selectedItemId,
     onOpenGraph,
   }: FileTreeProps) => {
-    const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-
     const {
       setSearchQuery,
       isSearchMode,
@@ -34,6 +31,7 @@ export const FileTree = memo(
       handleDragEnd,
       renderSectionHeader,
       renderTreeItem,
+      handleAllNotesClick,
     } = useFileTreeController({
       expandedItems,
       toggleExpanded,
@@ -41,13 +39,6 @@ export const FileTree = memo(
       selectedItemId,
       onOpenGraph,
     });
-
-    const handleAllNotesClick = useCallback(() => {
-      const mainLayout = layoutsResponse?.data?.find(layout => layout.isMain);
-      if (mainLayout) {
-        onOpenGraph?.(mainLayout.id);
-      }
-    }, [layoutsResponse?.data, onOpenGraph]);
 
     return (
       <FileTreeView

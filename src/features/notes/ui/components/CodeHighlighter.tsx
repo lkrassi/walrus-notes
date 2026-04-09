@@ -82,7 +82,12 @@ export const CodeHighlighter: FC<CodeHighlighterProps> = ({
             await loader();
           }
         }
-      } catch (_e) {}
+      } catch (error) {
+        console.warn('Failed to load Prism language module', {
+          language,
+          error,
+        });
+      }
       if (mounted) setLoaded(true);
     }
 

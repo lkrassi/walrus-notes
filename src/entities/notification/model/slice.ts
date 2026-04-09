@@ -1,6 +1,6 @@
+import { normalizeMessage } from '@/shared/model/utils/normalizeMessage';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { normalizeMessage } from '@/shared/model/utils/normalizeMessage';
 
 export type Notification = {
   id: string;
@@ -57,7 +57,9 @@ export const notificationsSlice = createSlice({
 
       try {
         window.__NOTIFICATION_LOG__ = window.__NOTIFICATION_LOG__ || [];
-      } catch {}
+      } catch (error) {
+        console.warn('Failed to init notification debug log', error);
+      }
 
       if (duplicate) {
         try {
@@ -68,7 +70,12 @@ export const notificationsSlice = createSlice({
             existing: state.notifications.map(n => n.message),
             time: Date.now(),
           });
-        } catch {}
+        } catch (error) {
+          console.warn(
+            'Failed to write duplicate notification debug entry',
+            error
+          );
+        }
 
         return;
       }
@@ -84,7 +91,9 @@ export const notificationsSlice = createSlice({
           id,
           time: Date.now(),
         });
-      } catch {}
+      } catch (error) {
+        console.warn('Failed to write notification debug entry', error);
+      }
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(

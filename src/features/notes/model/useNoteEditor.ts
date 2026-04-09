@@ -1,18 +1,9 @@
+import { useDrafts } from '@/entities';
 import type { Note } from '@/entities/note';
-import { useSelector } from 'react-redux';
 import { useDraftSync } from './useDraftSync';
 import { useNoteEditorState } from './useNoteEditorState';
 import { useNoteNotifications } from './useNoteNotifications';
 import { useNoteSave } from './useNoteSave';
-
-type RootStateLike = {
-  drafts?: Record<string, string>;
-  user: {
-    profile?: {
-      id?: string;
-    } | null;
-  };
-};
 
 export const useNoteEditor = (
   note: Note,
@@ -20,6 +11,7 @@ export const useNoteEditor = (
   onNoteUpdated?: (note: Note) => void
 ) => {
   const isDraftDebug = import.meta.env.DEV;
+  const { drafts } = useDrafts();
   const logDraft = (message: string, extra?: Record<string, unknown>) => {
     if (!isDraftDebug) return;
     if (extra) {
@@ -29,10 +21,7 @@ export const useNoteEditor = (
     console.log(`[draft-flow][${note.id}] ${message}`);
   };
 
-  const storeDraft = useSelector(
-    (s: RootStateLike) => s.drafts?.[note.id] ?? null
-  );
-  const userId = useSelector((s: RootStateLike) => s.user.profile?.id ?? '');
+  const storeDraft = drafts[note.id] ?? null;
 
   const {
     isEditing,
@@ -69,11 +58,10 @@ export const useNoteEditor = (
     sendUpdateDraft,
   } = useDraftSync({
     noteId: note.id,
-    userId,
     draft: payload,
   });
 
-  const { isRecordNotFound422, showError } = useNoteNotifications();
+  const { showError } = useNoteNotifications();
 
   const { isLoading, handleSave, handleDiscard } = useNoteSave({
     note,
@@ -96,7 +84,6 @@ export const useNoteEditor = (
     sendUpdateDraft,
     onNoteUpdated,
     showError,
-    isRecordNotFound422,
     logDraft,
   });
 
@@ -110,11 +97,7 @@ export const useNoteEditor = (
     isSynced,
     lastSavedAt,
     hasLocalChanges,
-    hasServerDraft: !!(
-      note.draft &&
-      note.draft.length &&
-      note.draft !== note.payload
-    ),
+    hasServerDraft: hasAnyDraftMarker,
     setTitle,
     setPayload,
     handleEdit,

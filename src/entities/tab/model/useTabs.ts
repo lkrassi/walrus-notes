@@ -1,13 +1,17 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { TabType } from '../lib/tabUtils';
 import {
   clearTabs,
   closeLayoutTabs,
   closeTab,
+  closeTabsByItemId,
   openPreviewTab,
   openTab,
   pinTab,
+  reorderTabs,
   switchTab,
+  updateTabNote,
   type DashboardTab,
 } from './slice';
 import type { FileTreeItem } from './types';
@@ -67,9 +71,30 @@ export const useTabs = () => {
     [dispatch]
   );
 
+  const closeByItem = useCallback(
+    (itemId: string, itemType?: TabType) => {
+      dispatch(closeTabsByItemId({ itemId, itemType }));
+    },
+    [dispatch]
+  );
+
   const clear = useCallback(() => {
     dispatch(clearTabs());
   }, [dispatch]);
+
+  const reorder = useCallback(
+    (tabs: DashboardTab[]) => {
+      dispatch(reorderTabs(tabs));
+    },
+    [dispatch]
+  );
+
+  const updateNote = useCallback(
+    (noteId: string, updates: Partial<FileTreeItem['note']>) => {
+      dispatch(updateTabNote({ noteId, updates: updates ?? {} }));
+    },
+    [dispatch]
+  );
 
   return {
     openTabs,
@@ -80,6 +105,9 @@ export const useTabs = () => {
     switchTo,
     close,
     closeByLayout,
+    closeByItem,
+    reorder,
+    updateNote,
     clear,
   };
 };

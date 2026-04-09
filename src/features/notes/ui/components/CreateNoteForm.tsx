@@ -1,8 +1,4 @@
-import {
-  getLayoutAccess,
-  useCreateNoteMutation,
-  useGetMyLayoutsQuery,
-} from '@/entities';
+import { useCreateNoteMutation } from '@/entities';
 import type { Note } from '@/entities/note';
 import { useNotifications } from '@/entities/notification';
 import { Button, Input, Textarea } from '@/shared';
@@ -17,6 +13,7 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCreateNoteFormData } from '../../model/useCreateNoteFormData';
 
 interface CreateNoteFormProps {
   layoutId: string;
@@ -34,13 +31,8 @@ export const CreateNoteForm = memo(function CreateNoteForm({
   const { showError } = useNotifications();
   const { closeModal } = useModalContentContext();
   const [createNote, { isLoading }] = useCreateNoteMutation();
-  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-  const currentLayout = (layoutsResponse?.data || []).find(
-    l => l.id === layoutId
-  );
-  const canWrite = currentLayout
-    ? getLayoutAccess(currentLayout).canWrite
-    : true;
+  const { data: formData } = useCreateNoteFormData({ layoutId });
+  const canWrite = formData?.canWrite ?? true;
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

@@ -9,9 +9,7 @@ export const useDraftState = (draft: string) => {
 
   const lastEditAtRef = useRef<number | null>(null);
   const skipInitialSendRef = useRef<boolean>(true);
-  const initialPayloadRef = useRef<string | null>(null);
   const suppressRemoteUntilRef = useRef<number | null>(null);
-  const lastManualSendAtRef = useRef<number | null>(null);
   const prevSentRef = useRef<string | null>(null);
   const awaitingAckRef = useRef<string | null>(null);
   const pendingRef = useRef<string | null>(null);
@@ -39,15 +37,15 @@ export const useDraftState = (draft: string) => {
       ) {
         lastCommittedPayloadRef.current = null;
       }
-    } catch (_e) {}
+    } catch (error) {
+      console.warn('Failed to reset committed payload ref', error);
+    }
   }, [draft]);
 
   const refsObjectRef = useRef<DraftRefs>({
     lastEditAtRef,
     skipInitialSendRef,
-    initialPayloadRef,
     suppressRemoteUntilRef,
-    lastManualSendAtRef,
     prevSentRef,
     awaitingAckRef,
     pendingRef,

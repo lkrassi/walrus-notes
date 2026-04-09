@@ -10,8 +10,6 @@ export type DraftPhase =
 
 export interface UseDraftSyncOpts {
   noteId: string | null | undefined;
-  userId: string;
-  serverUrl?: string;
   draft: string;
   debounceMs?: number;
   onRemoteDraft?: (newDraft: string) => void;
@@ -54,9 +52,7 @@ export interface DraftWebSocketClient {
 export interface DraftRefs {
   lastEditAtRef: React.MutableRefObject<number | null>;
   skipInitialSendRef: React.MutableRefObject<boolean>;
-  initialPayloadRef: React.MutableRefObject<string | null>;
   suppressRemoteUntilRef: React.MutableRefObject<number | null>;
-  lastManualSendAtRef: React.MutableRefObject<number | null>;
   prevSentRef: React.MutableRefObject<string | null>;
   awaitingAckRef: React.MutableRefObject<string | null>;
   pendingRef: React.MutableRefObject<string | null>;

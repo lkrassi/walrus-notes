@@ -82,7 +82,9 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
       set.forEach(listener => {
         try {
           listener(parsed.payload, parsed);
-        } catch (_e) {}
+        } catch (e) {
+          console.error('WebSocket listener callback failed', e);
+        }
       });
     }
   }, [lastJsonMessage, sendJsonMessage]);
@@ -124,7 +126,9 @@ export const useWebSocket = (opts: UseWebSocketOptions = {}) => {
       if (readyState === ReadyState.OPEN) {
         try {
           cb();
-        } catch (_e) {}
+        } catch (e) {
+          console.error('WebSocket onOpen callback failed', e);
+        }
       }
 
       return () => openCallbacks.current.delete(cb);

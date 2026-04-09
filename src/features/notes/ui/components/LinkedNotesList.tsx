@@ -2,7 +2,7 @@ import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLinkedNotes } from '../../lib/hooks';
+import { useLinkedNotesData } from '../../model';
 import { LinkedNotesDropdown } from './LinkedNotesDropdown';
 
 interface LinkedNotesListProps {
@@ -20,9 +20,9 @@ export const LinkedNotesList = ({
   const [isExpandedIn, setIsExpandedIn] = useState(false);
   const [isExpandedOut, setIsExpandedOut] = useState(false);
 
-  const { linkedNotesIn, linkedNotesOut, isLoading } = useLinkedNotes({
-    noteId,
-  });
+  const { data, isLoading } = useLinkedNotesData({ noteId });
+  const linkedNotesIn = data?.linkedNotesIn ?? [];
+  const linkedNotesOut = data?.linkedNotesOut ?? [];
 
   const handleNoteClick = useCallback(
     (note: Note) => {

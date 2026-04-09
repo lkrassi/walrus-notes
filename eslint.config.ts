@@ -164,8 +164,40 @@ export default [
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-useless-escape': 'error',
-      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-empty': ['error', { allowEmptyCatch: false }],
       '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
+
+  {
+    files: ['src/{app,pages,widgets,features}/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector:
+            "ImportDeclaration[source.value='react-redux'] ImportSpecifier[imported.name='useDispatch']",
+          message: 'Use useAppDispatch instead of react-redux useDispatch.',
+        },
+        {
+          selector:
+            "ImportDeclaration[source.value='react-redux'] ImportSpecifier[imported.name='useSelector']",
+          message: 'Use useAppSelector instead of react-redux useSelector.',
+        },
+        {
+          selector:
+            'ImportDeclaration[source.value=/^@\\/entities\\/[^/]+\\/.+/]',
+          message:
+            'Import entities through public API (@/entities/<slice>), not deep internals.',
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src/widgets/hooks/redux.ts'],
+    rules: {
+      'no-restricted-syntax': 'off',
     },
   },
 

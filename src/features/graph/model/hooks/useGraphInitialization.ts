@@ -1,3 +1,4 @@
+import { handleError } from '@/shared';
 import { useEffect, useRef } from 'react';
 import type { Edge, Node } from 'reactflow';
 
@@ -41,7 +42,13 @@ export const useGraphInitialization = ({
             (inNode.data as { layoutColor?: string } | undefined)
               ?.layoutColor ?? null;
           if (prevColor !== newColor) return false;
-        } catch (_e) {}
+        } catch (error) {
+          handleError(error, {
+            type: 'graph-connection',
+            message: 'Failed to compare graph node metadata',
+            mode: 'background',
+          });
+        }
       }
       return true;
     };
@@ -66,7 +73,13 @@ export const useGraphInitialization = ({
             (inEdge.data as { edgeColor?: string } | undefined)?.edgeColor ??
             null;
           if (prevColor !== newColor) return false;
-        } catch (_e) {}
+        } catch (error) {
+          handleError(error, {
+            type: 'graph-connection',
+            message: 'Failed to compare graph edge metadata',
+            mode: 'background',
+          });
+        }
       }
       return true;
     };

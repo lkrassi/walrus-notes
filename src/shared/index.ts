@@ -1,6 +1,12 @@
 export { apiSlice, fileApi, useUploadFileMutation } from './api';
 export { buildYjsWsUrl, cn, getUserColorById } from './lib/core';
 export {
+  handleError,
+  type ErrorContext,
+  type ErrorMode,
+  type ErrorType,
+} from './lib/error/handleError';
+export {
   ModalContentContext,
   ModalContext,
   ThemeContext,

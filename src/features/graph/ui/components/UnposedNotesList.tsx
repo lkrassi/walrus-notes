@@ -1,4 +1,3 @@
-import { useGetUnposedNotesQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { useDndMonitor, useDroppable } from '@dnd-kit/core';
@@ -12,8 +11,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useUnposedNotesData } from '../../model/hooks/useUnposedNotesData';
 import { NotePreview } from './NotePreview';
 
 type DragCardSize = {
@@ -35,39 +35,11 @@ export const UnposedNotesList = ({
   onOpenChange,
 }: UnposedNotesListProps) => {
   const { t } = useTranslation();
-
-  const { data: unposedNotesResponse, isLoading } = useGetUnposedNotesQuery({
+  const { isLoading, orderedNotes, setOrderedIds } = useUnposedNotesData({
     layoutId,
+    isOpen,
+    onOpenChange,
   });
-
-  const [orderedIds, setOrderedIds] = useState<string[]>([]);
-
-  const unposedNotes = unposedNotesResponse?.data || [];
-
-  const noteMap = useMemo(
-    () => new Map(unposedNotes.map(note => [note.id, note])),
-    [unposedNotes]
-  );
-
-  useEffect(() => {
-    const nextIds = unposedNotes.map(note => note.id);
-    setOrderedIds(prev => {
-      const kept = prev.filter(id => nextIds.includes(id));
-      const appended = nextIds.filter(id => !kept.includes(id));
-      return [...kept, ...appended];
-    });
-  }, [unposedNotes]);
-
-  const orderedNotes = useMemo(
-    () => orderedIds.map(id => noteMap.get(id)).filter(Boolean) as Note[],
-    [orderedIds, noteMap]
-  );
-
-  useEffect(() => {
-    if (!isLoading && orderedNotes.length === 0 && isOpen) {
-      onOpenChange(false);
-    }
-  }, [isLoading, orderedNotes.length, isOpen, onOpenChange]);
 
   useDndMonitor({
     onDragEnd: event => {

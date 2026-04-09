@@ -26,7 +26,9 @@ const loadExpandedItems = (): Set<string> => {
       const arr = JSON.parse(stored) as string[];
       return new Set(arr);
     }
-  } catch (_e) {}
+  } catch (e) {
+    console.warn('Failed to load expanded file tree items from storage', e);
+  }
 
   return new Set();
 };
@@ -34,7 +36,9 @@ const loadExpandedItems = (): Set<string> => {
 const saveExpandedItems = (items: Set<string>) => {
   try {
     localStorage.setItem(EXPANDED_ITEMS_KEY, JSON.stringify([...items]));
-  } catch (_e) {}
+  } catch (e) {
+    console.warn('Failed to save expanded file tree items to storage', e);
+  }
 };
 
 const FileTreeContext = createContext<{
@@ -109,17 +113,24 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     return ids;
   }, [openTabs]);
 
+  // Ensure all opened note tabs have their parent layouts expanded
   useEffect(() => {
     if (noteTabLayoutIds.size === 0) {
       return;
     }
 
+    const itemsToExpand: string[] = [];
     for (const layoutId of noteTabLayoutIds) {
       if (!expandedItems.has(layoutId)) {
-        dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: layoutId });
+        itemsToExpand.push(layoutId);
       }
     }
-  }, [noteTabLayoutIds, expandedItems]);
+
+    // Expand all parent layouts of open tabs
+    for (const layoutId of itemsToExpand) {
+      dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: layoutId });
+    }
+  }, [fileTree, openTabs]);
 
   useEffect(() => {
     setIsLoading(isLayoutsLoading);

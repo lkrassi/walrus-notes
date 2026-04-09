@@ -244,13 +244,22 @@ export const useGraphConnections = ({
               setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
               try {
                 onEdgeCreated?.(newEdge);
-              } catch (_e) {}
-            } catch (_error) {
+              } catch (error) {
+                console.warn(
+                  'Ignored non-critical edge created callback error',
+                  error
+                );
+              }
+            } catch (error) {
               setTempEdges(prev =>
                 prev.filter(
-                  edge => edge.id !== `temp-${tempEdge.source}-${targetNodeId}`
+                  edge =>
+                    !edge.id.startsWith(
+                      `temp-${tempEdge.source}-${targetNodeId}`
+                    )
                 )
               );
+              throw error;
             } finally {
               setTempEdge(null);
             }
@@ -322,11 +331,17 @@ export const useGraphConnections = ({
         setTempEdges(prev => prev.filter(edge => edge.id !== newEdge.id));
         try {
           onEdgeCreated?.(newEdge);
-        } catch (_error) {}
-      } catch (_e) {
+        } catch (error) {
+          console.warn(
+            'Ignored non-critical edge created callback error',
+            error
+          );
+        }
+      } catch (error) {
         setTempEdges(prev =>
-          prev.filter(edge => edge.id !== `temp-${source}-${target}`)
+          prev.filter(edge => !edge.id.startsWith(`temp-${source}-${target}`))
         );
+        throw error;
       } finally {
         setTempEdge(null);
       }

@@ -316,7 +316,14 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getNotes', data.data);
-        } catch (_e) {}
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn(
+              'getNotes draft hydration skipped due to query error',
+              e
+            );
+          }
+        }
       },
       providesTags: (result, _e, arg) => [
         { type: 'Notes', id: arg.layoutId },
@@ -375,7 +382,11 @@ export const notesApi = apiSlice.injectEndpoints({
               movedNote = found;
               break;
             }
-          } catch {}
+          } catch (e) {
+            if (import.meta.env.DEV) {
+              console.warn('Failed to inspect notes cache during dragNote', e);
+            }
+          }
         }
 
         if (!fromLayoutId || !movedNote) return;
@@ -608,7 +619,14 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getPosedNotes', data.data);
-        } catch (_e) {}
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn(
+              'getPosedNotes draft hydration skipped due to query error',
+              e
+            );
+          }
+        }
       },
       providesTags: (_result, _error, arg) => [
         { type: 'Notes', id: `posed-${arg.layoutId}` },
@@ -625,7 +643,14 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'getUnposedNotes', data.data);
-        } catch (_e) {}
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn(
+              'getUnposedNotes draft hydration skipped due to query error',
+              e
+            );
+          }
+        }
       },
       providesTags: (_result, _error, arg) => [
         { type: 'Notes', id: `unposed-${arg.layoutId}` },
@@ -941,7 +966,14 @@ export const notesApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           hydrateServerDrafts(dispatch, getState, 'searchNotes', data.data);
-        } catch (_e) {}
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.warn(
+              'searchNotes draft hydration skipped due to query error',
+              e
+            );
+          }
+        }
       },
     }),
   }),

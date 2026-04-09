@@ -132,7 +132,12 @@ export const useGraphDragAndDrop = ({
           if (client && typeof screenToFlowPosition === 'function') {
             try {
               dropPosition = screenToFlowPosition(client);
-            } catch (_e) {}
+            } catch (e) {
+              console.error(
+                'Failed to map drop position to flow coordinates',
+                e
+              );
+            }
           }
 
           onAddNoteToGraph?.(note, dropPosition);
@@ -147,7 +152,9 @@ export const useGraphDragAndDrop = ({
           cleanupRef.current();
           cleanupRef.current = null;
         }
-      } catch (_e) {}
+      } catch (e) {
+        console.error('Failed to cleanup drag listeners', e);
+      }
       setLastClientCoords(null);
     },
     [

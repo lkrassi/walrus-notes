@@ -1,11 +1,11 @@
 import type { Layout } from '@/entities/layout';
-import { useGetMyLayoutsQuery } from '@/entities/layout';
 import { cn } from '@/shared/lib/core';
 import { useModalContentContext } from '@/shared/lib/react/modal';
 import { Button, RenderWithState, Skeleton } from '@/shared/ui';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFolderSelectData } from '../../model/useFolderSelectData';
 
 interface FolderSelectModalProps {
   onFolderSelected: (layoutId: string) => void;
@@ -16,17 +16,10 @@ export const FolderSelectModal = ({
 }: FolderSelectModalProps) => {
   const { t } = useTranslation();
   const { closeModal } = useModalContentContext();
-  const {
-    data: layoutsResponse,
-    isLoading,
-    isFetching,
-  } = useGetMyLayoutsQuery();
+  const { data, isInitialLoading, isRefreshing } = useFolderSelectData();
   const [selectedLayoutId, setSelectedLayoutId] = useState<string | null>(null);
 
-  const layouts = layoutsResponse?.data || [];
-  const nonMainLayouts = layouts.filter(layout => !layout.isMain);
-  const isInitialLoading = isLoading && !layoutsResponse;
-  const isRefreshing = isFetching && !!layoutsResponse;
+  const nonMainLayouts = data?.nonMainLayouts || [];
 
   const handleFolderClick = (layout: Layout) => {
     setSelectedLayoutId(layout.id);

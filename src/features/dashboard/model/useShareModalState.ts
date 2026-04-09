@@ -83,7 +83,10 @@ export const useShareModalState = (targetId: string) => {
         await navigator.clipboard.writeText(generatedLink.fullUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch {}
+      } catch (error) {
+        showError(t('share:modal.error.generic'));
+        console.warn('Failed to copy share link', error);
+      }
     }
   };
 

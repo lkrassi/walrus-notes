@@ -80,7 +80,9 @@ const loadTabsFromStorage = (): TabsState => {
         return sanitized;
       }
     }
-  } catch (_e) {}
+  } catch (error) {
+    console.warn('Failed to load tabs from storage', error);
+  }
   return { openTabs: [], activeTabId: null };
 };
 
@@ -88,7 +90,9 @@ export const saveTabsToStorage = (state: TabsState) => {
   try {
     const sanitized = sanitizeTabsState(state);
     localStorage.setItem(TABS_STORAGE_KEY, JSON.stringify(sanitized));
-  } catch (_e) {}
+  } catch (error) {
+    console.warn('Failed to save tabs to storage', error);
+  }
 };
 
 const initialState: TabsState = loadTabsFromStorage();

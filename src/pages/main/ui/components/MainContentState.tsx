@@ -1,9 +1,9 @@
-import { useGetMyLayoutsQuery } from '@/entities/layout';
-import { cn, getLoadingState } from '@/shared/lib/core';
+import { cn } from '@/shared/lib/core';
 import { Button, Skeleton } from '@/shared/ui';
 import { FileText } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMainContentLayoutsData } from '../../model/useMainContentLayoutsData';
 import { FolderCard } from './FolderCard';
 
 interface MainContentStateProps {
@@ -20,16 +20,12 @@ export const MainContentState = ({
   onFolderClick,
 }: MainContentStateProps) => {
   const { t } = useTranslation();
-  const { data: layoutsResponse, isLoading: isLayoutsLoading } =
-    useGetMyLayoutsQuery(undefined, {
-      skip: !isMobile || variant !== 'empty',
-    });
-  const { isInitialLoading: isInitialLayoutsLoading } = getLoadingState(
-    isLayoutsLoading,
-    layoutsResponse
-  );
+  const { data, isInitialLoading } = useMainContentLayoutsData({
+    isMobile,
+    variant,
+  });
 
-  const nonMainLayouts = (layoutsResponse?.data || []).filter(l => !l.isMain);
+  const nonMainLayouts = data?.nonMainLayouts || [];
 
   if (variant === 'unsupported') {
     return (
@@ -44,7 +40,7 @@ export const MainContentState = ({
   }
 
   if (variant === 'empty' && isMobile) {
-    if (isInitialLayoutsLoading) {
+    if (isInitialLoading) {
       return (
         <div
           className={cn(

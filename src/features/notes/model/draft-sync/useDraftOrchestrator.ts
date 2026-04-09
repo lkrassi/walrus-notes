@@ -27,6 +27,7 @@ export const useDraftOrchestrator = ({
   dispatch,
 }: UseDraftOrchestratorOpts): UseDraftSyncReturn => {
   const debounced = useDebounced(draft, debounceMs);
+  const COMMIT_ACK_TIMEOUT_MS = 5000;
 
   const {
     draftPhase,
@@ -113,6 +114,32 @@ export const useDraftOrchestrator = ({
     clearCommitRetryTimer();
     refs.commitRetryCountRef.current = 0;
   }, [clearCommitRetryTimer, refs]);
+
+  const send = useDraftSender({
+    noteId,
+    ws,
+    refs,
+    lastCommitAt,
+    dispatch,
+    setIsSaving,
+    setDraftPhase,
+  });
+
+  const flushPendingDraft = useCallback(() => {
+    const pending = refs.pendingRef.current;
+    if (pending == null) {
+      return;
+    }
+
+    if (pending !== refs.draftRef.current) {
+      return;
+    }
+
+    const sent = send(pending);
+    if (!sent) {
+      setDraftPhase('PENDING_UPDATE');
+    }
+  }, [refs, send, setDraftPhase]);
 
   useEffect(() => {
     if (!noteId) {
@@ -201,6 +228,44 @@ export const useDraftOrchestrator = ({
   }, [draftPhase, noteId, refs, scheduleCommitRetry, setDraftPhase, ws]);
 
   useEffect(() => {
+    if (!noteId || !ws || draftPhase !== 'COMMITTING') {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (!refs.awaitingCommitRef.current) {
+        return;
+      }
+
+      refs.pendingCommitPayloadRef.current =
+        refs.awaitingCommitPayloadRef.current ??
+        refs.pendingCommitPayloadRef.current ??
+        refs.draftRef.current ??
+        null;
+      refs.awaitingCommitRef.current = false;
+      refs.awaitingCommitPayloadRef.current = null;
+      setIsSaving(false);
+      setDraftPhase('PENDING_UPDATE');
+      scheduleCommitRetry('ack-timeout');
+      flushPendingDraft();
+    }, COMMIT_ACK_TIMEOUT_MS);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [
+    COMMIT_ACK_TIMEOUT_MS,
+    draftPhase,
+    flushPendingDraft,
+    noteId,
+    refs,
+    scheduleCommitRetry,
+    setDraftPhase,
+    setIsSaving,
+    ws,
+  ]);
+
+  useEffect(() => {
     if (!noteId) return;
 
     refs.skipInitialSendRef.current = true;
@@ -212,7 +277,6 @@ export const useDraftOrchestrator = ({
         refs.pendingRef.current = null;
         refs.awaitingAckRef.current = null;
         refs.prevSentRef.current = normalizedStoredDraft;
-        refs.initialPayloadRef.current = normalizedStoredDraft;
       }
     } catch (error) {
       reportDraftSyncError('storedDraft:hydrate', error, { noteId });
@@ -220,16 +284,6 @@ export const useDraftOrchestrator = ({
 
     return () => {};
   }, [noteId, refs, storedDraft]);
-
-  const send = useDraftSender({
-    noteId,
-    ws,
-    refs,
-    lastCommitAt,
-    dispatch,
-    setIsSaving,
-    setDraftPhase,
-  });
 
   useDraftListeners({
     ws,
@@ -250,6 +304,9 @@ export const useDraftOrchestrator = ({
     onCommitRetryResolved: () => {
       resetCommitRetryState();
     },
+    onCommitSettled: () => {
+      flushPendingDraft();
+    },
   });
 
   useEffect(() => {
@@ -257,26 +314,6 @@ export const useDraftOrchestrator = ({
 
     if (refs.skipInitialSendRef.current) {
       refs.skipInitialSendRef.current = false;
-      return;
-    }
-
-    try {
-      if (
-        refs.initialPayloadRef.current != null &&
-        refs.prevSentRef.current == null &&
-        debounced === refs.initialPayloadRef.current
-      ) {
-        return;
-      }
-    } catch (error) {
-      reportDraftSyncError('debounce:initial-guard', error, { noteId });
-    }
-
-    if (
-      refs.lastManualSendAtRef.current != null &&
-      Date.now() - refs.lastManualSendAtRef.current < debounceMs + 200
-    ) {
-      refs.lastManualSendAtRef.current = null;
       return;
     }
 
@@ -313,14 +350,6 @@ export const useDraftOrchestrator = ({
           refs.suppressRemoteUntilRef.current = Date.now() + 3500;
         } catch (error) {
           reportDraftSyncError('commitDraft:suppress-remote-window', error, {
-            noteId,
-          });
-        }
-
-        try {
-          refs.lastManualSendAtRef.current = Date.now();
-        } catch (error) {
-          reportDraftSyncError('commitDraft:last-manual-send-at', error, {
             noteId,
           });
         }
@@ -371,17 +400,9 @@ export const useDraftOrchestrator = ({
         return false;
       }
 
-      try {
-        refs.lastManualSendAtRef.current = Date.now();
-      } catch (error) {
-        reportDraftSyncError('sendUpdateDraft:last-manual-send-at', error, {
-          noteId,
-        });
-      }
-
       return send(value);
     },
-    [noteId, send, refs]
+    [noteId, send]
   );
 
   return {

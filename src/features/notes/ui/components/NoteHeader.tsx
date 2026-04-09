@@ -20,8 +20,6 @@ interface NoteHeaderProps {
   isLoading: boolean;
   hasLocalChanges?: boolean;
   hasServerDraft?: boolean;
-  isSaving?: boolean;
-  isPending?: boolean;
   isFullscreen?: boolean;
   onlineUsers?: Map<number, AwarenessUser>;
   currentUserId?: string;
@@ -42,9 +40,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
   title,
   isLoading,
   hasLocalChanges,
-  hasServerDraft: _hasServerDraft,
-  isSaving: _isSaving,
-  isPending: _isPending,
+  hasServerDraft,
   isFullscreen,
   onEdit,
   onSave,
@@ -167,7 +163,7 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
           isLoading={isLoading}
           isFullscreen={isFullscreen}
           hasLocalChanges={hasLocalChanges}
-          hasServerDraft={_hasServerDraft}
+          hasServerDraft={hasServerDraft}
           onSave={handleSave}
           onCancel={onCancel}
           onEdit={onEdit}

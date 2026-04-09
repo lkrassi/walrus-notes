@@ -177,14 +177,12 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const updatePositionCallback = useCallback(
     async (noteId: string, xPos: number, yPos: number) => {
       if (!canWrite) return;
-      try {
-        await updatePosition({
-          layoutId,
-          noteId,
-          xPos,
-          yPos,
-        }).unwrap();
-      } catch (_e) {}
+      await updatePosition({
+        layoutId,
+        noteId,
+        xPos,
+        yPos,
+      }).unwrap();
     },
     [layoutId, canWrite, updatePosition]
   );

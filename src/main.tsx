@@ -17,7 +17,9 @@ const waitForPrimaryFont = async () => {
       document.fonts.load("1em 'Podkova'"),
       new Promise(resolve => setTimeout(resolve, timeoutMs)),
     ]);
-  } catch (_error) {}
+  } catch (error) {
+    console.warn('Primary font preload failed, continuing bootstrap', error);
+  }
 };
 
 const bootstrap = async () => {

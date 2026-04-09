@@ -1,11 +1,11 @@
 import type { Layout } from '@/entities/layout';
-import { useGetNotesQuery } from '@/entities/note';
 import { DeleteLayoutForm, UpdateLayoutForm } from '@/features/layout';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react/modal';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { Network, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useFolderCardData } from '../../model/useFolderCardData';
 
 interface FolderCardProps {
   layout: Layout;
@@ -15,12 +15,8 @@ interface FolderCardProps {
 export const FolderCard = ({ layout, onFolderClick }: FolderCardProps) => {
   const { t } = useTranslation();
   const { openModalFromTrigger } = useModalActions();
-  const { data: notesResponse } = useGetNotesQuery({
-    layoutId: layout.id,
-    page: 1,
-  });
-
-  const notesCount = notesResponse?.data?.length || 0;
+  const { data } = useFolderCardData({ layoutId: layout.id });
+  const notesCount = data?.notesCount || 0;
 
   const handleEdit = openModalFromTrigger(
     <UpdateLayoutForm

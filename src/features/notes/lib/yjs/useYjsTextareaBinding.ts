@@ -173,7 +173,12 @@ export const useYjsTextareaBinding = ({
             }
           }
         }
-      } catch (_e) {}
+      } catch (error) {
+        console.warn(
+          'Failed to compute textarea selection after Yjs update',
+          error
+        );
+      }
 
       textarea.value = newContent;
       lastRemoteContentRef.current = newContent;
@@ -187,7 +192,12 @@ export const useYjsTextareaBinding = ({
         const clampedEnd = Math.max(0, Math.min(newSelectionEnd, maxLength));
 
         textarea.setSelectionRange(clampedStart, clampedEnd);
-      } catch (_e) {}
+      } catch (error) {
+        console.warn(
+          'Failed to restore textarea selection after Yjs update',
+          error
+        );
+      }
 
       if (onContentChangeRef.current) {
         onContentChangeRef.current(newContent);

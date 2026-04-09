@@ -1,111 +1,9 @@
-import { notesApi, removeDraft, useUpdateNoteMutation } from '@/entities';
+import { removeDraft } from '@/entities';
 import type { Note } from '@/entities/note';
+import { handleError } from '@/shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-
-const clearNoteDraftInCaches = (
-  dispatch: (action: unknown) => unknown,
-  noteId: string,
-  layoutId?: string
-) => {
-  if (!layoutId) {
-    return;
-  }
-
-  dispatch(
-    notesApi.util.updateQueryData(
-      'getNotes',
-      { layoutId, page: 1 },
-      draftState => {
-        const idx = draftState.data.findIndex(n => n.id === noteId);
-        if (idx !== -1) {
-          draftState.data[idx].draft = '';
-        }
-      }
-    )
-  );
-
-  dispatch(
-    notesApi.util.updateQueryData('getPosedNotes', { layoutId }, draftState => {
-      const idx = draftState.data.findIndex(n => n.id === noteId);
-      if (idx !== -1) {
-        draftState.data[idx].draft = '';
-      }
-    })
-  );
-
-  dispatch(
-    notesApi.util.updateQueryData(
-      'getUnposedNotes',
-      { layoutId },
-      draftState => {
-        const idx = draftState.data.findIndex(n => n.id === noteId);
-        if (idx !== -1) {
-          draftState.data[idx].draft = '';
-        }
-      }
-    )
-  );
-};
-
-const updateNoteInCaches = ({
-  dispatch,
-  noteId,
-  layoutId,
-  title,
-  payload,
-}: {
-  dispatch: (action: unknown) => unknown;
-  noteId: string;
-  layoutId?: string;
-  title: string;
-  payload: string;
-}) => {
-  if (!layoutId) {
-    return;
-  }
-
-  dispatch(
-    notesApi.util.updateQueryData(
-      'getNotes',
-      { layoutId, page: 1 },
-      draftState => {
-        const idx = draftState.data.findIndex(n => n.id === noteId);
-        if (idx !== -1) {
-          draftState.data[idx].title = title;
-          draftState.data[idx].payload = payload;
-          draftState.data[idx].draft = '';
-        }
-      }
-    )
-  );
-
-  dispatch(
-    notesApi.util.updateQueryData('getPosedNotes', { layoutId }, draftState => {
-      const idx = draftState.data.findIndex(n => n.id === noteId);
-      if (idx !== -1) {
-        draftState.data[idx].title = title;
-        draftState.data[idx].payload = payload;
-        draftState.data[idx].draft = '';
-      }
-    })
-  );
-
-  dispatch(
-    notesApi.util.updateQueryData(
-      'getUnposedNotes',
-      { layoutId },
-      draftState => {
-        const idx = draftState.data.findIndex(n => n.id === noteId);
-        if (idx !== -1) {
-          draftState.data[idx].title = title;
-          draftState.data[idx].payload = payload;
-          draftState.data[idx].draft = '';
-        }
-      }
-    )
-  );
-};
+import { updateNoteCacheFields } from './draft-sync/cacheUpdates';
 
 interface UseNoteSaveParams {
   note: Note;
@@ -128,7 +26,6 @@ interface UseNoteSaveParams {
   sendUpdateDraft: (value: string) => boolean;
   onNoteUpdated?: (note: Note) => void;
   showError: (message: string) => void;
-  isRecordNotFound422: (error: unknown) => boolean;
   logDraft: (message: string, extra?: Record<string, unknown>) => void;
 }
 
@@ -153,11 +50,20 @@ export const useNoteSave = ({
   sendUpdateDraft,
   onNoteUpdated,
   showError,
-  isRecordNotFound422,
   logDraft,
 }: UseNoteSaveParams) => {
   const dispatch = useDispatch() as (action: unknown) => unknown;
-  const [updateNote, { isLoading }] = useUpdateNoteMutation();
+  const isLoading = false;
+  const handleNoteError = useCallback(
+    (error: unknown, message = 'notes:noteUpdateError') => {
+      handleError(error, {
+        type: 'note-save',
+        message,
+        notify: showError,
+      });
+    },
+    [showError]
+  );
 
   const handleSave = useCallback(
     async (overrideTitle?: string) => {
@@ -189,8 +95,16 @@ export const useNoteSave = ({
       const newTitle = safeTitle.trim();
       const newPayload = safePayload;
 
+      if (newTitle !== note.title) {
+        logDraft('save keeps title unchanged in draft flow', {
+          currentTitleLength: (note.title ?? '').length,
+          requestedTitleLength: newTitle.length,
+        });
+      }
+
       if (newTitle === note.title && newPayload === note.payload) {
         if (hasAnyDraftMarker) {
+          let noOpSyncFailed = false;
           try {
             const res = commitDraft(newPayload);
             if (res) {
@@ -202,18 +116,46 @@ export const useNoteSave = ({
               serverDraftLength: serverDraft.length,
               storeDraftLength: storedDraftText.length,
             });
-          } catch (_e) {
-            logDraft('save no-op, commitDraft threw while clearing marker');
+          } catch (error) {
+            logDraft('save no-op, commitDraft threw while clearing marker', {
+              error: String(error),
+            });
+            handleNoteError(error);
+            noOpSyncFailed = true;
           }
 
           try {
             ignoreDraftRef.current = true;
             dispatch(removeDraft({ noteId: note.id }));
-          } catch (_e) {}
+          } catch (error) {
+            logDraft('failed to clear local draft marker in no-op save', {
+              error: String(error),
+            });
+            handleNoteError(error);
+            noOpSyncFailed = true;
+          }
 
           try {
-            clearNoteDraftInCaches(dispatch, note.id, note.layoutId);
-          } catch (_e) {}
+            updateNoteCacheFields({
+              dispatch,
+              layoutIds: note.layoutId ? [note.layoutId] : [],
+              noteId: note.id,
+              updates: {
+                draft: '',
+              },
+            });
+          } catch (error) {
+            logDraft('failed to clear draft caches in no-op save', {
+              error: String(error),
+            });
+            handleNoteError(error);
+            noOpSyncFailed = true;
+          }
+
+          if (noOpSyncFailed) {
+            setIsEditing(true);
+            return false;
+          }
         }
 
         setIsEditing(false);
@@ -222,17 +164,11 @@ export const useNoteSave = ({
       }
 
       try {
-        const response = await updateNote({
-          noteId: note.id,
-          title: newTitle,
-          payload: newPayload,
-        }).unwrap();
+        const finalTitle = note.title;
+        const finalPayload = newPayload;
+        const finalUpdatedAt = new Date().toISOString();
 
-        const serverNote = response?.data;
-        const finalTitle = serverNote?.title ?? newTitle;
-        const finalPayload = serverNote?.payload ?? newPayload;
-        const finalUpdatedAt =
-          serverNote?.updatedAt ?? new Date().toISOString();
+        let postSaveSyncFailed = false;
 
         try {
           const res = commitDraft(finalPayload);
@@ -244,33 +180,73 @@ export const useNoteSave = ({
             commitSent: !!res,
             finalPayloadLength: finalPayload.length,
           });
-        } catch (_e) {}
+
+          if (!res) {
+            postSaveSyncFailed = true;
+          }
+        } catch (error) {
+          logDraft('commitDraft failed in save flow', {
+            error: String(error),
+          });
+          handleNoteError(error);
+          postSaveSyncFailed = true;
+        }
 
         try {
           setPayloadState(finalPayload);
-        } catch (_e) {}
+        } catch (error) {
+          logDraft('setPayloadState failed in save flow', {
+            error: String(error),
+          });
+          handleNoteError(error);
+          postSaveSyncFailed = true;
+        }
 
         try {
           ignoreDraftRef.current = true;
-        } catch (_e) {}
+        } catch (error) {
+          logDraft('failed to set ignoreDraftRef in save flow', {
+            error: String(error),
+          });
+          handleNoteError(error);
+          postSaveSyncFailed = true;
+        }
 
         try {
           dispatch(removeDraft({ noteId: note.id }));
-        } catch (_e) {}
+        } catch (error) {
+          logDraft('failed to clear local draft in save flow', {
+            error: String(error),
+          });
+          handleNoteError(error);
+          postSaveSyncFailed = true;
+        }
 
         try {
-          updateNoteInCaches({
+          updateNoteCacheFields({
             dispatch,
+            layoutIds: note.layoutId ? [note.layoutId] : [],
             noteId: note.id,
-            layoutId: note.layoutId || serverNote?.layoutId,
-            title: finalTitle,
-            payload: finalPayload,
+            updates: {
+              payload: finalPayload,
+              draft: '',
+            },
           });
-        } catch (_e) {}
+        } catch (error) {
+          logDraft('failed to update note caches in save flow', {
+            error: String(error),
+          });
+          handleNoteError(error);
+          postSaveSyncFailed = true;
+        }
+
+        if (postSaveSyncFailed) {
+          setIsEditing(true);
+          return false;
+        }
 
         const updatedNote: Note = {
           ...note,
-          ...serverNote,
           title: finalTitle,
           payload: finalPayload,
           draft: '',
@@ -288,13 +264,7 @@ export const useNoteSave = ({
 
         return true;
       } catch (error) {
-        if (isRecordNotFound422(error)) {
-          setIsEditing(true);
-          logDraft('save failed with 422 record_not_found');
-          return false;
-        }
-
-        showError('notes:noteUpdateError');
+        handleNoteError(error);
         setIsEditing(true);
         logDraft('save failed with generic error');
         return false;
@@ -312,11 +282,10 @@ export const useNoteSave = ({
       commitDraft,
       serverDraft.length,
       setIsEditing,
-      updateNote,
       setTitle,
       onNoteUpdated,
-      isRecordNotFound422,
       logDraft,
+      handleNoteError,
       lastLocalCommitRef,
       ignoreDraftRef,
       dispatch,
@@ -332,20 +301,56 @@ export const useNoteSave = ({
         setPayloadState(originalPayload);
         hydratedServerPayloadRef.current = originalPayload;
         lastLocalUpdateRef.current = null;
-      } catch (_e) {}
+      } catch (error) {
+        logDraft('discard failed to reset local payload state', {
+          error: String(error),
+        });
+        handleNoteError(error);
+        return false;
+      }
 
       setIsEditing(false);
 
       try {
-        sendUpdateDraft('');
-      } catch (_e) {}
+        const sent = sendUpdateDraft('');
+        if (!sent) {
+          logDraft('discard failed to enqueue empty draft update');
+          handleNoteError(new Error('sendUpdateDraft returned false'));
+          return false;
+        }
+      } catch (error) {
+        logDraft('discard failed to send empty draft update', {
+          error: String(error),
+        });
+        handleNoteError(error);
+        return false;
+      }
       try {
         dispatch(removeDraft({ noteId: note.id }));
-      } catch (_e) {}
+      } catch (error) {
+        logDraft('discard failed to remove local draft', {
+          error: String(error),
+        });
+        handleNoteError(error);
+        return false;
+      }
 
       try {
-        clearNoteDraftInCaches(dispatch, note.id, note.layoutId);
-      } catch (_e) {}
+        updateNoteCacheFields({
+          dispatch,
+          layoutIds: note.layoutId ? [note.layoutId] : [],
+          noteId: note.id,
+          updates: {
+            draft: '',
+          },
+        });
+      } catch (error) {
+        logDraft('discard failed to clear draft caches', {
+          error: String(error),
+        });
+        handleNoteError(error);
+        return false;
+      }
 
       if (onNoteUpdated) {
         onNoteUpdated({
@@ -355,7 +360,13 @@ export const useNoteSave = ({
       }
 
       logDraft('discard completed');
-    } catch (_e) {}
+    } catch (error) {
+      logDraft('discard failed unexpectedly', {
+        error: String(error),
+      });
+      handleNoteError(error);
+      return false;
+    }
     return true;
   }, [
     dispatch,
@@ -369,6 +380,7 @@ export const useNoteSave = ({
     sendUpdateDraft,
     setIsEditing,
     setPayloadState,
+    handleNoteError,
   ]);
 
   return {

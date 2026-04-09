@@ -61,7 +61,9 @@ export const DropdownContent: FC<DropdownContentProps> = ({
             ) {
               return node;
             }
-          } catch (_e) {}
+          } catch (e) {
+            console.warn('Failed to inspect dropdown scroll parent', e);
+          }
           node = node.parentElement;
         }
         return null;
@@ -98,7 +100,12 @@ export const DropdownContent: FC<DropdownContentProps> = ({
       retryTimer = window.setTimeout(() => {
         try {
           setupObserver();
-        } catch (_e) {}
+        } catch (e) {
+          console.warn(
+            'Failed to initialize dropdown intersection observer',
+            e
+          );
+        }
       }, 60) as unknown as number;
     }
 

@@ -1,5 +1,3 @@
-import { useImportLayoutMutation } from '@/entities';
-import { useNotifications } from '@/entities/notification';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { Button } from '@/shared/ui';
@@ -12,32 +10,13 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useImportDataAction } from '../../model/useImportDataAction';
 
 export const ImportDataButton: FC = () => {
   const { t } = useTranslation();
-  const { showError, showSuccess } = useNotifications();
-  const [importLayout, { isLoading }] = useImportLayoutMutation();
+  const { isLoading, handleFile } = useImportDataAction();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
-
-    try {
-      const content = await file.text();
-      const parsed = JSON.parse(content);
-      const info = parsed?.info ?? parsed?.data ?? parsed;
-
-      if (!info) {
-        throw new Error('invalid_file');
-      }
-
-      await importLayout({ info }).unwrap();
-      showSuccess(t('settings:backup.import.success'));
-    } catch {
-      showError(t('settings:backup.import.error'));
-    }
-  };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     await handleFile(event.target.files?.[0]);

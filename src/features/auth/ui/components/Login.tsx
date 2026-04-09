@@ -5,7 +5,7 @@ import {
   useUser,
 } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { Button, Input, Skeleton } from '@/shared';
+import { Button, Input } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import {
   MODAL_SIZE_PRESETS,
@@ -16,21 +16,13 @@ import { useMobileForm } from '@/shared/lib/react/hooks';
 import type { FieldProps } from 'formik';
 import { Field, Form, Formik } from 'formik';
 import { Eye, EyeOff } from 'lucide-react';
-import { Suspense, lazy, type FC } from 'react';
+import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { usePasswordVisibility } from '../../lib/hooks';
 import { createAuthValidationSchemas } from '../../model/validationSchemas';
-const ForgotPasswordEmailModal = lazy(() =>
-  import('./ForgotPasswordEmailModal').then(m => ({
-    default: m.ForgotPasswordEmailModal,
-  }))
-);
-const ResetPasswordModal = lazy(() =>
-  import('./ResetPasswordModal').then(m => ({
-    default: m.ResetPasswordModal,
-  }))
-);
+import { ForgotPasswordEmailModal } from './ForgotPasswordEmailModal';
+import { ResetPasswordModal } from './ResetPasswordModal';
 
 type LoginProps = {
   onSwitchToRegister?: () => void;
@@ -132,80 +124,50 @@ export const Login: FC<LoginProps> = () => {
   };
 
   const handleForgotPassword = openModalFromTrigger(
-    <Suspense
-      fallback={
-        <div
-          className={cn(
-            'flex',
-            'items-center',
-            'justify-center',
-            'h-full',
-            'text-gray-500'
-          )}
-        >
-          {t('auth:forgotPasswordEmail.title')}
-        </div>
-      }
-    >
-      <ForgotPasswordEmailModal
-        onSubmit={async (email: string) => {
-          try {
-            await forgotPassword({ email }).unwrap();
+    <ForgotPasswordEmailModal
+      onSubmit={async (email: string) => {
+        try {
+          await forgotPassword({ email }).unwrap();
+          closeModal();
+
+          const handleResetSuccess = () => {
             closeModal();
-
-            const handleResetSuccess = () => {
-              closeModal();
-              showSuccess(
-                t('auth:resetPassword.success') || 'Пароль успешно изменен!'
-              );
-            };
-
-            openModal(
-              <Suspense
-                fallback={
-                  <div className={cn('space-y-4', 'p-6')}>
-                    <Skeleton className='mx-auto h-7 w-48 max-w-full' />
-                    <Skeleton className='h-12 w-full rounded-xl' />
-                    <Skeleton className='h-12 w-full rounded-xl' />
-                    <Skeleton className='h-11 w-full rounded-xl' />
-                  </div>
-                }
-              >
-                <ResetPasswordModal
-                  email={email}
-                  onSuccess={handleResetSuccess}
-                />
-              </Suspense>,
-              {
-                title: t('auth:resetPassword.title') || 'Сброс пароля',
-                size: MODAL_SIZE_PRESETS.authResetPassword,
-                closeOnOverlayClick: false,
-                closeOnEscape: false,
-                showCloseButton: false,
-              }
+            showSuccess(
+              t('auth:resetPassword.success') || 'Пароль успешно изменен!'
             );
-          } catch (err) {
-            const errorData = err as { data?: { meta?: { code?: string } } };
-            const errorCode = errorData?.data?.meta?.code || 'unknown_error';
+          };
 
-            if (errorCode === 'user_not_found') {
-              showError(
-                t('auth:resetPassword.error.userNotFound') ||
-                  'Пользователь не найден'
-              );
-            } else if (errorCode === 'confirm_code_already_send') {
-              showError(
-                t('auth:resetPassword.error.codeSent') ||
-                  'Код уже отправлен, попробуйте позже'
-              );
-            } else {
-              showError(t('auth:resetPassword.error.failed'));
+          openModal(
+            <ResetPasswordModal email={email} onSuccess={handleResetSuccess} />,
+            {
+              title: t('auth:resetPassword.title') || 'Сброс пароля',
+              size: MODAL_SIZE_PRESETS.authResetPassword,
+              closeOnOverlayClick: false,
+              closeOnEscape: false,
+              showCloseButton: false,
             }
-            throw err;
+          );
+        } catch (err) {
+          const errorData = err as { data?: { meta?: { code?: string } } };
+          const errorCode = errorData?.data?.meta?.code || 'unknown_error';
+
+          if (errorCode === 'user_not_found') {
+            showError(
+              t('auth:resetPassword.error.userNotFound') ||
+                'Пользователь не найден'
+            );
+          } else if (errorCode === 'confirm_code_already_send') {
+            showError(
+              t('auth:resetPassword.error.codeSent') ||
+                'Код уже отправлен, попробуйте позже'
+            );
+          } else {
+            showError(t('auth:resetPassword.error.failed'));
           }
-        }}
-      />
-    </Suspense>,
+          throw err;
+        }
+      }}
+    />,
     {
       title: t('auth:forgotPasswordEmail.title') || 'Восстановление пароля',
       size: MODAL_SIZE_PRESETS.authForgotPasswordEmail,

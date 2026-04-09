@@ -1,15 +1,8 @@
 import type { Note } from '@/entities/note';
 import type { DashboardTab, FileTreeItem } from '@/entities/tab';
-import {
-  closeTab,
-  createTabId,
-  openTab,
-  reorderTabs,
-  switchTab,
-  updateTabNote,
-} from '@/entities/tab';
+import { createTabId, useTabs } from '@/entities/tab';
+import { hasUnsavedChanges } from '@/shared/lib/notes/hasUnsavedChanges';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
 interface UseMainTabsFlowProps {
   openTabs: DashboardTab[];
@@ -26,7 +19,7 @@ export const useMainTabsFlow = ({
   onNoteOpenPinned,
   onNoteTreeUpdate,
 }: UseMainTabsFlowProps) => {
-  const dispatch = useDispatch();
+  const { close, open, reorder, switchTo, updateNote } = useTabs();
   const confirmIfUnsaved = useCallback(
     (action: () => void) => {
       if (!activeTab) {
@@ -45,11 +38,7 @@ export const useMainTabsFlow = ({
         return;
       }
 
-      const hasUnsavedServerDraft = !!(
-        note.draft &&
-        note.draft.length > 0 &&
-        note.draft !== note.payload
-      );
+      const hasUnsavedServerDraft = hasUnsavedChanges(note, null);
 
       if (!hasUnsavedServerDraft) {
         action();
@@ -61,34 +50,34 @@ export const useMainTabsFlow = ({
 
   const handleTabClick = useCallback(
     (tabId: string) => {
-      confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+      confirmIfUnsaved(() => switchTo(tabId));
     },
-    [confirmIfUnsaved, dispatch]
+    [confirmIfUnsaved, switchTo]
   );
 
   const handleTabClose = useCallback(
     (tabId: string) => {
-      confirmIfUnsaved(() => dispatch(closeTab(tabId)));
+      confirmIfUnsaved(() => close(tabId));
     },
-    [confirmIfUnsaved, dispatch]
+    [close, confirmIfUnsaved]
   );
 
   const handleTabReorder = useCallback(
     (tabs: DashboardTab[]) => {
-      dispatch(reorderTabs(tabs));
+      reorder(tabs);
     },
-    [dispatch]
+    [reorder]
   );
 
   const handleNoteUpdated = useCallback(
     (noteId: string, updates: Partial<Note>) => {
-      dispatch(updateTabNote({ noteId, updates }));
+      updateNote(noteId, updates);
 
       if (onNoteTreeUpdate) {
         onNoteTreeUpdate(noteId, updates);
       }
     },
-    [dispatch, onNoteTreeUpdate]
+    [onNoteTreeUpdate, updateNote]
   );
 
   const handleItemSelect = useCallback(
@@ -96,16 +85,16 @@ export const useMainTabsFlow = ({
       const tabId = createTabId(item.type, item.id);
       const existingTab = openTabs.find(tab => tab.id === tabId);
       if (existingTab) {
-        confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+        confirmIfUnsaved(() => switchTo(tabId));
         return;
       }
 
       confirmIfUnsaved(() => {
-        dispatch(openTab(item));
-        dispatch(switchTab(tabId));
+        open(item);
+        switchTo(tabId);
       });
     },
-    [confirmIfUnsaved, dispatch, openTabs]
+    [confirmIfUnsaved, open, openTabs, switchTo]
   );
 
   const handleFolderClickFromGallery = useCallback(
@@ -114,24 +103,22 @@ export const useMainTabsFlow = ({
       const existingTab = openTabs.find(tab => tab.id === tabId);
 
       if (existingTab) {
-        confirmIfUnsaved(() => dispatch(switchTab(tabId)));
+        confirmIfUnsaved(() => switchTo(tabId));
         return;
       }
 
       confirmIfUnsaved(() => {
-        dispatch(
-          openTab({
-            id: layoutId,
-            type: 'layout',
-            title,
-            color: '',
-            isMain: false,
-          } as FileTreeItem)
-        );
-        dispatch(switchTab(tabId));
+        open({
+          id: layoutId,
+          type: 'layout',
+          title,
+          color: '',
+          isMain: false,
+        } as FileTreeItem);
+        switchTo(tabId);
       });
     },
-    [confirmIfUnsaved, dispatch, openTabs]
+    [confirmIfUnsaved, open, openTabs, switchTo]
   );
 
   const handleNoteOpenFromGraph = useCallback(

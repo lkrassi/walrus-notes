@@ -64,7 +64,9 @@ export const useGraphDragHandlers = ({
         try {
           isNodeDraggingRef.current = false;
           setIsNodeDragging?.(false);
-        } catch (_e) {}
+        } catch (e) {
+          console.error('Failed to reset node dragging state', e);
+        }
         return;
       }
 
@@ -103,7 +105,9 @@ export const useGraphDragHandlers = ({
                   rfSetNodes?.(prev =>
                     prev.map(n => (n.id === nodeId ? { ...n, position } : n))
                   );
-                } catch (_e) {}
+                } catch (e) {
+                  console.error('Failed to sync React Flow nodes state', e);
+                }
                 try {
                   const change = {
                     id: nodeId,
@@ -112,10 +116,14 @@ export const useGraphDragHandlers = ({
                     dragging: false,
                   } as unknown as NodeChange;
                   onNodesChange?.([change]);
-                } catch (_e) {}
+                } catch (e) {
+                  console.error('Failed to emit node position change event', e);
+                }
                 try {
                   rfSetEdges?.(prev => prev.map(e => ({ ...e })));
-                } catch (_e) {}
+                } catch (e) {
+                  console.error('Failed to refresh React Flow edges state', e);
+                }
                 updatePositionCallback(nodeId, position.x, position.y);
               }
             );
@@ -132,7 +140,9 @@ export const useGraphDragHandlers = ({
       try {
         isNodeDraggingRef.current = false;
         setIsNodeDragging?.(false);
-      } catch (_e) {}
+      } catch (e) {
+        console.error('Failed to finalize node dragging state', e);
+      }
     },
     [
       nodes,

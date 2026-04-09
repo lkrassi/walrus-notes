@@ -176,12 +176,10 @@ export const useFileTreeController = ({
 
       moveNoteInTree(activeData.noteId, fromLayoutId, toLayoutId);
 
-      try {
-        await dragNote({
-          noteId: activeData.noteId,
-          toLayoutId,
-        }).unwrap();
-      } catch (_error) {}
+      await dragNote({
+        noteId: activeData.noteId,
+        toLayoutId,
+      }).unwrap();
 
       dragStartLayoutIdRef.current = null;
     },
@@ -334,6 +332,13 @@ export const useFileTreeController = ({
     [t]
   );
 
+  const handleAllNotesClick = useCallback(() => {
+    const mainLayout = layouts.find(layout => layout.isMain);
+    if (mainLayout) {
+      onOpenGraph?.(mainLayout.id);
+    }
+  }, [layouts, onOpenGraph]);
+
   return {
     searchQuery,
     setSearchQuery,
@@ -348,5 +353,6 @@ export const useFileTreeController = ({
     handleDragEnd,
     renderSectionHeader,
     renderTreeItem,
+    handleAllNotesClick,
   } as const;
 };

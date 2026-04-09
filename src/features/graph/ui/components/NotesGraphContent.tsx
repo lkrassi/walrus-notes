@@ -1,4 +1,3 @@
-import { getLayoutAccess, useGetMyLayoutsQuery } from '@/entities';
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { memo, useMemo } from 'react';
@@ -6,6 +5,7 @@ import { GraphProvider } from '../../lib/context';
 import { useGraphContentHandlers, useGraphState } from '../../lib/hooks';
 import { useGraphSelection } from '../../model/hooks/useGraphSelection';
 import { useNotesGraph } from '../../model/hooks/useNotesGraph';
+import { useNotesGraphData } from '../../model/hooks/useNotesGraphData';
 import { NotesGraphView } from './NotesGraphView';
 
 const noopNodeDragStop = () => {};
@@ -25,13 +25,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   allowNodeDrag,
   isMain,
 }: NotesGraphContentProps) {
-  const { data: layoutsResponse } = useGetMyLayoutsQuery(undefined);
-  const currentLayout = (layoutsResponse?.data || []).find(
-    l => l.id === layoutId
-  );
-  const access = currentLayout
-    ? getLayoutAccess(currentLayout)
-    : { canRead: true, canWrite: true, canEdit: true };
+  const { data: access } = useNotesGraphData({ layoutId });
   const canWrite = access.canWrite;
   const {
     isInitialLoading,

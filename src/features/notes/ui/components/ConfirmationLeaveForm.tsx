@@ -44,7 +44,9 @@ export const ConfirmationLeaveForm: FC<{ onConfirm?: () => void }> = ({
             try {
               onConfirm?.();
               closeModal();
-            } catch (_e) {}
+            } catch (error) {
+              console.warn('Failed to confirm leave action', error);
+            }
           }}
           className={cn('px-6', 'py-3')}
           variant='escape'

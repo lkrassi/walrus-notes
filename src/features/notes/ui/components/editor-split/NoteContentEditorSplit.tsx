@@ -28,6 +28,13 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
     layoutId,
     isEditing = false,
     isResizing = false,
+    canWrite,
+    hasLocalChanges,
+    hasServerDraft,
+    isSaving,
+    isPending,
+    isSynced,
+    lastSavedAt,
     enableCollaboration = false,
     userId,
     userName,
@@ -107,6 +114,13 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                 note={note}
                 layoutId={layoutId}
                 previewRef={previewRef}
+                canWrite={canWrite}
+                hasLocalChanges={hasLocalChanges}
+                hasServerDraft={hasServerDraft}
+                isSaving={isSaving}
+                isPending={isPending}
+                isSynced={isSynced}
+                lastSavedAt={lastSavedAt}
               />
             </div>
           </LayoutGroup>
@@ -167,6 +181,13 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
               note={note}
               layoutId={layoutId}
               previewRef={previewRef}
+              canWrite={canWrite}
+              hasLocalChanges={hasLocalChanges}
+              hasServerDraft={hasServerDraft}
+              isSaving={isSaving}
+              isPending={isPending}
+              isSynced={isSynced}
+              lastSavedAt={lastSavedAt}
             />
           </div>
         </LayoutGroup>

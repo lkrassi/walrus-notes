@@ -20,10 +20,14 @@ export const useNoteEditorState = ({
     }
 
     const initialServerDraft = note.draft?.trim() ?? '';
-    const initialHasDraft =
+    const initialStoreDraft = storeDraft?.trim() ?? '';
+    const initialHasServerDraft =
       !!initialServerDraft.length &&
       initialServerDraft !== (note.payload ?? '');
-    return initialHasDraft;
+    const initialHasStoreDraft =
+      !!initialStoreDraft.length && initialStoreDraft !== (note.payload ?? '');
+
+    return initialHasServerDraft || initialHasStoreDraft;
   });
   const [title, setTitle] = useState<string>(note.title ?? '');
 
@@ -60,7 +64,9 @@ export const useNoteEditorState = ({
         const newValue = typeof value === 'function' ? value(prev) : value;
         return newValue;
       });
-    } catch (_e) {}
+    } catch (error) {
+      logDraft('setPayload failed', { error: String(error) });
+    }
   };
 
   const handleEdit = () => {
@@ -93,7 +99,9 @@ export const useNoteEditorState = ({
         ) {
           return prev;
         }
-      } catch (_e) {}
+      } catch (error) {
+        logDraft('hydrate guard check failed', { error: String(error) });
+      }
       if (lastLocalUpdateRef.current == null) {
         return incomingSafe;
       }
@@ -131,7 +139,11 @@ export const useNoteEditorState = ({
         }
         setPayloadState(storedDraftText);
       }
-    } catch (_e) {}
+    } catch (error) {
+      logDraft('sync store draft into payload failed', {
+        error: String(error),
+      });
+    }
   }, [hasStoreDraft, note.id, storedDraftText]);
 
   useLayoutEffect(() => {
@@ -149,16 +161,7 @@ export const useNoteEditorState = ({
       });
       setIsEditing(true);
     }
-  }, [
-    canWrite,
-    hasServerDraft,
-    hasStoreDraft,
-    note.id,
-    note.payload,
-    note.draft,
-    storeDraft,
-    logDraft,
-  ]);
+  }, [canWrite, hasServerDraft, hasStoreDraft, note.id, logDraft]);
 
   useEffect(() => {
     ignoreDraftRef.current = false;
@@ -167,7 +170,7 @@ export const useNoteEditorState = ({
       noteDraftLength: (note.draft ?? '').length,
       storeDraftLength: (storeDraft ?? '').length,
     });
-  }, [note.id, note.payload, note.draft, storeDraft, logDraft]);
+  }, [note.id, logDraft]);
 
   return {
     isEditing,
