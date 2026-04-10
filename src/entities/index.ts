@@ -13,11 +13,11 @@ export type {
   UpdateDraftPayload,
 } from './draft';
 export {
-  CreateEdgeCommand,
-  DeleteEdgeCommand,
+  createDeleteEdgeCommand,
+  createEdgeCommand,
+  createMoveEdgeCommand,
+  createMoveNodeCommand,
   generateColorFromId,
-  MoveEdgeCommand,
-  MoveNodeCommand,
   useGraphHistory,
 } from './graph';
 export type { UseGraphHistoryReturn } from './graph';

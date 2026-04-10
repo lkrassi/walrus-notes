@@ -1,8 +1,8 @@
 export {
-  CreateEdgeCommand,
-  DeleteEdgeCommand,
-  MoveEdgeCommand,
-  MoveNodeCommand,
+  createDeleteEdgeCommand,
+  createEdgeCommand,
+  createMoveEdgeCommand,
+  createMoveNodeCommand,
 } from './commands';
 export { useGraphHistory } from './hooks/useGraphHistory';
 export type { UseGraphHistoryReturn } from './hooks/useGraphHistory';

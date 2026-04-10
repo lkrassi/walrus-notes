@@ -27,31 +27,23 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     style = {},
     data,
   } = props;
-  const edgeColors = getEdgeColors();
 
+  const edgeColors = getEdgeColors();
   const strokeColor = data?.edgeColor || edgeColors.STROKE;
-  const isSelected = Boolean(data?.isSelected);
-  const isRelated = Boolean(data?.isRelatedToSelected);
   const isBidirectional = Boolean(data?.isBidirectional);
   const reverseColor = data?.reverseEdgeColor;
 
   const { getNodeFlowInfo, chooseClosestAnchor, findNodeUnderCursor } =
     useEdgeGeometry(source);
-
   const viewportTick = useViewportTracking();
 
-  const {
-    isDragging,
-    dragPosition,
-    currentTargetNode,
-    isConnectionExists,
-    handleMouseDown,
-  } = useEdgeDrag({
-    id,
-    source,
-    target,
-    findNodeUnderCursor,
-  });
+  const { isDragging, dragPosition, currentTargetNode, handleMouseDown } =
+    useEdgeDrag({
+      id,
+      source,
+      target,
+      findNodeUnderCursor,
+    });
 
   const { edgePath, getDragEdgePath } = useEdgePath({
     source,
@@ -67,30 +59,20 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     currentTargetNode,
   });
 
-  const getDragStrokeColor = () => {
-    if (currentTargetNode) {
-      return isConnectionExists() ? edgeColors.INVALID : edgeColors.VALID;
-    }
-    return strokeColor;
-  };
-
-  const dragStrokeColor = getDragStrokeColor();
-
-  const markerSize = isSelected ? 12 : isRelated ? 10 : 9;
+  const dragStrokeColor = strokeColor;
+  const markerSize = 9;
   const markerRefX = markerSize - 1;
   const markerRefY = markerSize / 2;
   const markerPath = `M 0 0 L ${markerSize} ${markerSize / 2} L 0 ${markerSize} z`;
-
+  const bidirectionalGradientId = createMarkerId(id, 'bidirectional-gradient');
   const staticMarkerId = createMarkerId(id, 'static');
   const dragMarkerId = createMarkerId(id, 'drag');
-  const bidirectionalGradientId = createMarkerId(id, 'bidirectional-gradient');
-  const markerEnd = `url(#${staticMarkerId})`;
-  const dragMarkerEnd = `url(#${dragMarkerId})`;
-  const markerStart = undefined;
 
   const edgeColor = isBidirectional
     ? `url(#${bidirectionalGradientId})`
     : strokeColor;
+  const markerEnd = `url(#${staticMarkerId})`;
+  const dragMarkerEnd = `url(#${dragMarkerId})`;
 
   return (
     <>
@@ -138,7 +120,6 @@ export const MultiColorEdge = memo(function MultiColorEdge(
       {!isDragging && (
         <BaseEdge
           path={edgePath}
-          markerStart={markerStart}
           markerEnd={markerEnd}
           style={{
             stroke: edgeColor,
@@ -149,15 +130,14 @@ export const MultiColorEdge = memo(function MultiColorEdge(
       )}
 
       {isDragging && dragPosition && (
-        <path
-          d={getDragEdgePath()}
-          markerStart={markerStart}
+        <BaseEdge
+          path={getDragEdgePath()}
           markerEnd={dragMarkerEnd}
-          fill='none'
-          stroke={dragStrokeColor}
-          strokeWidth={EDGE_INTERACTION.DRAG_STROKE_WIDTH}
-          strokeDasharray='5,5'
-          className={cn('animate-pulse')}
+          style={{
+            ...style,
+            stroke: dragStrokeColor,
+            fill: 'none',
+          }}
         />
       )}
 

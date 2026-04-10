@@ -3,14 +3,16 @@ import type { EdgeDeleteEventDetail } from '../../model/types';
 
 export const useEdgeDeleteEvents = (
   onDrop: (event: CustomEvent<EdgeDeleteEventDetail>) => void,
-  onStart: () => void
+  onStart: (event: CustomEvent<EdgeDeleteEventDetail>) => void
 ) => {
   useEffect(() => {
     const handleDrop = (event: Event) => {
       onDrop(event as CustomEvent<EdgeDeleteEventDetail>);
     };
 
-    const handleStart = () => onStart();
+    const handleStart = (event: Event) => {
+      onStart(event as CustomEvent<EdgeDeleteEventDetail>);
+    };
 
     document.addEventListener('edgeDeleteDrop', handleDrop);
     document.addEventListener('edgeDeleteStart', handleStart);

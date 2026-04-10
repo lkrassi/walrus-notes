@@ -6,6 +6,7 @@ import {
   useGraphContextState,
 } from '../../lib/context';
 import { GraphBackground } from './GraphBackground';
+import { GraphConnectionLine } from './GraphConnectionLine';
 import { GraphControls } from './GraphControls';
 import { GraphMiniMap } from './GraphMiniMap';
 import { useGraphViewContext } from './GraphViewContext';
@@ -65,6 +66,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
       onConnect={canEdit ? onConnect : undefined}
       onConnectStart={canEdit ? onConnectStart : undefined}
       onConnectEnd={canEdit ? onConnectEnd : undefined}
+      connectionLineComponent={GraphConnectionLine}
       onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}
       onNodeDrag={onNodeDrag}

@@ -39,7 +39,7 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     onNodeMouseEnter,
     onNodeMouseLeave,
     onPaneClick,
-  } = useNotesGraph({ layoutId });
+  } = useNotesGraph({ layoutId, isMain });
 
   const {
     screenToFlowPosition,
@@ -87,6 +87,54 @@ export const NotesGraphContent = memo(function NotesGraphContent({
       canEdit: canWrite,
     });
 
+  const connectionPreviewInvalidNodeIds = useMemo(() => {
+    const invalid = new Set<string>();
+
+    const creatingSourceId = graphHandlersState.tempEdge?.source;
+    if (typeof creatingSourceId === 'string' && creatingSourceId.length > 0) {
+      graphHandlersState.allEdges.forEach(edge => {
+        if (edge.source === creatingSourceId) {
+          invalid.add(edge.target);
+        }
+      });
+    }
+
+    const movingSourceId = graphHandlersState.edgeDragSourceId;
+    if (typeof movingSourceId === 'string' && movingSourceId.length > 0) {
+      graphHandlersState.allEdges.forEach(edge => {
+        if (edge.source !== movingSourceId) {
+          return;
+        }
+
+        const isCurrentlyMovedEdgeTarget =
+          edge.target === graphHandlersState.edgeDragOriginalTargetId;
+        if (!isCurrentlyMovedEdgeTarget) {
+          invalid.add(edge.target);
+        }
+      });
+    }
+
+    return Array.from(invalid);
+  }, [
+    graphHandlersState.allEdges,
+    graphHandlersState.edgeDragOriginalTargetId,
+    graphHandlersState.edgeDragSourceId,
+    graphHandlersState.tempEdge?.source,
+  ]);
+
+  const hoveredInvalidConnectionTargetIds = useMemo(() => {
+    if (!hoveredNodeId) {
+      return [] as string[];
+    }
+
+    return connectionPreviewInvalidNodeIds.includes(hoveredNodeId)
+      ? [hoveredNodeId]
+      : [];
+  }, [connectionPreviewInvalidNodeIds, hoveredNodeId]);
+
+  const isConnectionPreviewActive =
+    !!graphHandlersState.tempEdge || !!graphHandlersState.edgeDragSourceId;
+
   const { edgesWithSelection, nodesWithSelection } = useGraphSelection({
     nodes,
     edges,
@@ -94,6 +142,8 @@ export const NotesGraphContent = memo(function NotesGraphContent({
     selectedNodeId,
     hoveredNodeId,
     allEdges: graphHandlersState.allEdges,
+    isConnectionPreviewActive,
+    invalidConnectionTargetIds: hoveredInvalidConnectionTargetIds,
   });
 
   const graphContextState = useMemo(

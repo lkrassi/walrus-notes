@@ -5,6 +5,7 @@ type AnyEdge = Edge & {
   data?: {
     isRelatedToSelected?: boolean;
     isSelected?: boolean;
+    optimisticReplaceEdgeId?: string;
     [key: string]: unknown;
   };
 };
@@ -13,6 +14,8 @@ type AnyNode = Node & {
   data?: {
     selected?: boolean;
     isRelatedToSelected?: boolean;
+    isConnectionPreviewActive?: boolean;
+    isInvalidConnectionTarget?: boolean;
     [key: string]: unknown;
   };
   style?: { opacity?: number; [key: string]: unknown };
@@ -25,6 +28,8 @@ interface UseGraphSelectionProps {
   selectedNodeId: string | null;
   hoveredNodeId?: string | null;
   allEdges: Edge[];
+  isConnectionPreviewActive?: boolean;
+  invalidConnectionTargetIds?: string[];
 }
 
 interface StyledEdge extends Omit<Edge, 'style' | 'data'> {
@@ -60,12 +65,27 @@ export const useGraphSelection = ({
   selectedNodeId,
   hoveredNodeId,
   allEdges,
+  isConnectionPreviewActive = false,
+  invalidConnectionTargetIds = [],
 }: UseGraphSelectionProps): {
   edgesWithSelection: StyledEdge[];
   nodesWithSelection: StyledNode[];
 } => {
   const edgesWithSelection: StyledEdge[] = useMemo(() => {
-    const combinedEdges = [...edges, ...tempEdges];
+    const replacingEdgeIds = new Set(
+      tempEdges
+        .map(
+          edge =>
+            (edge.data as { optimisticReplaceEdgeId?: string } | undefined)
+              ?.optimisticReplaceEdgeId
+        )
+        .filter((id): id is string => Boolean(id))
+    );
+
+    const combinedEdges = [
+      ...edges.filter(edge => !replacingEdgeIds.has(edge.id)),
+      ...tempEdges,
+    ];
 
     const multiSelectedIds = new Set(
       nodes
@@ -163,6 +183,8 @@ export const useGraphSelection = ({
   }, [edges, tempEdges, selectedNodeId, hoveredNodeId, nodes]);
 
   const nodesWithSelection: StyledNode[] = useMemo(() => {
+    const invalidTargetIds = new Set(invalidConnectionTargetIds);
+
     const multiSelectedIds = new Set(
       nodes
         .filter(n => (n as unknown as { selected?: boolean }).selected)
@@ -179,11 +201,15 @@ export const useGraphSelection = ({
       return nodes.map(node => {
         const isRelated = relatedNodeIds.has(node.id);
         const isSelected = multiSelectedIds.has(node.id);
+        const isInvalidConnectionTarget =
+          isConnectionPreviewActive && invalidTargetIds.has(node.id);
 
         const newData = {
           ...node.data,
           selected: isSelected,
           isRelatedToSelected: isRelated,
+          isConnectionPreviewActive,
+          isInvalidConnectionTarget,
         };
         const newStyle = {
           ...node.style,
@@ -193,7 +219,11 @@ export const useGraphSelection = ({
         const n = node as AnyNode;
         const dataChanged =
           n.data?.selected !== newData.selected ||
-          n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+          n.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+          n.data?.isConnectionPreviewActive !==
+            newData.isConnectionPreviewActive ||
+          n.data?.isInvalidConnectionTarget !==
+            newData.isInvalidConnectionTarget;
         const styleChanged = n.style?.opacity !== newStyle.opacity;
 
         if (!dataChanged && !styleChanged) return node as StyledNode;
@@ -211,10 +241,15 @@ export const useGraphSelection = ({
 
     if (!effectiveSelected) {
       return nodes.map(node => {
+        const isInvalidConnectionTarget =
+          isConnectionPreviewActive && invalidTargetIds.has(node.id);
+
         const newData = {
           ...node.data,
           selected: false,
           isRelatedToSelected: true,
+          isConnectionPreviewActive,
+          isInvalidConnectionTarget,
         };
         const newStyle = {
           ...node.style,
@@ -223,7 +258,11 @@ export const useGraphSelection = ({
         const n = node as AnyNode;
         const dataChanged =
           n.data?.selected !== newData.selected ||
-          n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+          n.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+          n.data?.isConnectionPreviewActive !==
+            newData.isConnectionPreviewActive ||
+          n.data?.isInvalidConnectionTarget !==
+            newData.isInvalidConnectionTarget;
         const styleChanged = n.style?.opacity !== newStyle.opacity;
         if (!dataChanged && !styleChanged) return node as StyledNode;
         return {
@@ -244,11 +283,15 @@ export const useGraphSelection = ({
     return nodes.map(node => {
       const isRelated = relatedNodeIds.has(node.id);
       const isSelected = effectiveSelected === node.id;
+      const isInvalidConnectionTarget =
+        isConnectionPreviewActive && invalidTargetIds.has(node.id);
 
       const newData = {
         ...node.data,
         selected: isSelected,
         isRelatedToSelected: isRelated,
+        isConnectionPreviewActive,
+        isInvalidConnectionTarget,
       };
       const newStyle = {
         ...node.style,
@@ -258,7 +301,10 @@ export const useGraphSelection = ({
       const n = node as AnyNode;
       const dataChanged =
         n.data?.selected !== newData.selected ||
-        n.data?.isRelatedToSelected !== newData.isRelatedToSelected;
+        n.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
+        n.data?.isConnectionPreviewActive !==
+          newData.isConnectionPreviewActive ||
+        n.data?.isInvalidConnectionTarget !== newData.isInvalidConnectionTarget;
       const styleChanged = n.style?.opacity !== newStyle.opacity;
 
       if (!dataChanged && !styleChanged) return node as StyledNode;
@@ -270,7 +316,14 @@ export const useGraphSelection = ({
         style: newStyle,
       } as StyledNode;
     });
-  }, [nodes, selectedNodeId, hoveredNodeId, allEdges]);
+  }, [
+    nodes,
+    selectedNodeId,
+    hoveredNodeId,
+    allEdges,
+    invalidConnectionTargetIds,
+    isConnectionPreviewActive,
+  ]);
 
   return {
     edgesWithSelection,

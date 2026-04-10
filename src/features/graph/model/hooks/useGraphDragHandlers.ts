@@ -1,5 +1,6 @@
-import { MoveNodeCommand, type useGraphHistory } from '@/entities/graph';
+import { createMoveNodeCommand, type useGraphHistory } from '@/entities/graph';
 import { useCallback, useRef, type MouseEvent, type RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Edge, Node, NodeChange } from 'reactflow';
 
 type GraphHistory = ReturnType<typeof useGraphHistory>;
@@ -7,7 +8,11 @@ type GraphHistory = ReturnType<typeof useGraphHistory>;
 interface UseGraphDragHandlersProps {
   nodes: Node[];
   setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-  updatePositionCallback: (nodeId: string, x: number, y: number) => void;
+  updatePositionCallback: (
+    nodeId: string,
+    x: number,
+    y: number
+  ) => Promise<void>;
   graphHistory: GraphHistory;
   isNodeDraggingRef: RefObject<boolean>;
   isProcessingRef: RefObject<boolean>;
@@ -37,6 +42,7 @@ export const useGraphDragHandlers = ({
   onNodesChange,
   rfSetEdges,
 }: UseGraphDragHandlersProps) => {
+  const { t } = useTranslation('main');
   const nodePositionsAtDragStartRef = useRef<
     Map<string, { x: number; y: number }>
   >(new Map());
@@ -59,7 +65,7 @@ export const useGraphDragHandlers = ({
   );
 
   const handleNodeDragStop = useCallback(
-    async (_event: MouseEvent, node: Node) => {
+    (_event: MouseEvent, node: Node) => {
       if (!node) {
         try {
           isNodeDraggingRef.current = false;
@@ -78,6 +84,9 @@ export const useGraphDragHandlers = ({
         const movedNodes = isMultiSelect ? selectedNodes : [node];
         isProcessingRef.current = true;
 
+        isNodeDraggingRef.current = false;
+        setIsNodeDragging?.(false);
+
         for (const movedNode of movedNodes) {
           const startPos = nodePositionsAtDragStartRef.current.get(
             movedNode.id
@@ -90,11 +99,20 @@ export const useGraphDragHandlers = ({
             endPos &&
             (startPos.x !== endPos.x || startPos.y !== endPos.y)
           ) {
-            const command = new MoveNodeCommand(
-              movedNode.id,
-              startPos,
-              endPos,
-              (nodeId: string, position: { x: number; y: number }) => {
+            const noteTitle =
+              (
+                movedNode.data as { note?: { title?: string } } | undefined
+              )?.note?.title?.trim() || movedNode.id;
+
+            const command = createMoveNodeCommand({
+              nodeId: movedNode.id,
+              previousPosition: startPos,
+              newPosition: endPos,
+              description: t('undoRedo.moveNote', { noteTitle }),
+              onExecute: async (
+                nodeId: string,
+                position: { x: number; y: number }
+              ) => {
                 setNodes(prev => {
                   const updated = prev.map(n =>
                     n.id === nodeId ? { ...n, position } : n
@@ -124,25 +142,25 @@ export const useGraphDragHandlers = ({
                 } catch (e) {
                   console.error('Failed to refresh React Flow edges state', e);
                 }
-                updatePositionCallback(nodeId, position.x, position.y);
-              }
-            );
-            await graphHistory.executeCommand(command);
-            updatePositionCallback(movedNode.id, endPos.x, endPos.y);
+
+                void updatePositionCallback(nodeId, position.x, position.y)
+                  .then(() => undefined)
+                  .catch(error => {
+                    console.error('Failed to persist node position', error);
+                  });
+              },
+            });
+
+            void graphHistory.executeCommand(command).catch(error => {
+              console.error('Failed to execute move node command', error);
+            });
           }
         }
       } catch (_e) {
         onNodeDragStop?.(_event, node);
-      } finally {
-        isProcessingRef.current = false;
       }
 
-      try {
-        isNodeDraggingRef.current = false;
-        setIsNodeDragging?.(false);
-      } catch (e) {
-        console.error('Failed to finalize node dragging state', e);
-      }
+      isProcessingRef.current = false;
     },
     [
       nodes,
@@ -156,6 +174,7 @@ export const useGraphDragHandlers = ({
       onNodesChange,
       rfSetEdges,
       setNodes,
+      t,
     ]
   );
 

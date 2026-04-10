@@ -1,9 +1,9 @@
 export {
-  CreateEdgeCommand,
-  DeleteEdgeCommand,
+  createDeleteEdgeCommand,
+  createEdgeCommand,
+  createMoveEdgeCommand,
+  createMoveNodeCommand,
   generateColorFromId,
-  MoveEdgeCommand,
-  MoveNodeCommand,
   useGraphHistory,
 } from '@/entities/graph';
 export type { UseGraphHistoryReturn } from '@/entities/graph';

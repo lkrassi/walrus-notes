@@ -67,7 +67,18 @@ export const useEdgeDrag = ({
           moveEvent.clientX,
           moveEvent.clientY
         );
-        setCurrentTargetNode(targetNode?.id || null);
+
+        const candidateId = targetNode?.id ?? null;
+        const isInvalidTarget =
+          candidateId !== null &&
+          getEdges().some(
+            edge =>
+              edge.id !== id &&
+              edge.source === source &&
+              edge.target === candidateId
+          );
+
+        setCurrentTargetNode(isInvalidTarget ? null : candidateId);
       };
 
       const handleMouseUp = (upEvent: globalThis.MouseEvent) => {

@@ -14,5 +14,12 @@
   "note": "note",
   "notes": "notes",
   "allNotes": "All Notes Graph",
-  "allNotesDescription": "All notes from all folders"
+  "allNotesDescription": "All notes from all folders",
+  "undoRedo": {
+    "undo": "Undo{{description}} (Ctrl+Z)",
+    "redo": "Redo{{description}} (Ctrl+Y)",
+    "moveNote": "moving note \"{{noteTitle}}\"",
+    "moveConnection": "moving connection \"{{sourceTitle}}\" → \"{{targetTitle}}\"",
+    "disconnectConnection": "disconnecting connection \"{{sourceTitle}}\" → \"{{targetTitle}}\""
+  }
 }

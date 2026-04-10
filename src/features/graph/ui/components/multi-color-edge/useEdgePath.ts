@@ -136,12 +136,51 @@ export const useEdgePath = ({
     viewportTick,
   ]);
 
-  const getDragEdgePath = () => {
+  const edgeEndpoints = useMemo(() => {
+    const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
+    const targetInfo = getNodeFlowInfo(target, targetX, targetY);
+
+    const sourceAnchor = chooseClosestAnchor(
+      sourceInfo.anchors,
+      targetInfo.center
+    );
+    const targetAnchor = chooseClosestAnchor(
+      targetInfo.anchors,
+      sourceInfo.center
+    );
+
+    const sourcePosition = resolvePositionFromAnchor(
+      sourceAnchor,
+      sourceInfo.anchors
+    );
+    const targetPosition = resolvePositionFromAnchor(
+      targetAnchor,
+      targetInfo.anchors
+    );
+
+    return {
+      sourceAnchor,
+      targetAnchor,
+      sourcePosition,
+      targetPosition,
+    };
+  }, [
+    source,
+    target,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    getNodeFlowInfo,
+    chooseClosestAnchor,
+    viewportTick,
+  ]);
+
+  const getDragEdgeEndpoints = () => {
     const usePos = dragPosition;
-    if (!usePos) return '';
+    if (!usePos) return null;
 
     const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
-
     const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
 
     if (currentTargetNode) {
@@ -154,15 +193,86 @@ export const useEdgePath = ({
         targetInfo.anchors,
         sourceInfo.center
       );
-      return `M ${sourceAnchor.x} ${sourceAnchor.y} L ${targetAnchor.x} ${targetAnchor.y}`;
+
+      return {
+        sourceAnchor,
+        targetAnchor,
+      };
     }
 
     const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
-    return `M ${sourceAnchor.x} ${sourceAnchor.y} L ${flowPosition.x} ${flowPosition.y}`;
+    return {
+      sourceAnchor,
+      targetAnchor: flowPosition,
+    };
+  };
+
+  const getDragEdgePath = () => {
+    const usePos = dragPosition;
+    if (!usePos) return '';
+
+    const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
+    const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
+    const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
+    const sourcePosition = resolvePositionFromAnchor(
+      sourceAnchor,
+      sourceInfo.anchors
+    );
+
+    const resolveFloatingTargetPosition = (
+      from: { x: number; y: number },
+      to: { x: number; y: number }
+    ): Position => {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        return dx >= 0 ? Position.Left : Position.Right;
+      }
+
+      return dy >= 0 ? Position.Top : Position.Bottom;
+    };
+
+    if (currentTargetNode) {
+      const targetInfo = getNodeFlowInfo(currentTargetNode, targetX, targetY);
+      const targetAnchor = chooseClosestAnchor(
+        targetInfo.anchors,
+        sourceInfo.center
+      );
+      const targetPosition = resolvePositionFromAnchor(
+        targetAnchor,
+        targetInfo.anchors
+      );
+
+      return getBezierPath({
+        sourceX: sourceAnchor.x,
+        sourceY: sourceAnchor.y,
+        targetX: targetAnchor.x,
+        targetY: targetAnchor.y,
+        sourcePosition,
+        targetPosition,
+      })[0];
+    }
+
+    const targetPosition = resolveFloatingTargetPosition(
+      sourceAnchor,
+      flowPosition
+    );
+
+    return getBezierPath({
+      sourceX: sourceAnchor.x,
+      sourceY: sourceAnchor.y,
+      targetX: flowPosition.x,
+      targetY: flowPosition.y,
+      sourcePosition,
+      targetPosition,
+    })[0];
   };
 
   return {
     edgePath,
+    edgeEndpoints,
+    getDragEdgeEndpoints,
     getDragEdgePath,
   };
 };

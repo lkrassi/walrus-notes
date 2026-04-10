@@ -104,12 +104,11 @@ export const useEdgeGeometry = (source: string) => {
           flowPosition.x >= nodeX &&
           flowPosition.x <= nodeX + nodeWidth &&
           flowPosition.y >= nodeY &&
-          flowPosition.y <= nodeY + nodeHeight &&
-          node.id !== source
+          flowPosition.y <= nodeY + nodeHeight
         );
       });
     },
-    [screenToFlowPosition, getNodes, source]
+    [screenToFlowPosition, getNodes]
   );
 
   return {

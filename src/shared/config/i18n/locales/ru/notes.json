@@ -32,7 +32,7 @@
   "graphUnposedShow": "Показать непозиционированные заметки",
   "graphDraggableNoteTitle": "Перетаскиваемая заметка: {{title}}",
   "graphViewOnly": "Только просмотр",
-  "graphOverlayView": "Вид",
+  "graphOverlayView": "Координаты",
   "graphOverlayDragging": "Перетаскивание",
   "graphOverlayNode": "Узел",
   "editorHelp": "Подсказки по редактору",

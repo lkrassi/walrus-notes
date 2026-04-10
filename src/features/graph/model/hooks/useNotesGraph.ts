@@ -6,22 +6,27 @@ import {
 } from '@/entities';
 import type { Note } from '@/entities/note';
 import { getLoadingState } from '@/shared/lib/core';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Edge, Node } from 'reactflow';
 import { graphTheme } from '../../lib/utils';
 
 interface UseNotesGraphProps {
   layoutId: string;
+  isMain?: boolean;
 }
 
-export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
+export const useNotesGraph = ({ layoutId, isMain }: UseNotesGraphProps) => {
   const palette = graphTheme();
 
   const {
     data: posedNotesResponse,
     isLoading,
     isFetching,
-  } = useGetPosedNotesQuery({ layoutId });
+    refetch,
+  } = useGetPosedNotesQuery(
+    { layoutId },
+    { refetchOnMountOrArgChange: isMain === true }
+  );
   const { isInitialLoading, isRefreshing } = getLoadingState(
     isFetching,
     posedNotesResponse
@@ -38,6 +43,14 @@ export const useNotesGraph = ({ layoutId }: UseNotesGraphProps) => {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   const posedNotes = posedNotesResponse?.data || [];
+
+  useEffect(() => {
+    if (isMain !== true) {
+      return;
+    }
+
+    void refetch();
+  }, [isMain, layoutId, refetch]);
 
   const layoutsMap = useMemo(() => {
     const m = new Map<string, string>();

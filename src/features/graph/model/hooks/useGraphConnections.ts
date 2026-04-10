@@ -211,14 +211,16 @@ export const useGraphConnections = ({
           }
 
           if (isValidNoteId(targetNodeId) && tempEdge?.source) {
-            if (tempEdge.source === targetNodeId) {
+            const sourceId = tempEdge.source;
+
+            if (sourceId === targetNodeId) {
               setTempEdge(null);
               return;
             }
 
             const edgeExists = allEdges.some(
               edge =>
-                edge.source === tempEdge.source && edge.target === targetNodeId
+                edge.source === sourceId && edge.target === targetNodeId
             );
 
             if (edgeExists) {
@@ -226,9 +228,13 @@ export const useGraphConnections = ({
               return;
             }
 
+            // Turn off preview before optimistic edge/request to avoid
+            // transient invalid highlight on the dropped valid target.
+            setTempEdge(null);
+
             try {
               const newEdge = createEdge(
-                tempEdge.source,
+                sourceId,
                 targetNodeId,
                 resolvedSourceHandle,
                 targetHandleId
@@ -237,7 +243,7 @@ export const useGraphConnections = ({
 
               await createNoteLink({
                 layoutId,
-                firstNoteId: tempEdge.source,
+                firstNoteId: sourceId,
                 secondNoteId: targetNodeId,
               }).unwrap();
 
@@ -255,7 +261,7 @@ export const useGraphConnections = ({
                 prev.filter(
                   edge =>
                     !edge.id.startsWith(
-                      `temp-${tempEdge.source}-${targetNodeId}`
+                      `temp-${sourceId}-${targetNodeId}`
                     )
                 )
               );
@@ -310,8 +316,13 @@ export const useGraphConnections = ({
       );
 
       if (edgeExists) {
+        setTempEdge(null);
         return;
       }
+
+      // Turn off connection preview immediately after successful drop so
+      // the hovered target does not briefly render as invalid during async flow.
+      setTempEdge(null);
 
       try {
         const newEdge = createEdge(

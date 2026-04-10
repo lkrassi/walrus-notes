@@ -15,5 +15,12 @@
   "note": "заметка",
   "notes": "заметок",
   "allNotes": "Общий граф",
-  "allNotesDescription": "Все заметки из всех папок"
+  "allNotesDescription": "Все заметки из всех папок",
+  "undoRedo": {
+    "undo": "Отменить{{description}} (Ctrl+Z)",
+    "redo": "Повторить{{description}} (Ctrl+Y)",
+    "moveNote": "перемещение заметки \"{{noteTitle}}\"",
+    "moveConnection": "перемещение связи \"{{sourceTitle}}\" → \"{{targetTitle}}\"",
+    "disconnectConnection": "удаление связи \"{{sourceTitle}}\" → \"{{targetTitle}}\""
+  }
 }

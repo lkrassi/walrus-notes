@@ -3,6 +3,7 @@ import { cn } from '@/shared/lib/core';
 import { Tooltip } from '@/shared/ui';
 import { Redo2, Undo2 } from 'lucide-react';
 import { type FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface GraphUndoRedoControlsProps {
   graphHistory: UseGraphHistoryReturn;
@@ -13,6 +14,7 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
   graphHistory,
   isHorizontal = false,
 }) => {
+  const { t } = useTranslation('main');
   const { undo, redo, canUndo, canRedo, undoDescription, redoDescription } =
     graphHistory;
 
@@ -57,6 +59,12 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
   }, [undo, redo, canUndo, canRedo]);
 
   const direction = isHorizontal ? 'row' : 'column';
+  const undoTitle = t('undoRedo.undo', {
+    description: undoDescription ? `: ${undoDescription}` : '',
+  });
+  const redoTitle = t('undoRedo.redo', {
+    description: redoDescription ? `: ${redoDescription}` : '',
+  });
 
   return (
     <div
@@ -65,10 +73,7 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
         direction === 'row' ? 'flex-row' : 'flex-col'
       )}
     >
-      <Tooltip
-        title={`Undo${undoDescription ? `: ${undoDescription}` : ''} (Ctrl+Z)`}
-        placement={isHorizontal ? 'bottom' : 'right'}
-      >
+      <Tooltip title={undoTitle} placement={isHorizontal ? 'bottom' : 'right'}>
         <button
           type='button'
           onClick={undo}
@@ -79,16 +84,13 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
           )}
-          aria-label='Undo'
+          aria-label={undoTitle}
         >
           <Undo2 size={16} />
         </button>
       </Tooltip>
 
-      <Tooltip
-        title={`Redo${redoDescription ? `: ${redoDescription}` : ''} (Ctrl+Y)`}
-        placement={isHorizontal ? 'bottom' : 'right'}
-      >
+      <Tooltip title={redoTitle} placement={isHorizontal ? 'bottom' : 'right'}>
         <button
           type='button'
           onClick={redo}
@@ -99,7 +101,7 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
           )}
-          aria-label='Redo'
+          aria-label={redoTitle}
         >
           <Redo2 size={16} />
         </button>

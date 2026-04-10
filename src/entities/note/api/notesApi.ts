@@ -670,7 +670,30 @@ export const notesApi = apiSlice.injectEndpoints({
         const state = getState() as unknown as LocalRootState;
         const layouts =
           layoutApi.endpoints.getMyLayouts.select()(state).data?.data || [];
-        const allLayoutIds = layouts.map(layout => layout.id);
+        const allLayoutIds = new Set(layouts.map(layout => layout.id));
+        allLayoutIds.add(arg.layoutId);
+
+        const apiQueries = state.api?.queries;
+        if (apiQueries && typeof apiQueries === 'object') {
+          for (const queryState of Object.values(apiQueries)) {
+            const typedQuery = queryState as {
+              endpointName?: string;
+              originalArgs?: { layoutId?: string };
+            };
+
+            if (typedQuery.endpointName !== 'getPosedNotes') {
+              continue;
+            }
+
+            const cachedLayoutId = typedQuery.originalArgs?.layoutId;
+            if (
+              typeof cachedLayoutId === 'string' &&
+              cachedLayoutId.length > 0
+            ) {
+              allLayoutIds.add(cachedLayoutId);
+            }
+          }
+        }
 
         const unposedCache = notesApi.endpoints.getUnposedNotes.select({
           layoutId: arg.layoutId,
@@ -761,23 +784,10 @@ export const notesApi = apiSlice.injectEndpoints({
 
         try {
           await queryFulfilled;
-
-          dispatch(
-            notesApi.util.invalidateTags(
-              allLayoutIds.map(layoutId => ({
-                type: 'Notes' as const,
-                id: `posed-${layoutId}`,
-              }))
-            )
-          );
         } catch {
           patches.forEach(patch => patch.undo());
         }
       },
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: `posed-${arg.layoutId}` },
-        { type: 'Notes', id: `unposed-${arg.layoutId}` },
-      ],
     }),
 
     createNoteLink: builder.mutation<
@@ -862,12 +872,6 @@ export const notesApi = apiSlice.injectEndpoints({
           patches.forEach(p => p.undo());
         }
       },
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.layoutId },
-        { type: 'Notes', id: `posed-${arg.layoutId}` },
-        { type: 'Notes', id: `linked-${arg.firstNoteId}` },
-        { type: 'Notes', id: `linked-${arg.secondNoteId}` },
-      ],
     }),
 
     deleteNoteLink: builder.mutation<
@@ -951,12 +955,6 @@ export const notesApi = apiSlice.injectEndpoints({
           patches.forEach(p => p.undo());
         }
       },
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Notes', id: arg.layoutId },
-        { type: 'Notes', id: `posed-${arg.layoutId}` },
-        { type: 'Notes', id: `linked-${arg.firstNoteId}` },
-        { type: 'Notes', id: `linked-${arg.secondNoteId}` },
-      ],
     }),
 
     searchNotes: builder.query<SearchNotesResponse, SearchNotesRequest>({

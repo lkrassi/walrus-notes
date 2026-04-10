@@ -1,8 +1,8 @@
 export {
-  CreateEdgeCommand,
-  DeleteEdgeCommand,
-  MoveEdgeCommand,
-  MoveNodeCommand,
+  createDeleteEdgeCommand,
+  createEdgeCommand,
+  createMoveEdgeCommand,
+  createMoveNodeCommand,
   generateColorFromId,
   useGraphHistory,
 } from '../../model/utils/graphUtils';
