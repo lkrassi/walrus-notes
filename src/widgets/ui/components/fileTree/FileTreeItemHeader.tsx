@@ -8,7 +8,7 @@ import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { FolderOpenIcon } from '@/shared/ui/icons/FolderOpenIcon';
 import { useIsMobile, useLocalization, useModalActions } from '@/widgets/hooks';
 import { useDraggable } from '@dnd-kit/core';
-import { ChevronDown, FileText, Trash2 } from 'lucide-react';
+import { ChevronDown, FileText, Pin, Trash2 } from 'lucide-react';
 import { DeleteNoteForm } from './DeleteNoteForm';
 import { FileTreeItemActions } from './FileTreeItemActions';
 
@@ -17,9 +17,11 @@ type FileTreeItemHeaderProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  isPinned?: boolean;
   isAnyNoteDragging?: boolean;
   hasSelection?: boolean;
   onItemClick: (item: FileTreeItemType) => void;
+  onTogglePin?: (item: FileTreeItemType) => void;
   onItemDoubleClick?: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
@@ -32,9 +34,11 @@ export const FileTreeItemHeader = ({
   level,
   isExpanded,
   isSelected,
+  isPinned = false,
   isAnyNoteDragging,
   hasSelection: _hasSelection,
   onItemClick,
+  onTogglePin,
   onItemDoubleClick,
   onOpenGraph,
   onDeleteNote,
@@ -294,6 +298,48 @@ export const FileTreeItemHeader = ({
         </span>
 
         <div className={cn('flex', 'items-center', 'gap-1')}>
+          {(item.type === 'layout' || item.type === 'note') &&
+            item.isMain !== true && (
+              <button
+                onPointerDown={e => {
+                  e.stopPropagation();
+                }}
+                onClick={e => {
+                  e.stopPropagation();
+                  onTogglePin?.(item);
+                }}
+                className={cn(
+                  !isAnyNoteDragging && 'transition-opacity duration-150',
+                  isPinned ? 'opacity-100' : 'opacity-0',
+                  !isAnyNoteDragging && 'group-hover:opacity-100',
+                  !isAnyNoteDragging && 'group-focus-within:opacity-100',
+                  'flex h-5 w-5 items-center justify-center',
+                  isAnyNoteDragging &&
+                    item.type === 'note' &&
+                    'pointer-events-none',
+                  isMobile
+                    ? 'text-gray-600 opacity-100 dark:text-white'
+                    : isPinned
+                      ? 'text-primary dark:text-dark-primary'
+                      : 'text-text/50 dark:text-dark-text/50 hover:text-text dark:hover:text-dark-text'
+                )}
+                title={
+                  isPinned
+                    ? t('fileTree:unpinItem') || 'Unpin'
+                    : t('fileTree:pinItem') || 'Pin'
+                }
+                aria-label={
+                  isPinned
+                    ? t('fileTree:unpinItem') || 'Unpin'
+                    : t('fileTree:pinItem') || 'Pin'
+                }
+              >
+                <Pin
+                  className={cn('h-3.5', 'w-3.5', isPinned && 'fill-current')}
+                />
+              </button>
+            )}
+
           {item.type === 'layout' &&
             item.isMain !== true &&
             isSelected &&

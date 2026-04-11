@@ -1,7 +1,8 @@
+import type { Note } from '@/entities/note';
 import { useDragNoteMutation } from '@/entities/note';
 import type { FileTreeItem as FileTreeItemType } from '@/entities/tab';
 import { cn } from '@/shared/lib/core';
-import { useFileTree } from '@/widgets/hooks';
+import { useFileTree, useLocalStorage } from '@/widgets/hooks';
 import { useNotifications } from '@/widgets/hooks/useNotifications';
 import {
   closestCenter,
@@ -47,6 +48,20 @@ const isLayoutDropData = (data: unknown): data is LayoutDropData => {
   return candidate.type === 'layout' && typeof candidate.layoutId === 'string';
 };
 
+type PinScope = 'owned' | 'shared';
+
+type PinnedItemsStorage = {
+  layouts: Record<PinScope, string[]>;
+  notes: Record<PinScope, Record<string, string[]>>;
+};
+
+const PINNED_STORAGE_KEY = 'fileTree:pinned:v1';
+
+const EMPTY_PINNED_STATE: PinnedItemsStorage = {
+  layouts: { owned: [], shared: [] },
+  notes: { owned: {}, shared: {} },
+};
+
 export const useFileTreeController = ({
   expandedItems,
   toggleExpanded,
@@ -60,8 +75,18 @@ export const useFileTreeController = ({
   const [dragNote] = useDragNoteMutation();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const { sections, layoutAccessById, layouts, isSearchMode, isLoading } =
-    useFileTreeData({ searchQuery });
+  const [pinnedItems, setPinnedItems] = useLocalStorage<PinnedItemsStorage>(
+    PINNED_STORAGE_KEY,
+    EMPTY_PINNED_STATE
+  );
+  const {
+    sections,
+    layoutScopeById,
+    layoutAccessById,
+    layouts,
+    isSearchMode,
+    isLoading,
+  } = useFileTreeData({ searchQuery });
 
   const [activeDragNote, setActiveDragNote] = useState<ActiveDragNote | null>(
     null
@@ -69,6 +94,220 @@ export const useFileTreeController = ({
   const dragStartLayoutIdRef = useRef<string | null>(null);
 
   const [focusedLayoutId, setFocusedLayoutId] = useState<string | null>(null);
+
+  const normalizedPinnedItems = useMemo<PinnedItemsStorage>(
+    () => ({
+      layouts: {
+        owned: Array.isArray(pinnedItems?.layouts?.owned)
+          ? pinnedItems.layouts.owned
+          : [],
+        shared: Array.isArray(pinnedItems?.layouts?.shared)
+          ? pinnedItems.layouts.shared
+          : [],
+      },
+      notes: {
+        owned:
+          pinnedItems?.notes?.owned &&
+          typeof pinnedItems.notes.owned === 'object'
+            ? pinnedItems.notes.owned
+            : {},
+        shared:
+          pinnedItems?.notes?.shared &&
+          typeof pinnedItems.notes.shared === 'object'
+            ? pinnedItems.notes.shared
+            : {},
+      },
+    }),
+    [pinnedItems]
+  );
+
+  const toggleLayoutPin = useCallback(
+    (layoutId: string, scope: PinScope) => {
+      setPinnedItems(prev => {
+        const prevState = prev || EMPTY_PINNED_STATE;
+        const currentIds = new Set(prevState.layouts[scope] || []);
+        if (currentIds.has(layoutId)) {
+          currentIds.delete(layoutId);
+        } else {
+          currentIds.add(layoutId);
+        }
+
+        return {
+          layouts: {
+            ...prevState.layouts,
+            [scope]: Array.from(currentIds),
+          },
+          notes: {
+            ...prevState.notes,
+          },
+        };
+      });
+    },
+    [setPinnedItems]
+  );
+
+  const toggleNotePin = useCallback(
+    (layoutId: string, noteId: string, scope: PinScope) => {
+      setPinnedItems(prev => {
+        const prevState = prev || EMPTY_PINNED_STATE;
+        const scopedNotes = prevState.notes[scope] || {};
+        const currentIds = new Set(scopedNotes[layoutId] || []);
+        if (currentIds.has(noteId)) {
+          currentIds.delete(noteId);
+        } else {
+          currentIds.add(noteId);
+        }
+
+        return {
+          layouts: {
+            ...prevState.layouts,
+          },
+          notes: {
+            ...prevState.notes,
+            [scope]: {
+              ...scopedNotes,
+              [layoutId]: Array.from(currentIds),
+            },
+          },
+        };
+      });
+    },
+    [setPinnedItems]
+  );
+
+  const sectionsWithPins = useMemo(() => {
+    if (isSearchMode) {
+      return sections;
+    }
+
+    const byIndex = (arr: string[]) =>
+      new Map(arr.map((id, index) => [id, index] as const));
+
+    return sections.map(section => {
+      if (section.id !== 'owned' && section.id !== 'shared') {
+        return section;
+      }
+
+      const scope = section.id;
+      const pinnedIds = normalizedPinnedItems.layouts[scope] || [];
+      const pinnedSet = new Set(pinnedIds);
+      const pinnedOrder = byIndex(pinnedIds);
+
+      const sorted = [...section.items].sort((a, b) => {
+        const aPinned = pinnedSet.has(a.id);
+        const bPinned = pinnedSet.has(b.id);
+        if (aPinned !== bPinned) {
+          return aPinned ? -1 : 1;
+        }
+
+        if (aPinned && bPinned) {
+          const ai = pinnedOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+          const bi = pinnedOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+          return ai - bi;
+        }
+
+        return 0;
+      });
+
+      return {
+        ...section,
+        items: sorted,
+      };
+    });
+  }, [isSearchMode, normalizedPinnedItems.layouts, sections]);
+
+  const sortNotesForLayout = useCallback(
+    (layoutId: string, notes: Note[]) => {
+      const scope = layoutScopeById.get(layoutId);
+      if (!scope) {
+        return notes;
+      }
+
+      const pinnedIds = normalizedPinnedItems.notes[scope]?.[layoutId] || [];
+      if (pinnedIds.length === 0) {
+        return notes;
+      }
+
+      const pinnedSet = new Set(pinnedIds);
+      const pinnedOrder = new Map(
+        pinnedIds.map((id, index) => [id, index] as const)
+      );
+
+      return [...notes].sort((a, b) => {
+        const aPinned = pinnedSet.has(a.id);
+        const bPinned = pinnedSet.has(b.id);
+        if (aPinned !== bPinned) {
+          return aPinned ? -1 : 1;
+        }
+
+        if (aPinned && bPinned) {
+          const ai = pinnedOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+          const bi = pinnedOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+          return ai - bi;
+        }
+
+        return 0;
+      });
+    },
+    [layoutScopeById, normalizedPinnedItems.notes]
+  );
+
+  const isItemPinned = useCallback(
+    (item: FileTreeItemType) => {
+      if (item.type === 'layout') {
+        const scope = layoutScopeById.get(item.id);
+        if (!scope) {
+          return false;
+        }
+
+        return normalizedPinnedItems.layouts[scope]?.includes(item.id) || false;
+      }
+
+      if (item.type === 'note' && item.parentId) {
+        const scope = layoutScopeById.get(item.parentId);
+        if (!scope) {
+          return false;
+        }
+
+        return (
+          normalizedPinnedItems.notes[scope]?.[item.parentId]?.includes(
+            item.id
+          ) || false
+        );
+      }
+
+      return false;
+    },
+    [
+      layoutScopeById,
+      normalizedPinnedItems.layouts,
+      normalizedPinnedItems.notes,
+    ]
+  );
+
+  const handleTogglePin = useCallback(
+    (item: FileTreeItemType) => {
+      if (item.type === 'layout') {
+        const scope = layoutScopeById.get(item.id);
+        if (!scope) {
+          return;
+        }
+
+        toggleLayoutPin(item.id, scope);
+        return;
+      }
+
+      if (item.type === 'note' && item.parentId) {
+        const scope = layoutScopeById.get(item.parentId);
+        if (!scope) {
+          return;
+        }
+
+        toggleNotePin(item.parentId, item.id, scope);
+      }
+    },
+    [layoutScopeById, toggleLayoutPin, toggleNotePin]
+  );
 
   const selectedParentId = useMemo(() => {
     if (!selectedItemId) return;
@@ -92,8 +331,8 @@ export const useFileTreeController = ({
       return undefined;
     };
 
-    return visitItems(sections.flatMap(section => section.items));
-  }, [sections, selectedItemId]);
+    return visitItems(sectionsWithPins.flatMap(section => section.items));
+  }, [sectionsWithPins, selectedItemId]);
 
   useEffect(() => {
     if (selectedParentId) {
@@ -249,12 +488,15 @@ export const useFileTreeController = ({
           level={level}
           isExpanded={isExpanded}
           isSelected={isSelected}
+          isPinned={isItemPinned(item)}
           isAnyNoteDragging={activeDragNote !== null}
           hasSelection={!!selectedItemId || !!focusedLayoutId}
           hasChildren={!!item.children?.length}
           onItemClick={handleItemClick}
+          onTogglePin={handleTogglePin}
           onItemDoubleClick={handleItemDoubleClick}
           onOpenGraph={onOpenGraph}
+          sortNotes={sortNotesForLayout}
           renderChild={renderTreeItem}
           toggleExpanded={toggleExpanded}
         />
@@ -266,9 +508,12 @@ export const useFileTreeController = ({
       selectedParentId,
       focusedLayoutId,
       activeDragNote,
+      isItemPinned,
+      handleTogglePin,
       handleItemClick,
       handleItemDoubleClick,
       onOpenGraph,
+      sortNotesForLayout,
       toggleExpanded,
     ]
   );
@@ -344,7 +589,7 @@ export const useFileTreeController = ({
     setSearchQuery,
     isSearchMode,
     isLoading,
-    sections,
+    sections: sectionsWithPins,
     sectionTitles,
     activeDragNote,
     collisionDetection,

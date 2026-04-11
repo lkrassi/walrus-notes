@@ -11,16 +11,19 @@ type FileTreeItemProps = {
   level: number;
   isExpanded: boolean;
   isSelected: boolean;
+  isPinned?: boolean;
   isAnyNoteDragging?: boolean;
   hasSelection?: boolean;
   hasChildren: boolean;
   onItemClick: (item: FileTreeItemType) => void;
+  onTogglePin?: (item: FileTreeItemType) => void;
   onItemDoubleClick?: (item: FileTreeItemType) => void;
   onOpenGraph?: (layoutId: string) => void;
   onDeleteNote?: (noteId: string) => void;
   onDeleteLayout?: (layoutId: string) => void;
   toggleExpanded?: (itemId: string) => void;
   renderChild?: (child: FileTreeItemType, level: number) => ReactNode;
+  sortNotes?: (layoutId: string, notes: Note[]) => Note[];
   onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
 
@@ -29,13 +32,16 @@ export const FileTreeItem = ({
   level,
   isExpanded,
   isSelected,
+  isPinned,
   isAnyNoteDragging,
   hasSelection,
   onItemClick,
+  onTogglePin,
   onItemDoubleClick,
   onOpenGraph,
   onDeleteNote,
   renderChild,
+  sortNotes,
   onNotesLoaded,
   toggleExpanded,
 }: FileTreeItemProps) => {
@@ -72,9 +78,11 @@ export const FileTreeItem = ({
         level={level}
         isExpanded={isExpanded}
         isSelected={isSelected}
+        isPinned={isPinned}
         isAnyNoteDragging={isAnyNoteDragging}
         hasSelection={hasSelection}
         onItemClick={onItemClick}
+        onTogglePin={onTogglePin}
         onItemDoubleClick={onItemDoubleClick}
         onOpenGraph={onOpenGraph}
         onDeleteNote={onDeleteNote}
@@ -84,6 +92,7 @@ export const FileTreeItem = ({
         item={item}
         level={level}
         isExpanded={isExpanded}
+        sortNotes={sortNotes}
         renderChild={renderChild}
         onNotesLoaded={onNotesLoaded}
       />

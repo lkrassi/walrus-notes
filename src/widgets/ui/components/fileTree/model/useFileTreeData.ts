@@ -132,6 +132,20 @@ export const useFileTreeData = ({ searchQuery }: UseFileTreeDataOptions) => {
     [nonSearchTreeItems, sharedLayoutIds]
   );
 
+  const layoutScopeById = useMemo(() => {
+    const scopeMap = new Map<string, 'owned' | 'shared'>();
+
+    for (const item of ownedTreeItems) {
+      scopeMap.set(item.id, 'owned');
+    }
+
+    for (const item of sharedTreeItems) {
+      scopeMap.set(item.id, 'shared');
+    }
+
+    return scopeMap;
+  }, [ownedTreeItems, sharedTreeItems]);
+
   const sections = useMemo<FileTreeSection[]>(() => {
     if (isSearchMode) {
       return [{ id: 'search', items: searchItems }];
@@ -152,6 +166,7 @@ export const useFileTreeData = ({ searchQuery }: UseFileTreeDataOptions) => {
 
   return {
     sections,
+    layoutScopeById,
     layoutAccessById,
     layouts: layoutsResponse?.data ?? [],
     isSearchMode,

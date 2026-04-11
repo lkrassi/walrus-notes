@@ -11,5 +11,7 @@
   "collapseFolder": "Collapse folder",
   "showMore": "Show more",
   "clearSearch": "Clear search field",
-  "searchPlaceholder": "Search..."
+  "searchPlaceholder": "Search...",
+  "pinItem": "Pin",
+  "unpinItem": "Unpin"
 }

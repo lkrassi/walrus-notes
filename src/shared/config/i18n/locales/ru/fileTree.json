@@ -11,5 +11,7 @@
   "collapseFolder": "Свернуть папку",
   "showMore": "Показать ещё",
   "searchPlaceholder": "Поиск...",
-  "clearSearch": "Очистить поле поиска"
+  "clearSearch": "Очистить поле поиска",
+  "pinItem": "Закрепить",
+  "unpinItem": "Открепить"
 }

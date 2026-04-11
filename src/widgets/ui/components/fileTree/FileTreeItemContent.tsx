@@ -12,6 +12,7 @@ type FileTreeItemContentProps = {
   item: UseFileTreeItem;
   level: number;
   isExpanded: boolean;
+  sortNotes?: (layoutId: string, notes: Note[]) => Note[];
   renderChild?: (child: UseFileTreeItem, level: number) => ReactNode;
   onNotesLoaded?: (layoutId: string, notes: Note[]) => void;
 };
@@ -20,6 +21,7 @@ export const FileTreeItemContent = ({
   item,
   level,
   isExpanded,
+  sortNotes,
   renderChild,
   onNotesLoaded,
 }: FileTreeItemContentProps) => {
@@ -63,6 +65,11 @@ export const FileTreeItemContent = ({
   const createNoteLabel =
     allNotes.length > 0 ? t('fileTree:addMore') : t('fileTree:addNote');
 
+  const displayedNotes =
+    item.type === 'layout' && sortNotes
+      ? sortNotes(item.id, allNotes)
+      : allNotes;
+
   return (
     <DropdownContent
       isOpen={isExpanded && item.type === 'layout'}
@@ -102,7 +109,7 @@ export const FileTreeItemContent = ({
       }
     >
       <div>
-        {allNotes.map(note => (
+        {displayedNotes.map(note => (
           <div key={note.id} className={cn('mt-0')}>
             {renderChild?.(
               {
