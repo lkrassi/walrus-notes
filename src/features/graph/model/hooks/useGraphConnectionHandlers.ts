@@ -7,7 +7,7 @@ import {
   createMoveEdgeCommand,
   type useGraphHistory,
 } from '@/entities/graph';
-import { useCallback, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Connection, Edge, Node } from 'reactflow';
 import type { GraphRetractLineState } from '../../lib/context/GraphContext';
@@ -71,6 +71,23 @@ export const useGraphConnectionHandlers = ({
     null
   );
   const palette = graphTheme();
+
+  useEffect(() => {
+    if (!retractLine) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(
+      () => {
+        setRetractLine(prev => (prev?.id === retractLine.id ? null : prev));
+      },
+      (retractLine.durationMs ?? 180) + 40
+    );
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [retractLine]);
 
   const getNodeTitle = useCallback(
     (nodeId: string) => {
@@ -280,7 +297,8 @@ export const useGraphConnectionHandlers = ({
             await graphHistory.executeCommand(command);
           }
         }
-      } catch (_error) {
+      } catch (e) {
+        console.info(e);
       } finally {
         setEdgeDragSourceId(null);
         setEdgeDragOriginalTargetId(null);

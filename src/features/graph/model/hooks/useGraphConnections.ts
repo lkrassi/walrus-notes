@@ -1,5 +1,5 @@
 import { useCreateNoteLinkMutation } from '@/entities';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
 import type { GraphRetractLineState } from '../../lib/context/GraphContext';
 import { graphTheme } from '../../lib/utils';
@@ -69,6 +69,23 @@ export const useGraphConnections = ({
   const allEdges = useMemo(() => {
     return [...edges, ...tempEdges];
   }, [edges, tempEdges]);
+
+  useEffect(() => {
+    if (!retractLine) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(
+      () => {
+        setRetractLine(prev => (prev?.id === retractLine.id ? null : prev));
+      },
+      (retractLine.durationMs ?? 180) + 40
+    );
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [retractLine]);
 
   const createEdge = useCallback(
     (
