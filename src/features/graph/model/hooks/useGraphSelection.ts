@@ -87,50 +87,6 @@ export const useGraphSelection = ({
       ...tempEdges,
     ];
 
-    const multiSelectedIds = new Set(
-      nodes
-        .filter(n => (n as unknown as { selected?: boolean }).selected)
-        .map(n => n.id)
-    );
-
-    if (multiSelectedIds.size > 0) {
-      return combinedEdges.map(edge => {
-        const isRelated =
-          multiSelectedIds.has(edge.source) ||
-          multiSelectedIds.has(edge.target);
-        const isSelected =
-          multiSelectedIds.has(edge.source) &&
-          multiSelectedIds.has(edge.target);
-        const newStyle = {
-          strokeWidth: isRelated ? 3 : 2,
-          strokeDasharray: isRelated ? '0' : '5,5',
-          opacity: isRelated ? 1 : 0.3,
-        };
-        const newData = {
-          ...edge.data,
-          isRelatedToSelected: isRelated,
-          isSelected: isSelected,
-        };
-
-        const e = edge as AnyEdge;
-        const styleChanged =
-          e.style?.strokeWidth !== newStyle.strokeWidth ||
-          e.style?.strokeDasharray !== newStyle.strokeDasharray ||
-          e.style?.opacity !== newStyle.opacity;
-        const dataChanged =
-          e.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
-          e.data?.isSelected !== newData.isSelected;
-
-        if (!styleChanged && !dataChanged) return edge as StyledEdge;
-
-        return {
-          ...edge,
-          style: newStyle,
-          data: newData,
-        } as StyledEdge;
-      });
-    }
-
     const effectiveSelected = selectedNodeId ?? hoveredNodeId ?? null;
 
     if (!effectiveSelected) {
@@ -184,58 +140,6 @@ export const useGraphSelection = ({
 
   const nodesWithSelection: StyledNode[] = useMemo(() => {
     const invalidTargetIds = new Set(invalidConnectionTargetIds);
-
-    const multiSelectedIds = new Set(
-      nodes
-        .filter(n => (n as unknown as { selected?: boolean }).selected)
-        .map(n => n.id)
-    );
-
-    if (multiSelectedIds.size > 0) {
-      const relatedNodeIds = new Set<string>(Array.from(multiSelectedIds));
-      allEdges.forEach(edge => {
-        if (multiSelectedIds.has(edge.source)) relatedNodeIds.add(edge.target);
-        if (multiSelectedIds.has(edge.target)) relatedNodeIds.add(edge.source);
-      });
-
-      return nodes.map(node => {
-        const isRelated = relatedNodeIds.has(node.id);
-        const isSelected = multiSelectedIds.has(node.id);
-        const isInvalidConnectionTarget =
-          isConnectionPreviewActive && invalidTargetIds.has(node.id);
-
-        const newData = {
-          ...node.data,
-          selected: isSelected,
-          isRelatedToSelected: isRelated,
-          isConnectionPreviewActive,
-          isInvalidConnectionTarget,
-        };
-        const newStyle = {
-          ...node.style,
-          opacity: isRelated ? 1 : 0.5,
-        };
-
-        const n = node as AnyNode;
-        const dataChanged =
-          n.data?.selected !== newData.selected ||
-          n.data?.isRelatedToSelected !== newData.isRelatedToSelected ||
-          n.data?.isConnectionPreviewActive !==
-            newData.isConnectionPreviewActive ||
-          n.data?.isInvalidConnectionTarget !==
-            newData.isInvalidConnectionTarget;
-        const styleChanged = n.style?.opacity !== newStyle.opacity;
-
-        if (!dataChanged && !styleChanged) return node as StyledNode;
-
-        return {
-          ...node,
-          selected: isSelected,
-          data: newData,
-          style: newStyle,
-        } as StyledNode;
-      });
-    }
 
     const effectiveSelected = selectedNodeId ?? hoveredNodeId ?? null;
 

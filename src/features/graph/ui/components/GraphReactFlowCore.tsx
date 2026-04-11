@@ -9,6 +9,7 @@ import { GraphBackground } from './GraphBackground';
 import { GraphConnectionLine } from './GraphConnectionLine';
 import { GraphControls } from './GraphControls';
 import { GraphMiniMap } from './GraphMiniMap';
+import { GraphRetractLine } from './GraphRetractLine';
 import { useGraphViewContext } from './GraphViewContext';
 import { MultiColorEdge } from './multi-color-edge';
 import { NoteNodeComponent } from './NoteNode';
@@ -40,6 +41,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
     disableZoomDuringDrag,
     allowNodeDrag,
     canEdit,
+    retractLine,
     isMain,
     graphHistory,
   } = useGraphContextState();
@@ -84,6 +86,8 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
       nodesConnectable={canEdit}
       elementsSelectable={canEdit}
       selectNodesOnDrag={false}
+      selectionKeyCode={null}
+      multiSelectionKeyCode={null}
       minZoom={0.1}
       maxZoom={2.3}
       proOptions={{ hideAttribution: true }}
@@ -99,6 +103,9 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
       <GraphBackground />
       <GraphMiniMap rightOffset={_minimapOffset} />
       <GraphControls graphHistory={graphHistory} />
+      {retractLine && (
+        <GraphRetractLine key={retractLine.id} line={retractLine} />
+      )}
       <OffscreenArrows nodes={nodesWithSelection} isMain={isMain} />
       <ViewportTracker onViewportChange={onViewportChange} />
     </ReactFlow>

@@ -10,6 +10,7 @@ import {
 import { useCallback, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Connection, Edge, Node } from 'reactflow';
+import type { GraphRetractLineState } from '../../lib/context/GraphContext';
 import { graphTheme } from '../../lib/utils';
 
 type GraphHistory = ReturnType<typeof useGraphHistory>;
@@ -25,6 +26,27 @@ interface UseGraphConnectionHandlersProps {
   onConnectOriginal: (connection: Connection) => Promise<void>;
   isProcessingRef: RefObject<boolean>;
 }
+
+const resolveSourceAnchor = (
+  sourceNode: Node | undefined,
+  startX: number,
+  startY: number
+) => {
+  const width = (sourceNode?.width as number) || 100;
+  const height = (sourceNode?.height as number) || 100;
+  const left = sourceNode?.position.x ?? 0;
+  const top = sourceNode?.position.y ?? 0;
+  const centerX = left + width / 2;
+  const centerY = top + height / 2;
+
+  const dx = startX - centerX;
+  const dy = startY - centerY;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx >= 0 ? { x: left + width, y: centerY } : { x: left, y: centerY };
+  }
+
+  return dy >= 0 ? { x: centerX, y: top + height } : { x: centerX, y: top };
+};
 
 export const useGraphConnectionHandlers = ({
   layoutId,
@@ -45,6 +67,9 @@ export const useGraphConnectionHandlers = ({
   const [edgeDragOriginalTargetId, setEdgeDragOriginalTargetId] = useState<
     string | null
   >(null);
+  const [retractLine, setRetractLine] = useState<GraphRetractLineState | null>(
+    null
+  );
   const palette = graphTheme();
 
   const getNodeTitle = useCallback(
@@ -72,9 +97,38 @@ export const useGraphConnectionHandlers = ({
         source: string;
         target: string;
         newTarget?: string | null;
+        dropFlowX?: number;
+        dropFlowY?: number;
       }>
     ) => {
       const { edgeId, source, target, newTarget } = event.detail;
+      const { dropFlowX, dropFlowY } = event.detail;
+
+      const emitRetract = () => {
+        if (typeof dropFlowX !== 'number' || typeof dropFlowY !== 'number') {
+          return;
+        }
+
+        const sourceNode = nodes.find(node => node.id === source);
+        const sourceAnchor = resolveSourceAnchor(
+          sourceNode,
+          dropFlowX,
+          dropFlowY
+        );
+        const color =
+          (sourceNode?.data as { layoutColor?: string } | undefined)
+            ?.layoutColor || palette.edge;
+
+        setRetractLine({
+          id: `edge-retract-${Date.now()}-${source}`,
+          sourceX: sourceAnchor.x,
+          sourceY: sourceAnchor.y,
+          startX: dropFlowX,
+          startY: dropFlowY,
+          color,
+          durationMs: 180,
+        });
+      };
 
       if (isProcessingRef.current) return;
 
@@ -86,6 +140,7 @@ export const useGraphConnectionHandlers = ({
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             if (source === newTarget) {
+              emitRetract();
               return;
             }
 
@@ -94,6 +149,7 @@ export const useGraphConnectionHandlers = ({
                 e.id !== edgeId && e.source === source && e.target === newTarget
             );
             if (duplicateExists) {
+              emitRetract();
               return;
             }
 
@@ -191,6 +247,7 @@ export const useGraphConnectionHandlers = ({
             await graphHistory.executeCommand(command);
           }
         } else {
+          emitRetract();
           const edge = edges.find(e => e.id === edgeId);
           if (edge) {
             const command = createDeleteEdgeCommand({
@@ -263,5 +320,6 @@ export const useGraphConnectionHandlers = ({
     isDraggingEdge,
     edgeDragSourceId,
     edgeDragOriginalTargetId,
+    retractLine,
   };
 };

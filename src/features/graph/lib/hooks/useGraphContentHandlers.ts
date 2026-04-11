@@ -86,6 +86,7 @@ export const useGraphContentHandlers = ({
     tempEdges,
     allEdges,
     tempEdge,
+    retractLine: connectRetractLine,
     onConnectStart,
     onConnectEnd,
     onConnect: onConnectOriginal,
@@ -113,6 +114,7 @@ export const useGraphContentHandlers = ({
     isDraggingEdge,
     edgeDragSourceId,
     edgeDragOriginalTargetId,
+    retractLine: edgeRetractLine,
   } = useGraphConnectionHandlers({
     layoutId,
     nodes,
@@ -192,6 +194,7 @@ export const useGraphContentHandlers = ({
       tempEdges,
       allEdges,
       tempEdge,
+      retractLine: edgeRetractLine ?? connectRetractLine,
       edgeDragSourceId,
       edgeDragOriginalTargetId,
     },

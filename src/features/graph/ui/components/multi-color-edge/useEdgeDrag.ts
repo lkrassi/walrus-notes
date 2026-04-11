@@ -18,7 +18,7 @@ export const useEdgeDrag = ({
   target,
   findNodeUnderCursor,
 }: UseEdgeDragProps) => {
-  const { getEdges } = useReactFlow();
+  const { getEdges, screenToFlowPosition } = useReactFlow();
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
@@ -96,6 +96,14 @@ export const useEdgeDrag = ({
         const eventDetail: EdgeDeleteEventDetail = {
           ...dragDataRef.current,
           newTarget: targetNode?.id || null,
+          dropFlowX: screenToFlowPosition({
+            x: upEvent.clientX,
+            y: upEvent.clientY,
+          }).x,
+          dropFlowY: screenToFlowPosition({
+            x: upEvent.clientX,
+            y: upEvent.clientY,
+          }).y,
         };
 
         const dropEvent = new CustomEvent<EdgeDeleteEventDetail>(
@@ -110,7 +118,7 @@ export const useEdgeDrag = ({
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     },
-    [id, source, target, findNodeUnderCursor]
+    [id, source, target, findNodeUnderCursor, screenToFlowPosition]
   );
 
   return {

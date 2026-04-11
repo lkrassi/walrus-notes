@@ -24,9 +24,15 @@ export const useGraphNodeInteractions = ({
   }, []);
 
   const handleNodeDragStop = useCallback(
-    (event: MouseEvent, node: Node) => {
+    (event: MouseEvent, node: Node, nodes: Node[]) => {
       setOverlayCoords(null);
-      onNodeDragStop?.(event, node, nodesWithSelection as Node[]);
+      onNodeDragStop?.(
+        event,
+        node,
+        Array.isArray(nodes) && nodes.length > 0
+          ? nodes
+          : (nodesWithSelection as Node[])
+      );
     },
     [onNodeDragStop, nodesWithSelection]
   );

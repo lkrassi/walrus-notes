@@ -5,6 +5,8 @@ export interface EdgeDeleteEventDetail {
   source: string;
   target: string;
   newTarget?: string | null;
+  dropFlowX?: number;
+  dropFlowY?: number;
 }
 
 export interface NoteNodeData {

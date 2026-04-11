@@ -4,6 +4,16 @@ import type { DragEvent as ReactDragEvent } from 'react';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { Edge, Node, ReactFlowProps } from 'reactflow';
 
+export type GraphRetractLineState = {
+  id: string;
+  sourceX: number;
+  sourceY: number;
+  startX: number;
+  startY: number;
+  color: string;
+  durationMs?: number;
+};
+
 type GraphState = {
   layoutId: string;
   isRefreshing: boolean;
@@ -16,6 +26,7 @@ type GraphState = {
   disableZoomDuringDrag: boolean;
   allowNodeDrag: boolean;
   isDraggingEdge: boolean;
+  retractLine: GraphRetractLineState | null;
   isMain?: boolean;
   graphHistory?: UseGraphHistoryReturn;
   canEdit: boolean;

@@ -1,6 +1,7 @@
 import { useCreateNoteLinkMutation } from '@/entities';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { Connection, Edge, Node } from 'reactflow';
+import type { GraphRetractLineState } from '../../lib/context/GraphContext';
 import { graphTheme } from '../../lib/utils';
 
 interface UseGraphConnectionsProps {
@@ -26,6 +27,27 @@ const isValidNoteId = (id: string | null | undefined): id is string => {
   );
 };
 
+const resolveSourceAnchor = (
+  sourceNode: Node | undefined,
+  startX: number,
+  startY: number
+) => {
+  const width = (sourceNode?.width as number) || 100;
+  const height = (sourceNode?.height as number) || 100;
+  const left = sourceNode?.position.x ?? 0;
+  const top = sourceNode?.position.y ?? 0;
+  const centerX = left + width / 2;
+  const centerY = top + height / 2;
+
+  const dx = startX - centerX;
+  const dy = startY - centerY;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    return dx >= 0 ? { x: left + width, y: centerY } : { x: left, y: centerY };
+  }
+
+  return dy >= 0 ? { x: centerX, y: top + height } : { x: centerX, y: top };
+};
+
 export const useGraphConnections = ({
   layoutId,
   canEdit = true,
@@ -39,6 +61,9 @@ export const useGraphConnections = ({
   const [createNoteLink] = useCreateNoteLinkMutation();
   const [tempEdge, setTempEdge] = useState<Connection | null>(null);
   const [tempEdges, setTempEdges] = useState<Edge[]>([]);
+  const [retractLine, setRetractLine] = useState<GraphRetractLineState | null>(
+    null
+  );
   const hasHandledConnectRef = useRef(false);
 
   const allEdges = useMemo(() => {
@@ -127,6 +152,24 @@ export const useGraphConnections = ({
         return;
       }
 
+      const createRetract = (startX: number, startY: number) => {
+        const sourceNode = nodes.find(node => node.id === tempEdge.source);
+        const sourceAnchor = resolveSourceAnchor(sourceNode, startX, startY);
+        const color =
+          (sourceNode?.data as { layoutColor?: string } | undefined)
+            ?.layoutColor || palette.edge;
+
+        setRetractLine({
+          id: `connect-retract-${Date.now()}-${tempEdge.source}`,
+          sourceX: sourceAnchor.x,
+          sourceY: sourceAnchor.y,
+          startX,
+          startY,
+          color,
+          durationMs: 180,
+        });
+      };
+
       let targetNodeId: string | null = null;
 
       let dropPosition = null as { x: number; y: number } | null;
@@ -214,16 +257,21 @@ export const useGraphConnections = ({
             const sourceId = tempEdge.source;
 
             if (sourceId === targetNodeId) {
+              if (dropPosition) {
+                createRetract(dropPosition.x, dropPosition.y);
+              }
               setTempEdge(null);
               return;
             }
 
             const edgeExists = allEdges.some(
-              edge =>
-                edge.source === sourceId && edge.target === targetNodeId
+              edge => edge.source === sourceId && edge.target === targetNodeId
             );
 
             if (edgeExists) {
+              if (dropPosition) {
+                createRetract(dropPosition.x, dropPosition.y);
+              }
               setTempEdge(null);
               return;
             }
@@ -260,9 +308,7 @@ export const useGraphConnections = ({
               setTempEdges(prev =>
                 prev.filter(
                   edge =>
-                    !edge.id.startsWith(
-                      `temp-${sourceId}-${targetNodeId}`
-                    )
+                    !edge.id.startsWith(`temp-${sourceId}-${targetNodeId}`)
                 )
               );
               throw error;
@@ -274,6 +320,9 @@ export const useGraphConnections = ({
         }
       }
       if (!isValidNoteId(targetNodeId) || tempEdge.source === targetNodeId) {
+        if (dropPosition) {
+          createRetract(dropPosition.x, dropPosition.y);
+        }
         setTempEdge(null);
         return;
       }
@@ -287,6 +336,7 @@ export const useGraphConnections = ({
       nodes,
       allEdges,
       createEdge,
+      palette.edge,
     ]
   );
 
@@ -364,6 +414,7 @@ export const useGraphConnections = ({
     tempEdge,
     tempEdges,
     allEdges,
+    retractLine,
     onConnectStart,
     onConnectEnd,
     onConnect,

@@ -17,7 +17,7 @@ interface UseGraphDragHandlersProps {
   isNodeDraggingRef: RefObject<boolean>;
   isProcessingRef: RefObject<boolean>;
   rfSetNodes?: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-  onNodeDragStop?: (event: MouseEvent, node: Node) => void;
+  onNodeDragStop?: (event: MouseEvent, node: Node, nodes: Node[]) => void;
   setIsNodeDragging?: (dragging: boolean) => void;
   onNodesChange?: (changes: NodeChange[]) => void;
   rfSetEdges?: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
@@ -52,20 +52,15 @@ export const useGraphDragHandlers = ({
       isNodeDraggingRef.current = true;
       setIsNodeDragging?.(true);
 
-      const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
-      const nodesToSave = selectedNodes.some(n => n.id === node.id)
-        ? selectedNodes
-        : [node];
-
-      nodePositionsAtDragStartRef.current = new Map(
-        nodesToSave.map(n => [n.id, { ...n.position }])
-      );
+      nodePositionsAtDragStartRef.current = new Map([
+        [node.id, { ...node.position }],
+      ]);
     },
-    [nodes, isNodeDraggingRef, setIsNodeDragging]
+    [isNodeDraggingRef, setIsNodeDragging]
   );
 
   const handleNodeDragStop = useCallback(
-    (_event: MouseEvent, node: Node) => {
+    (_event: MouseEvent, node: Node, nodesAtStop: Node[] = []) => {
       if (!node) {
         try {
           isNodeDraggingRef.current = false;
@@ -77,87 +72,89 @@ export const useGraphDragHandlers = ({
       }
 
       try {
-        const selectedNodes = nodes.filter((n: NodeExt) => n.selected);
-        const isMultiSelect =
-          selectedNodes.length > 1 && selectedNodes.some(n => n.id === node.id);
-
-        const movedNodes = isMultiSelect ? selectedNodes : [node];
+        const latestNodes =
+          Array.isArray(nodesAtStop) && nodesAtStop.length > 0
+            ? nodesAtStop
+            : nodes;
         isProcessingRef.current = true;
 
         isNodeDraggingRef.current = false;
         setIsNodeDragging?.(false);
+        const startPos = nodePositionsAtDragStartRef.current.get(node.id);
+        const currentNode = latestNodes.find(n => n.id === node.id);
+        const endPos = currentNode?.position;
 
-        for (const movedNode of movedNodes) {
-          const startPos = nodePositionsAtDragStartRef.current.get(
-            movedNode.id
-          );
-          const currentNode = nodes.find(n => n.id === movedNode.id);
-          const endPos = currentNode?.position;
+        if (!startPos && endPos) {
+          void updatePositionCallback(node.id, endPos.x, endPos.y)
+            .then(() => undefined)
+            .catch(error => {
+              console.error('Failed to persist node position', error);
+            });
+        }
 
-          if (
-            startPos &&
-            endPos &&
-            (startPos.x !== endPos.x || startPos.y !== endPos.y)
-          ) {
-            const noteTitle =
-              (
-                movedNode.data as { note?: { title?: string } } | undefined
-              )?.note?.title?.trim() || movedNode.id;
+        if (
+          startPos &&
+          endPos &&
+          (startPos.x !== endPos.x || startPos.y !== endPos.y)
+        ) {
+          const nodeData = node.data as
+            | { note?: { title?: string } }
+            | undefined;
+          const noteTitle = nodeData?.note?.title?.trim() || node.id;
 
-            const command = createMoveNodeCommand({
-              nodeId: movedNode.id,
-              previousPosition: startPos,
-              newPosition: endPos,
-              description: t('undoRedo.moveNote', { noteTitle }),
-              onExecute: async (
-                nodeId: string,
-                position: { x: number; y: number }
-              ) => {
-                setNodes(prev => {
-                  const updated = prev.map(n =>
-                    n.id === nodeId ? { ...n, position } : n
-                  );
-                  return updated;
+          const command = createMoveNodeCommand({
+            nodeId: node.id,
+            previousPosition: startPos,
+            newPosition: endPos,
+            description: t('undoRedo.moveNote', { noteTitle }),
+            onExecute: async (
+              nodeId: string,
+              position: { x: number; y: number }
+            ) => {
+              setNodes(prev => {
+                const updated = prev.map(n =>
+                  n.id === nodeId ? { ...n, position } : n
+                );
+                return updated;
+              });
+              try {
+                rfSetNodes?.(prev =>
+                  prev.map(n => (n.id === nodeId ? { ...n, position } : n))
+                );
+              } catch (e) {
+                console.error('Failed to sync React Flow nodes state', e);
+              }
+              try {
+                const change = {
+                  id: nodeId,
+                  type: 'position',
+                  position,
+                  dragging: false,
+                } as unknown as NodeChange;
+                onNodesChange?.([change]);
+              } catch (e) {
+                console.error('Failed to emit node position change event', e);
+              }
+              try {
+                rfSetEdges?.(prev => prev.map(e => ({ ...e })));
+              } catch (e) {
+                console.error('Failed to refresh React Flow edges state', e);
+              }
+
+              void updatePositionCallback(nodeId, position.x, position.y)
+                .then(() => undefined)
+                .catch(error => {
+                  console.error('Failed to persist node position', error);
                 });
-                try {
-                  rfSetNodes?.(prev =>
-                    prev.map(n => (n.id === nodeId ? { ...n, position } : n))
-                  );
-                } catch (e) {
-                  console.error('Failed to sync React Flow nodes state', e);
-                }
-                try {
-                  const change = {
-                    id: nodeId,
-                    type: 'position',
-                    position,
-                    dragging: false,
-                  } as unknown as NodeChange;
-                  onNodesChange?.([change]);
-                } catch (e) {
-                  console.error('Failed to emit node position change event', e);
-                }
-                try {
-                  rfSetEdges?.(prev => prev.map(e => ({ ...e })));
-                } catch (e) {
-                  console.error('Failed to refresh React Flow edges state', e);
-                }
+            },
+          });
 
-                void updatePositionCallback(nodeId, position.x, position.y)
-                  .then(() => undefined)
-                  .catch(error => {
-                    console.error('Failed to persist node position', error);
-                  });
-              },
-            });
-
-            void graphHistory.executeCommand(command).catch(error => {
-              console.error('Failed to execute move node command', error);
-            });
-          }
+          void graphHistory.executeCommand(command).catch(error => {
+            console.error('Failed to execute move node command', error);
+          });
         }
       } catch (_e) {
-        onNodeDragStop?.(_event, node);
+        onNodeDragStop?.(_event, node, nodesAtStop);
       }
 
       isProcessingRef.current = false;
@@ -185,23 +182,57 @@ export const useGraphDragHandlers = ({
         type?: 'position' | 'select' | string;
         position?: { x: number; y: number } | null;
         selected?: boolean;
+        dragging?: boolean;
       };
 
       const posChanges = (changes as LocalNodeChange[]).filter(
         ch => ch.type === 'position' && ch.position
       );
+
+      if (posChanges.some(ch => ch.dragging !== false)) {
+        isNodeDraggingRef.current = true;
+        setIsNodeDragging?.(true);
+      }
+
+      if (
+        posChanges.length > 0 &&
+        posChanges.every(ch => ch.dragging === false)
+      ) {
+        isNodeDraggingRef.current = false;
+        setIsNodeDragging?.(false);
+      }
+
       if (posChanges.length === 0) {
         onNodesChange?.(changes);
         return;
       }
 
       setNodes(prev => {
+        const draggingPositionChanges = (changes as LocalNodeChange[]).filter(
+          ch => ch.type === 'position' && ch.position && ch.dragging !== false
+        );
+
+        if (draggingPositionChanges.length > 0) {
+          const prevMapForStart = new Map(prev.map(n => [n.id, n.position]));
+          for (const change of draggingPositionChanges) {
+            if (!change.id) continue;
+            if (nodePositionsAtDragStartRef.current.has(change.id)) continue;
+
+            const startPosition = prevMapForStart.get(change.id);
+            if (!startPosition) continue;
+
+            nodePositionsAtDragStartRef.current.set(change.id, {
+              x: startPosition.x,
+              y: startPosition.y,
+            });
+          }
+        }
+
         const prevMap = new Map(prev.map(n => [n.id, n] as [string, typeof n]));
         const updated = prev.map(n => ({ ...n }));
 
         const mainChange = posChanges[0] as LocalNodeChange;
         const movedId = mainChange.id as string;
-        const newPos = mainChange.position as { x: number; y: number };
         const movedPrev = prevMap.get(movedId);
         if (!movedPrev) {
           (changes as LocalNodeChange[]).forEach(ch => {
@@ -224,26 +255,6 @@ export const useGraphDragHandlers = ({
           return updated;
         }
 
-        const dx = newPos.x - (movedPrev.position?.x ?? 0);
-        const dy = newPos.y - (movedPrev.position?.y ?? 0);
-
-        const selectedIds = new Set(
-          prev
-            .filter((n: Node & { selected?: boolean }) => n.selected)
-            .map(n => n.id)
-        );
-
-        if (selectedIds.size > 1 && selectedIds.has(movedId)) {
-          return prev.map(n =>
-            selectedIds.has(n.id)
-              ? {
-                  ...n,
-                  position: { x: n.position.x + dx, y: n.position.y + dy },
-                }
-              : n
-          );
-        }
-
         (changes as LocalNodeChange[]).forEach(ch => {
           if (ch.id) {
             const idx = updated.findIndex(u => u.id === ch.id);
@@ -264,7 +275,7 @@ export const useGraphDragHandlers = ({
         return updated;
       });
     },
-    [setNodes, onNodesChange]
+    [isNodeDraggingRef, onNodesChange, setIsNodeDragging, setNodes]
   );
 
   return {
