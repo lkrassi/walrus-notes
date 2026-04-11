@@ -113,8 +113,7 @@ export const CreateChoiceModal = ({
             className={cn(
               'text-xs',
               'md:text-sm',
-              'text-secondary',
-              'dark:text-dark-secondary',
+              'muted-text',
               'line-clamp-2'
             )}
           >
@@ -195,8 +194,7 @@ export const CreateChoiceModal = ({
             className={cn(
               'text-xs',
               'md:text-sm',
-              'text-secondary',
-              'dark:text-dark-secondary',
+              'muted-text',
               'line-clamp-2'
             )}
           >

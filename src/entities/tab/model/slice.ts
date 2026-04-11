@@ -19,6 +19,11 @@ export interface TabsState {
   activeTabId: string | null;
 }
 
+type LayoutTabUpdates = {
+  title?: string;
+  color?: string;
+};
+
 const TABS_STORAGE_KEY = 'dashboard:tabs';
 
 const sanitizeNoteForTab = (note: Note): Note => {
@@ -283,6 +288,26 @@ const tabsSlice = createSlice({
       });
     },
 
+    updateTabLayout: (
+      state,
+      action: PayloadAction<{ layoutId: string; updates: LayoutTabUpdates }>
+    ) => {
+      const { layoutId, updates } = action.payload;
+
+      state.openTabs.forEach(tab => {
+        if (tab.item.type === 'layout' && tab.item.id === layoutId) {
+          tab.item.title = updates.title ?? tab.item.title;
+          tab.item.color = updates.color ?? tab.item.color;
+          return;
+        }
+
+        if (tab.item.type === 'graph' && tab.item.layoutId === layoutId) {
+          tab.item.title = updates.title ?? tab.item.title;
+          tab.item.color = updates.color ?? tab.item.color;
+        }
+      });
+    },
+
     clearTabs: state => {
       state.openTabs = [];
       state.activeTabId = null;
@@ -301,6 +326,7 @@ export const {
   closeLayoutTabs,
   reorderTabs,
   updateTabNote,
+  updateTabLayout,
   clearTabs,
 } = tabsSlice.actions;
 

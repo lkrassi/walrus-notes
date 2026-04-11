@@ -41,6 +41,7 @@ export const NotePreview = ({
         'cursor-grab active:cursor-grabbing',
         'text-left',
         'relative flex flex-col gap-1 overflow-hidden py-2 pr-5 pl-2',
+        'rounded-xl',
         'bg-bg/94 text-text border-border/75 border',
         'transition-[transform,border-color,opacity] duration-200 ease-out',
         'dark:border-dark-border/80 dark:bg-dark-bg/92 dark:text-dark-text',
@@ -51,16 +52,6 @@ export const NotePreview = ({
         borderColor: resolvedColor,
       }}
     >
-      <div
-        className='absolute inset-y-0 left-0 w-1.5 opacity-95'
-        style={{ background: resolvedColor }}
-        aria-hidden
-      />
-      <div
-        className='absolute inset-x-0 top-0 h-px opacity-70'
-        style={{ background: resolvedColor }}
-        aria-hidden
-      />
       <div
         className='absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_42%)] opacity-80 dark:opacity-100'
         aria-hidden

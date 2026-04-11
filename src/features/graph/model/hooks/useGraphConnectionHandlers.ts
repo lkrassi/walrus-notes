@@ -249,7 +249,7 @@ export const useGraphConnectionHandlers = ({
                         secondNoteId: newTarget,
                       }).unwrap();
                     } catch {
-                      // Ignore rollback network failures and keep original error.
+                      //ignore
                     }
                   }
                   throw error;

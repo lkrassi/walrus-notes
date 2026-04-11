@@ -11,6 +11,7 @@ export {
   saveTabsToStorage,
   switchTab,
   tabsReducer,
+  updateTabLayout,
   updateTabNote,
 } from './slice';
 export type { DashboardTab, TabsState } from './slice';

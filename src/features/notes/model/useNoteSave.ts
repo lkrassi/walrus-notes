@@ -1,4 +1,4 @@
-import { removeDraft } from '@/entities';
+import { removeDraft, useUpdateNoteMutation } from '@/entities';
 import type { Note } from '@/entities/note';
 import { handleError } from '@/shared';
 import { useCallback } from 'react';
@@ -53,6 +53,7 @@ export const useNoteSave = ({
   logDraft,
 }: UseNoteSaveParams) => {
   const dispatch = useDispatch() as (action: unknown) => unknown;
+  const [updateNote] = useUpdateNoteMutation();
   const isLoading = false;
   const handleNoteError = useCallback(
     (error: unknown, message = 'notes:noteUpdateError') => {
@@ -164,9 +165,20 @@ export const useNoteSave = ({
       }
 
       try {
-        const finalTitle = note.title;
-        const finalPayload = newPayload;
-        const finalUpdatedAt = new Date().toISOString();
+        const updateResponse = await updateNote({
+          noteId: note.id,
+          title: newTitle,
+          payload: newPayload,
+        }).unwrap();
+
+        const serverNote = updateResponse?.data;
+        const finalTitle =
+          serverNote?.title && serverNote.title.trim().length > 0
+            ? serverNote.title.trim()
+            : newTitle;
+        const finalPayload = serverNote?.payload ?? newPayload;
+        const finalUpdatedAt =
+          serverNote?.updatedAt ?? note.updatedAt ?? new Date().toISOString();
 
         let postSaveSyncFailed = false;
 
@@ -228,6 +240,7 @@ export const useNoteSave = ({
             layoutIds: note.layoutId ? [note.layoutId] : [],
             noteId: note.id,
             updates: {
+              title: finalTitle,
               payload: finalPayload,
               draft: '',
             },
@@ -247,6 +260,7 @@ export const useNoteSave = ({
 
         const updatedNote: Note = {
           ...note,
+          ...(serverNote ?? {}),
           title: finalTitle,
           payload: finalPayload,
           draft: '',
@@ -274,6 +288,7 @@ export const useNoteSave = ({
       canWrite,
       isEditing,
       note,
+      updateNote,
       storedDraftText.length,
       payload,
       title,

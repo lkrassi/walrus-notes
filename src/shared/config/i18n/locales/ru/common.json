@@ -5,7 +5,10 @@
     "cancel": "Отмена"
   },
   "navigation": {
-    "dashboard": "Доступы"
+    "dashboard": "Доступы",
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "workspace": "Рабочая область"
   },
   "theme": {
     "switchToLight": "Переключить на светлую тему",

@@ -30,24 +30,44 @@ export const Main = () => {
 
   return (
     <WebSocketProvider userId={userId}>
-      <div className={cn('flex', 'h-screen', 'flex-col')}>
+      <div
+        className={cn(
+          'bg-bg',
+          'text-foreground',
+          'flex',
+          'h-screen',
+          'flex-col',
+          'overflow-hidden'
+        )}
+      >
         <PrivateHeader />
-        <div className={cn('flex', 'min-h-0', 'flex-1', 'max-md:flex-col')}>
-          <FileTreeProvider>
-            <Sidebar
-              ref={sidebarRef}
-              onItemSelect={handleItemSelect}
-              selectedItemId={activeTabId || undefined}
-            />
-          </FileTreeProvider>
-          <GraphNoteOpenProvider
-            value={{
-              onNoteOpen: handleNoteOpenFromGraph,
-              onNoteOpenPinned: handleNoteOpenFromGraphPinned,
-            }}
+        <div className={cn('min-h-0', 'flex-1', 'p-2', 'md:p-3')}>
+          <div
+            className={cn(
+              'relative',
+              'flex',
+              'h-full',
+              'min-h-0',
+              'gap-2',
+              'overflow-hidden'
+            )}
           >
-            <MainContent onNoteTreeUpdate={handleNoteTreeUpdate} />
-          </GraphNoteOpenProvider>
+            <FileTreeProvider>
+              <Sidebar
+                ref={sidebarRef}
+                onItemSelect={handleItemSelect}
+                selectedItemId={activeTabId || undefined}
+              />
+            </FileTreeProvider>
+            <GraphNoteOpenProvider
+              value={{
+                onNoteOpen: handleNoteOpenFromGraph,
+                onNoteOpenPinned: handleNoteOpenFromGraphPinned,
+              }}
+            >
+              <MainContent onNoteTreeUpdate={handleNoteTreeUpdate} />
+            </GraphNoteOpenProvider>
+          </div>
         </div>
       </div>
     </WebSocketProvider>

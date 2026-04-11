@@ -25,16 +25,16 @@ export const SearchInput = ({
     <div
       className={cn(
         'flex',
-        'items-center',
-        'gap-1.5',
-        'px-2',
-        'py-0.5',
-        'rounded-none',
-        'text-xs',
+        'h-9',
         'w-full',
-        'bg-surface-2',
+        'items-center',
+        'gap-2',
+        'rounded-lg',
         'border',
-        'border-border',
+        'border-border/85',
+        'bg-surface-2/80',
+        'px-2.5',
+        'text-xs',
         className || ''
       )}
     >
@@ -44,20 +44,29 @@ export const SearchInput = ({
         onChange={e => setValue(e.target.value)}
         placeholder={t ? t('fileTree:searchPlaceholder') : 'Поиск...'}
         className={cn(
+          'h-full',
           'flex-1',
-          'h-5',
           'bg-transparent',
+          'text-sm',
+          'text-foreground',
           'outline-none',
-          'text-xs',
-          'text-foreground'
+          'placeholder:text-muted-foreground'
         )}
       />
       {value && (
         <button
           onClick={() => setValue('')}
           className={cn(
-            'text-xl',
+            'inline-flex',
+            'h-5',
+            'w-5',
+            'items-center',
+            'justify-center',
+            'rounded-sm',
+            'text-sm',
             'text-muted-foreground',
+            'transition-colors',
+            'hover:bg-interactive-hover',
             'hover:text-foreground'
           )}
           title={t ? t('fileTree:clearSearch') : 'Очистить'}

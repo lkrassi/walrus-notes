@@ -49,26 +49,44 @@ export const SortableTab = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex max-w-50 min-w-30 cursor-grab items-stretch px-4 whitespace-nowrap select-none'
+        'group',
+        'relative',
+        'flex',
+        'h-9',
+        'max-w-64',
+        'min-w-36',
+        'cursor-grab',
+        'items-center',
+        'rounded-lg',
+        'px-3',
+        'whitespace-nowrap',
+        'select-none'
       )}
       title={tab.item.title}
       animate={{
         color: isActive ? 'rgb(255, 255, 255)' : undefined,
       }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
       {...attributes}
       {...listeners}
     >
       {showAnimatedBackground && (
         <motion.div
           layoutId='activeTabBackground'
-          className='bg-primary absolute inset-0'
+          className='bg-primary absolute inset-0 rounded-lg'
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         />
       )}
       <div
         className={cn(
-          'relative z-10 mr-2 flex min-w-0 flex-1 items-center overflow-hidden',
+          'relative',
+          'z-10',
+          'mr-1',
+          'flex',
+          'min-w-0',
+          'flex-1',
+          'items-center',
+          'overflow-hidden',
           isActive ? 'text-primary-foreground' : 'text-foreground'
         )}
         onClick={handleContentClick}
@@ -85,10 +103,9 @@ export const SortableTab = ({
           <div
             className={cn(
               'truncate text-sm font-medium',
-              !tab.isPinned && 'italic'
+              !tab.isPinned && 'italic opacity-90'
             )}
           >
-            {!tab.isPinned}
             {tab.item.title}
           </div>
         </div>
@@ -102,18 +119,21 @@ export const SortableTab = ({
         aria-label={`Close tab ${tab.item.title}`}
         title={`Close tab ${tab.item.title}`}
         className={cn(
-          'relative z-10 ml-1 inline-flex h-full w-8 items-center justify-center',
-          isActive ? 'text-primary-foreground' : 'text-foreground'
+          'relative',
+          'z-10',
+          'inline-flex',
+          'h-6',
+          'w-6',
+          'items-center',
+          'justify-center',
+          'rounded-md',
+          'transition-colors',
+          isActive
+            ? 'text-primary-foreground hover:bg-interactive-hover/80'
+            : 'text-muted-foreground hover:bg-interactive-hover hover:text-foreground'
         )}
       >
-        <X
-          className={cn(
-            isActive
-              ? 'hover:bg-interactive-hover hover:text-text'
-              : 'hover:bg-primary/50 hover:text-foreground',
-            'h-3 w-3'
-          )}
-        />
+        <X className='h-3.5 w-3.5' />
       </button>
     </motion.div>
   );

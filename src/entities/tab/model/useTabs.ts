@@ -11,6 +11,7 @@ import {
   pinTab,
   reorderTabs,
   switchTab,
+  updateTabLayout,
   updateTabNote,
   type DashboardTab,
 } from './slice';
@@ -96,6 +97,16 @@ export const useTabs = () => {
     [dispatch]
   );
 
+  const updateLayout = useCallback(
+    (
+      layoutId: string,
+      updates: Partial<Pick<FileTreeItem, 'title' | 'color'>>
+    ) => {
+      dispatch(updateTabLayout({ layoutId, updates: updates ?? {} }));
+    },
+    [dispatch]
+  );
+
   return {
     openTabs,
     activeTabId,
@@ -108,6 +119,7 @@ export const useTabs = () => {
     closeByItem,
     reorder,
     updateNote,
+    updateLayout,
     clear,
   };
 };

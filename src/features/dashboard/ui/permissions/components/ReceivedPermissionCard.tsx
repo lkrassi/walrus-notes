@@ -44,7 +44,7 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
   return (
     <article
       className={cn(
-        'border-border dark:border-dark-border bg-bg/90 dark:bg-dark-bg/70 border p-4 shadow-sm backdrop-blur-sm'
+        'border-border dark:border-dark-border bg-bg/90 dark:bg-dark-bg/70 rounded-xl border p-4 shadow-sm backdrop-blur-sm'
       )}
     >
       <div className={cn('mb-4 flex items-start justify-between gap-3')}>
@@ -60,7 +60,7 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
           onClick={handleDelete}
           disabled={disabledDelete}
           className={cn(
-            'inline-flex items-center gap-1 border px-2.5 py-1 text-xs font-medium',
+            'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium',
             'border-border text-danger hover:bg-danger/10 disabled:opacity-50',
             'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
           )}
@@ -88,7 +88,7 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
 
       <div
         className={cn(
-          'border-border mb-4 border bg-gray-50 p-3 dark:bg-gray-900/40'
+          'border-border mb-4 rounded-lg border bg-gray-50 p-3 dark:bg-gray-900/40'
         )}
       >
         <p className={cn('muted-text text-xs')}>

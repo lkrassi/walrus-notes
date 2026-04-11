@@ -84,6 +84,7 @@ const ActionIconButton: FC<ActionIconButtonProps> = ({
         'w-8',
         'items-center',
         'justify-center',
+        'rounded-md',
         'border',
         'border-border',
         'bg-bg',

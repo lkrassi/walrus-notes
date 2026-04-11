@@ -86,6 +86,7 @@ export {
   saveTabsToStorage,
   switchTab,
   tabsReducer,
+  updateTabLayout,
   updateTabNote,
   useTabs,
 } from './tab';

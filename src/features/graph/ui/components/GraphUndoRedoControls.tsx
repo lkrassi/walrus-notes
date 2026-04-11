@@ -79,7 +79,7 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
           onClick={undo}
           disabled={!canUndo}
           className={cn(
-            'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+            'border-border/70 inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
             canUndo
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
@@ -96,7 +96,7 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
           onClick={redo}
           disabled={!canRedo}
           className={cn(
-            'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
+            'border-border/70 inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
             canRedo
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'

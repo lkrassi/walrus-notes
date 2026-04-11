@@ -57,7 +57,8 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
                 'bg-white',
                 'dark:bg-dark-bg',
                 'p-2',
-                'transition-all'
+                'transition-all',
+                'rounded-lg'
               )}
             >
               <div className={cn('flex items-center gap-2')}>
@@ -71,7 +72,7 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
               </div>
             </DropdownTrigger>
           }
-          contentClassName={cn('max-h-60 w-full overflow-y-auto')}
+          contentClassName={cn('max-h-60 w-full overflow-y-auto', 'rounded-lg')}
         >
           <DropdownContent
             isOpen={isOpen}
@@ -84,13 +85,18 @@ export const LinkedNotesDropdown: FC<LinkedNotesDropdownProps> = memo(
                   'text-center',
                   'text-xs',
                   'text-text/60',
-                  'dark:text-dark-text/60'
+                  'dark:text-dark-text/60',
+                  'rounded-lg'
                 )}
               >
                 {emptyMessage}
               </div>
             }
-            className={cn('dark:bg-dark-bg bg-white shadow-lg', 'w-full')}
+            className={cn(
+              'dark:bg-dark-bg bg-white shadow-lg',
+              'w-full',
+              'rounded-lg'
+            )}
           >
             {visibleItems.map(note => (
               <LinkedNoteItem

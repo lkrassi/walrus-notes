@@ -99,6 +99,7 @@ export const UnposedNotesList = ({
           'right-0',
           '-translate-y-1/2',
           'z-40',
+          'rounded-l-xl',
           'border',
           'border-r-0',
           'p-2',
@@ -147,6 +148,7 @@ export const UnposedNotesList = ({
             'w-100',
             'max-w-[45vw]',
             'overflow-hidden',
+            'rounded-l-xl',
             'border-l',
             'shadow-xl'
           )}

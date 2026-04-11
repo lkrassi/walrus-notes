@@ -5,7 +5,10 @@
     "cancel": "Cancel"
   },
   "navigation": {
-    "dashboard": "Access Dashboard"
+    "dashboard": "Access Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "workspace": "Workspace"
   },
   "theme": {
     "switchToLight": "Switch to light theme",

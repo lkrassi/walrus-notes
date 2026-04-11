@@ -35,8 +35,6 @@ export const AllNotesButton = ({
             'dark:to-dark-primary-dark',
             'p-6',
             'text-left',
-            'transition-all',
-            'duration-300',
             'cursor-pointer',
             'shadow-lg',
             'hover:shadow-xl'
@@ -47,8 +45,6 @@ export const AllNotesButton = ({
               animate={{ rotate: 360 }}
               transition={{
                 repeat: Infinity,
-                duration: 20,
-                ease: 'linear',
               }}
               className={cn(
                 'bg-white/20',
@@ -88,28 +84,36 @@ export const AllNotesButton = ({
       onClick={onAllNotesClick}
       className={cn(
         'w-full',
-        'px-2',
-        'py-1',
-        'min-h-7',
-        'rounded-none',
+        'min-h-9',
+        'rounded-lg',
+        'px-2.5',
+        'py-1.5',
         'text-left',
         'text-[13px]',
         'flex',
         'items-center',
         'gap-2',
+        'transition-colors',
         isSelected
-          ? cn(
-              'bg-interactive-selected',
-              'text-foreground',
-              'dark:bg-primary/45',
-              'dark:text-white'
-            )
+          ? cn('bg-interactive-selected', 'text-foreground')
           : cn('hover:bg-interactive-hover')
       )}
       title={t('main:allNotes')}
     >
-      <Network className='h-3.5 w-3.5 shrink-0' />
-      <span className='truncate font-normal'>{t('main:allNotes')}</span>
+      <span
+        className={cn(
+          'inline-flex',
+          'h-6',
+          'w-6',
+          'items-center',
+          'justify-center',
+          'rounded-md',
+          isSelected ? 'bg-primary/18 text-primary' : 'bg-surface-2'
+        )}
+      >
+        <Network className='h-3.5 w-3.5 shrink-0' />
+      </span>
+      <span className='truncate font-medium'>{t('main:allNotes')}</span>
     </button>
   );
 };

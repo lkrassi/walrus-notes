@@ -293,8 +293,6 @@ export const useGraphConnections = ({
               return;
             }
 
-            // Turn off preview before optimistic edge/request to avoid
-            // transient invalid highlight on the dropped valid target.
             setTempEdge(null);
 
             try {
@@ -387,8 +385,6 @@ export const useGraphConnections = ({
         return;
       }
 
-      // Turn off connection preview immediately after successful drop so
-      // the hovered target does not briefly render as invalid during async flow.
       setTempEdge(null);
 
       try {

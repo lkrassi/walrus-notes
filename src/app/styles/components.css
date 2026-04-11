@@ -11,7 +11,7 @@
 }
 
 .btn {
-  @apply inline-flex h-12 items-center justify-center px-6;
+  @apply inline-flex h-12 items-center justify-center rounded-lg px-6;
 }
 
 .muted-text {
@@ -24,6 +24,7 @@
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
   border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
 }
 
 .dark .card {
@@ -41,7 +42,7 @@
 }
 
 .field-box {
-  @apply border-border dark:border-dark-border text-text dark:text-dark-text bg-bg dark:bg-dark-bg border px-3 py-2;
+  @apply border-border dark:border-dark-border text-text dark:text-dark-text bg-bg dark:bg-dark-bg rounded-lg border px-3 py-2;
 }
 
 .hero-title {
@@ -53,7 +54,7 @@
 }
 
 .feature-card {
-  @apply border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70 border p-4;
+  @apply border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70 rounded-xl border p-4;
 }
 
 .feature-title {

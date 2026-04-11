@@ -31,7 +31,6 @@ export const useNoteViewerData = ({
     { layoutId: resolvedLayoutId, page: 1 },
     {
       skip: !resolvedLayoutId,
-      // Always verify note payload/draft on mount to avoid stale-cache flicker
       refetchOnMountOrArgChange: true,
     }
   );

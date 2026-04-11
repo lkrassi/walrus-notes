@@ -16,7 +16,7 @@ export const GraphMiniMap: FC<GraphMiniMapProps> = ({
       style={{
         width: 160,
         height: 108,
-        borderRadius: 0,
+        borderRadius: 14,
         border: '1px solid var(--border)',
         background: 'var(--surface)',
         backdropFilter: 'blur(6px)',

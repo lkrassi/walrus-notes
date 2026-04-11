@@ -113,7 +113,6 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
     return ids;
   }, [openTabs]);
 
-  // Ensure all opened note tabs have their parent layouts expanded
   useEffect(() => {
     if (noteTabLayoutIds.size === 0) {
       return;
@@ -126,7 +125,6 @@ export const FileTreeProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    // Expand all parent layouts of open tabs
     for (const layoutId of itemsToExpand) {
       dispatchFileTree({ type: 'TOGGLE_EXPANDED', payload: layoutId });
     }

@@ -62,7 +62,12 @@ const SidebarComponent = (
 
   const handleOpenGraph = (layoutId: string) => {
     const layout = fileTree.find(item => item.id === layoutId);
-    const graphTitle = layout ? `${layout.title}` : 'Граф заметок';
+    const graphTitle =
+      layout?.isMain === true
+        ? t('main:allNotes')
+        : layout
+          ? `${layout.title}`
+          : 'Граф заметок';
 
     onItemSelect?.(
       {
@@ -99,20 +104,30 @@ const SidebarComponent = (
           'text-foreground',
           'border-border',
           'fixed',
-          'top-0',
+          'top-14',
           'bottom-0',
           'left-0',
           'flex',
           'flex-col',
+          'w-[min(88vw,360px)]',
           'border-r',
           'bg-bg',
           'transition-transform',
           'duration-300',
           'ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
-          'md:relative',
+          'md:static',
           'md:flex',
           'md:translate-x-0',
+          'md:inset-auto',
+          'md:top-auto',
+          'md:bottom-auto',
+          'md:z-auto',
+          'md:m-2',
+          'md:mr-0',
+          'md:w-auto',
+          'md:rounded-xl',
+          'md:border',
           'z-100'
         )}
         style={_width ? { width: `${_width}px` } : undefined}
@@ -121,10 +136,12 @@ const SidebarComponent = (
           className={cn(
             'border-border',
             'border-b',
-            'px-4',
+            'px-3',
+            'py-3',
             'flex',
             'flex-col',
-            'gap-3'
+            'gap-2.5',
+            'bg-surface/55'
           )}
         >
           <div
@@ -133,10 +150,9 @@ const SidebarComponent = (
               'items-center',
               'gap-2',
               'md:hidden',
-              'mb-2',
-              'min-h-12'
+              'mb-1',
+              'min-h-10'
             )}
-            style={{ minHeight: '48px' }}
           >
             <button
               onClick={() => setIsMobileOpen(false)}
@@ -162,12 +178,12 @@ const SidebarComponent = (
               src={logo}
               alt={t('common:header.logoAlt')}
               className={cn(
-                'h-12',
-                'w-12',
-                'min-h-12',
-                'min-w-12',
-                'max-h-12',
-                'max-w-12'
+                'h-10',
+                'w-10',
+                'min-h-10',
+                'min-w-10',
+                'max-h-10',
+                'max-w-10'
               )}
               loading='eager'
               decoding='async'
@@ -176,8 +192,7 @@ const SidebarComponent = (
               <h1
                 className={cn(
                   'text-text',
-                  'dark:text-dark-text',
-                  'text-xl',
+                  'text-lg',
                   'leading-none',
                   'font-bold'
                 )}
@@ -187,33 +202,41 @@ const SidebarComponent = (
               <h1
                 className={cn(
                   'text-primary',
-                  'text-xl',
+                  'text-lg',
                   'leading-none',
                   'font-bold'
                 )}
-                style={{ lineHeight: '48px', height: '48px' }}
               >
                 Notes
               </h1>
             </div>
           </div>
 
-          <div className={cn('flex', 'items-center', 'justify-between')}>
-            <h2 className={cn('text-lg', 'font-semibold')}>
+          <div
+            className={cn('flex', 'items-center', 'justify-between', 'gap-2')}
+          >
+            <h2 className={cn('text-base', 'font-semibold', 'tracking-tight')}>
               {t('fileTree:fileStructure')}
             </h2>
             <button
               onClick={handleCreateLayout}
               title={t('fileTree:createNewLayout')}
               aria-label={t('fileTree:createNewLayout')}
-              className={cn('text-foreground', 'hover:text-primary', 'p-1')}
+              className={cn(
+                'text-foreground',
+                'hover:text-primary',
+                'hover:bg-interactive-hover',
+                'rounded-md',
+                'p-1.5',
+                'transition-colors'
+              )}
             >
               <Plus className={cn('h-5', 'w-5')} />
             </button>
           </div>
         </div>
 
-        <div className={cn('flex-1 overflow-y-auto')}>
+        <div className={cn('flex-1', 'overflow-y-auto', 'min-h-0')}>
           <FileTree
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
@@ -223,12 +246,34 @@ const SidebarComponent = (
           />
         </div>
 
-        <div className={cn('border-t', 'border-border', 'p-4', 'mt-auto')}>
+        <div
+          className={cn(
+            'mt-auto',
+            'border-t',
+            'border-border',
+            'p-3',
+            'bg-surface/40'
+          )}
+        >
           <Link
             to='/dashboard'
             className={cn(
-              'border-border mb-3 flex items-center justify-center gap-2 border px-3 py-2 text-sm font-medium',
-              'text-foreground hover:bg-muted-foreground/10'
+              'border-border',
+              'mb-2.5',
+              'flex',
+              'items-center',
+              'justify-center',
+              'gap-2',
+              'rounded-lg',
+              'border',
+              'bg-bg/80',
+              'px-3',
+              'py-2',
+              'text-sm',
+              'font-medium',
+              'text-foreground',
+              'transition-colors',
+              'hover:bg-interactive-hover'
             )}
           >
             <ShieldCheck className={cn('h-4 w-4')} />
@@ -251,7 +296,7 @@ const SidebarComponent = (
               'h-full',
               'w-2',
               'cursor-col-resize',
-              'hover:bg-surface-2'
+              'hover:bg-surface-2/80'
             )}
           />
         )}

@@ -11,30 +11,37 @@ const PrivateHeaderComponent = () => {
   const isProfilePage = location.pathname === '/profile';
   const isSettingsPage = location.pathname === '/settings';
   const isDashboardPage = location.pathname === '/dashboard';
+  const sectionLabel = isProfilePage
+    ? t('common:navigation.profile')
+    : isSettingsPage
+      ? t('common:navigation.settings')
+      : isDashboardPage
+        ? t('common:navigation.dashboard')
+        : t('common:navigation.workspace');
 
   return (
     <header
       className={cn(
-        'bg-bg',
-        'dark:bg-dark-bg',
         'border-border',
-        'dark:border-dark-border',
-        'flex',
-        'flex-col',
-        'gap-3',
-        'border-b'
+        'bg-bg/90',
+        'sticky',
+        'top-0',
+        'z-40',
+        'border-b',
+        'backdrop-blur'
       )}
     >
       <div
         className={cn(
           'flex',
+          'h-14',
           'items-center',
           'justify-between',
-          'px-4',
-          'md:px-0'
+          'px-3',
+          'md:px-4'
         )}
       >
-        <div className={cn('flex', 'items-center', 'gap-2')}>
+        <div className={cn('flex', 'items-center', 'gap-2.5', 'min-w-0')}>
           {!isProfilePage && !isSettingsPage && !isDashboardPage && (
             <MobileMenu />
           )}
@@ -47,12 +54,12 @@ const PrivateHeaderComponent = () => {
               src={logo}
               alt={t('common:header.logoAlt')}
               className={cn(
-                'h-12',
-                'w-12',
-                'min-h-12',
-                'min-w-12',
-                'max-h-12',
-                'max-w-12'
+                'h-10',
+                'w-10',
+                'min-h-10',
+                'min-w-10',
+                'max-h-10',
+                'max-w-10'
               )}
               loading='lazy'
             />
@@ -60,8 +67,7 @@ const PrivateHeaderComponent = () => {
               <h1
                 className={cn(
                   'text-text',
-                  'dark:text-dark-text',
-                  'text-xl',
+                  'text-lg',
                   'leading-none',
                   'font-bold'
                 )}
@@ -71,7 +77,7 @@ const PrivateHeaderComponent = () => {
               <h1
                 className={cn(
                   'text-primary',
-                  'text-xl',
+                  'text-lg',
                   'leading-none',
                   'font-bold'
                 )}
@@ -80,6 +86,29 @@ const PrivateHeaderComponent = () => {
               </h1>
             </div>
           </Link>
+        </div>
+
+        <div
+          className={cn(
+            'text-muted-foreground',
+            'hidden',
+            'items-center',
+            'gap-2',
+            'rounded-full',
+            'border',
+            'border-border/80',
+            'bg-surface/80',
+            'px-3',
+            'py-1',
+            'text-xs',
+            'font-medium',
+            'md:flex'
+          )}
+        >
+          <span
+            className={cn('h-1.5', 'w-1.5', 'rounded-full', 'bg-primary')}
+          />
+          <span className={cn('max-w-45', 'truncate')}>{sectionLabel}</span>
         </div>
       </div>
     </header>

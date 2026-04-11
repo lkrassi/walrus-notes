@@ -64,13 +64,13 @@ export const FileTreeView: FC<FileTreeViewProps> = ({
       onDragEnd={onDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
-      <div className='flex h-full flex-col'>
-        <div className='px-1 py-1'>
+      <div className='flex h-full flex-col px-2 pt-1.5 pb-2'>
+        <div className='pb-1.5'>
           <SearchInput onSearchChange={setSearchQuery} />
         </div>
 
         {!isSearchMode && (
-          <div className='px-1 py-0.5'>
+          <div className='pb-1.5'>
             <AllNotesButton
               onAllNotesClick={onAllNotesClick}
               isSelected={selectedItemId?.startsWith('graph-')}
@@ -78,7 +78,7 @@ export const FileTreeView: FC<FileTreeViewProps> = ({
           </div>
         )}
 
-        <div className='flex-1 overflow-y-auto px-1 py-0.5'>
+        <div className='flex-1 overflow-y-auto pr-1'>
           {isSearchMode ? (
             <div className='space-y-0'>
               <FileTreeSection

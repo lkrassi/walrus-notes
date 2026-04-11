@@ -54,7 +54,17 @@ export const Tabs = memo(function Tabs({
   return (
     <div
       className={cn(
-        'border-border bg-surface text-foreground relative flex h-8 border-b'
+        'border-border',
+        'bg-surface/70',
+        'text-foreground',
+        'relative',
+        'flex',
+        'h-11',
+        'items-center',
+        'overflow-hidden',
+        'rounded-xl',
+        'border',
+        'px-1'
       )}
     >
       <DndContext
@@ -70,7 +80,15 @@ export const Tabs = memo(function Tabs({
         >
           <div
             className={cn(
-              'relative flex h-full flex-1 items-stretch overflow-x-auto overflow-y-hidden'
+              'relative',
+              'flex',
+              'h-full',
+              'flex-1',
+              'items-center',
+              'gap-1',
+              'overflow-x-auto',
+              'overflow-y-hidden',
+              'py-1'
             )}
           >
             {visibleTabs.map(tab => (
@@ -90,7 +108,17 @@ export const Tabs = memo(function Tabs({
           {activeTab ? (
             <div
               className={cn(
-                'relative flex h-full max-w-50 min-w-30 cursor-grab items-center px-4 whitespace-nowrap select-none',
+                'relative',
+                'flex',
+                'h-9',
+                'max-w-64',
+                'min-w-36',
+                'items-center',
+                'rounded-lg',
+                'px-3',
+                'whitespace-nowrap',
+                'shadow-sm',
+                'select-none',
                 activeTab.isActive
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-surface text-foreground'

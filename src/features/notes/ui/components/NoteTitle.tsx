@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/core';
+import { FileText } from 'lucide-react';
 import { memo, type FC, type MouseEvent } from 'react';
 
 interface NoteTitleProps {
@@ -14,15 +15,23 @@ export const NoteTitle: FC<NoteTitleProps> = memo(function NoteTitle({
 }) {
   return (
     <div className={cn('min-w-0', 'flex', 'items-center', 'flex-1')}>
-      <div
-        className={cn(
-          'flex',
-          'items-center',
-          'justify-between',
-          'w-full',
-          'min-w-0'
-        )}
-      >
+      <div className={cn('flex', 'items-center', 'gap-2.5', 'min-w-0')}>
+        <div
+          className={cn(
+            'inline-flex',
+            'h-6',
+            'w-6',
+            'items-center',
+            'justify-center',
+            'rounded-md',
+            'bg-primary/12',
+            'text-primary',
+            'shrink-0'
+          )}
+        >
+          <FileText className='h-4 w-4' />
+        </div>
+
         <button
           onClick={onEdit}
           disabled={!canWrite}

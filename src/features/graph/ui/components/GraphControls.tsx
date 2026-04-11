@@ -19,7 +19,10 @@ export const GraphControls: FC<GraphControlsProps> = ({ graphHistory }) => {
 
   return (
     <>
-      <Controls onFitView={handleFitView} />
+      <Controls
+        onFitView={handleFitView}
+        className='border-border/70 overflow-hidden rounded-xl border'
+      />
       {graphHistory && (
         <Panel position='top-left' style={{ marginTop: '50px' }}>
           <GraphUndoRedoControls graphHistory={graphHistory} isHorizontal />

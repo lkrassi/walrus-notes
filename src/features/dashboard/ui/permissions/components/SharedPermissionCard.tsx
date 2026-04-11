@@ -49,7 +49,9 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   const handleDelete = () => onDelete(permission.id);
 
   return (
-    <article className={cn('border-border bg-bg/90 border p-4 shadow-sm')}>
+    <article
+      className={cn('border-border bg-bg/90 rounded-xl border p-4 shadow-sm')}
+    >
       <div className={cn('mb-4 flex items-start justify-between gap-3')}>
         <div className={cn('inline-flex items-center gap-2')}>
           <Shield className={cn('text-primary h-4 w-4')} />
@@ -63,7 +65,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
           onClick={handleDelete}
           disabled={disabledDelete}
           className={cn(
-            'inline-flex items-center gap-1 border px-2.5 py-1 text-xs font-medium',
+            'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium',
             'border-border',
             'text-danger hover:bg-danger/10 disabled:opacity-50',
             'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
@@ -94,7 +96,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
 
       <div
         className={cn(
-          'border-border mb-4 border bg-gray-50 p-3 dark:bg-gray-900/40'
+          'border-border mb-4 rounded-lg border bg-gray-50 p-3 dark:bg-gray-900/40'
         )}
       >
         <p className={cn('muted-text text-xs')}>
@@ -120,7 +122,7 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
           onClick={() => onUpdate(permission.id, draft)}
           disabled={disabledUpdate || !canUpdate}
           className={cn(
-            'border-primary bg-primary text-primary-foreground border px-3 py-2 text-sm font-medium',
+            'border-primary bg-primary text-primary-foreground rounded-lg border px-3 py-2 text-sm font-medium',
             'hover:bg-primary/90 disabled:border-border disabled:bg-muted/40 disabled:text-muted-foreground disabled:opacity-100',
             'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
           )}

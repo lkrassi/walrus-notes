@@ -35,7 +35,8 @@ export const ProfileButton: FC = () => {
         'focus-visible:ring-ring',
         'focus-visible:ring-2',
         'text-foreground',
-        'hover:bg-muted-foreground/10'
+        'hover:bg-muted-foreground/10',
+        'rounded-lg'
       )}
       title={t('profile:title')}
     >

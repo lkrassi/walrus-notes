@@ -33,20 +33,23 @@ export type ButtonProps = {
 
 const variantClasses: Record<ResolvedButtonVariant, string> = {
   primary: cn(
+    'rounded-lg',
     'bg-primary',
     'text-primary-foreground',
     'hover:brightness-105',
     'active:brightness-95'
   ),
   secondary: cn(
+    'rounded-lg',
     'bg-secondary',
     'text-secondary-foreground',
     'hover:brightness-95',
     'active:brightness-90'
   ),
-  danger: cn('bg-danger', 'text-white', 'hover:brightness-105'),
-  success: cn('bg-success', 'text-white', 'hover:brightness-105'),
+  danger: cn('rounded-lg', 'bg-danger', 'text-white', 'hover:brightness-105'),
+  success: cn('rounded-lg', 'bg-success', 'text-white', 'hover:brightness-105'),
   outline: cn(
+    'rounded-lg',
     'border',
     'border-border',
     'bg-background',
@@ -55,12 +58,14 @@ const variantClasses: Record<ResolvedButtonVariant, string> = {
     'active:bg-interactive-active'
   ),
   ghost: cn(
+    'rounded-lg',
     'bg-transparent',
     'text-foreground',
     'hover:bg-interactive-hover',
     'active:bg-interactive-active'
   ),
   disabled: cn(
+    'rounded-lg',
     'border',
     'border-border',
     'bg-interactive-disabled-bg',

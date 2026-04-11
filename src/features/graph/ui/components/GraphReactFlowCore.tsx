@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/shared/lib/react/hooks';
-import { memo } from 'react';
-import ReactFlow from 'reactflow';
+import { memo, useEffect, useRef } from 'react';
+import ReactFlow, { useReactFlow } from 'reactflow';
 import {
   useGraphContextActions,
   useGraphContextState,
@@ -25,6 +25,8 @@ const nodeTypes = {
 
 export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
   const isMobile = useIsMobile();
+  const { fitView, setViewport } = useReactFlow();
+  const pendingFitLayoutIdRef = useRef<string | null>(null);
   const {
     onNodeDragStop,
     onNodeDrag,
@@ -36,6 +38,7 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
   } = useGraphViewContext();
   const {
     layoutId,
+    isRefreshing,
     nodesWithSelection,
     edgesWithSelection,
     disableZoomDuringDrag,
@@ -58,6 +61,68 @@ export const GraphReactFlowCore = memo(function GraphReactFlowCore() {
     onPaneClick,
     onNodeDoubleClick,
   } = useGraphContextActions();
+
+  useEffect(() => {
+    pendingFitLayoutIdRef.current = layoutId;
+  }, [layoutId]);
+
+  useEffect(() => {
+    if (pendingFitLayoutIdRef.current !== layoutId) {
+      return;
+    }
+
+    if (isRefreshing) {
+      return;
+    }
+
+    const hasForeignNodes =
+      !isMain &&
+      nodesWithSelection.some(node => {
+        const nodeLayoutId = (
+          node.data as { note?: { layoutId?: string } } | undefined
+        )?.note?.layoutId;
+
+        return (
+          typeof nodeLayoutId === 'string' &&
+          nodeLayoutId.length > 0 &&
+          nodeLayoutId !== layoutId
+        );
+      });
+
+    if (hasForeignNodes) {
+      return;
+    }
+
+    if (nodesWithSelection.length === 0 && edgesWithSelection.length === 0) {
+      void setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 300 });
+      pendingFitLayoutIdRef.current = null;
+      return;
+    }
+
+    const fitOptions = { padding: 0.22, duration: 500 };
+    let rafId2: number | null = null;
+    const rafId = requestAnimationFrame(() => {
+      rafId2 = requestAnimationFrame(() => {
+        void fitView(fitOptions);
+        pendingFitLayoutIdRef.current = null;
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (rafId2 !== null) {
+        cancelAnimationFrame(rafId2);
+      }
+    };
+  }, [
+    fitView,
+    setViewport,
+    isRefreshing,
+    isMain,
+    layoutId,
+    nodesWithSelection,
+    edgesWithSelection.length,
+  ]);
 
   return (
     <ReactFlow

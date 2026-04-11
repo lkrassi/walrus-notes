@@ -59,23 +59,49 @@ export const MainContent = memo(function DashboardContent({
   return (
     <main
       className={cn(
-        'flex-col',
         'flex',
+        'flex-col',
         'min-h-0',
         'min-w-0',
         'flex-1',
-        'relative'
+        'relative',
+        'overflow-hidden'
       )}
     >
       {openTabs.length > 0 && (
-        <Tabs
-          tabs={openTabs}
-          onTabClick={handleTabClick}
-          onTabClose={handleTabClose}
-          onTabReorder={handleTabReorder}
-        />
+        <div className={cn('px-2', 'pt-2', 'md:px-3', 'md:pt-3')}>
+          <Tabs
+            tabs={openTabs}
+            onTabClick={handleTabClick}
+            onTabClose={handleTabClose}
+            onTabReorder={handleTabReorder}
+          />
+        </div>
       )}
-      <div className={cn('min-h-0', 'flex-1')}>{renderContent()}</div>
+      <div
+        className={cn(
+          'min-h-0',
+          'flex-1',
+          'px-2',
+          'pb-2',
+          'md:px-3',
+          'md:pb-3',
+          openTabs.length > 0 ? 'pt-2' : 'pt-2 md:pt-3'
+        )}
+      >
+        <div
+          className={cn(
+            'h-full',
+            'overflow-hidden',
+            'rounded-xl',
+            'border',
+            'border-border/70',
+            'bg-bg'
+          )}
+        >
+          {renderContent()}
+        </div>
+      </div>
     </main>
   );
 });

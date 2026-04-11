@@ -35,6 +35,8 @@ export const GraphNodeContextMenu: FC<GraphNodeContextMenuProps> = ({
         'dark:bg-dark-bg',
         'text-text',
         'dark:text-dark-text',
+        'overflow-hidden',
+        'rounded-lg',
         'border',
         'fixed z-50 w-48 border'
       )}

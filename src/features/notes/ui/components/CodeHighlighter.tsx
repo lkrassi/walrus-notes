@@ -104,7 +104,7 @@ export const CodeHighlighter: FC<CodeHighlighterProps> = ({
     '') as unknown as Language;
 
   return (
-    <div className={cn('m-0', 'overflow-x-auto', 'rounded-lg', 'relative')}>
+    <div className={cn('m-0', 'overflow-x-auto', 'rounded-xl', 'relative')}>
       {language && (
         <div
           style={{

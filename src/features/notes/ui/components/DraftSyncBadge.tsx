@@ -36,8 +36,6 @@ export const DraftSyncBadge: FC<DraftSyncBadgeProps> = memo(
         return 'saving' as const;
       }
 
-      // If data is already synced or persisted as server draft, user-visible
-      // status should be "saved" (data won't be lost).
       if (isSynced || hasServerDraft || lastSavedAt) {
         return 'saved' as const;
       }

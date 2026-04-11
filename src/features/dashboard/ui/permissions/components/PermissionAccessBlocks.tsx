@@ -67,7 +67,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
       <div className='flex'>
         <div
           className={cn(
-            'flex items-center justify-between gap-2 border px-2 py-1.5 text-xs transition-colors',
+            'flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-xs transition-colors',
             'border-border dark:border-dark-border dark:bg-dark-bg/60 bg-white/80'
           )}
         >
@@ -88,7 +88,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
           const block = (
             <div
               className={cn(
-                'flex items-center justify-between gap-2 border px-2 py-1.5 text-xs transition-colors',
+                'flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-xs transition-colors',
                 'border-border dark:border-dark-border dark:bg-dark-bg/60 bg-white/80',
                 isActive
                   ? blockStyleByRight[field]
@@ -104,7 +104,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
                 canToggle ? (
                   <div
                     className={cn(
-                      'border-border dark:border-dark-border flex h-4 w-4 shrink-0 items-center justify-center border',
+                      'border-border dark:border-dark-border flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
                       isActive
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'bg-transparent'
@@ -115,7 +115,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
                 ) : (
                   <div
                     className={cn(
-                      'border-border dark:border-dark-border text-muted-foreground flex h-4 w-4 shrink-0 items-center justify-center border',
+                      'border-border dark:border-dark-border text-muted-foreground flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
                       'bg-muted/60 dark:bg-dark-bg/40'
                     )}
                     aria-hidden='true'

@@ -172,7 +172,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
           <div
             className={cn(
               'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
-              'mx-auto w-full max-w-md border p-4 shadow-2xl backdrop-blur-xl'
+              'mx-auto w-full max-w-md rounded-2xl border p-4 backdrop-blur-xl'
             )}
           >
             <h2
@@ -253,7 +253,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={passwordVisibility.toggleVisibility}
-                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
+                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-lg p-1 focus-visible:ring-2 focus-visible:outline-none'
                         aria-label={
                           passwordVisibility.isVisible
                             ? t('common:password.hide')
@@ -299,7 +299,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={confirmPasswordVisibility.toggleVisibility}
-                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
+                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-lg p-1 focus-visible:ring-2 focus-visible:outline-none'
                         aria-label={
                           confirmPasswordVisibility.isVisible
                             ? t('common:password.hide')

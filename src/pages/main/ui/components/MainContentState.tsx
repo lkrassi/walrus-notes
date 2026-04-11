@@ -29,9 +29,20 @@ export const MainContentState = ({
 
   if (variant === 'unsupported') {
     return (
-      <div className={cn('flex', 'h-full', 'items-center', 'justify-center')}>
-        <div className={cn('text-center')}>
-          <p className={cn('text-secondary', 'dark:text-dark-secondary')}>
+      <div className={cn('grid', 'h-full', 'place-items-center', 'p-6')}>
+        <div
+          className={cn(
+            'max-w-md',
+            'rounded-xl',
+            'border',
+            'border-border/80',
+            'bg-surface/70',
+            'px-6',
+            'py-5',
+            'text-center'
+          )}
+        >
+          <p className={cn('text-muted-foreground')}>
             Неподдерживаемый тип вкладки
           </p>
         </div>
@@ -55,18 +66,16 @@ export const MainContentState = ({
             'justify-center'
           )}
         >
-          <div
-            className={cn('border-border dark:border-dark-border border p-4')}
-          >
-            <Skeleton className='mb-3 h-6 w-2/3 rounded-none' />
-            <Skeleton className='h-4 w-full rounded-none' />
+          <div className={cn('rounded-xl', 'border', 'border-border', 'p-4')}>
+            <Skeleton className='mb-3 h-6 w-2/3 rounded-md' />
+            <Skeleton className='h-4 w-full rounded-md' />
           </div>
-          <Skeleton className='h-11 w-full rounded-none' />
+          <Skeleton className='h-11 w-full rounded-lg' />
           <div className='grid grid-cols-2 gap-2'>
-            <Skeleton className='h-24 w-full rounded-none' />
-            <Skeleton className='h-24 w-full rounded-none' />
-            <Skeleton className='h-24 w-full rounded-none' />
-            <Skeleton className='h-24 w-full rounded-none' />
+            <Skeleton className='h-24 w-full rounded-lg' />
+            <Skeleton className='h-24 w-full rounded-lg' />
+            <Skeleton className='h-24 w-full rounded-lg' />
+            <Skeleton className='h-24 w-full rounded-lg' />
           </div>
         </div>
       );
@@ -109,9 +118,10 @@ export const MainContentState = ({
         ) : (
           <div
             className={cn(
-              'border-border dark:border-dark-border',
-              'bg-surface dark:bg-dark-surface',
+              'border-border',
+              'bg-surface',
               'text-center',
+              'rounded-xl',
               'border',
               'py-8',
               'px-4'
@@ -138,32 +148,42 @@ export const MainContentState = ({
   }
 
   return (
-    <div
-      className={cn(
-        'bg-bg',
-        'dark:bg-dark-bg',
-        'flex',
-        'h-full',
-        'items-center',
-        'justify-center'
-      )}
-    >
-      <div className={cn('text-center')}>
-        <div className={cn('muted-text', 'mx-auto', 'mb-4', 'h-16', 'w-16')}>
-          <FileText className='h-15 w-15' />{' '}
-        </div>
-        <h3
+    <div className={cn('grid', 'h-full', 'place-items-center', 'p-6')}>
+      <div
+        className={cn(
+          'w-full',
+          'max-w-xl',
+          'rounded-2xl',
+          'border',
+          'border-border/80',
+          'bg-surface/70',
+          'px-8',
+          'py-10',
+          'text-center'
+        )}
+      >
+        <div
           className={cn(
-            'text-text',
-            'dark:text-dark-text',
-            'mb-2',
-            'text-xl',
-            'font-semibold'
+            'mx-auto',
+            'mb-5',
+            'flex',
+            'h-14',
+            'w-14',
+            'items-center',
+            'justify-center',
+            'rounded-xl',
+            'bg-primary/12',
+            'text-primary'
           )}
         >
+          <FileText className='h-7 w-7' />
+        </div>
+        <h3 className={cn('mb-2', 'text-xl', 'font-semibold')}>
           {t('main:selectFileOrFolder')}
         </h3>
-        <p className={cn('muted-text')}>{t('main:selectItemDescription')}</p>
+        <p className={cn('text-muted-foreground')}>
+          {t('main:selectItemDescription')}
+        </p>
       </div>
     </div>
   );
