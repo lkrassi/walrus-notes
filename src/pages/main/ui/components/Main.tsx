@@ -35,20 +35,21 @@ export const Main = () => {
           'bg-bg',
           'text-foreground',
           'flex',
-          'h-screen',
+          'h-[100dvh]',
           'flex-col',
           'overflow-hidden'
         )}
       >
         <PrivateHeader />
-        <div className={cn('min-h-0', 'flex-1', 'p-2', 'md:p-3')}>
+        <div className={cn('min-h-0', 'flex-1', 'p-0', 'md:p-3')}>
           <div
             className={cn(
               'relative',
               'flex',
               'h-full',
               'min-h-0',
-              'gap-2',
+              'gap-0',
+              'md:gap-2',
               'overflow-hidden'
             )}
           >

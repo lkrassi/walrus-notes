@@ -3,7 +3,7 @@ import { getLoadingState } from '@/shared/lib/core';
 
 interface UseMainContentLayoutsDataParams {
   isMobile: boolean;
-  variant: 'empty' | 'unsupported';
+  variant: 'empty' | 'unsupported' | 'graphUnavailable';
 }
 
 export const useMainContentLayoutsData = ({

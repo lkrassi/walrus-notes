@@ -15,6 +15,11 @@
   "notes": "notes",
   "allNotes": "All Notes Graph",
   "allNotesDescription": "All notes from all folders",
+  "mobileWorkspaceTitle": "A focused mobile workspace",
+  "mobileWorkspaceDescription": "Small screens work better with notes and folders. Graphs stay hidden here so the interface remains fast and easy to scan.",
+  "graphUnavailableTitle": "Graphs are not available on mobile",
+  "graphUnavailableDescription": "Open a note or folder on a larger screen to view and work with the graph without restrictions.",
+  "graphUnavailableHint": "Mobile screens show notes and folders only",
   "undoRedo": {
     "undo": "Undo{{description}} (Ctrl+Z)",
     "redo": "Redo{{description}} (Ctrl+Y)",

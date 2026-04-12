@@ -16,6 +16,11 @@
   "notes": "заметок",
   "allNotes": "Общий граф",
   "allNotesDescription": "Все заметки из всех папок",
+  "mobileWorkspaceTitle": "Удобный режим для телефона",
+  "mobileWorkspaceDescription": "На маленьком экране удобнее работать с заметками и папками. Графы здесь скрыты, чтобы интерфейс оставался быстрым и понятным.",
+  "graphUnavailableTitle": "Графы недоступны на телефоне",
+  "graphUnavailableDescription": "Откройте заметку или папку на большем экране, чтобы увидеть граф и работать с ним без ограничений.",
+  "graphUnavailableHint": "На мобильных экранах доступны только заметки и папки",
   "undoRedo": {
     "undo": "Отменить{{description}} (Ctrl+Z)",
     "redo": "Повторить{{description}} (Ctrl+Y)",

@@ -9,6 +9,8 @@ interface FileTreeProps {
   onItemSelect?: (item: FileTreeItemType, mode?: 'preview' | 'pinned') => void;
   selectedItemId?: string;
   onOpenGraph?: (layoutId: string) => void;
+  isMobile?: boolean;
+  showAllNotesButton?: boolean;
 }
 
 export const FileTree = memo(
@@ -18,6 +20,8 @@ export const FileTree = memo(
     onItemSelect,
     selectedItemId,
     onOpenGraph,
+    isMobile,
+    showAllNotesButton = true,
   }: FileTreeProps) => {
     const {
       setSearchQuery,
@@ -55,6 +59,8 @@ export const FileTree = memo(
         renderSectionHeader={renderSectionHeader}
         renderTreeItem={renderTreeItem}
         onAllNotesClick={handleAllNotesClick}
+        isMobile={isMobile}
+        showAllNotesButton={showAllNotesButton}
       />
     );
   }

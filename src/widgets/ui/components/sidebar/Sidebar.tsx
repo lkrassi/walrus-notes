@@ -51,6 +51,7 @@ const SidebarComponent = (
     title: t('fileTree:createNewLayout'),
     size: MODAL_SIZE_PRESETS.layoutCreate,
   });
+  const canOpenGraphs = !isMobile;
 
   const handleItemSelect = (
     item: FileTreeItem,
@@ -61,6 +62,8 @@ const SidebarComponent = (
   };
 
   const handleOpenGraph = (layoutId: string) => {
+    if (!canOpenGraphs) return;
+
     const layout = fileTree.find(item => item.id === layoutId);
     const graphTitle =
       layout?.isMain === true
@@ -104,14 +107,15 @@ const SidebarComponent = (
           'text-foreground',
           'border-border',
           'fixed',
-          'top-14',
+          'top-0',
           'bottom-0',
           'left-0',
           'flex',
           'flex-col',
           'w-[min(88vw,360px)]',
           'border-r',
-          'bg-bg',
+          'bg-bg/96',
+          'backdrop-blur-xl',
           'transition-transform',
           'duration-300',
           'ease-in-out',
@@ -120,7 +124,7 @@ const SidebarComponent = (
           'md:flex',
           'md:translate-x-0',
           'md:inset-auto',
-          'md:top-auto',
+          'md:top-14',
           'md:bottom-auto',
           'md:z-auto',
           'md:m-2',
@@ -137,23 +141,14 @@ const SidebarComponent = (
             'border-border',
             'border-b',
             'px-3',
-            'py-3',
+            'py-2',
             'flex',
             'flex-col',
             'gap-2.5',
-            'bg-surface/55'
+            'bg-surface/70'
           )}
         >
-          <div
-            className={cn(
-              'flex',
-              'items-center',
-              'gap-2',
-              'md:hidden',
-              'mb-1',
-              'min-h-10'
-            )}
-          >
+          <div className={cn('flex', 'items-center', 'gap-2.5', 'md:hidden')}>
             <button
               onClick={() => setIsMobileOpen(false)}
               className={cn(
@@ -173,45 +168,48 @@ const SidebarComponent = (
             >
               <X className={cn('h-6', 'w-6')} />
             </button>
-
-            <img
-              src={logo}
-              alt={t('common:header.logoAlt')}
-              className={cn(
-                'h-10',
-                'w-10',
-                'min-h-10',
-                'min-w-10',
-                'max-h-10',
-                'max-w-10'
-              )}
-              loading='eager'
-              decoding='async'
-            />
-            <div className={cn('flex', 'items-baseline', 'gap-1', 'flex-1')}>
-              <h1
+            <Link
+              to='/main'
+              className={cn('flex', 'items-center')}
+              aria-label={t('common:header.goToHomepage')}
+            >
+              <img
+                src={logo}
+                alt={t('common:header.logoAlt')}
                 className={cn(
-                  'text-text',
-                  'text-lg',
-                  'leading-none',
-                  'font-bold'
+                  'h-10',
+                  'w-10',
+                  'min-h-10',
+                  'min-w-10',
+                  'max-h-10',
+                  'max-w-10'
                 )}
-              >
-                Walrus
-              </h1>
-              <h1
-                className={cn(
-                  'text-primary',
-                  'text-lg',
-                  'leading-none',
-                  'font-bold'
-                )}
-              >
-                Notes
-              </h1>
-            </div>
+                loading='lazy'
+              />
+              <div className={cn('flex', 'items-baseline', 'gap-1')}>
+                <h1
+                  className={cn(
+                    'text-text',
+                    'text-lg',
+                    'leading-none',
+                    'font-bold'
+                  )}
+                >
+                  Walrus
+                </h1>
+                <h1
+                  className={cn(
+                    'text-primary',
+                    'text-lg',
+                    'leading-none',
+                    'font-bold'
+                  )}
+                >
+                  Notes
+                </h1>
+              </div>
+            </Link>
           </div>
-
           <div
             className={cn('flex', 'items-center', 'justify-between', 'gap-2')}
           >
@@ -242,7 +240,9 @@ const SidebarComponent = (
             toggleExpanded={toggleExpanded}
             onItemSelect={handleItemSelect}
             selectedItemId={currentSelectedItemId}
-            onOpenGraph={handleOpenGraph}
+            onOpenGraph={canOpenGraphs ? handleOpenGraph : undefined}
+            isMobile={isMobile}
+            showAllNotesButton={canOpenGraphs}
           />
         </div>
 

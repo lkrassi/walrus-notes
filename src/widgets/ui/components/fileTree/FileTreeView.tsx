@@ -36,6 +36,8 @@ interface FileTreeViewProps {
   renderSectionHeader: (title: string) => ReactNode;
   renderTreeItem: (item: FileTreeItemType, level?: number) => ReactNode;
   onAllNotesClick: () => void;
+  isMobile?: boolean;
+  showAllNotesButton?: boolean;
 }
 
 export const FileTreeView: FC<FileTreeViewProps> = ({
@@ -52,6 +54,8 @@ export const FileTreeView: FC<FileTreeViewProps> = ({
   renderSectionHeader,
   renderTreeItem,
   onAllNotesClick,
+  isMobile = false,
+  showAllNotesButton = true,
 }) => {
   const sensors = useDndSensors({ mouseDistance: 5 });
 
@@ -64,13 +68,20 @@ export const FileTreeView: FC<FileTreeViewProps> = ({
       onDragEnd={onDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
-      <div className='flex h-full flex-col px-2 pt-1.5 pb-2'>
-        <div className='pb-1.5'>
+      <div
+        className={cn(
+          'flex',
+          'h-full',
+          'flex-col',
+          isMobile ? 'px-3 pt-3 pb-3' : 'px-2 pt-1.5 pb-2'
+        )}
+      >
+        <div className={cn(isMobile ? 'pb-2' : 'pb-1.5')}>
           <SearchInput onSearchChange={setSearchQuery} />
         </div>
 
-        {!isSearchMode && (
-          <div className='pb-1.5'>
+        {!isSearchMode && showAllNotesButton && (
+          <div className={cn(isMobile ? 'pb-2' : 'pb-1.5')}>
             <AllNotesButton
               onAllNotesClick={onAllNotesClick}
               isSelected={selectedItemId?.startsWith('graph-')}
@@ -78,7 +89,13 @@ export const FileTreeView: FC<FileTreeViewProps> = ({
           </div>
         )}
 
-        <div className='flex-1 overflow-y-auto pr-1'>
+        <div
+          className={cn(
+            'flex-1',
+            'overflow-y-auto',
+            isMobile ? 'pr-0.5' : 'pr-1'
+          )}
+        >
           {isSearchMode ? (
             <div className='space-y-0'>
               <FileTreeSection

@@ -145,7 +145,8 @@ export const NoteHeader: FC<NoteHeaderProps> = memo(function NoteHeader({
         'py-1.5',
         'backdrop-blur-sm',
         'dark:border-dark-border',
-        'dark:bg-dark-bg/90'
+        'dark:bg-dark-bg/90',
+        'gap-y-5 max-sm:flex-col'
       )}
     >
       <div className={cn('min-w-0', 'flex-1')}>

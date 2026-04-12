@@ -27,8 +27,18 @@ export const MainContent = memo(function DashboardContent({
   } = useMainContentState({
     onNoteTreeUpdate,
   });
+  const visibleTabs = isMobile
+    ? openTabs.filter(tab => tab.item.type === 'note')
+    : openTabs;
+  const isMobileGraphLocked = Boolean(
+    isMobile && activeTab && activeTab.item.type !== 'note'
+  );
 
   const renderContent = () => {
+    if (isMobileGraphLocked) {
+      return <MainContentState variant='graphUnavailable' isMobile />;
+    }
+
     if (!activeTab) {
       return (
         <MainContentState
@@ -68,10 +78,10 @@ export const MainContent = memo(function DashboardContent({
         'overflow-hidden'
       )}
     >
-      {openTabs.length > 0 && (
+      {visibleTabs.length > 0 && (
         <div className={cn('px-2', 'pt-2', 'md:px-3', 'md:pt-3')}>
           <Tabs
-            tabs={openTabs}
+            tabs={visibleTabs}
             onTabClick={handleTabClick}
             onTabClose={handleTabClose}
             onTabReorder={handleTabReorder}
@@ -85,8 +95,7 @@ export const MainContent = memo(function DashboardContent({
           'px-2',
           'pb-2',
           'md:px-3',
-          'md:pb-3',
-          openTabs.length > 0 ? 'pt-2' : 'pt-2 md:pt-3'
+          visibleTabs.length > 0 ? 'pt-2' : 'pt-2 md:pt-3'
         )}
       >
         <div
