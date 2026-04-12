@@ -1,5 +1,6 @@
 import { useDrafts } from '@/entities';
 import type { Note } from '@/entities/note';
+import { useCallback } from 'react';
 import { useDraftSync } from './useDraftSync';
 import { useNoteEditorState } from './useNoteEditorState';
 import { useNoteNotifications } from './useNoteNotifications';
@@ -12,14 +13,17 @@ export const useNoteEditor = (
 ) => {
   const isDraftDebug = import.meta.env.DEV;
   const { drafts } = useDrafts();
-  const logDraft = (message: string, extra?: Record<string, unknown>) => {
-    if (!isDraftDebug) return;
-    if (extra) {
-      console.log(`[draft-flow][${note.id}] ${message}`, extra);
-      return;
-    }
-    console.log(`[draft-flow][${note.id}] ${message}`);
-  };
+  const logDraft = useCallback(
+    (message: string, extra?: Record<string, unknown>) => {
+      if (!isDraftDebug) return;
+      if (extra) {
+        console.log(`[draft-flow][${note.id}] ${message}`, extra);
+        return;
+      }
+      console.log(`[draft-flow][${note.id}] ${message}`);
+    },
+    [isDraftDebug, note.id]
+  );
 
   const storeDraft = drafts[note.id] ?? null;
 
@@ -38,6 +42,7 @@ export const useNoteEditor = (
     serverDraft,
     originalPayload,
     ignoreDraftRef,
+    suppressAutoEditUntilRef,
     lastLocalCommitRef,
     lastLocalUpdateRef,
     hydratedServerPayloadRef,
@@ -77,6 +82,7 @@ export const useNoteEditor = (
     isEditing,
     setIsEditing,
     ignoreDraftRef,
+    suppressAutoEditUntilRef,
     lastLocalCommitRef,
     lastLocalUpdateRef,
     hydratedServerPayloadRef,

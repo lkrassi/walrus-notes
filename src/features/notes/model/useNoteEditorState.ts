@@ -32,6 +32,7 @@ export const useNoteEditorState = ({
   const [title, setTitle] = useState<string>(note.title ?? '');
 
   const ignoreDraftRef = useRef(false);
+  const suppressAutoEditUntilRef = useRef<number | null>(null);
   const lastLocalCommitRef = useRef<number | null>(null);
   const lastLocalUpdateRef = useRef<number | null>(null);
   const hydratedServerPayloadRef = useRef<string>(note.payload ?? '');
@@ -151,6 +152,19 @@ export const useNoteEditorState = ({
       return;
     }
 
+    if (ignoreDraftRef.current) {
+      logDraft('skip force edit mode: ignoreDraftRef is active');
+      return;
+    }
+
+    const suppressUntil = suppressAutoEditUntilRef.current;
+    if (suppressUntil != null && Date.now() < suppressUntil) {
+      logDraft('skip force edit mode: temporary suppression is active', {
+        suppressUntil,
+      });
+      return;
+    }
+
     if (hasStoreDraft || hasServerDraft) {
       logDraft('force edit mode because draft detected', {
         hasStoreDraft,
@@ -160,6 +174,12 @@ export const useNoteEditorState = ({
         storeDraftLength: (storeDraft ?? '').length,
       });
       setIsEditing(true);
+      return;
+    }
+
+    if (suppressUntil != null) {
+      suppressAutoEditUntilRef.current = null;
+      logDraft('clear auto-edit suppression: draft markers are gone');
     }
   }, [canWrite, hasServerDraft, hasStoreDraft, note.id, logDraft]);
 
@@ -188,6 +208,7 @@ export const useNoteEditorState = ({
     serverDraft,
     originalPayload,
     ignoreDraftRef,
+    suppressAutoEditUntilRef,
     lastLocalCommitRef,
     lastLocalUpdateRef,
     hydratedServerPayloadRef,

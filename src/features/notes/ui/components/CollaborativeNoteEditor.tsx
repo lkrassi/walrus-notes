@@ -47,6 +47,18 @@ export const CollaborativeNoteEditor = memo(
       },
       ref
     ) {
+      const isCollabDebug = import.meta.env.DEV;
+      const logCollab = (message: string, extra?: Record<string, unknown>) => {
+        if (!isCollabDebug) return;
+        if (extra) {
+          console.log(
+            `[collab-editor][${noteId}][${userId}] ${message}`,
+            extra
+          );
+          return;
+        }
+        console.log(`[collab-editor][${noteId}][${userId}] ${message}`);
+      };
       const { showError } = useNotifications();
       const { t } = useTranslation();
       const [reconnectAttempts, setReconnectAttempts] = useState(0);
@@ -62,13 +74,14 @@ export const CollaborativeNoteEditor = memo(
         [showError, t]
       );
 
-      const { ytext, onlineUsers, updateCursorAwareness } = useYjsCollaboration(
-        noteId,
-        userId,
-        userName,
-        initialContent,
-        handleStatusChange
-      );
+      const { ytext, onlineUsers, isContentLoaded, updateCursorAwareness } =
+        useYjsCollaboration(
+          noteId,
+          userId,
+          userName,
+          initialContent,
+          handleStatusChange
+        );
 
       useImperativeHandle(
         ref,
@@ -95,6 +108,15 @@ export const CollaborativeNoteEditor = memo(
       }, [onlineUsers, onOnlineUsersChange]);
 
       useEffect(() => {
+        logCollab('collaboration state changed', {
+          reconnectAttempts,
+          isContentLoaded,
+          ytextLength: ytext?.length ?? null,
+          onlineUsers: onlineUsers.size,
+        });
+      }, [isContentLoaded, onlineUsers.size, reconnectAttempts, ytext]);
+
+      useEffect(() => {
         if (reconnectAttempts >= 5) {
           showError(
             t('notes:connectionFailedReload') ||
@@ -109,7 +131,7 @@ export const CollaborativeNoteEditor = memo(
             <CollaborativeEditor
               ytext={ytext}
               fallbackContent={initialContent}
-              disabled={disabled}
+              disabled={disabled || !isContentLoaded}
               className={cn('h-full')}
               onContentChange={onContentChange}
               onCursorChange={updateCursorAwareness}

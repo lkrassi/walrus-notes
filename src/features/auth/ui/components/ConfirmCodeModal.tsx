@@ -123,7 +123,7 @@ export const ConfirmCodeModal: FC<ConfirmCodeModalProps> = ({
   return (
     <div className='flex w-full flex-col gap-3 p-6'>
       <div className='text-center'>
-        <p className='text-secondary dark:text-dark-secondary text-sm'>
+        <p className='text-text text-sm'>
           {t('auth:confirmCode.description') ||
             'Код подтверждения отправлен на'}
           <br />

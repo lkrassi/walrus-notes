@@ -12,6 +12,16 @@ export const useYjsCollaboration = (
   onStatusChange?: (status: 'connected' | 'disconnected') => void
 ) => {
   const isPresenceDebug = import.meta.env.DEV;
+  const logPresence = (message: string, extra?: Record<string, unknown>) => {
+    if (!isPresenceDebug) return;
+
+    if (extra) {
+      console.log(`[yjs-presence][${noteId}][${userId}] ${message}`, extra);
+      return;
+    }
+
+    console.log(`[yjs-presence][${noteId}][${userId}] ${message}`);
+  };
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
     new Map()
@@ -35,6 +45,12 @@ export const useYjsCollaboration = (
   const cursorRafRef = useRef<number | null>(null);
   const lastCursorSentAtRef = useRef(0);
   const cursorTimeoutRef = useRef<number | null>(null);
+  const lastResolvedRemoteCursorRef = useRef<
+    Map<
+      number,
+      { selectionStart: number; selectionEnd: number; updatedAt: number }
+    >
+  >(new Map());
 
   const sendCursorNow = useCallback(() => {
     const payload = cursorPayloadRef.current;
@@ -64,13 +80,18 @@ export const useYjsCollaboration = (
       head,
       updatedAt: now,
     } as CursorInfo);
+    logPresence('send cursor awareness', {
+      selectionStart: payload.selectionStart,
+      selectionEnd: payload.selectionEnd,
+      textLength: ytextCurrent.length,
+    });
   }, [isPresenceDebug, noteId, userId]);
 
   const resolveAbsoluteIndex = useCallback(
-    (relativeJson: unknown, fallback: number): number => {
+    (relativeJson: unknown): number | null => {
       const ydoc = ydocRef.current;
       const text = ytextRef.current;
-      if (!ydoc || !text) return fallback;
+      if (!ydoc || !text || !relativeJson) return null;
 
       try {
         const relPos = Y.createRelativePositionFromJSON(
@@ -81,13 +102,13 @@ export const useYjsCollaboration = (
           ydoc
         );
         if (!absolute || typeof absolute.index !== 'number') {
-          return fallback;
+          return null;
         }
 
         const maxIndex = text.length;
         return Math.max(0, Math.min(absolute.index, maxIndex));
       } catch (_e) {
-        return fallback;
+        return null;
       }
     },
     []
@@ -136,7 +157,17 @@ export const useYjsCollaboration = (
             cursorTimeoutRef.current = null;
             sendCursorNow();
           }, throttleMs - elapsed);
+          logPresence('cursor throttled', {
+            elapsed,
+            throttleMs,
+            delayedMs: throttleMs - elapsed,
+          });
           return;
+        }
+
+        if (cursorTimeoutRef.current !== null) {
+          window.clearTimeout(cursorTimeoutRef.current);
+          cursorTimeoutRef.current = null;
         }
 
         sendCursorNow();
@@ -191,6 +222,9 @@ export const useYjsCollaboration = (
     const handleStatus = (event: {
       status: 'connected' | 'disconnected' | 'connecting';
     }) => {
+      logPresence('provider status', {
+        status: event.status,
+      });
       setIsConnected(event.status === 'connected');
 
       if (event.status !== 'connecting') {
@@ -220,9 +254,72 @@ export const useYjsCollaboration = (
         return;
       }
 
-      hasInitializedRef.current = true;
+      logPresence('provider sync received', {
+        isSynced,
+        textLengthBeforeInit: ytextInstance.length,
+      });
 
-      setIsContentLoaded(true);
+      const seedContent = firstInitialContentRef.current ?? '';
+      const markContentAsLoaded = () => {
+        if (hasInitializedRef.current) {
+          return;
+        }
+
+        hasInitializedRef.current = true;
+        setIsContentLoaded(true);
+        logPresence('content marked as loaded', {
+          textLengthAfterInit: ytextInstance.length,
+        });
+      };
+
+      if (ytextInstance.length !== 0 || seedContent.length === 0) {
+        markContentAsLoaded();
+        return;
+      }
+
+      window.setTimeout(() => {
+        if (hasInitializedRef.current) {
+          return;
+        }
+
+        if (ytextInstance.length === 0) {
+          const awarenessStates = providerInstance.awareness.getStates() as Map<
+            number,
+            AwarenessUser
+          >;
+          const knownUserIds = Array.from(awarenessStates.values())
+            .map(state => state.user?.id)
+            .filter((id): id is string => typeof id === 'string' && !!id)
+            .filter((value, index, arr) => arr.indexOf(value) === index)
+            .sort();
+
+          const leaderUserId = knownUserIds[0] ?? userId;
+          const isLeader = leaderUserId === userId;
+
+          if (isLeader) {
+            ydoc.transact(() => {
+              ytextInstance.insert(0, seedContent);
+            }, 'local-initial-seed');
+
+            logPresence('seeded empty ytext from initialContent after sync', {
+              seededLength: seedContent.length,
+              leaderUserId,
+              knownUsersCount: knownUserIds.length,
+            });
+          } else {
+            logPresence(
+              'skip initial seed: another user is selected as seed leader',
+              {
+                currentUserId: userId,
+                leaderUserId,
+                knownUsersCount: knownUserIds.length,
+              }
+            );
+          }
+        }
+
+        markContentAsLoaded();
+      }, 250);
     };
 
     providerInstance.on('status', handleStatus);
@@ -260,6 +357,7 @@ export const useYjsCollaboration = (
 
           const rawCursor = state.cursor;
           if (!rawCursor) {
+            lastResolvedRemoteCursorRef.current.delete(clientId);
             normalizedStates.set(clientId, {
               clientId,
               isLocal: clientId === localClientId,
@@ -280,14 +378,52 @@ export const useYjsCollaboration = (
             )
           );
 
-          const absoluteStart = resolveAbsoluteIndex(
-            rawCursor.anchor,
-            fallbackStart
-          );
-          const absoluteEnd = resolveAbsoluteIndex(rawCursor.head, fallbackEnd);
+          const resolvedStart = resolveAbsoluteIndex(rawCursor.anchor);
+          const resolvedEnd = resolveAbsoluteIndex(rawCursor.head);
+          const previousResolved =
+            lastResolvedRemoteCursorRef.current.get(clientId);
+          const incomingUpdatedAt =
+            typeof rawCursor.updatedAt === 'number'
+              ? rawCursor.updatedAt
+              : Date.now();
 
-          const normalizedStart = Math.min(absoluteStart, absoluteEnd);
-          const normalizedEnd = Math.max(absoluteStart, absoluteEnd);
+          let normalizedStart: number;
+          let normalizedEnd: number;
+          let effectiveUpdatedAt = incomingUpdatedAt;
+          const isStaleAwarenessUpdate =
+            !!previousResolved &&
+            incomingUpdatedAt < previousResolved.updatedAt;
+
+          if (isStaleAwarenessUpdate && previousResolved) {
+            normalizedStart = previousResolved.selectionStart;
+            normalizedEnd = previousResolved.selectionEnd;
+            effectiveUpdatedAt = previousResolved.updatedAt;
+            logPresence('ignored stale remote cursor awareness update', {
+              clientId,
+              incomingUpdatedAt,
+              previousUpdatedAt: previousResolved.updatedAt,
+              selectionStart: normalizedStart,
+              selectionEnd: normalizedEnd,
+            });
+          } else if (
+            typeof resolvedStart === 'number' &&
+            typeof resolvedEnd === 'number'
+          ) {
+            normalizedStart = Math.min(resolvedStart, resolvedEnd);
+            normalizedEnd = Math.max(resolvedStart, resolvedEnd);
+          } else if (previousResolved) {
+            normalizedStart = previousResolved.selectionStart;
+            normalizedEnd = previousResolved.selectionEnd;
+          } else {
+            normalizedStart = Math.min(fallbackStart, fallbackEnd);
+            normalizedEnd = Math.max(fallbackStart, fallbackEnd);
+          }
+
+          lastResolvedRemoteCursorRef.current.set(clientId, {
+            selectionStart: normalizedStart,
+            selectionEnd: normalizedEnd,
+            updatedAt: effectiveUpdatedAt,
+          });
 
           normalizedStates.set(clientId, {
             clientId,
@@ -298,6 +434,7 @@ export const useYjsCollaboration = (
               index: normalizedEnd,
               selectionStart: normalizedStart,
               selectionEnd: normalizedEnd,
+              updatedAt: effectiveUpdatedAt,
             },
           });
         });
@@ -324,6 +461,9 @@ export const useYjsCollaboration = (
 
         lastOnlineUsersKeyRef.current = usersKey;
         setOnlineUsers(normalizedStates);
+        logPresence('awareness users changed', {
+          usersCount: normalizedStates.size,
+        });
       });
     };
 
@@ -333,6 +473,9 @@ export const useYjsCollaboration = (
     handleAwarenessChange();
 
     return () => {
+      logPresence('collaboration cleanup', {
+        lastTextLength: ytextInstance.length,
+      });
       providerInstance.off('status', handleStatus);
       providerInstance.off('sync', handleSync);
       providerInstance.awareness.off('change', handleAwarenessChange);
@@ -342,6 +485,7 @@ export const useYjsCollaboration = (
       ydocRef.current = null;
       ytextRef.current = null;
       providerRef.current = null;
+      lastResolvedRemoteCursorRef.current.clear();
 
       if (cursorRafRef.current !== null) {
         cancelAnimationFrame(cursorRafRef.current);

@@ -16,6 +16,17 @@ export const useYjsTextareaBinding = ({
   disabled = false,
   onContentChange,
 }: UseYjsTextareaBindingProps) => {
+  const isYjsBindingDebug = import.meta.env.DEV;
+  const logBinding = (message: string, extra?: Record<string, unknown>) => {
+    if (!isYjsBindingDebug || !ytext) return;
+
+    if (extra) {
+      console.log(`[yjs-binding][len:${ytext.length}] ${message}`, extra);
+      return;
+    }
+
+    console.log(`[yjs-binding][len:${ytext.length}] ${message}`);
+  };
   const onContentChangeRef = useRef(onContentChange);
   const isLocalChangeRef = useRef(false);
   const lastRemoteContentRef = useRef<string>('');
@@ -29,14 +40,12 @@ export const useYjsTextareaBinding = ({
 
     if (ytext) {
       const initialContent = ytext.toString();
-      const hasFallback = fallbackContent.length > 0;
-      const hasTextareaValue = textareaRef.current.value.length > 0;
-
-      if (initialContent.length === 0 && hasFallback && hasTextareaValue) {
-        return;
-      }
 
       if (textareaRef.current.value !== initialContent) {
+        logBinding('sync textarea from ytext on mount/update', {
+          prevTextareaLength: textareaRef.current.value.length,
+          newLength: initialContent.length,
+        });
         textareaRef.current.value = initialContent;
         lastRemoteContentRef.current = initialContent;
       }
@@ -61,6 +70,11 @@ export const useYjsTextareaBinding = ({
 
       if (newValue === oldValue) return;
 
+      logBinding('local input diff detected', {
+        oldLength: oldValue.length,
+        newLength: newValue.length,
+      });
+
       isLocalChangeRef.current = true;
 
       try {
@@ -84,6 +98,14 @@ export const useYjsTextareaBinding = ({
         if (insertText.length > 0) {
           ytext.insert(commonPrefixLength, insertText);
         }
+
+        logBinding('applied local diff into ytext', {
+          commonPrefixLength,
+          commonSuffixLength,
+          deleteLength,
+          insertLength: insertText.length,
+          resultLength: ytext.length,
+        });
 
         if (onContentChangeRef.current) {
           onContentChangeRef.current(newValue);
@@ -114,6 +136,16 @@ export const useYjsTextareaBinding = ({
         return;
       }
 
+      const transaction = (event as { transaction?: { local?: boolean } })
+        .transaction as { local?: boolean } | undefined;
+
+      logBinding('observe ytext change', {
+        localTransaction: !!transaction?.local,
+        prevTextareaLength: textarea.value.length,
+        newContentLength: newContent.length,
+        delta: event.delta,
+      });
+
       const selectionStart = textarea.selectionStart ?? 0;
       const selectionEnd = textarea.selectionEnd ?? 0;
 
@@ -121,8 +153,6 @@ export const useYjsTextareaBinding = ({
       let newSelectionEnd = selectionEnd;
 
       try {
-        const transaction = (event as { transaction?: { local?: boolean } })
-          .transaction as { local?: boolean } | undefined;
         const isLocal = !!(transaction && transaction.local);
 
         if (!isLocal) {
@@ -192,6 +222,12 @@ export const useYjsTextareaBinding = ({
         const clampedEnd = Math.max(0, Math.min(newSelectionEnd, maxLength));
 
         textarea.setSelectionRange(clampedStart, clampedEnd);
+        logBinding('restored textarea selection after remote change', {
+          selectionStart,
+          selectionEnd,
+          clampedStart,
+          clampedEnd,
+        });
       } catch (error) {
         console.warn(
           'Failed to restore textarea selection after Yjs update',

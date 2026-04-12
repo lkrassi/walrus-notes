@@ -10,7 +10,7 @@ export const useImportDataAction = () => {
 
   const handleFile = useCallback(
     async (file: File | undefined) => {
-      if (!file) return;
+      if (!file) return false;
 
       try {
         const content = await file.text();
@@ -23,8 +23,10 @@ export const useImportDataAction = () => {
 
         await importLayout({ info }).unwrap();
         showSuccess(t('settings:backup.import.success'));
+        return true;
       } catch {
         showError(t('settings:backup.import.error'));
+        return false;
       }
     },
     [importLayout, showSuccess, t, showError]

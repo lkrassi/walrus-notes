@@ -13,7 +13,6 @@ export const initialFromPermission = (
 
 export const kindLabelKey = (kind: string) => {
   if (kind.includes('LAYOUT')) return 'share:permissionsDashboard.kind.layout';
-  if (kind.includes('NOTE')) return 'share:permissionsDashboard.kind.note';
   return 'share:permissionsDashboard.kind.unknown';
 };
 

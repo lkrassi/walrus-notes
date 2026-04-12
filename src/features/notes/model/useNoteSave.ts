@@ -19,6 +19,7 @@ interface UseNoteSaveParams {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
   ignoreDraftRef: { current: boolean };
+  suppressAutoEditUntilRef: { current: number | null };
   lastLocalCommitRef: { current: number | null };
   lastLocalUpdateRef: { current: number | null };
   hydratedServerPayloadRef: { current: string };
@@ -43,6 +44,7 @@ export const useNoteSave = ({
   isEditing,
   setIsEditing,
   ignoreDraftRef,
+  suppressAutoEditUntilRef,
   lastLocalCommitRef,
   lastLocalUpdateRef,
   hydratedServerPayloadRef,
@@ -311,6 +313,13 @@ export const useNoteSave = ({
   const handleDiscard = useCallback(async () => {
     try {
       ignoreDraftRef.current = true;
+      suppressAutoEditUntilRef.current = Number.POSITIVE_INFINITY;
+      logDraft(
+        'discard confirmed, suppress auto-edit mode until draft clears',
+        {
+          suppressUntil: suppressAutoEditUntilRef.current,
+        }
+      );
 
       try {
         setPayloadState(originalPayload);
@@ -387,6 +396,7 @@ export const useNoteSave = ({
     dispatch,
     hydratedServerPayloadRef,
     ignoreDraftRef,
+    suppressAutoEditUntilRef,
     lastLocalUpdateRef,
     logDraft,
     note,
