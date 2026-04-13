@@ -340,10 +340,19 @@ export const FileTreeItemHeader = ({
               </button>
             )}
 
-          {item.type === 'layout' &&
-            item.isMain !== true &&
-            isSelected &&
-            canEdit && (
+          {item.type === 'layout' && item.isMain !== true && canEdit && (
+            <div
+              className={cn(
+                !isAnyNoteDragging && 'transition-opacity duration-150',
+                isMobile || isSelected ? 'opacity-100' : 'opacity-0',
+                !isAnyNoteDragging && 'group-hover:opacity-100',
+                !isAnyNoteDragging && 'group-focus-within:opacity-100',
+                !isMobile &&
+                  !isSelected &&
+                  !isAnyNoteDragging &&
+                  'pointer-events-none group-focus-within:pointer-events-auto group-hover:pointer-events-auto'
+              )}
+            >
               <FileTreeItemActions
                 onShare={e => {
                   e.stopPropagation();
@@ -371,7 +380,8 @@ export const FileTreeItemHeader = ({
                 titleDelete={t('layout:tooltip.delete')}
                 titleOpenGraph={t('layout:tooltip.graph')}
               />
-            )}
+            </div>
+          )}
           {item.type === 'note' && item.isMain !== true && canWrite && (
             <>
               <button

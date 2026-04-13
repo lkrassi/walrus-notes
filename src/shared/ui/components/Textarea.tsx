@@ -30,8 +30,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref
   ) => {
     const baseClasses = `
-      px-3
-      py-2
       text-base
       focus:outline-none
       disabled:bg-interactive-disabled-bg
