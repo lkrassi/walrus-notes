@@ -2,15 +2,16 @@ import { useUser } from '@/entities';
 import { cn } from '@/shared/lib/core';
 import { useMemo, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const ProfileButton: FC = () => {
   const { profile } = useUser();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleOpenProfile = () => {
-    navigate('/profile');
+    navigate('/profile', { state: { from: location.pathname } });
   };
 
   const displayName = profile?.username || 'User';

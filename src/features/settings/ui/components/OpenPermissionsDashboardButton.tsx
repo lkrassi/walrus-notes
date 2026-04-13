@@ -9,7 +9,7 @@ export const OpenPermissionsDashboardButton: FC = () => {
   const { t } = useTranslation();
 
   const handleOpen = () => {
-    navigate('/dashboard');
+    navigate('/dashboard', { state: { from: '/profile' } });
   };
 
   return (

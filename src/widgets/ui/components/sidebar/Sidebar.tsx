@@ -17,7 +17,7 @@ import { parseTabId } from '@/widgets/model/utils/tabUtils';
 import { FileTree } from '@/widgets/ui/components/fileTree';
 import { Plus, ShieldCheck, X } from 'lucide-react';
 import { forwardRef, useImperativeHandle, type Ref } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 type SidebarProps = {
   onItemSelect?: (item: FileTreeItem, mode?: 'preview' | 'pinned') => void;
@@ -31,6 +31,7 @@ const SidebarComponent = (
   }>
 ) => {
   const { t } = useLocalization();
+  const location = useLocation();
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
   const isMobile = useIsMobile();
   const { width: _width, onPointerDown } = useResizableSidebar();
@@ -256,7 +257,10 @@ const SidebarComponent = (
           )}
         >
           <Link
-            to='/dashboard'
+            to={{
+              pathname: '/dashboard',
+            }}
+            state={{ from: location.pathname }}
             className={cn(
               'border-border',
               'mb-2.5',
@@ -273,7 +277,7 @@ const SidebarComponent = (
               'font-medium',
               'text-foreground',
               'transition-colors',
-              'hover:bg-interactive-hover'
+              'hover:bg-muted-foreground/10'
             )}
           >
             <ShieldCheck className={cn('h-4 w-4')} />
