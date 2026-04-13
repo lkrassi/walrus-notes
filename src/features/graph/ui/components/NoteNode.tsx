@@ -73,9 +73,8 @@ export function NoteNodeComponent({ data, selected }: NoteNodeProps) {
       className={cn(
         'group relative transition-colors duration-150',
         isConnectionPreviewActive &&
-          !isInvalidConnectionTarget &&
-          'outline-primary/25 outline-1',
-        isInvalidConnectionTarget && 'bg-danger/10 outline-danger/45 outline-1'
+          isInvalidConnectionTarget &&
+          'bg-danger/10 outline-danger/45 outline-1'
       )}
       animate={{
         opacity: data.isRelatedToSelected !== false ? 1 : 0.48,

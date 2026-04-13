@@ -37,15 +37,15 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     useEdgeGeometry(source);
   const viewportTick = useViewportTracking();
 
-  const { isDragging, dragPosition, currentTargetNode, handleMouseDown } =
-    useEdgeDrag({
-      id,
-      source,
-      target,
-      findNodeUnderCursor,
-    });
+  const { isDragging, dragPosition, handleMouseDown } = useEdgeDrag({
+    id,
+    source,
+    target,
+    findNodeUnderCursor,
+  });
 
   const { edgePath, getDragEdgePath } = useEdgePath({
+    edgeId: id,
     source,
     target,
     sourceX,
@@ -56,7 +56,7 @@ export const MultiColorEdge = memo(function MultiColorEdge(
     getNodeFlowInfo,
     chooseClosestAnchor,
     dragPosition,
-    currentTargetNode,
+    findNodeUnderCursor,
   });
 
   const dragStrokeColor = strokeColor;

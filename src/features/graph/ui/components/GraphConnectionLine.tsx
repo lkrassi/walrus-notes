@@ -28,7 +28,6 @@ export const GraphConnectionLine = ({
   fromY,
   toX,
   toY,
-  toPosition,
   fromNode,
 }: ExtendedConnectionLineProps) => {
   const { getNodes, getEdges } = useReactFlow();
@@ -206,7 +205,7 @@ export const GraphConnectionLine = ({
     targetX: targetAnchor.x,
     targetY: targetAnchor.y,
     sourcePosition,
-    targetPosition: toPosition ?? targetPosition,
+    targetPosition,
   })[0];
 
   return (

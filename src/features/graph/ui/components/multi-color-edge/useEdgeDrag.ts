@@ -18,16 +18,13 @@ export const useEdgeDrag = ({
   target,
   findNodeUnderCursor,
 }: UseEdgeDragProps) => {
-  const { getEdges, screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
-  const [currentTargetNode, setCurrentTargetNode] = useState<string | null>(
-    null
-  );
 
   const dragDataRef = useRef<EdgeDeleteEventDetail>({
     edgeId: id,
@@ -35,20 +32,11 @@ export const useEdgeDrag = ({
     target,
   });
 
-  const isConnectionExists = useCallback(() => {
-    if (!currentTargetNode) return false;
-    const edges = getEdges();
-    return edges.some(
-      edge => edge.source === source && edge.target === currentTargetNode
-    );
-  }, [currentTargetNode, source, getEdges]);
-
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
       setIsDragging(true);
-      setCurrentTargetNode(null);
 
       dragDataRef.current = { edgeId: id, source, target };
 
@@ -62,29 +50,11 @@ export const useEdgeDrag = ({
 
       const handleMouseMove = (moveEvent: globalThis.MouseEvent) => {
         setDragPosition({ x: moveEvent.clientX, y: moveEvent.clientY });
-
-        const targetNode = findNodeUnderCursor(
-          moveEvent.clientX,
-          moveEvent.clientY
-        );
-
-        const candidateId = targetNode?.id ?? null;
-        const isInvalidTarget =
-          candidateId !== null &&
-          getEdges().some(
-            edge =>
-              edge.id !== id &&
-              edge.source === source &&
-              edge.target === candidateId
-          );
-
-        setCurrentTargetNode(isInvalidTarget ? null : candidateId);
       };
 
       const handleMouseUp = (upEvent: globalThis.MouseEvent) => {
         setIsDragging(false);
         setDragPosition(null);
-        setCurrentTargetNode(null);
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
 
@@ -124,8 +94,6 @@ export const useEdgeDrag = ({
   return {
     isDragging,
     dragPosition,
-    currentTargetNode,
-    isConnectionExists,
     handleMouseDown,
   };
 };

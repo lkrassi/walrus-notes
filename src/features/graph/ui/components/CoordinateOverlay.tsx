@@ -22,7 +22,7 @@ export const CoordinateOverlay: FC<CoordinateOverlayProps> = ({
       style={{ right: `calc(0.5rem + ${rightOffset})` }}
       aria-hidden
     >
-      <div className='border-border/70 dark:border-dark-border/70 bg-bg/80 dark:bg-dark-bg/80 text-text dark:text-dark-text m-2 rounded-lg border px-2.5 py-2 shadow-md backdrop-blur'>
+      <div className='border-border/70 dark:border-dark-border/70 bg-bg/80 dark:bg-dark-bg/80 text-text dark:text-dark-text m-2 rounded-lg border px-2.5 py-2'>
         {centerCoords ? (
           <div className='text-[11px] font-medium tracking-wide'>
             {t('notes:graphOverlayView')}: {Math.round(centerCoords.x)},{' '}

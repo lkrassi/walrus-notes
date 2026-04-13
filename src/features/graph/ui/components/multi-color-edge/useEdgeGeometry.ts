@@ -3,7 +3,7 @@ import { useReactFlow } from 'reactflow';
 import { NODE_DEFAULTS } from './constants';
 import type { NodeFlowInfo } from './types';
 
-export const useEdgeGeometry = (source: string) => {
+export const useEdgeGeometry = (_source: string) => {
   const { screenToFlowPosition, getNodes } = useReactFlow();
 
   const getNodeFlowInfo = useCallback(

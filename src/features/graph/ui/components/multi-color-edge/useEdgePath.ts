@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { getBezierPath, Position, useReactFlow } from 'reactflow';
 
 interface UseEdgePathProps {
+  edgeId: string;
   source: string;
   target: string;
   sourceX: number;
@@ -32,10 +33,14 @@ interface UseEdgePathProps {
     point: { x: number; y: number }
   ) => { x: number; y: number };
   dragPosition: { x: number; y: number } | null;
-  currentTargetNode: string | null;
+  findNodeUnderCursor: (
+    clientX: number,
+    clientY: number
+  ) => { id: string } | undefined;
 }
 
 export const useEdgePath = ({
+  edgeId,
   source,
   target,
   sourceX,
@@ -46,9 +51,9 @@ export const useEdgePath = ({
   getNodeFlowInfo,
   chooseClosestAnchor,
   dragPosition,
-  currentTargetNode,
+  findNodeUnderCursor,
 }: UseEdgePathProps) => {
-  const { screenToFlowPosition, getNodes } = useReactFlow();
+  const { screenToFlowPosition, getNodes, getEdges } = useReactFlow();
 
   const resolvePositionFromAnchor = (
     anchor: { x: number; y: number },
@@ -182,28 +187,57 @@ export const useEdgePath = ({
 
     const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
     const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
+    const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
+    const sourcePosition = resolvePositionFromAnchor(
+      sourceAnchor,
+      sourceInfo.anchors
+    );
 
-    if (currentTargetNode) {
-      const targetInfo = getNodeFlowInfo(currentTargetNode, targetX, targetY);
-      const sourceAnchor = chooseClosestAnchor(
-        sourceInfo.anchors,
-        flowPosition
+    const hoveredNode = findNodeUnderCursor(usePos.x, usePos.y);
+    const candidateTargetNodeId = hoveredNode?.id ?? null;
+    const isSelfTarget =
+      candidateTargetNodeId !== null && candidateTargetNodeId === source;
+    const isInvalidTarget =
+      isSelfTarget ||
+      (candidateTargetNodeId !== null &&
+        getEdges().some(
+          edge =>
+            edge.id !== edgeId &&
+            edge.source === source &&
+            edge.target === candidateTargetNodeId
+        ));
+
+    const effectiveTargetNodeId = isInvalidTarget
+      ? null
+      : candidateTargetNodeId;
+
+    if (effectiveTargetNodeId) {
+      const targetInfo = getNodeFlowInfo(
+        effectiveTargetNodeId,
+        targetX,
+        targetY
       );
       const targetAnchor = chooseClosestAnchor(
         targetInfo.anchors,
         sourceInfo.center
       );
+      const targetPosition = resolvePositionFromAnchor(
+        targetAnchor,
+        targetInfo.anchors
+      );
 
       return {
         sourceAnchor,
         targetAnchor,
+        sourcePosition,
+        targetPosition,
       };
     }
 
-    const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
     return {
       sourceAnchor,
       targetAnchor: flowPosition,
+      sourcePosition,
     };
   };
 
@@ -212,12 +246,12 @@ export const useEdgePath = ({
     if (!usePos) return '';
 
     const flowPosition = screenToFlowPosition({ x: usePos.x, y: usePos.y });
-    const sourceInfo = getNodeFlowInfo(source, sourceX, sourceY);
-    const sourceAnchor = chooseClosestAnchor(sourceInfo.anchors, flowPosition);
-    const sourcePosition = resolvePositionFromAnchor(
-      sourceAnchor,
-      sourceInfo.anchors
-    );
+    const endpoints = getDragEdgeEndpoints();
+    if (!endpoints) {
+      return '';
+    }
+
+    const { sourceAnchor, sourcePosition } = endpoints;
 
     const resolveFloatingTargetPosition = (
       from: { x: number; y: number },
@@ -233,16 +267,11 @@ export const useEdgePath = ({
       return dy >= 0 ? Position.Top : Position.Bottom;
     };
 
-    if (currentTargetNode) {
-      const targetInfo = getNodeFlowInfo(currentTargetNode, targetX, targetY);
-      const targetAnchor = chooseClosestAnchor(
-        targetInfo.anchors,
-        sourceInfo.center
-      );
-      const targetPosition = resolvePositionFromAnchor(
-        targetAnchor,
-        targetInfo.anchors
-      );
+    if (endpoints.targetPosition) {
+      const { targetAnchor, targetPosition } = endpoints;
+      if (!targetPosition) {
+        return '';
+      }
 
       return getBezierPath({
         sourceX: sourceAnchor.x,

@@ -174,18 +174,18 @@ export const useGraphContentHandlers = ({
 
   const handleNodeMouseEnterWrapped = useCallback(
     (e: MouseEvent, node: Node) => {
-      if (isNodeDraggingRef.current) return;
+      if (isNodeDraggingRef.current || isDraggingEdge) return;
       handleNodeMouseEnter(e, node);
     },
-    [handleNodeMouseEnter, isNodeDraggingRef]
+    [handleNodeMouseEnter, isNodeDraggingRef, isDraggingEdge]
   );
 
   const handleNodeMouseLeaveWrapped = useCallback(
     (e: MouseEvent, node: Node) => {
-      if (isNodeDraggingRef.current) return;
+      if (isNodeDraggingRef.current || isDraggingEdge) return;
       handleNodeMouseLeave(e, node);
     },
-    [handleNodeMouseLeave, isNodeDraggingRef]
+    [handleNodeMouseLeave, isNodeDraggingRef, isDraggingEdge]
   );
 
   return {
