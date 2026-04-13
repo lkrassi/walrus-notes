@@ -1,1 +1,4 @@
-export type { EdgeDeleteEventDetail } from '@/entities/graph';
+export type {
+  EdgeDeleteEventDetail,
+  EdgeDeleteHoverEventDetail,
+} from '@/entities/graph';

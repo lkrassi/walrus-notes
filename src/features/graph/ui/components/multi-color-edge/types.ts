@@ -5,7 +5,10 @@ export interface MultiColorStepEdgeData {
   isBidirectional?: boolean;
   reverseEdgeColor?: string;
 }
-export type { EdgeDeleteEventDetail } from '../../../model/types';
+export type {
+  EdgeDeleteEventDetail,
+  EdgeDeleteHoverEventDetail,
+} from '../../../model/types';
 
 export interface NodeFlowInfo {
   center: { x: number; y: number };

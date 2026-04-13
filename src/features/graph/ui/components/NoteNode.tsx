@@ -71,10 +71,10 @@ export function NoteNodeComponent({ data, selected }: NoteNodeProps) {
   return (
     <motion.div
       className={cn(
-        'group relative transition-colors duration-150',
+        'group relative rounded-xl transition-colors duration-150',
         isConnectionPreviewActive &&
           isInvalidConnectionTarget &&
-          'bg-danger/10 outline-danger/45 outline-1'
+          'bg-danger/10 ring-danger/45 ring-1'
       )}
       animate={{
         opacity: data.isRelatedToSelected !== false ? 1 : 0.48,
@@ -86,7 +86,7 @@ export function NoteNodeComponent({ data, selected }: NoteNodeProps) {
         <>
           <motion.div
             className={cn(
-              'text-danger/60 pointer-events-none absolute inset-0 z-30'
+              'text-danger/60 pointer-events-none absolute inset-0 z-30 overflow-hidden rounded-xl'
             )}
             style={invalidOverlayStyle}
             animate={{
@@ -97,7 +97,7 @@ export function NoteNodeComponent({ data, selected }: NoteNodeProps) {
           />
           <div
             className={cn(
-              'pointer-events-none absolute inset-0 z-20',
+              'pointer-events-none absolute inset-0 z-20 rounded-xl',
               'ring-danger/80 shadow-danger/35 shadow-lg ring-2'
             )}
             aria-hidden='true'

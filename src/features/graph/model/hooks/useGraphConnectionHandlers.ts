@@ -5,6 +5,7 @@ import {
 import {
   createDeleteEdgeCommand,
   createMoveEdgeCommand,
+  type EdgeDeleteHoverEventDetail,
   type useGraphHistory,
 } from '@/entities/graph';
 import { useCallback, useEffect, useState, type RefObject } from 'react';
@@ -65,6 +66,9 @@ export const useGraphConnectionHandlers = ({
   const [isDraggingEdge, setIsDraggingEdge] = useState(false);
   const [edgeDragSourceId, setEdgeDragSourceId] = useState<string | null>(null);
   const [edgeDragOriginalTargetId, setEdgeDragOriginalTargetId] = useState<
+    string | null
+  >(null);
+  const [edgeDragHoveredTargetId, setEdgeDragHoveredTargetId] = useState<
     string | null
   >(null);
   const [retractLine, setRetractLine] = useState<GraphRetractLineState | null>(
@@ -302,6 +306,7 @@ export const useGraphConnectionHandlers = ({
       } finally {
         setEdgeDragSourceId(null);
         setEdgeDragOriginalTargetId(null);
+        setEdgeDragHoveredTargetId(null);
         isProcessingRef.current = false;
       }
     },
@@ -326,7 +331,15 @@ export const useGraphConnectionHandlers = ({
     (event: CustomEvent<{ source: string; target: string }>) => {
       setEdgeDragSourceId(event.detail.source);
       setEdgeDragOriginalTargetId(event.detail.target);
+      setEdgeDragHoveredTargetId(null);
       setIsDraggingEdge(true);
+    },
+    []
+  );
+
+  const handleEdgeDeleteHover = useCallback(
+    (event: CustomEvent<EdgeDeleteHoverEventDetail>) => {
+      setEdgeDragHoveredTargetId(event.detail.hoveredTarget ?? null);
     },
     []
   );
@@ -335,9 +348,11 @@ export const useGraphConnectionHandlers = ({
     onConnect,
     handleEdgeDeleteDrop,
     handleEdgeDeleteStart,
+    handleEdgeDeleteHover,
     isDraggingEdge,
     edgeDragSourceId,
     edgeDragOriginalTargetId,
+    edgeDragHoveredTargetId,
     retractLine,
   };
 };

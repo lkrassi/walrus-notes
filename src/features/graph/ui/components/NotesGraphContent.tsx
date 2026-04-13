@@ -123,14 +123,33 @@ export const NotesGraphContent = memo(function NotesGraphContent({
   ]);
 
   const hoveredInvalidConnectionTargetIds = useMemo(() => {
-    if (!hoveredNodeId) {
+    const hoveredPreviewNodeId = graphHandlersState.isDraggingEdge
+      ? graphHandlersState.edgeDragHoveredTargetId
+      : hoveredNodeId;
+
+    if (!hoveredPreviewNodeId) {
       return [] as string[];
     }
 
-    return connectionPreviewInvalidNodeIds.includes(hoveredNodeId)
-      ? [hoveredNodeId]
-      : [];
-  }, [connectionPreviewInvalidNodeIds, hoveredNodeId]);
+    if (connectionPreviewInvalidNodeIds.includes(hoveredPreviewNodeId)) {
+      return [hoveredPreviewNodeId];
+    }
+
+    if (
+      graphHandlersState.isDraggingEdge &&
+      hoveredPreviewNodeId === graphHandlersState.edgeDragSourceId
+    ) {
+      return [hoveredPreviewNodeId];
+    }
+
+    return [] as string[];
+  }, [
+    connectionPreviewInvalidNodeIds,
+    graphHandlersState.edgeDragHoveredTargetId,
+    graphHandlersState.edgeDragSourceId,
+    graphHandlersState.isDraggingEdge,
+    hoveredNodeId,
+  ]);
 
   const isConnectionPreviewActive =
     !!graphHandlersState.tempEdge || !!graphHandlersState.edgeDragSourceId;

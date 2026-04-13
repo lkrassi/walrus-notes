@@ -9,6 +9,7 @@ export {
 
 export type {
   EdgeDeleteEventDetail,
+  EdgeDeleteHoverEventDetail,
   GraphEdge,
   GraphNode,
   MultiColorEdgeData,

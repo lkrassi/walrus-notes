@@ -8,6 +8,7 @@ export { useGraphHistory } from './hooks/useGraphHistory';
 export type { UseGraphHistoryReturn } from './hooks/useGraphHistory';
 export type {
   EdgeDeleteEventDetail,
+  EdgeDeleteHoverEventDetail,
   GraphEdge,
   GraphNode,
   MultiColorEdgeData,

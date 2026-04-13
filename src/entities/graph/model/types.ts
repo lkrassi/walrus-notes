@@ -9,6 +9,13 @@ export interface EdgeDeleteEventDetail {
   dropFlowY?: number;
 }
 
+export interface EdgeDeleteHoverEventDetail {
+  edgeId: string;
+  source: string;
+  target: string;
+  hoveredTarget?: string | null;
+}
+
 export interface NoteNodeData {
   note: Note;
   onNoteClick?: (noteId: string) => void;

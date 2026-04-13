@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
 import { useReactFlow } from 'reactflow';
-import type { EdgeDeleteEventDetail } from './types';
+import type {
+  EdgeDeleteEventDetail,
+  EdgeDeleteHoverEventDetail,
+} from './types';
 
 interface UseEdgeDragProps {
   id: string;
@@ -50,6 +53,23 @@ export const useEdgeDrag = ({
 
       const handleMouseMove = (moveEvent: globalThis.MouseEvent) => {
         setDragPosition({ x: moveEvent.clientX, y: moveEvent.clientY });
+
+        const hoveredNode = findNodeUnderCursor(
+          moveEvent.clientX,
+          moveEvent.clientY
+        );
+        const hoverDetail: EdgeDeleteHoverEventDetail = {
+          ...dragDataRef.current,
+          hoveredTarget: hoveredNode?.id ?? null,
+        };
+
+        const hoverEvent = new CustomEvent<EdgeDeleteHoverEventDetail>(
+          'edgeDeleteHover',
+          {
+            detail: hoverDetail,
+          }
+        );
+        document.dispatchEvent(hoverEvent);
       };
 
       const handleMouseUp = (upEvent: globalThis.MouseEvent) => {
@@ -83,6 +103,17 @@ export const useEdgeDrag = ({
           }
         );
         document.dispatchEvent(dropEvent);
+
+        const hoverResetEvent = new CustomEvent<EdgeDeleteHoverEventDetail>(
+          'edgeDeleteHover',
+          {
+            detail: {
+              ...dragDataRef.current,
+              hoveredTarget: null,
+            },
+          }
+        );
+        document.dispatchEvent(hoverResetEvent);
       };
 
       document.addEventListener('mousemove', handleMouseMove);

@@ -111,9 +111,11 @@ export const useGraphContentHandlers = ({
     onConnect,
     handleEdgeDeleteDrop,
     handleEdgeDeleteStart,
+    handleEdgeDeleteHover,
     isDraggingEdge,
     edgeDragSourceId,
     edgeDragOriginalTargetId,
+    edgeDragHoveredTargetId,
     retractLine: edgeRetractLine,
   } = useGraphConnectionHandlers({
     layoutId,
@@ -135,7 +137,11 @@ export const useGraphContentHandlers = ({
     }
   }, [edges, tempEdges.length, setTempEdges]);
 
-  useEdgeDeleteEvents(handleEdgeDeleteDrop, handleEdgeDeleteStart);
+  useEdgeDeleteEvents(
+    handleEdgeDeleteDrop,
+    handleEdgeDeleteStart,
+    handleEdgeDeleteHover
+  );
 
   const { handleNodeDoubleClick, handleNoteDrop } = useGraphSelectionHandlers({
     screenToFlowPosition,
@@ -197,6 +203,7 @@ export const useGraphContentHandlers = ({
       retractLine: edgeRetractLine ?? connectRetractLine,
       edgeDragSourceId,
       edgeDragOriginalTargetId,
+      edgeDragHoveredTargetId,
     },
     actions: {
       handleNodeDragStart,
