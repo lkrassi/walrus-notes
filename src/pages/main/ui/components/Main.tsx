@@ -35,7 +35,7 @@ export const Main = () => {
           'bg-bg',
           'text-foreground',
           'flex',
-          'h-[100dvh]',
+          'h-dvh',
           'flex-col',
           'overflow-hidden'
         )}

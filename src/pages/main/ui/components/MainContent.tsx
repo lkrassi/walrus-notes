@@ -79,7 +79,7 @@ export const MainContent = memo(function DashboardContent({
       )}
     >
       {visibleTabs.length > 0 && (
-        <div className={cn('px-2', 'pt-2', 'md:px-3', 'md:pt-3')}>
+        <div className={cn('md:p-2')}>
           <Tabs
             tabs={visibleTabs}
             onTabClick={handleTabClick}
@@ -92,9 +92,7 @@ export const MainContent = memo(function DashboardContent({
         className={cn(
           'min-h-0',
           'flex-1',
-          'px-2',
-          'pb-2',
-          'md:px-3',
+          'md:p-2',
           visibleTabs.length > 0 ? 'pt-2' : 'pt-2 md:pt-3'
         )}
       >

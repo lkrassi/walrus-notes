@@ -19,6 +19,7 @@ export const useDraftOrchestrator = ({
   noteId,
   draft,
   debounceMs = 800,
+  autoSyncEnabled = true,
   onRemoteDraft,
   onRemoteCommit,
   ws,
@@ -266,6 +267,9 @@ export const useDraftOrchestrator = ({
   ]);
 
   useEffect(() => {
+    if (!autoSyncEnabled) {
+      return;
+    }
     if (!noteId) return;
 
     refs.skipInitialSendRef.current = true;
@@ -334,7 +338,7 @@ export const useDraftOrchestrator = ({
     }
 
     send(debounced);
-  }, [debounced, noteId, send, debounceMs, refs]);
+  }, [autoSyncEnabled, debounced, noteId, send, debounceMs, refs]);
 
   const commitDraft = useCallback(
     (value?: string) => {

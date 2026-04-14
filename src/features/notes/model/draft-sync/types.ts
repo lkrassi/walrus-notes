@@ -12,6 +12,7 @@ export interface UseDraftSyncOpts {
   noteId: string | null | undefined;
   draft: string;
   debounceMs?: number;
+  autoSyncEnabled?: boolean;
   onRemoteDraft?: (newDraft: string) => void;
   onRemoteCommit?: () => void;
 }

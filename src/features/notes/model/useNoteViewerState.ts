@@ -89,8 +89,33 @@ export const useNoteViewerState = ({
   }, [handleCancel]);
 
   const handleDiscardAction = useCallback(() => {
-    void handleDiscard();
-  }, [handleDiscard]);
+    void (async () => {
+      const discarded = await handleDiscard();
+      if (!discarded) {
+        return;
+      }
+
+      const ytext = collaborativeEditorRef.current?.ytext;
+      if (!ytext) {
+        return;
+      }
+
+      try {
+        const persistedPayload = note.payload ?? '';
+        ytext.doc?.transact(() => {
+          if (ytext.length > 0) {
+            ytext.delete(0, ytext.length);
+          }
+
+          if (persistedPayload.length > 0) {
+            ytext.insert(0, persistedPayload);
+          }
+        }, 'discard-reset');
+      } catch {
+        // Ignore Yjs reset errors: local payload is already restored by handleDiscard.
+      }
+    })();
+  }, [collaborativeEditorRef, handleDiscard, note.payload]);
 
   useEffect(() => {
     if (!isEditing) {

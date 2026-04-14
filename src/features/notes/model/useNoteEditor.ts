@@ -64,6 +64,7 @@ export const useNoteEditor = (
   } = useDraftSync({
     noteId: note.id,
     draft: payload,
+    autoSyncEnabled: isEditing,
   });
 
   const { showError } = useNoteNotifications();

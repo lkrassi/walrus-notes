@@ -17,6 +17,7 @@ export const useDraftSync = ({
   noteId,
   draft,
   debounceMs = 800,
+  autoSyncEnabled = true,
   onRemoteDraft,
   onRemoteCommit,
 }: UseDraftSyncOpts): UseDraftSyncReturn => {
@@ -45,6 +46,7 @@ export const useDraftSync = ({
     noteId,
     draft,
     debounceMs,
+    autoSyncEnabled,
     onRemoteDraft,
     onRemoteCommit,
     ws,
