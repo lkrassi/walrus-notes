@@ -7,9 +7,11 @@ import { YjsTextarea, type YjsTextareaHandle } from './YjsTextarea';
 interface CollaborativeEditorProps {
   ytext: Y.Text | null;
   fallbackContent?: string;
+  isContentLoaded?: boolean;
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
+  onSyncedContentChange?: (content: string) => void;
   onCursorChange?: (selectionStart: number, selectionEnd: number) => void;
   onlineUsers?: Map<number, AwarenessUser>;
   currentUserId: string;
@@ -18,9 +20,11 @@ interface CollaborativeEditorProps {
 export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
   ytext,
   fallbackContent = '',
+  isContentLoaded = false,
   disabled = false,
   className,
   onContentChange,
+  onSyncedContentChange,
   onCursorChange,
   onlineUsers,
   currentUserId,
@@ -41,8 +45,10 @@ export const CollaborativeEditor: FC<CollaborativeEditorProps> = ({
         ref={editorRef}
         ytext={ytext}
         fallbackContent={fallbackContent}
+        isContentLoaded={isContentLoaded}
         disabled={disabled}
         onContentChange={onContentChange}
+        onSyncedContentChange={onSyncedContentChange}
         onCursorChange={onCursorChange}
         onlineUsers={onlineUsers}
         currentUserId={currentUserId}

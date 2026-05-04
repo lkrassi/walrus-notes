@@ -20,6 +20,7 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
     userName,
     initialContent,
     onPayloadChange,
+    onSyncedPayloadChange,
     onOnlineUsersChange,
     collaborativeEditorRef,
   }) {
@@ -54,6 +55,7 @@ export const CollaborativeEditorPanel: FC<CollaborativeEditorPanelProps> = memo(
           disabled={isLoading}
           className={cn('h-full', 'pt-3')}
           onContentChange={onPayloadChange}
+          onSyncedContentChange={onSyncedPayloadChange}
           onOnlineUsersChange={onOnlineUsersChange}
         />
       </div>

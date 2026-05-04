@@ -35,6 +35,7 @@ export const useNoteEditor = (
     payload,
     setPayload,
     setPayloadState,
+    resetHydrationGuards,
     handleEdit,
     handleCancel,
     hasAnyDraftMarker,
@@ -65,6 +66,7 @@ export const useNoteEditor = (
     noteId: note.id,
     draft: payload,
     autoSyncEnabled: isEditing,
+    initialPrevSent: originalPayload,
   });
 
   const { showError } = useNoteNotifications();
@@ -107,6 +109,8 @@ export const useNoteEditor = (
     hasServerDraft: hasAnyDraftMarker,
     setTitle,
     setPayload,
+    setPayloadState,
+    resetHydrationGuards,
     handleEdit,
     handleCancel,
     handleSave,

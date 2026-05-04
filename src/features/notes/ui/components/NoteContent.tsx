@@ -13,6 +13,7 @@ interface NoteContentProps {
   payload: string;
   isLoading: boolean;
   onPayloadChange: (payload: string) => void;
+  onSyncedPayloadChange?: (payload: string) => void;
   note?: Note;
   layoutId?: string;
   canWrite?: boolean;
@@ -41,6 +42,7 @@ export const NoteContent: FC<NoteContentProps> = ({
   payload,
   isLoading,
   onPayloadChange,
+  onSyncedPayloadChange,
   note,
   layoutId,
   canWrite,
@@ -123,6 +125,7 @@ export const NoteContent: FC<NoteContentProps> = ({
     <NoteContentEditorSplit
       payload={payload}
       onPayloadChange={onPayloadChange}
+      onSyncedPayloadChange={onSyncedPayloadChange}
       isLoading={isLoading}
       textareaRef={textareaRef}
       previewRef={previewRef}

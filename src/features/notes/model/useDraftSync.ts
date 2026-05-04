@@ -20,6 +20,7 @@ export const useDraftSync = ({
   autoSyncEnabled = true,
   onRemoteDraft,
   onRemoteCommit,
+  initialPrevSent,
 }: UseDraftSyncOpts): UseDraftSyncReturn => {
   const ctx = useWSContext();
   const ws = ctx;
@@ -49,6 +50,7 @@ export const useDraftSync = ({
     autoSyncEnabled,
     onRemoteDraft,
     onRemoteCommit,
+    initialPrevSent,
     ws,
     storedDraft,
     layouts,

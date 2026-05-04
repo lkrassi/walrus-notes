@@ -13,6 +13,8 @@ export interface UseDraftSyncOpts {
   draft: string;
   debounceMs?: number;
   autoSyncEnabled?: boolean;
+  /** Optional initial persisted payload to treat as already-sent */
+  initialPrevSent?: string | null;
   onRemoteDraft?: (newDraft: string) => void;
   onRemoteCommit?: () => void;
 }

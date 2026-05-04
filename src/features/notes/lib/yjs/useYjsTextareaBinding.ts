@@ -5,16 +5,20 @@ interface UseYjsTextareaBindingProps {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   ytext: Y.Text | null;
   fallbackContent?: string;
+  isContentLoaded?: boolean;
   disabled?: boolean;
   onContentChange?: (content: string) => void;
+  onSyncedContentChange?: (content: string) => void;
 }
 
 export const useYjsTextareaBinding = ({
   textareaRef,
   ytext,
   fallbackContent = '',
+  isContentLoaded = false,
   disabled = false,
   onContentChange,
+  onSyncedContentChange,
 }: UseYjsTextareaBindingProps) => {
   const isYjsBindingDebug = import.meta.env.DEV;
   const logBinding = (message: string, extra?: Record<string, unknown>) => {
@@ -28,26 +32,37 @@ export const useYjsTextareaBinding = ({
     console.log(`[yjs-binding][len:${ytext.length}] ${message}`);
   };
   const onContentChangeRef = useRef(onContentChange);
+  const onSyncedContentChangeRef = useRef(onSyncedContentChange);
   const isLocalChangeRef = useRef(false);
   const lastRemoteContentRef = useRef<string>('');
 
   useEffect(() => {
     onContentChangeRef.current = onContentChange;
   }, [onContentChange]);
+  useEffect(() => {
+    onSyncedContentChangeRef.current = onSyncedContentChange;
+  }, [onSyncedContentChange]);
 
   useEffect(() => {
     if (!textareaRef.current) return;
 
     if (ytext) {
       const initialContent = ytext.toString();
+      const shouldKeepFallback =
+        !isContentLoaded && initialContent.length === 0;
+      const nextContent = shouldKeepFallback ? fallbackContent : initialContent;
 
-      if (textareaRef.current.value !== initialContent) {
+      if (textareaRef.current.value !== nextContent) {
         logBinding('sync textarea from ytext on mount/update', {
           prevTextareaLength: textareaRef.current.value.length,
-          newLength: initialContent.length,
+          newLength: nextContent.length,
+          isContentLoaded,
         });
-        textareaRef.current.value = initialContent;
-        lastRemoteContentRef.current = initialContent;
+        textareaRef.current.value = nextContent;
+        lastRemoteContentRef.current = nextContent;
+        if (!shouldKeepFallback && onSyncedContentChangeRef.current) {
+          onSyncedContentChangeRef.current(initialContent);
+        }
       }
       return;
     }
@@ -55,6 +70,9 @@ export const useYjsTextareaBinding = ({
     if (fallbackContent && textareaRef.current.value === '') {
       textareaRef.current.value = fallbackContent;
       lastRemoteContentRef.current = fallbackContent;
+      if (onSyncedContentChangeRef.current) {
+        onSyncedContentChangeRef.current(fallbackContent);
+      }
     }
   }, [ytext, textareaRef, fallbackContent]);
   useEffect(() => {
@@ -138,6 +156,7 @@ export const useYjsTextareaBinding = ({
 
       const transaction = (event as { transaction?: { local?: boolean } })
         .transaction as { local?: boolean } | undefined;
+      const isLocal = !!(transaction && transaction.local);
 
       logBinding('observe ytext change', {
         localTransaction: !!transaction?.local,
@@ -153,8 +172,6 @@ export const useYjsTextareaBinding = ({
       let newSelectionEnd = selectionEnd;
 
       try {
-        const isLocal = !!(transaction && transaction.local);
-
         if (!isLocal) {
           const delta = event.delta as
             | Array<{ retain?: number; insert?: string; delete?: number }>
@@ -235,8 +252,11 @@ export const useYjsTextareaBinding = ({
         );
       }
 
-      if (onContentChangeRef.current) {
+      if (isLocal && onContentChangeRef.current) {
         onContentChangeRef.current(newContent);
+      }
+      if (onSyncedContentChangeRef.current) {
+        onSyncedContentChangeRef.current(newContent);
       }
     };
 

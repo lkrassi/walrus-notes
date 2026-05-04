@@ -75,6 +75,12 @@ export const useNoteEditorState = ({
     setIsEditing(true);
   };
 
+  const resetHydrationGuards = () => {
+    ignoreDraftRef.current = false;
+    suppressAutoEditUntilRef.current = null;
+    lastLocalUpdateRef.current = null;
+  };
+
   const handleCancel = () => {
     setTitle(note.title ?? '');
     setIsEditing(false);
@@ -200,6 +206,7 @@ export const useNoteEditorState = ({
     payload,
     setPayload,
     setPayloadState,
+    resetHydrationGuards,
     handleEdit,
     handleCancel,
     hasServerDraft,

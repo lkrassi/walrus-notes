@@ -6,6 +6,7 @@ import type { CollaborativeNoteEditorHandle } from '../CollaborativeNoteEditor';
 export interface EditorSplitProps {
   payload: string;
   onPayloadChange: (p: string) => void;
+  onSyncedPayloadChange?: (p: string) => void;
   isLoading: boolean;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   previewRef: RefObject<HTMLDivElement | null>;
@@ -60,6 +61,7 @@ export interface EditorPanelProps {
 export interface CollaborativeEditorPanelProps {
   payload: string;
   onPayloadChange: (p: string) => void;
+  onSyncedPayloadChange?: (p: string) => void;
   isLoading: boolean;
   isEditing: boolean;
   isResizing: boolean;

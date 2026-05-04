@@ -28,7 +28,7 @@ export const NoteViewer = memo(function NoteViewer({
     title,
     isLoading,
     setPayload,
-    handleEdit,
+    handleEditAction,
     hasLocalChanges,
     hasServerDraft,
     isSaving,
@@ -48,6 +48,7 @@ export const NoteViewer = memo(function NoteViewer({
     handleCancelAction,
     handleDiscardAction,
     payload,
+    handleSyncedPayloadChange,
   } = useNoteViewerState({ note: effectiveNote, canWrite, onNoteUpdated });
 
   return (
@@ -71,7 +72,7 @@ export const NoteViewer = memo(function NoteViewer({
           isLoading={isLoading}
           hasLocalChanges={hasLocalChanges}
           hasServerDraft={hasServerDraft}
-          onEdit={handleEdit}
+          onEdit={handleEditAction}
           onSave={handleSaveAction}
           onCancel={handleCancelAction}
           onDiscardConfirm={handleDiscardAction}
@@ -94,6 +95,7 @@ export const NoteViewer = memo(function NoteViewer({
             payload={payload}
             isLoading={isLoading}
             onPayloadChange={setPayload}
+            onSyncedPayloadChange={handleSyncedPayloadChange}
             note={effectiveNote}
             layoutId={resolvedLayoutId}
             canWrite={canWrite}
@@ -104,7 +106,7 @@ export const NoteViewer = memo(function NoteViewer({
             isSynced={isSynced}
             lastSavedAt={lastSavedAt}
             isFullscreen={isFullscreen}
-            onEdit={handleEdit}
+            onEdit={handleEditAction}
             onSave={handleSaveAction}
             onCancel={handleCancelAction}
             onDiscardConfirm={handleDiscardAction}

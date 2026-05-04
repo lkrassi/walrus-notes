@@ -1,4 +1,4 @@
-import { useUser } from '@/entities';
+import { useLazyGetNotesQuery, useUser } from '@/entities';
 import type { Note } from '@/entities/note';
 import type { AwarenessUser } from '@/shared/lib/react/collaboration';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -23,6 +23,9 @@ export const useNoteViewerState = ({
     payload,
     isLoading,
     setPayload,
+    setPayloadState,
+    setTitle,
+    resetHydrationGuards,
     handleEdit,
     handleCancel,
     handleSave,
@@ -37,6 +40,7 @@ export const useNoteViewerState = ({
 
   const { exportNote } = useExportNote();
   const collaborativeEditorRef = useRef<CollaborativeNoteEditorHandle>(null);
+  const [getNotes] = useLazyGetNotesQuery();
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<number, AwarenessUser>>(
@@ -77,6 +81,13 @@ export const useNoteViewerState = ({
     [canWrite, setPayload]
   );
 
+  const handleSyncedPayloadChange = useCallback(
+    (content: string) => {
+      setPayloadState(content);
+    },
+    [setPayloadState]
+  );
+
   const handleSaveAction = useCallback(
     (overrideTitle?: string) => {
       void handleSave(overrideTitle);
@@ -87,6 +98,50 @@ export const useNoteViewerState = ({
   const handleCancelAction = useCallback(() => {
     void handleCancel();
   }, [handleCancel]);
+
+  const handleEditAction = useCallback(() => {
+    if (!canWrite) {
+      return;
+    }
+
+    void (async () => {
+      resetHydrationGuards();
+
+      const layoutId = note.layoutId;
+      if (layoutId) {
+        try {
+          const response = await getNotes({ layoutId, page: 1 }).unwrap();
+          const freshNote = response?.data?.find(item => item.id === note.id);
+          if (freshNote) {
+            const freshTitle = freshNote.title ?? note.title ?? '';
+            const freshDraft = freshNote.draft?.trim() ?? '';
+            const freshPayload = freshNote.payload ?? '';
+            const freshEditorContent =
+              freshDraft.length > 0 && freshDraft !== freshPayload
+                ? freshDraft
+                : freshPayload;
+
+            setTitle(freshTitle);
+            setPayloadState(freshEditorContent);
+          }
+        } catch {
+          // If refetch failed, continue with existing state to keep edit flow available.
+        }
+      }
+
+      handleEdit();
+    })();
+  }, [
+    canWrite,
+    getNotes,
+    handleEdit,
+    note.id,
+    note.layoutId,
+    note.title,
+    resetHydrationGuards,
+    setPayloadState,
+    setTitle,
+  ]);
 
   const handleDiscardAction = useCallback(() => {
     void (async () => {
@@ -151,7 +206,8 @@ export const useNoteViewerState = ({
     payload,
     isLoading,
     setPayload,
-    handleEdit,
+    handleSyncedPayloadChange,
+    handleEditAction,
     hasLocalChanges,
     hasServerDraft,
     isSaving,

@@ -8,7 +8,6 @@ export const useYjsCollaboration = (
   noteId: string,
   userId: string,
   userName: string,
-  initialContent?: string,
   onStatusChange?: (status: 'connected' | 'disconnected') => void
 ) => {
   const isPresenceDebug = import.meta.env.DEV;
@@ -32,8 +31,6 @@ export const useYjsCollaboration = (
 
   const ydocRef = useRef<Y.Doc | null>(null);
   const hasInitializedRef = useRef(false);
-  const hasOptimisticInitRef = useRef(false);
-  const firstInitialContentRef = useRef<string | undefined>(undefined);
   const lastOnlineUsersKeyRef = useRef<string>('');
   const onStatusChangeRef = useRef(onStatusChange);
   const providerRef = useRef<WebsocketProvider | null>(null);
@@ -185,12 +182,7 @@ export const useYjsCollaboration = (
       return;
     }
 
-    if (initialContent !== undefined) {
-      firstInitialContentRef.current = initialContent;
-    }
-
     hasInitializedRef.current = false;
-    hasOptimisticInitRef.current = false;
     setIsContentLoaded(false);
 
     const ydoc = new Y.Doc();
@@ -256,70 +248,14 @@ export const useYjsCollaboration = (
 
       logPresence('provider sync received', {
         isSynced,
-        textLengthBeforeInit: ytextInstance.length,
+        textLength: ytextInstance.length,
       });
 
-      const seedContent = firstInitialContentRef.current ?? '';
-      const markContentAsLoaded = () => {
-        if (hasInitializedRef.current) {
-          return;
-        }
-
-        hasInitializedRef.current = true;
-        setIsContentLoaded(true);
-        logPresence('content marked as loaded', {
-          textLengthAfterInit: ytextInstance.length,
-        });
-      };
-
-      if (ytextInstance.length !== 0 || seedContent.length === 0) {
-        markContentAsLoaded();
-        return;
-      }
-
-      window.setTimeout(() => {
-        if (hasInitializedRef.current) {
-          return;
-        }
-
-        if (ytextInstance.length === 0) {
-          const awarenessStates = providerInstance.awareness.getStates() as Map<
-            number,
-            AwarenessUser
-          >;
-          const knownUserIds = Array.from(awarenessStates.values())
-            .map(state => state.user?.id)
-            .filter((id): id is string => typeof id === 'string' && !!id)
-            .filter((value, index, arr) => arr.indexOf(value) === index)
-            .sort();
-
-          const leaderUserId = knownUserIds[0] ?? userId;
-          const isLeader = leaderUserId === userId;
-
-          if (isLeader) {
-            ydoc.transact(() => {
-              ytextInstance.insert(0, seedContent);
-            }, 'local-initial-seed');
-
-            logPresence('seeded empty ytext from initialContent after sync', {
-              seededLength: seedContent.length,
-              leaderUserId,
-              knownUsersCount: knownUserIds.length,
-            });
-          } else {
-            logPresence(
-              'skip initial seed: another user is selected as seed leader',
-              {
-                currentUserId: userId,
-                leaderUserId,
-                knownUsersCount: knownUserIds.length,
-              }
-            );
-          }
-        }
-
-        markContentAsLoaded();
-      }, 250);
+      hasInitializedRef.current = true;
+      setIsContentLoaded(true);
+      logPresence('content marked as loaded', {
+        textLengthAfterSync: ytextInstance.length,
+      });
     };
 
     providerInstance.on('status', handleStatus);
@@ -445,9 +381,11 @@ export const useYjsCollaboration = (
             if (!user) return '';
 
             const cursor = state.cursor;
-            const cursorKey = cursor
-              ? `${cursor.selectionStart}:${cursor.selectionEnd}`
-              : 'no-cursor';
+            const cursorKey = state.isLocal
+              ? 'local-cursor'
+              : cursor
+                ? `${cursor.selectionStart}:${cursor.selectionEnd}`
+                : 'no-cursor';
 
             return `${state.clientId ?? ''}:${user.id}:${user.name}:${user.color ?? ''}:${cursorKey}`;
           })
@@ -469,6 +407,7 @@ export const useYjsCollaboration = (
 
     providerInstance.awareness.on('change', handleAwarenessChange);
     providerInstance.awareness.on('update', handleAwarenessChange);
+    ytextInstance.observe(handleAwarenessChange);
 
     handleAwarenessChange();
 
@@ -480,6 +419,7 @@ export const useYjsCollaboration = (
       providerInstance.off('sync', handleSync);
       providerInstance.awareness.off('change', handleAwarenessChange);
       providerInstance.awareness.off('update', handleAwarenessChange);
+      ytextInstance.unobserve(handleAwarenessChange);
       providerInstance.destroy();
       ydoc.destroy();
       ydocRef.current = null;

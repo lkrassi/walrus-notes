@@ -11,6 +11,8 @@ type UseDraftOrchestratorOpts = UseDraftSyncDeps & {
   noteId: string | null | undefined;
   draft: string;
   debounceMs?: number;
+  autoSyncEnabled?: boolean;
+  initialPrevSent?: string | null;
   onRemoteDraft?: (newDraft: string) => void;
   onRemoteCommit?: () => void;
 };
@@ -20,6 +22,7 @@ export const useDraftOrchestrator = ({
   draft,
   debounceMs = 800,
   autoSyncEnabled = true,
+  initialPrevSent = null,
   onRemoteDraft,
   onRemoteCommit,
   ws,
@@ -281,13 +284,18 @@ export const useDraftOrchestrator = ({
         refs.pendingRef.current = null;
         refs.awaitingAckRef.current = null;
         refs.prevSentRef.current = normalizedStoredDraft;
+      } else if (initialPrevSent != null) {
+        // If there is no stored draft, initialize prevSentRef from the
+        // last-known committed payload to avoid immediately resending
+        // an empty or out-of-date draft after remount.
+        refs.prevSentRef.current = initialPrevSent;
       }
     } catch (error) {
       reportDraftSyncError('storedDraft:hydrate', error, { noteId });
     }
 
     return () => {};
-  }, [noteId, refs, storedDraft]);
+  }, [noteId, refs, storedDraft, autoSyncEnabled, initialPrevSent]);
 
   useDraftListeners({
     ws,

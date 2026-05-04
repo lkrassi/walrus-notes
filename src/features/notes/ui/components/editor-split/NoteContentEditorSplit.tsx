@@ -16,6 +16,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
   function NoteContentEditorSplit({
     payload,
     onPayloadChange,
+    onSyncedPayloadChange,
     isLoading,
     textareaRef,
     previewRef,
@@ -80,6 +81,7 @@ export const NoteContentEditorSplit: FC<EditorSplitProps> = memo(
                     key='collaborative-editor'
                     payload={payload}
                     onPayloadChange={onPayloadChange}
+                    onSyncedPayloadChange={onSyncedPayloadChange}
                     isLoading={isLoading}
                     isEditing={isEditing}
                     isResizing={isResizing}

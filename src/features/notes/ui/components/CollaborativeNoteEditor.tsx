@@ -29,6 +29,7 @@ interface CollaborativeNoteEditorProps {
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
+  onSyncedContentChange?: (content: string) => void;
   onOnlineUsersChange?: (users: Map<number, AwarenessUser>) => void;
 }
 
@@ -43,6 +44,7 @@ export const CollaborativeNoteEditor = memo(
         disabled,
         className,
         onContentChange,
+        onSyncedContentChange,
         onOnlineUsersChange,
       },
       ref
@@ -75,13 +77,7 @@ export const CollaborativeNoteEditor = memo(
       );
 
       const { ytext, onlineUsers, isContentLoaded, updateCursorAwareness } =
-        useYjsCollaboration(
-          noteId,
-          userId,
-          userName,
-          initialContent,
-          handleStatusChange
-        );
+        useYjsCollaboration(noteId, userId, userName, handleStatusChange);
 
       useImperativeHandle(
         ref,
@@ -131,9 +127,11 @@ export const CollaborativeNoteEditor = memo(
             <CollaborativeEditor
               ytext={ytext}
               fallbackContent={initialContent}
+              isContentLoaded={isContentLoaded}
               disabled={disabled || !isContentLoaded}
               className={cn('h-full')}
               onContentChange={onContentChange}
+              onSyncedContentChange={onSyncedContentChange}
               onCursorChange={updateCursorAwareness}
               onlineUsers={onlineUsers}
               currentUserId={userId}

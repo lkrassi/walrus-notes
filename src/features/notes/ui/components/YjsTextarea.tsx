@@ -21,9 +21,11 @@ export interface YjsTextareaHandle {
 interface YjsTextareaProps {
   ytext: Y.Text | null;
   fallbackContent?: string;
+  isContentLoaded?: boolean;
   disabled?: boolean;
   className?: string;
   onContentChange?: (content: string) => void;
+  onSyncedContentChange?: (content: string) => void;
   onCursorChange?: (selectionStart: number, selectionEnd: number) => void;
   onlineUsers?: Map<number, AwarenessUser>;
   currentUserId: string;
@@ -34,9 +36,11 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
     {
       ytext,
       fallbackContent = '',
+      isContentLoaded = false,
       disabled = false,
       className,
       onContentChange,
+      onSyncedContentChange,
       onCursorChange,
       onlineUsers,
       currentUserId,
@@ -51,8 +55,10 @@ export const YjsTextarea = forwardRef<YjsTextareaHandle, YjsTextareaProps>(
       textareaRef,
       ytext,
       fallbackContent,
+      isContentLoaded,
       disabled,
       onContentChange,
+      onSyncedContentChange,
     });
 
     useImperativeHandle(
