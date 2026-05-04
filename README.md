@@ -192,39 +192,27 @@ Fallback-экран на случай недоступности части пр
 
 ### 1. Главный экран приложения
 
-```md
 ![Главный экран Walrus Notes](./public/docs/main.png)
-```
 
 ### 2. Режим совместного редактирования
 
-```md
 ![Режим совместного редактирования](./public/docs/collaboration.png)
-```
 
 ### 3. Граф заметок
 
-```md
 ![Граф заметок](./public/docs/graph-view.png)
-```
 
 ### 4. Dashboard с правами доступа
 
-```md
 ![Dashboard прав доступа](./public/docs/dashboard-permissions.png)
-```
 
 ### 5. Профиль и настройки
 
-```md
 ![Профиль и настройки](./public/docs/profile-settings.png)
-```
 
 ### 6. Авторизация
 
-```md
 ![Авторизация](./public/docs/auth.png)
-```
 
 ## Требования к окружению
 
