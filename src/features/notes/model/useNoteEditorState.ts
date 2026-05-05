@@ -21,11 +21,8 @@ export const useNoteEditorState = ({
 
     const initialServerDraft = note.draft?.trim() ?? '';
     const initialStoreDraft = storeDraft?.trim() ?? '';
-    const initialHasServerDraft =
-      !!initialServerDraft.length &&
-      initialServerDraft !== (note.payload ?? '');
-    const initialHasStoreDraft =
-      !!initialStoreDraft.length && initialStoreDraft !== (note.payload ?? '');
+    const initialHasServerDraft = initialServerDraft !== (note.payload ?? '');
+    const initialHasStoreDraft = initialStoreDraft !== (note.payload ?? '');
 
     return initialHasServerDraft || initialHasStoreDraft;
   });
@@ -41,10 +38,8 @@ export const useNoteEditorState = ({
   const serverDraft = note.draft?.trim() ?? '';
   const storedDraftText = storeDraft?.trim() ?? '';
 
-  const hasServerDraft =
-    !!serverDraft.length && serverDraft !== (note.payload ?? '');
-  const hasStoreDraft =
-    !!storedDraftText.length && storedDraftText !== (note.payload ?? '');
+  const hasServerDraft = serverDraft !== (note.payload ?? '');
+  const hasStoreDraft = storedDraftText !== (note.payload ?? '');
   const hasAnyDraftMarker = !!storedDraftText.length || !!serverDraft.length;
 
   let initialPayload = originalPayload;
