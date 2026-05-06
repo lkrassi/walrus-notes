@@ -19,7 +19,7 @@ interface SharedPermissionsSectionProps {
     value: boolean,
     fallback: PermissionItem
   ) => void;
-  handleDelete: (permissionId: string) => void;
+  handleDelete: (permissionId: string) => Promise<boolean>;
   handleUpdate: (permissionId: string, draft: EditablePermissionState) => void;
 }
 

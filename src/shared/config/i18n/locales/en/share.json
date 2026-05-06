@@ -58,6 +58,21 @@
       "update": "Save",
       "revokeReceived": "Revoke",
       "revokeShared": "Revoke"
+    },
+    "confirmation": {
+      "cancel": "Cancel",
+      "processing": "Processing...",
+      "warning": "This action cannot be undone. Access will need to be granted again if needed.",
+      "shared": {
+        "title": "Revoke access",
+        "description": "User {{userName}} will lose access to \"{{targetName}}\".",
+        "confirm": "Revoke access"
+      },
+      "received": {
+        "title": "Decline access",
+        "description": "You will lose access to \"{{targetName}}\" granted by {{userName}}.",
+        "confirm": "Decline access"
+      }
     }
   }
 }

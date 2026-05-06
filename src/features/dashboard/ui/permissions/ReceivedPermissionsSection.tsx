@@ -8,7 +8,7 @@ interface ReceivedPermissionsSectionProps {
   received: PermissionItem[];
   t: (key: string, options?: Record<string, unknown>) => string;
   isDeleting: boolean;
-  onDelete: (permissionId: string) => void;
+  onDelete: (permissionId: string) => Promise<boolean>;
 }
 
 export const ReceivedPermissionsSection: FC<

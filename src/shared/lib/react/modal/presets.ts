@@ -4,6 +4,7 @@ export const MODAL_SIZE_PRESETS: Record<string, ModalOptions['size']> = {
   layoutCreate: 'lg',
   layoutUpdate: 'lg',
   layoutDelete: 'lg',
+  permissionsDelete: 'lg',
   shareAccess: 'lg',
   authForgotPasswordEmail: 'lg',
   authConfirmCode: 'lg',

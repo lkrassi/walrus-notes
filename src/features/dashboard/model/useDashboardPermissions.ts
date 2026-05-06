@@ -241,8 +241,10 @@ export function useDashboardPermissions() {
     try {
       await deletePermission({ permissionId }).unwrap();
       showSuccess('Доступ удалён');
+      return true;
     } catch {
       showError('Ошибка удаления');
+      return false;
     }
   };
 

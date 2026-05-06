@@ -1,11 +1,13 @@
 import type { PermissionItem } from '@/entities';
 import { cn } from '@/shared/lib/core';
+import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { Shield, Trash2 } from 'lucide-react';
-import { type FC } from 'react';
+import { type FC, type MouseEvent } from 'react';
 import { createFriendlyTargetName, kindLabelKey } from '../../../lib/utils';
 import type { EditablePermissionState } from '../../../model';
 import { PermissionAccessBlocks } from './PermissionAccessBlocks';
 import { PermissionAvatar } from './PermissionAvatar';
+import { PermissionDeleteConfirmationForm } from './PermissionDeleteConfirmationForm';
 
 interface SharedPermissionCardProps {
   permission: PermissionItem;
@@ -21,7 +23,7 @@ interface SharedPermissionCardProps {
     permission: PermissionItem
   ) => void;
   onUpdate: (permissionId: string, draft: EditablePermissionState) => void;
-  onDelete: (permissionId: string) => void;
+  onDelete: (permissionId: string) => Promise<boolean>;
   t: (key: string, options?: Record<string, unknown>) => string;
 }
 
@@ -38,6 +40,8 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   onDelete,
   t,
 }) => {
+  const { openModalFromTrigger } = useModalActions();
+
   const targetName = createFriendlyTargetName(
     permission.targetTitle,
     permission.kind,
@@ -46,7 +50,18 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
     t('share:permissionsDashboard.targetType.unknown')
   );
 
-  const handleDelete = () => onDelete(permission.id);
+  const handleDelete = openModalFromTrigger(
+    <PermissionDeleteConfirmationForm
+      permission={permission}
+      mode='shared'
+      isLoading={disabledDelete}
+      onConfirm={onDelete}
+    />,
+    {
+      title: t('share:permissionsDashboard.confirmation.shared.title'),
+      size: MODAL_SIZE_PRESETS.permissionsDelete,
+    }
+  );
 
   return (
     <article
@@ -62,7 +77,9 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
 
         <button
           type='button'
-          onClick={handleDelete}
+          onClick={(event: MouseEvent<HTMLButtonElement>) => {
+            handleDelete(event);
+          }}
           disabled={disabledDelete}
           className={cn(
             'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium',
