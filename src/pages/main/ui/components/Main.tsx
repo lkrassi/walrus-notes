@@ -1,3 +1,4 @@
+import { WSEventHandlerComponent } from '@/app/providers/wsEventsProvider';
 import type { Note } from '@/entities/note';
 import { cn } from '@/shared/lib/core';
 import { WebSocketProvider } from '@/shared/lib/react/websocket';
@@ -54,6 +55,7 @@ export const Main = () => {
             )}
           >
             <FileTreeProvider>
+              <WSEventHandlerComponent />
               <Sidebar
                 ref={sidebarRef}
                 onItemSelect={handleItemSelect}
