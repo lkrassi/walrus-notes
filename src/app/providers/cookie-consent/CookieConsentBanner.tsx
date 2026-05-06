@@ -60,7 +60,6 @@ export const CookieConsentBanner = () => {
               </Link>
             </p>
           </div>
-
           <label className='border-border dark:border-dark-border bg-bg dark:bg-dark-bg inline-flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium'>
             <input
               type='checkbox'

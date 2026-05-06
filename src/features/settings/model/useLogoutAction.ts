@@ -1,12 +1,12 @@
 import { useDrafts, useTabs, useUser } from '@/entities';
 import { apiSlice } from '@/shared/api';
+import { useAppDispatch } from '@/widgets/hooks';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export const useLogoutAction = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { resetProfile } = useUser();
   const { clear: clearTabsState } = useTabs();
   const { clear: clearDraftsState } = useDrafts();

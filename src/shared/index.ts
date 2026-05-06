@@ -45,7 +45,7 @@ export {
   DropdownContent,
   DropdownTrigger,
   Input,
-  Skeleton,
+  Loader,
   Textarea,
 } from './ui';
 export type {

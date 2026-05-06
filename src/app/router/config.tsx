@@ -1,15 +1,8 @@
+import { Loader } from '@/shared/ui';
 import { lazy, Suspense } from 'react';
 import { GuestRoute } from './GuestRoute';
-import { PublicPageFrameSkeleton } from './PageFrameSkeletons';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AppRoutes } from './routes';
-import {
-  AuthPageSkeleton,
-  DashboardPageSkeleton,
-  FirstPageSkeleton,
-  MainPageSkeleton,
-  SettingsPageSkeleton,
-} from './RouteSkeletons';
 
 const FirstPage = lazy(() =>
   import('pages/first/ui/FirstPage').then(m => ({ default: m.FirstPage }))
@@ -41,11 +34,23 @@ const CookiesPage = lazy(() =>
   }))
 );
 
+const PublicPageLoader = () => (
+  <div className='flex min-h-[80vh] items-center justify-center px-4 py-10'>
+    <Loader />
+  </div>
+);
+
+const AppPageLoader = () => (
+  <div className='flex min-h-screen items-center justify-center px-4 py-10'>
+    <Loader />
+  </div>
+);
+
 export const appRoutesConfig = [
   {
     path: AppRoutes.FIRST,
     element: (
-      <Suspense fallback={<FirstPageSkeleton />}>
+      <Suspense fallback={<PublicPageLoader />}>
         <FirstPage />
       </Suspense>
     ),
@@ -54,7 +59,7 @@ export const appRoutesConfig = [
     path: AppRoutes.AUTH,
     element: (
       <GuestRoute>
-        <Suspense fallback={<AuthPageSkeleton />}>
+        <Suspense fallback={<PublicPageLoader />}>
           <AuthPage />
         </Suspense>
       </GuestRoute>
@@ -63,7 +68,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.CONSENT,
     element: (
-      <Suspense fallback={<PublicPageFrameSkeleton />}>
+      <Suspense fallback={<PublicPageLoader />}>
         <CookiesPage />
       </Suspense>
     ),
@@ -72,7 +77,7 @@ export const appRoutesConfig = [
     path: AppRoutes.MAIN,
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<MainPageSkeleton />}>
+        <Suspense fallback={<AppPageLoader />}>
           <MainPage />
         </Suspense>
       </ProtectedRoute>
@@ -82,7 +87,7 @@ export const appRoutesConfig = [
     path: AppRoutes.DASHBOARD,
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<DashboardPageSkeleton />}>
+        <Suspense fallback={<AppPageLoader />}>
           <DashboardPage />
         </Suspense>
       </ProtectedRoute>
@@ -92,7 +97,7 @@ export const appRoutesConfig = [
     path: AppRoutes.PROFILE,
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<SettingsPageSkeleton />}>
+        <Suspense fallback={<AppPageLoader />}>
           <ProfilePage />
         </Suspense>
       </ProtectedRoute>
@@ -101,7 +106,7 @@ export const appRoutesConfig = [
   {
     path: AppRoutes.UNAVAILABLE,
     element: (
-      <Suspense fallback={<PublicPageFrameSkeleton />}>
+      <Suspense fallback={<PublicPageLoader />}>
         <UnavailablePage />
       </Suspense>
     ),

@@ -1,4 +1,4 @@
-import { ShareModal } from '@/features/dashboard/ui/ShareModal';
+import { ShareModal } from '@/features/dashboard';
 import { ShareModalProviderContext } from '@/features/share';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
 import { useLocalization } from '@/widgets/hooks/useLocalization';

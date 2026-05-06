@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/core';
-import { Button, Skeleton } from '@/shared/ui';
+import { Button, Loader } from '@/shared/ui';
 import { FileText, Network, Sparkles } from 'lucide-react';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -180,35 +180,10 @@ export const MainContentState = ({
       return (
         <div
           className={cn(
-            'h-full',
-            'overflow-y-auto',
-            'bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%),linear-gradient(180deg,rgba(11,15,21,0.03),transparent_35%)]',
-            'p-4',
-            'space-y-4',
-            'flex',
-            'flex-col',
-            'justify-center'
+            'h-full overflow-y-auto bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%),linear-gradient(180deg,rgba(11,15,21,0.03),transparent_35%)] p-4'
           )}
         >
-          <div
-            className={cn(
-              'rounded-3xl',
-              'border',
-              'border-border/70',
-              'bg-surface/70',
-              'p-4'
-            )}
-          >
-            <Skeleton className='mb-3 h-6 w-1/2 rounded-md' />
-            <Skeleton className='h-4 w-5/6 rounded-md' />
-          </div>
-          <Skeleton className='h-12 w-full rounded-2xl' />
-          <div className='grid grid-cols-2 gap-2'>
-            <Skeleton className='h-24 w-full rounded-2xl' />
-            <Skeleton className='h-24 w-full rounded-2xl' />
-            <Skeleton className='h-24 w-full rounded-2xl' />
-            <Skeleton className='h-24 w-full rounded-2xl' />
-          </div>
+          <Loader className='min-h-full' />
         </div>
       );
     }

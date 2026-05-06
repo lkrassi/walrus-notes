@@ -4,12 +4,16 @@ import {
   selectLastGeneratedLink,
   useGenerateLinkMutation,
 } from '@/entities';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 export const useShareLink = () => {
-  const dispatch = useDispatch();
-  const generatedLink = useSelector(selectLastGeneratedLink);
+  const dispatch = useAppDispatch();
+  const generatedLink = useAppSelector(state =>
+    selectLastGeneratedLink(
+      state as Parameters<typeof selectLastGeneratedLink>[0]
+    )
+  );
   const [generateLink] = useGenerateLinkMutation<GenerateLinkRequest>();
 
   const resetLink = useCallback(() => {

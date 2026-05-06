@@ -5,19 +5,9 @@ import {
   setUserProfile,
   syncAuthFromStorage,
 } from '@/entities/user';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks';
 import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
-type RootStateLike = {
-  user: {
-    accessToken: string | null;
-    refreshToken: string | null;
-    profile: {
-      id?: string;
-    } | null;
-  };
-};
 
 const normalizeStoredUserId = (value: string | null) => {
   if (!value || value === 'undefined' || value === 'null') {
@@ -28,11 +18,11 @@ const normalizeStoredUserId = (value: string | null) => {
 };
 
 export const useAuthSync = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const invalidSessionHandledRef = useRef(false);
-  const { accessToken, refreshToken, profile } = useSelector(
-    (state: RootStateLike) => state.user
+  const { accessToken, refreshToken, profile } = useAppSelector(
+    state => state.user
   );
 
   const storedUserId =

@@ -1,7 +1,7 @@
 import type { Layout } from '@/entities/layout';
 import { cn } from '@/shared/lib/core';
 import { useModalContentContext } from '@/shared/lib/react/modal';
-import { Button, RenderWithState, Skeleton } from '@/shared/ui';
+import { Button, Loader, RenderWithState } from '@/shared/ui';
 import { FolderIcon } from '@/shared/ui/icons/FolderIcon';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,18 +40,7 @@ export const FolderSelectModal = ({
     <RenderWithState
       isInitialLoading={isInitialLoading}
       isRefreshing={isRefreshing}
-      skeleton={
-        <div className='space-y-4 p-6'>
-          <Skeleton className='mx-auto h-7 w-48 max-w-full' />
-          <Skeleton className='h-12 w-full rounded-xl' />
-          <Skeleton className='h-12 w-full rounded-xl' />
-          <Skeleton className='h-12 w-full rounded-xl' />
-          <div className='flex justify-center gap-3 pt-2'>
-            <Skeleton className='h-10 w-28 rounded-lg' />
-            <Skeleton className='h-10 w-32 rounded-lg' />
-          </div>
-        </div>
-      }
+      loader={<Loader className='min-h-72 p-6' />}
       overlay={
         <div className='pointer-events-none absolute inset-0' aria-hidden />
       }

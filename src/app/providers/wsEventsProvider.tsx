@@ -1,9 +1,11 @@
+import type { RootState } from '@/app/store';
+import { store } from '@/app/store';
 import { layoutApi } from '@/entities/layout';
 import { notesApi } from '@/entities/note';
 import { closeLayoutTabs, closeTabsByItemId } from '@/entities/tab';
 import { useWSContext } from '@/shared/lib/react/websocket';
+import { useAppDispatch, useAppSelector } from '@/widgets/hooks';
 import { useFileTree } from '@/widgets/hooks/FileTreeContext';
-import { useAppDispatch, useAppSelector } from '@/widgets/hooks/redux';
 import { useEffect, useRef, type FC, type ReactNode } from 'react';
 
 const WS_EVENTS = {
@@ -34,21 +36,15 @@ export const WSEventHandlerComponent: FC = () => {
   const ws = useWSContext();
   const dispatch = useAppDispatch();
   const fileTree = useFileTree();
-  const currentUserId = useAppSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state: any) => state.user.profile?.id
-  );
+  const currentUserId = useAppSelector(state => state.user.profile?.id);
 
   // grab a snapshot of the redux state to inspect cached queries when needed
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rootState = useAppSelector((state: any) => state);
+  const rootState = store.getState() as RootState;
   const graphEventTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const graphEventIdsRef = useRef<Set<string>>(new Set());
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (typeof (window as any) !== 'undefined') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any)._wsDebug = {
+  if (typeof window !== 'undefined') {
+    (window as Window & { _wsDebug?: unknown })._wsDebug = {
       currentUserId,
       shouldIgnoreEvent: (payload: unknown) => {
         if (!payload || typeof payload !== 'object') return false;
@@ -101,8 +97,8 @@ export const WSEventHandlerComponent: FC = () => {
             const posedCache = notesApi.endpoints.getPosedNotes.select({
               layoutId: l.id,
             })(rootState);
-            const posedContains = posedCache.data?.data?.some((n: any) =>
-              ids.includes(n.id)
+            const posedContains = posedCache.data?.data?.some(
+              (n: { id: string }) => ids.includes(n.id)
             );
             if (posedContains) layoutIdsToInvalidate.add(l.id);
 
@@ -110,17 +106,17 @@ export const WSEventHandlerComponent: FC = () => {
               layoutId: l.id,
               page: 1,
             })(rootState);
-            const notesContains = notesCache.data?.data?.some((n: any) =>
-              ids.includes(n.id)
+            const notesContains = notesCache.data?.data?.some(
+              (n: { id: string }) => ids.includes(n.id)
             );
             if (notesContains) layoutIdsToInvalidate.add(l.id);
-          } catch (e) {
-            // ignore cache inspection errors
+          } catch {
+            // ignore
           }
         }
 
         if (layoutIdsToInvalidate.size > 0) {
-          const tags: Array<unknown> = [];
+          const tags: Array<{ type: 'Notes'; id: string }> = [];
           for (const lid of layoutIdsToInvalidate) {
             tags.push({ type: 'Notes', id: `posed-${lid}` });
             tags.push({ type: 'Notes', id: `unposed-${lid}` });
@@ -130,7 +126,7 @@ export const WSEventHandlerComponent: FC = () => {
         } else {
           dispatch(notesApi.util.invalidateTags(['Notes']));
         }
-      } catch (e) {
+      } catch {
         dispatch(notesApi.util.invalidateTags(['Notes']));
       }
 

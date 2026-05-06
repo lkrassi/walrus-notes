@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 interface RenderWithStateProps {
   isInitialLoading: boolean;
   isRefreshing?: boolean;
-  skeleton: ReactNode;
+  loader: ReactNode;
   overlay?: ReactNode;
   blockingOverlay?: boolean;
   children: ReactNode;
@@ -14,7 +14,7 @@ interface RenderWithStateProps {
 export const RenderWithState = ({
   isInitialLoading,
   isRefreshing = false,
-  skeleton,
+  loader,
   overlay,
   blockingOverlay = false,
   children,
@@ -25,7 +25,7 @@ export const RenderWithState = ({
   return (
     <div className={cn('relative h-full w-full', className)}>
       {isInitialLoading ? (
-        <div className='h-full w-full'>{skeleton}</div>
+        <div className='h-full w-full'>{loader}</div>
       ) : (
         <div className='h-full w-full'>{children}</div>
       )}

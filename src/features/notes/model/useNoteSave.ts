@@ -1,8 +1,8 @@
 import { removeDraft, useUpdateNoteMutation } from '@/entities';
 import type { Note } from '@/entities/note';
 import { handleError } from '@/shared';
+import { useAppDispatch } from '@/widgets/hooks';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { updateNoteCacheFields } from './draft-sync/cacheUpdates';
 
 interface UseNoteSaveParams {
@@ -54,7 +54,7 @@ export const useNoteSave = ({
   showError,
   logDraft,
 }: UseNoteSaveParams) => {
-  const dispatch = useDispatch() as (action: unknown) => unknown;
+  const dispatch = useAppDispatch() as (action: unknown) => unknown;
   const [updateNote] = useUpdateNoteMutation();
   const isLoading = false;
   const handleNoteError = useCallback(

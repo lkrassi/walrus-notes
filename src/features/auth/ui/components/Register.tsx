@@ -1,6 +1,6 @@
 import { useRegisterMutation, useSendConfirmCodeMutation } from '@/entities';
 import { useNotifications } from '@/entities/notification';
-import { Button, Input, Skeleton } from '@/shared';
+import { Button, Input, Loader } from '@/shared';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalContext } from '@/shared/lib/react';
 import { useMobileForm } from '@/shared/lib/react/hooks';
@@ -72,10 +72,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
           <Suspense
             fallback={
               <div className={cn('space-y-4', 'p-6')}>
-                <Skeleton className='mx-auto h-7 w-56 max-w-full' />
-                <Skeleton className='h-12 w-full rounded-xl' />
-                <Skeleton className='h-12 w-full rounded-xl' />
-                <Skeleton className='h-11 w-full rounded-xl' />
+                <Loader className='min-h-52' />
               </div>
             }
           >

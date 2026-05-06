@@ -10,52 +10,77 @@ const PublicHeaderComponent = () => {
   const { t } = useLocalization();
 
   return (
-    <header
-      className={cn(
-        'bg-bg',
-        'dark:bg-dark-bg',
-        'border-border',
-        'dark:border-dark-border',
-        'flex',
-        'flex-col',
-        'items-center',
-        'gap-4',
-        'border-b',
-        'max-md:py-5',
-        'md:flex-row',
-        'md:items-center',
-        'md:justify-between',
-        'md:px-5'
-      )}
-    >
-      <Link
-        to='/'
-        className={cn('flex', 'items-center', 'max-md:flex-col')}
-        aria-label={t('common:header.goToHomepage')}
+    <div className='px-5 pt-5'>
+      <header
+        className={cn(
+          'border-border',
+          'bg-bg/90',
+          'sticky',
+          'top-0',
+          'z-40',
+          'border',
+          'backdrop-blur',
+          'rounded-xl'
+        )}
       >
-        <img
-          src={logo}
-          alt={t('common:header.logoAlt')}
+        <div
           className={cn(
-            'h-12',
-            'w-12',
-            'min-h-12',
-            'min-w-12',
-            'max-h-12',
-            'max-w-12'
+            'flex',
+            'h-14',
+            'items-center',
+            'justify-between',
+            'px-3',
+            'md:px-4'
           )}
-          loading='lazy'
-        />
-        <div className={cn('flex', 'items-baseline', 'gap-1')}>
-          <h1 className={cn('text-text', 'dark:text-dark-text')}>Walrus</h1>
-          <h1 className={cn('text-primary')}>Notes</h1>
+        >
+          <Link
+            to='/main'
+            className={cn('flex', 'items-center')}
+            aria-label={t('common:header.goToHomepage')}
+          >
+            <img
+              src={logo}
+              alt={t('common:header.logoAlt')}
+              className={cn(
+                'h-10',
+                'w-10',
+                'min-h-10',
+                'min-w-10',
+                'max-h-10',
+                'max-w-10'
+              )}
+              loading='lazy'
+            />
+            <div className={cn('flex', 'items-baseline', 'gap-1')}>
+              <h1
+                className={cn(
+                  'text-text',
+                  'text-lg',
+                  'leading-none',
+                  'font-bold'
+                )}
+              >
+                Walrus
+              </h1>
+              <h1
+                className={cn(
+                  'text-primary',
+                  'text-lg',
+                  'leading-none',
+                  'font-bold'
+                )}
+              >
+                Notes
+              </h1>
+            </div>
+          </Link>
+          <div className={cn('flex', 'gap-x-2')}>
+            <ThemeSwitcher />
+            <LanguageSwitcher />
+          </div>
         </div>
-      </Link>
-      <div className={cn('flex', 'gap-x-2')}>
-        <ThemeSwitcher />
-        <LanguageSwitcher />
-      </div>
-    </header>
+      </header>
+    </div>
   );
 };
 

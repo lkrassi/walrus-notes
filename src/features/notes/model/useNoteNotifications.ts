@@ -1,12 +1,12 @@
 import { addNotification } from '@/entities';
 import { i18n } from '@/shared/config/i18n';
+import { useAppDispatch } from '@/widgets/hooks';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
 type DispatchLike = (action: unknown) => unknown;
 
 export const useNoteNotifications = () => {
-  const dispatch = useDispatch() as DispatchLike;
+  const dispatch = useAppDispatch() as DispatchLike;
 
   const isRecordNotFound422 = useCallback((error: unknown): boolean => {
     if (!error || typeof error !== 'object') return false;

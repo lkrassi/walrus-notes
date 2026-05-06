@@ -1,7 +1,7 @@
 import { notesApi, useGetNotesQuery, useLazyGetNotesQuery } from '@/entities';
 import type { Note } from '@/entities/note';
+import { useAppSelector } from '@/widgets/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 type NotesApiRootState = Parameters<
   ReturnType<typeof notesApi.endpoints.getNotes.select>
@@ -62,7 +62,9 @@ export const useFileTreeLayoutNotesData = ({
     }
   }, [notesResponse, isExpanded, layoutId, onNotesLoaded]);
 
-  const apiState = useSelector((state: NotesApiRootState) => state.api);
+  const apiState = useAppSelector(
+    state => state.api as NotesApiRootState['api']
+  );
 
   const allNotes = useMemo(() => {
     const notesMap = new Map<string, Note>();
