@@ -90,6 +90,10 @@ const createValidationSchema = (t: (key: string) => string) => ({
       .string()
       .oneOf([yup.ref('password')], t('auth:validation.passwordsMustMatch'))
       .required(t('auth:validation.confirmPasswordRequired')),
+    acceptPersonalData: yup
+      .boolean()
+      .oneOf([true], t('auth:validation.personalDataConsent'))
+      .required(t('auth:validation.personalDataConsent')),
   }),
 });
 

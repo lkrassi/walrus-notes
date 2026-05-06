@@ -1,0 +1,33 @@
+{
+  "title": "Cookies and data processing",
+  "intro": "This page explains what Walrus Notes stores, why it is needed, and what you agree to when you continue using the site.",
+  "sections": {
+    "cookies": {
+      "title": "What cookies we use",
+      "items": [
+        "Session cookies to keep you signed in.",
+        "Preference cookies to remember language and theme.",
+        "Consent cookies to remember that you have seen this notice."
+      ]
+    },
+    "data": {
+      "title": "Personal data processing",
+      "items": [
+        "Registration data such as email, username, and password hash are used to create and maintain your account.",
+        "Workspace and note data are processed to provide collaborative note-taking features.",
+        "We do not use your data for advertising and do not share it with third parties except where required to run the service."
+      ]
+    },
+    "rights": {
+      "title": "What you can do",
+      "items": [
+        "Review, change, or delete your account data from the app settings when available.",
+        "Clear browser cookies at any time to reset local consent state.",
+        "Contact the project owners if you want more details about storage or processing."
+      ]
+    }
+  },
+  "footer": "By continuing to use Walrus Notes, you acknowledge this information and agree to the described processing.",
+  "back": "Back to login",
+  "home": "Home"
+}

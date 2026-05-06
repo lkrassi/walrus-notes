@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 
 import enAuth from './locales/en/auth.json';
 import enCommon from './locales/en/common.json';
+import enCookies from './locales/en/cookies.json';
 import enFileTree from './locales/en/fileTree.json';
 import enFirst from './locales/en/first.json';
 import enLayout from './locales/en/layout.json';
@@ -14,6 +15,7 @@ import enSettings from './locales/en/settings.json';
 import enShare from './locales/en/share.json';
 import ruAuth from './locales/ru/auth.json';
 import ruCommon from './locales/ru/common.json';
+import ruCookies from './locales/ru/cookies.json';
 import ruFileTree from './locales/ru/fileTree.json';
 import ruFirst from './locales/ru/first.json';
 import ruLayout from './locales/ru/layout.json';
@@ -31,6 +33,7 @@ const resources = {
     fileTree: enFileTree,
     layout: enLayout,
     first: enFirst,
+    cookies: enCookies,
     notes: enNotes,
     profile: enProfile,
     settings: enSettings,
@@ -43,6 +46,7 @@ const resources = {
     fileTree: ruFileTree,
     layout: ruLayout,
     first: ruFirst,
+    cookies: ruCookies,
     notes: ruNotes,
     profile: ruProfile,
     settings: ruSettings,

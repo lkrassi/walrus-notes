@@ -1,4 +1,5 @@
 import { AuthSyncProvider } from '@/app/providers/AuthSyncProvider';
+import { CookieConsentBanner } from '@/app/providers/cookie-consent/CookieConsentBanner';
 import { ModalProvider } from '@/app/providers/modal';
 import { NotificationsContainer } from '@/app/providers/notifications';
 import { ShareModalProvider } from '@/app/providers/share/ShareModalProvider';
@@ -33,6 +34,7 @@ export const App = () => {
                       />
                     ))}
                   </Routes>
+                  <CookieConsentBanner />
                 </ShareModalProvider>
                 <NotificationsContainer />
               </ModalProvider>

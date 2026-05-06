@@ -35,6 +35,11 @@ const UnavailablePage = lazy(() =>
     default: m.UnavailablePage,
   }))
 );
+const CookiesPage = lazy(() =>
+  import('pages/cookies/ui/CookiesPage').then(m => ({
+    default: m.CookiesPage,
+  }))
+);
 
 export const appRoutesConfig = [
   {
@@ -53,6 +58,14 @@ export const appRoutesConfig = [
           <AuthPage />
         </Suspense>
       </GuestRoute>
+    ),
+  },
+  {
+    path: AppRoutes.CONSENT,
+    element: (
+      <Suspense fallback={<PublicPageFrameSkeleton />}>
+        <CookiesPage />
+      </Suspense>
     ),
   },
   {

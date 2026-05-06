@@ -25,6 +25,12 @@
     "hide": "Hide password",
     "show": "Show password"
   },
+  "cookieConsent": {
+    "title": "We use cookies",
+    "description": "Walrus Notes uses essential cookies to keep you signed in, remember preferences, and improve the workspace experience.",
+    "agree": "I agree to the use of cookies",
+    "readMore": "Read more"
+  },
   "header": {
     "goToHomepage": "Go to homepage",
     "logoAlt": "Walrus Notes logo",
