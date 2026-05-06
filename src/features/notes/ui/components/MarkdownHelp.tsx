@@ -6,7 +6,7 @@ import { HelpSection } from './HelpSection';
 export const MarkdownHelp: FC = () => {
   return (
     <div className={cn('max-w-4xl')}>
-      <div className={cn('space-y-8')}>
+      <div className={cn('grid', 'gap-4', 'sm:grid-cols-2')}>
         {markdownHelpSections.map(section => (
           <HelpSection key={section.titleKey} section={section} />
         ))}

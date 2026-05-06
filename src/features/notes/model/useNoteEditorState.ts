@@ -14,15 +14,21 @@ export const useNoteEditorState = ({
   storeDraft,
   logDraft,
 }: UseNoteEditorStateParams) => {
+  const originalPayload = note.payload ?? '';
+  const serverDraftText = note.draft ?? '';
+  const storedDraftTextRaw = storeDraft ?? '';
+
+  const hasMeaningfulDraft = (draftText: string) => {
+    return draftText.trim().length > 0 && draftText !== originalPayload;
+  };
+
   const [isEditing, setIsEditing] = useState(() => {
     if (!canWrite) {
       return false;
     }
 
-    const initialServerDraft = note.draft?.trim() ?? '';
-    const initialStoreDraft = storeDraft?.trim() ?? '';
-    const initialHasServerDraft = initialServerDraft !== (note.payload ?? '');
-    const initialHasStoreDraft = initialStoreDraft !== (note.payload ?? '');
+    const initialHasServerDraft = hasMeaningfulDraft(serverDraftText);
+    const initialHasStoreDraft = hasMeaningfulDraft(storedDraftTextRaw);
 
     return initialHasServerDraft || initialHasStoreDraft;
   });
@@ -32,15 +38,15 @@ export const useNoteEditorState = ({
   const suppressAutoEditUntilRef = useRef<number | null>(null);
   const lastLocalCommitRef = useRef<number | null>(null);
   const lastLocalUpdateRef = useRef<number | null>(null);
-  const hydratedServerPayloadRef = useRef<string>(note.payload ?? '');
+  const hydratedServerPayloadRef = useRef<string>(originalPayload);
 
-  const originalPayload = note.payload ?? '';
-  const serverDraft = note.draft?.trim() ?? '';
-  const storedDraftText = storeDraft?.trim() ?? '';
+  const serverDraft = serverDraftText;
+  const storedDraftText = storedDraftTextRaw;
 
-  const hasServerDraft = serverDraft !== (note.payload ?? '');
-  const hasStoreDraft = storedDraftText !== (note.payload ?? '');
-  const hasAnyDraftMarker = !!storedDraftText.length || !!serverDraft.length;
+  const hasServerDraft = hasMeaningfulDraft(serverDraft);
+  const hasStoreDraft = hasMeaningfulDraft(storedDraftText);
+  const hasAnyDraftMarker =
+    !!storedDraftText.trim().length || !!serverDraft.trim().length;
 
   let initialPayload = originalPayload;
   if (!ignoreDraftRef.current) {

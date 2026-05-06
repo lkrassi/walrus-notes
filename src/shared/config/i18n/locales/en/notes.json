@@ -57,7 +57,6 @@
   "paragraphsAndBreaks": "Paragraphs and line breaks",
   "paragraphsDescription": "Separate paragraphs with a blank line.",
   "paragraphsExample": "First paragraph\n\nSecond paragraph",
-  "lineBreaksDescription": "Use two spaces at the end of a line to force a line break.",
   "headings": "Headings",
   "headingsExample": "# Heading 1\n## Heading 2\n### Heading 3",
   "textFormatting": "Text formatting",

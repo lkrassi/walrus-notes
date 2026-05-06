@@ -114,12 +114,13 @@ export const useNoteViewerState = ({
           const freshNote = response?.data?.find(item => item.id === note.id);
           if (freshNote) {
             const freshTitle = freshNote.title ?? note.title ?? '';
-            const freshDraft = freshNote.draft?.trim() ?? '';
+            const freshDraft = freshNote.draft ?? '';
             const freshPayload = freshNote.payload ?? '';
-            const freshEditorContent =
-              freshDraft.length > 0 && freshDraft !== freshPayload
-                ? freshDraft
-                : freshPayload;
+            const hasMeaningfulFreshDraft =
+              freshDraft.trim().length > 0 && freshDraft !== freshPayload;
+            const freshEditorContent = hasMeaningfulFreshDraft
+              ? freshDraft
+              : freshPayload;
 
             setTitle(freshTitle);
             setPayloadState(freshEditorContent);

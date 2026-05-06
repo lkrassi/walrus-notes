@@ -57,7 +57,6 @@
   "paragraphsAndBreaks": "Абзацы и переносы строк",
   "paragraphsDescription": "Разделяйте абзацы пустой строкой.",
   "paragraphsExample": "Первый абзац\n\nВторой абзац",
-  "lineBreaksDescription": "Добавьте два пробела в конце строки, чтобы принудительно сделать перенос.",
   "headings": "Заголовки",
   "headingsExample": "# Заголовок 1\n## Заголовок 2\n### Заголовок 3",
   "textFormatting": "Форматирование текста",

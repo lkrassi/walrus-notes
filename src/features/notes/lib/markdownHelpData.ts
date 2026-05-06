@@ -10,7 +10,6 @@ export const markdownHelpSections: HelpSectionData[] = [
     titleKey: 'notes:paragraphsAndBreaks',
     descriptionKey: 'notes:paragraphsDescription',
     exampleKey: 'notes:paragraphsExample',
-    noteKey: 'notes:lineBreaksDescription',
   },
   {
     titleKey: 'notes:headings',

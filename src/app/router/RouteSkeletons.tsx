@@ -41,8 +41,8 @@ const PublicHeaderSkeleton = () => {
     >
       <PublicBrandSkeleton />
       <div className='flex items-center gap-2'>
-        <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
-        <Skeleton className='h-9 w-14 rounded-none sm:w-16' />
+        <Skeleton className='h-9 w-14 rounded-lg sm:w-16' />
+        <Skeleton className='h-9 w-14 rounded-lg sm:w-16' />
       </div>
     </header>
   );
@@ -99,7 +99,7 @@ export const FirstPageSkeleton = () => {
             <Skeleton className='mb-3 h-6 w-full rounded-none max-lg:mx-auto' />
             <Skeleton className='mb-3 h-6 w-full rounded-none max-lg:mx-auto' />
             <Skeleton className='mb-3 h-6 w-11/12 rounded-none max-lg:mx-auto' />
-            <Skeleton className='h-12 w-44 rounded-none max-lg:mx-auto' />
+            <Skeleton className='h-12 w-44 rounded-lg max-lg:mx-auto' />
           </section>
 
           <section className='min-w-0 flex-1 max-lg:w-full'>
@@ -132,8 +132,8 @@ export const AuthPageSkeleton = () => {
       <main className='flex min-h-[80vh] items-center justify-center px-4 py-10'>
         <div className='w-full max-w-md space-y-4'>
           <div className='mb-8 flex gap-x-5 p-2 max-sm:flex-col max-sm:gap-y-5'>
-            <Skeleton className='h-11 flex-1 rounded-none' />
-            <Skeleton className='h-11 flex-1 rounded-none' />
+            <Skeleton className='h-11 flex-1 rounded-lg' />
+            <Skeleton className='h-11 flex-1 rounded-lg' />
           </div>
           <div
             className={cn(
@@ -141,11 +141,11 @@ export const AuthPageSkeleton = () => {
             )}
           >
             <Skeleton className='mx-auto mb-6 h-10 w-64 max-w-full rounded-none' />
-            <Skeleton className='mb-3 h-4 w-16 rounded-none' />
-            <Skeleton className='mb-4 h-14 w-full rounded-none' />
+            <Skeleton className='mb-3 h-4 w-16 rounded-lg' />
+            <Skeleton className='mb-4 h-14 w-full rounded-xl' />
             <Skeleton className='mb-3 h-4 w-14 rounded-none' />
-            <Skeleton className='mb-4 h-14 w-full rounded-none' />
-            <Skeleton className='h-12 w-full rounded-none' />
+            <Skeleton className='mb-4 h-14 w-full rounded-xl' />
+            <Skeleton className='h-12 w-full rounded-lg' />
             <Skeleton className='mx-auto mt-5 h-5 w-36 rounded-none' />
           </div>
         </div>
