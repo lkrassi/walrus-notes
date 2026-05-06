@@ -9,6 +9,7 @@ import { Field, Form, Formik } from 'formik';
 import { Eye, EyeOff } from 'lucide-react';
 import { type FC, Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { usePasswordVisibility } from '../../lib/hooks';
 import { createAuthValidationSchemas } from '../../model/validationSchemas';
 const ConfirmCodeModal = lazy(() =>
@@ -25,7 +26,6 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const { showSuccess, showError } = useNotifications();
   const [register, { isLoading: isSubmitting }] = useRegisterMutation();
   const [sendConfirmCode] = useSendConfirmCodeMutation();
-  const passwordVisibility = usePasswordVisibility();
   const confirmPasswordVisibility = usePasswordVisibility();
   const { t } = useTranslation();
   const { openModal, closeModal } = useModalContext();
@@ -36,17 +36,22 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const confirmPasswordPlaceholder = t(
     'auth:register.confirmPasswordPlaceholder'
   );
-
+  const passwordVisibility = usePasswordVisibility();
   const initialValues = {
     email: '',
     username: '',
     password: '',
     confirmPassword: '',
+    acceptPersonalData: false,
   };
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
-      const { confirmPassword: _confirmPassword, ...registerPayload } = values;
+      const {
+        confirmPassword: _confirmPassword,
+        acceptPersonalData: _acceptPersonalData,
+        ...registerPayload
+      } = values;
       await register(registerPayload).unwrap();
 
       try {
@@ -314,6 +319,42 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                         )}
                       </button>
                     </div>
+                    <p className='text-danger-foreground min-h-5 text-xs'>
+                      {meta.touched && meta.error ? meta.error : ' '}
+                    </p>
+                  </div>
+                )}
+              </Field>
+
+              <Field name='acceptPersonalData' type='checkbox'>
+                {({ field, meta }: FieldProps<boolean>) => (
+                  <div className='space-y-1'>
+                    <label
+                      className={cn(
+                        'border-border dark:border-dark-border bg-bg/60 dark:bg-dark-bg/60',
+                        'flex items-start gap-3 rounded-xl border p-3 text-sm'
+                      )}
+                    >
+                      <input
+                        type='checkbox'
+                        checked={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        className='border-border text-primary focus:ring-primary mt-1 h-4 w-4 rounded'
+                        disabled={formikSubmitting || isSubmitting}
+                        required
+                      />
+                      <span className='text-muted-foreground leading-relaxed'>
+                        {t('auth:register.personalDataConsent')}{' '}
+                        <Link
+                          to='/consent'
+                          className='text-primary underline underline-offset-4 hover:opacity-80'
+                        >
+                          {t('auth:register.personalDataConsentLink')}
+                        </Link>
+                      </span>
+                    </label>
                     <p className='text-danger-foreground min-h-5 text-xs'>
                       {meta.touched && meta.error ? meta.error : ' '}
                     </p>
