@@ -171,18 +171,8 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
     >
       {({ isSubmitting: formikSubmitting, isValid, dirty }) => (
         <Form ref={formRef}>
-          <div
-            className={cn(
-              'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
-              'mx-auto w-full max-w-md rounded-2xl border p-4 backdrop-blur-xl'
-            )}
-          >
-            <h2
-              className={cn(
-                'text-text mb-3 text-center text-2xl font-bold',
-                'dark:text-dark-text'
-              )}
-            >
+          <div className='auth-panel'>
+            <h2 className='text-text dark:text-dark-text mb-3 text-center text-2xl font-bold'>
               {t('auth:register.title')}
             </h2>
 
@@ -255,7 +245,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={passwordVisibility.toggleVisibility}
-                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-lg p-1 focus-visible:ring-2 focus-visible:outline-none'
+                        className='password-toggle-btn'
                         aria-label={
                           passwordVisibility.isVisible
                             ? t('common:password.hide')
@@ -301,7 +291,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                       <button
                         type='button'
                         onClick={confirmPasswordVisibility.toggleVisibility}
-                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-lg p-1 focus-visible:ring-2 focus-visible:outline-none'
+                        className='password-toggle-btn'
                         aria-label={
                           confirmPasswordVisibility.isVisible
                             ? t('common:password.hide')
@@ -338,7 +328,7 @@ export const Register: FC<RegisterProps> = ({ onSwitchToLogin }) => {
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         name={field.name}
-                        className='border-border text-primary focus:ring-primary mt-1 h-4 w-4 rounded'
+                        className='check-base'
                         disabled={formikSubmitting || isSubmitting}
                         required
                       />

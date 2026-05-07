@@ -6,7 +6,6 @@ import {
 } from '@/entities';
 import { useNotifications } from '@/entities/notification';
 import { Button, Input } from '@/shared';
-import { cn } from '@/shared/lib/core';
 import {
   MODAL_SIZE_PRESETS,
   useModalActions,
@@ -188,18 +187,8 @@ export const Login: FC<LoginProps> = () => {
     >
       {({ isSubmitting: formikSubmitting, isValid, dirty }) => (
         <Form ref={formRef}>
-          <div
-            className={cn(
-              'border-border dark:border-dark-border bg-bg/70 dark:bg-dark-bg/70',
-              'mx-auto w-full max-w-md rounded-2xl border p-4 backdrop-blur-xl'
-            )}
-          >
-            <h2
-              className={cn(
-                'text-text mb-3 text-center text-2xl font-bold',
-                'dark:text-dark-text'
-              )}
-            >
+          <div className='auth-panel'>
+            <h2 className='text-text dark:text-dark-text mb-3 text-center text-2xl font-bold'>
               {t('auth:login.title')}
             </h2>
 
@@ -247,7 +236,7 @@ export const Login: FC<LoginProps> = () => {
                       <button
                         type='button'
                         onClick={passwordVisibility.toggleVisibility}
-                        className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded-lg p-1 focus-visible:ring-2 focus-visible:outline-none'
+                        className='password-toggle-btn'
                         aria-label={
                           passwordVisibility.isVisible
                             ? t('common:password.hide')
@@ -294,7 +283,7 @@ export const Login: FC<LoginProps> = () => {
                 <button
                   type='button'
                   onClick={handleForgotPassword}
-                  className='text-foreground focus-visible:ring-ring rounded border-0 bg-transparent px-1 hover:underline focus-visible:ring-2 focus-visible:outline-none'
+                  className='ghost-link-btn'
                   title={t('auth:login.forgotPassword') || 'Забыл пароль'}
                 >
                   {t('auth:login.forgotPassword')}

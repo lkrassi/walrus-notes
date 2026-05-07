@@ -38,13 +38,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         placeholder={placeholder}
         disabled={disabled}
         className={cn(
-          'w-full rounded-lg border px-3 py-2 text-base outline-none',
-          'border-border bg-surface text-foreground placeholder:text-muted-foreground',
-          'disabled:bg-interactive-disabled-bg disabled:text-interactive-disabled-fg',
-          ring
-            ? 'focus:ring-ring focus:border-transparent focus:ring-2'
-            : 'focus:border-ring',
-          isError && 'border-danger focus:ring-danger',
+          'input-base',
+          !ring && 'focus:border-ring focus:ring-0',
+          isError && 'error',
           className
         )}
         autoFocus={autoFocus}

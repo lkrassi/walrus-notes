@@ -29,52 +29,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref
   ) => {
-    const baseClasses = `
-      text-base
-      focus:outline-none
-      disabled:bg-interactive-disabled-bg
-      disabled:text-interactive-disabled-fg
-      disabled:opacity-70
-      disabled:cursor-not-allowed
-      resize-none
-      w-full
-    `;
-
-    let colorClasses = '';
-    switch (variant) {
-      case 'default':
-        colorClasses = `
-          border border-border
-          bg-surface
-          text-foreground
-          placeholder:text-muted-foreground
-          focus:ring-2
-          focus:ring-ring
-        `;
-        break;
-      case 'error':
-        colorClasses = `
-          border border-danger
-          bg-surface
-          text-foreground
-          placeholder:text-danger
-          focus:ring-2
-          focus:ring-danger
-        `;
-        break;
-      default:
-        colorClasses = `
-          border border-border
-          bg-surface
-          text-foreground
-          placeholder:text-muted-foreground
-          focus:ring-2
-          focus:ring-ring
-        `;
-    }
-
-    const classes = cn(baseClasses, colorClasses, className);
-
     return (
       <textarea
         ref={ref}
@@ -83,7 +37,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         placeholder={placeholder}
         rows={rows}
         disabled={disabled}
-        className={classes}
+        className={cn(
+          'input-base resize-none',
+          variant === 'error' && 'error placeholder:text-danger',
+          className
+        )}
         {...rest}
       />
     );

@@ -1,6 +1,7 @@
 import { UpdateLayoutForm } from '@/features/layout';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
+import { IconButton } from '@/shared/ui';
 import { Maximize2, Minimize2, Network } from 'lucide-react';
 import { memo, useCallback, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,46 +62,19 @@ export const GraphHeader: FC<GraphHeaderProps> = memo(function GraphHeader({
   );
 
   return (
-    <div
-      className={cn(
-        'flex',
-        'min-h-12',
-        'items-center',
-        'justify-between',
-        'gap-2',
-        'border-b',
-        'border-border',
-        'bg-bg/90',
-        'px-3',
-        'py-1.5',
-        'backdrop-blur-sm'
-      )}
-    >
-      <div className={cn('min-w-0', 'flex-1')}>
-        <div className={cn('flex', 'items-center', 'gap-2.5', 'min-w-0')}>
-          <div
-            className={cn(
-              'inline-flex',
-              'h-6',
-              'w-6',
-              'items-center',
-              'justify-center',
-              'rounded-md',
-              'bg-primary/12',
-              'text-primary',
-              'shrink-0'
-            )}
-          >
+    <div className='panel-header-surface'>
+      <div className='min-w-0 flex-1'>
+        <div className='flex min-w-0 items-center gap-2.5'>
+          <div className='flex-center bg-primary/12 text-primary h-6 w-6 shrink-0 rounded-md'>
             <Network className='h-4 w-4' />
           </div>
           <button
             onClick={handleOpenEditLayout}
             disabled={isMain || isAllNotes || !layoutId}
             className={cn(
+              'ghost-link-btn',
               'flex',
               'items-center',
-              'text-text',
-              'dark:text-dark-text',
               'truncate',
               'text-base',
               'font-semibold',
@@ -112,10 +86,6 @@ export const GraphHeader: FC<GraphHeaderProps> = memo(function GraphHeader({
               isMain || isAllNotes || !layoutId
                 ? 'cursor-default'
                 : 'cursor-pointer',
-              'bg-transparent',
-              'border-none',
-              'padding-0',
-              'm-0',
               'min-w-0',
               'max-w-full'
             )}
@@ -127,8 +97,9 @@ export const GraphHeader: FC<GraphHeaderProps> = memo(function GraphHeader({
       </div>
 
       {onToggleFullscreen && (
-        <button
-          type='button'
+        <IconButton
+          size='md'
+          variant='outline'
           onClick={onToggleFullscreen}
           title={
             isFullscreen
@@ -140,38 +111,15 @@ export const GraphHeader: FC<GraphHeaderProps> = memo(function GraphHeader({
               ? t('common:exitFullscreen')
               : t('common:enterFullscreen')
           }
-          className={cn(
-            'inline-flex',
-            'h-8',
-            'w-8',
-            'items-center',
-            'justify-center',
-            'rounded-md',
-            'border',
-            'border-border',
-            'bg-bg',
-            'text-text',
-            'hover:bg-secondary/15',
-            'hover:text-text',
-            'focus-visible:ring-ring',
-            'focus-visible:ring-2',
-            'focus-visible:outline-none',
-            'dark:border-dark-border/70',
-            'dark:bg-dark-bg/95',
-            'dark:text-dark-secondary',
-            'dark:hover:bg-dark-secondary/20',
-            'dark:hover:text-dark-text',
-            'shrink-0',
-            'disabled:cursor-not-allowed',
-            'disabled:opacity-50'
-          )}
-        >
-          {isFullscreen ? (
-            <Minimize2 className='h-4 w-4' />
-          ) : (
-            <Maximize2 className='h-4 w-4' />
-          )}
-        </button>
+          icon={
+            isFullscreen ? (
+              <Minimize2 className='h-4 w-4' />
+            ) : (
+              <Maximize2 className='h-4 w-4' />
+            )
+          }
+          className='btn-icon-tone-default shrink-0'
+        />
       )}
     </div>
   );

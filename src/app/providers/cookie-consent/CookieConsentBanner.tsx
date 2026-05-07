@@ -1,5 +1,4 @@
 import { AppRoutes } from '@/app/router/routes';
-import { cn } from '@/shared/lib/core';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
@@ -38,13 +37,7 @@ export const CookieConsentBanner = () => {
 
   return (
     <div className='pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-6 sm:pb-6'>
-      <div
-        className={cn(
-          'pointer-events-auto mx-auto w-full max-w-5xl',
-          'border-border dark:border-dark-border bg-bg/95 dark:bg-dark-bg/95',
-          'rounded-3xl border p-4 backdrop-blur-xl sm:p-5'
-        )}
-      >
+      <div className='consent-banner-card'>
         <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
           <div className='space-y-1'>
             <h2 className='text-lg font-bold'>
@@ -60,7 +53,7 @@ export const CookieConsentBanner = () => {
               </Link>
             </p>
           </div>
-          <label className='border-border dark:border-dark-border bg-bg dark:bg-dark-bg inline-flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-medium'>
+          <label className='consent-toggle-label'>
             <input
               type='checkbox'
               checked={isAccepted}
@@ -73,7 +66,7 @@ export const CookieConsentBanner = () => {
                   document.cookie = `${CONSENT_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
                 }
               }}
-              className='border-border text-primary focus:ring-primary h-4 w-4 rounded'
+              className='check-base'
             />
             <span>{t('common:cookieConsent.agree')}</span>
           </label>

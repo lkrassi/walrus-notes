@@ -65,12 +65,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
   if (!visibleRights.length) {
     return (
       <div className='flex'>
-        <div
-          className={cn(
-            'flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-xs transition-colors',
-            'border-border dark:border-dark-border dark:bg-dark-bg/60 bg-white/80'
-          )}
-        >
+        <div className={cn('permission-rights-block')}>
           {t('share:permissionsDashboard.rights.none')}
         </div>
       </div>
@@ -88,8 +83,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
           const block = (
             <div
               className={cn(
-                'flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-xs transition-colors',
-                'border-border dark:border-dark-border dark:bg-dark-bg/60 bg-white/80',
+                'permission-rights-block',
                 isActive
                   ? blockStyleByRight[field]
                   : 'opacity-45 grayscale-[0.15]',
@@ -104,7 +98,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
                 canToggle ? (
                   <div
                     className={cn(
-                      'border-border dark:border-dark-border flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
+                      'permission-rights-checkbox',
                       isActive
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'bg-transparent'
@@ -113,13 +107,7 @@ export const PermissionAccessBlocks: FC<PermissionAccessBlocksProps> = ({
                     {isActive ? <Check className='h-3 w-3' /> : null}
                   </div>
                 ) : (
-                  <div
-                    className={cn(
-                      'border-border dark:border-dark-border text-muted-foreground flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
-                      'bg-muted/60 dark:bg-dark-bg/40'
-                    )}
-                    aria-hidden='true'
-                  >
+                  <div className='permission-rights-lock' aria-hidden='true'>
                     <LockKeyhole className='h-2.5 w-2.5' />
                   </div>
                 )

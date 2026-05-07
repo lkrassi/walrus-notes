@@ -1,6 +1,6 @@
 import type { UseGraphHistoryReturn } from '@/entities/graph';
 import { cn } from '@/shared/lib/core';
-import { Tooltip } from '@/shared/ui';
+import { IconButton, Tooltip } from '@/shared/ui';
 import { Redo2, Undo2 } from 'lucide-react';
 import { type FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -74,37 +74,37 @@ export const GraphUndoRedoControls: FC<GraphUndoRedoControlsProps> = ({
       )}
     >
       <Tooltip title={undoTitle} placement={isHorizontal ? 'bottom' : 'right'}>
-        <button
-          type='button'
+        <IconButton
+          size='md'
+          variant='outline'
           onClick={undo}
           disabled={!canUndo}
+          icon={<Undo2 size={16} />}
           className={cn(
-            'border-border/70 inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
+            'border-border/70 rounded-lg',
             canUndo
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
           )}
           aria-label={undoTitle}
-        >
-          <Undo2 size={16} />
-        </button>
+        />
       </Tooltip>
 
       <Tooltip title={redoTitle} placement={isHorizontal ? 'bottom' : 'right'}>
-        <button
-          type='button'
+        <IconButton
+          size='md'
+          variant='outline'
           onClick={redo}
           disabled={!canRedo}
+          icon={<Redo2 size={16} />}
           className={cn(
-            'border-border/70 inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors',
+            'border-border/70 rounded-lg',
             canRedo
               ? 'text-primary hover:bg-primary/15 dark:text-dark-primary dark:hover:bg-dark-primary/15'
               : 'text-secondary/60 dark:text-dark-secondary/60 cursor-not-allowed'
           )}
           aria-label={redoTitle}
-        >
-          <Redo2 size={16} />
-        </button>
+        />
       </Tooltip>
     </div>
   );

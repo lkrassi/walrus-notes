@@ -39,10 +39,7 @@ export const NotePreview = ({
     <div
       className={cn(
         'cursor-grab active:cursor-grabbing',
-        'text-left',
-        'relative flex flex-col gap-1 overflow-hidden py-2 pr-5 pl-2',
-        'rounded-xl',
-        'bg-bg/94 text-text border-border/75 border',
+        'border-border/75 bg-bg/94 text-text relative flex flex-col gap-1 overflow-hidden rounded-xl border py-2 pr-5 pl-2 text-left',
         'transition-[transform,border-color,opacity] duration-200 ease-out',
         'dark:border-dark-border/80 dark:bg-dark-bg/92 dark:text-dark-text',
         isDrag && 'scale-[1.015]',
@@ -53,17 +50,13 @@ export const NotePreview = ({
       }}
     >
       <div
-        className='absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_42%)] opacity-80 dark:opacity-100'
+        className='absolute inset-0 opacity-80 dark:opacity-100'
         aria-hidden
       />
-      <p
-        className={cn(
-          'relative z-10 line-clamp-2 overflow-hidden pr-2 text-left font-semibold'
-        )}
-      >
+      <p className='relative z-10 line-clamp-2 overflow-hidden pr-2 text-left font-semibold'>
         {title}
       </p>
-      <div className='text-muted-foreground dark:text-dark-muted-foreground relative z-10 mt-auto flex items-center justify-between gap-1 text-[8px] leading-none'>
+      <div className='note-preview-meta'>
         <span className='inline-flex items-center gap-1 uppercase'>
           {t('notes:graphNodeLinks', { count: resolvedLinkCount })}
         </span>

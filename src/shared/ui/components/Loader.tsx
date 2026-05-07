@@ -11,10 +11,7 @@ export const Loader: FC<LoaderProps> = ({ className }) => {
     <div
       role='status'
       aria-live='polite'
-      className={cn(
-        'flex h-full w-full items-center justify-center',
-        className
-      )}
+      className={cn('flex-center h-full w-full', className)}
     >
       <div className='relative h-56 w-56'>
         {/* Core */}

@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/core';
+import { IconButton } from '@/shared/ui';
 import {
   CircleQuestionMark,
   Download,
@@ -49,57 +49,22 @@ const ActionIconButton: FC<ActionIconButtonProps> = ({
 }) => {
   const toneClass =
     tone === 'success'
-      ? cn(
-          'text-green-800',
-          'hover:bg-green-500/15',
-          'dark:text-green-300',
-          'dark:hover:bg-green-400/20'
-        )
+      ? 'btn-icon-tone-success'
       : tone === 'danger'
-        ? cn(
-            'text-red-800',
-            'hover:bg-red-500/15',
-            'dark:text-red-300',
-            'dark:hover:bg-red-400/20'
-          )
-        : cn(
-            'text-text',
-            'hover:bg-secondary/15',
-            'hover:text-text',
-            'dark:text-dark-secondary',
-            'dark:hover:bg-dark-secondary/20',
-            'dark:hover:text-dark-text'
-          );
+        ? 'btn-icon-tone-danger'
+        : 'btn-icon-tone-default';
 
   return (
-    <button
-      type='button'
+    <IconButton
+      icon={icon}
+      size='md'
+      variant='outline'
       aria-label={title}
       title={title}
       onClick={onClick}
       disabled={disabled}
-      className={cn(
-        'inline-flex',
-        'h-8',
-        'w-8',
-        'items-center',
-        'justify-center',
-        'rounded-md',
-        'border',
-        'border-border',
-        'bg-bg',
-        'focus-visible:ring-ring',
-        'focus-visible:ring-2',
-        'focus-visible:outline-none',
-        'dark:border-dark-border/70',
-        'dark:bg-dark-bg/95',
-        'disabled:cursor-not-allowed',
-        'disabled:opacity-50',
-        toneClass
-      )}
-    >
-      {icon}
-    </button>
+      className={toneClass}
+    />
   );
 };
 
@@ -125,20 +90,10 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
   const isBusy = isLoading;
 
   return (
-    <div
-      className={cn(
-        'flex',
-        'items-center',
-        'gap-1.5',
-        'overflow-x-auto',
-        'pb-0.5',
-        'pr-0.5',
-        'sm:overflow-visible'
-      )}
-    >
+    <div className='flex items-center gap-1.5 overflow-x-auto pr-0.5 pb-0.5 sm:overflow-visible'>
       {canWrite &&
         (isEditing ? (
-          <div className={cn('flex', 'items-center', 'gap-1')}>
+          <div className='flex items-center gap-1'>
             <ActionIconButton
               title={t('notes:save')}
               tone='success'
@@ -147,7 +102,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
                 if (isBusy) return;
                 onSave();
               }}
-              icon={<Save className={cn('h-4', 'w-4')} />}
+              icon={<Save className='h-4 w-4' />}
             />
 
             <ActionIconButton
@@ -163,7 +118,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
 
                 onCancel();
               }}
-              icon={<X className={cn('h-4', 'w-4')} />}
+              icon={<X className='h-4 w-4' />}
             />
 
             <ActionIconButton
@@ -173,7 +128,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
                 if (isBusy) return;
                 onOpenImageUpload(e as MouseEvent<HTMLElement>);
               }}
-              icon={<ImageIcon className={cn('h-4', 'w-4')} />}
+              icon={<ImageIcon className='h-4 w-4' />}
             />
           </div>
         ) : (
@@ -182,7 +137,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
             onClick={() => {
               onEdit();
             }}
-            icon={<Edit3 className={cn('h-4', 'w-4')} />}
+            icon={<Edit3 className='h-4 w-4' />}
           />
         ))}
 
@@ -192,7 +147,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
           onClick={() => {
             onExport();
           }}
-          icon={<Upload className={cn('h-4', 'w-4')} />}
+          icon={<Upload className='h-4 w-4' />}
         />
       )}
 
@@ -202,7 +157,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
           onClick={e => {
             onOpenImport(e as MouseEvent<HTMLElement>);
           }}
-          icon={<Download className={cn('h-4', 'w-4')} />}
+          icon={<Download className='h-4 w-4' />}
         />
       )}
 
@@ -212,7 +167,7 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
           onClick={e => {
             onOpenHelp(e as MouseEvent<HTMLElement>);
           }}
-          icon={<CircleQuestionMark className={cn('h-4', 'w-4')} />}
+          icon={<CircleQuestionMark className='h-4 w-4' />}
         />
       )}
 
@@ -226,9 +181,9 @@ export const NoteActions: FC<NoteActionsProps> = memo(function NoteActions({
           }}
           icon={
             isFullscreen ? (
-              <Minimize2 className={cn('h-4', 'w-4')} />
+              <Minimize2 className='h-4 w-4' />
             ) : (
-              <Maximize2 className={cn('h-4', 'w-4')} />
+              <Maximize2 className='h-4 w-4' />
             )
           }
         />

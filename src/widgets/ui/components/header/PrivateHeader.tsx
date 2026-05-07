@@ -22,28 +22,8 @@ const PrivateHeaderComponent = () => {
 
   return (
     <div className='px-5 pt-5'>
-      <header
-        className={cn(
-          'border-border',
-          'bg-bg/90',
-          'sticky',
-          'top-0',
-          'z-40',
-          'border',
-          'backdrop-blur',
-          'rounded-xl'
-        )}
-      >
-        <div
-          className={cn(
-            'flex',
-            'h-14',
-            'items-center',
-            'justify-between',
-            'px-3',
-            'md:px-4'
-          )}
-        >
+      <header className='border-border bg-bg/90 sticky top-0 z-40 rounded-xl border backdrop-blur'>
+        <div className='flex h-14 items-center justify-between px-3 md:px-4'>
           <div className={cn('flex', 'items-center', 'gap-2.5', 'min-w-0')}>
             {!isProfilePage && !isSettingsPage && !isDashboardPage && (
               <MobileMenu />

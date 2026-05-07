@@ -32,46 +32,18 @@ export type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'>;
 
 const variantClasses: Record<ResolvedButtonVariant, string> = {
-  primary: cn(
-    'rounded-lg',
-    'bg-primary',
-    'text-primary-foreground',
-    'hover:brightness-105',
-    'active:brightness-95'
-  ),
-  secondary: cn(
-    'rounded-lg',
-    'bg-secondary',
-    'text-secondary-foreground',
-    'hover:brightness-95',
-    'active:brightness-90'
-  ),
-  danger: cn('rounded-lg', 'bg-danger', 'text-white', 'hover:brightness-105'),
-  success: cn('rounded-lg', 'bg-success', 'text-white', 'hover:brightness-105'),
-  outline: cn(
-    'rounded-lg',
-    'border',
-    'border-border',
-    'bg-background',
-    'text-foreground',
-    'hover:bg-interactive-hover',
-    'active:bg-interactive-active'
-  ),
-  ghost: cn(
-    'rounded-lg',
-    'bg-transparent',
-    'text-foreground',
-    'hover:bg-interactive-hover',
-    'active:bg-interactive-active'
-  ),
-  disabled: cn(
-    'rounded-lg',
-    'border',
-    'border-border',
-    'bg-interactive-disabled-bg',
-    'text-interactive-disabled-fg',
-    'cursor-not-allowed'
-  ),
+  primary:
+    'bg-primary text-primary-foreground hover:brightness-105 active:brightness-95',
+  secondary:
+    'bg-secondary text-secondary-foreground hover:brightness-95 active:brightness-90',
+  danger: 'bg-danger text-white hover:brightness-105',
+  success: 'bg-success text-white hover:brightness-105',
+  outline:
+    'border border-border bg-background text-foreground hover:bg-interactive-hover active:bg-interactive-active',
+  ghost:
+    'bg-transparent text-foreground hover:bg-interactive-hover active:bg-interactive-active',
+  disabled:
+    'border border-border bg-interactive-disabled-bg text-interactive-disabled-fg cursor-not-allowed',
 };
 
 const legacyVariantMap: Record<LegacyButtonVariant, ResolvedButtonVariant> = {
@@ -127,9 +99,7 @@ export const Button = memo(
           type={type}
           disabled={disabled}
           className={cn(
-            'relative px-4 py-1 text-base font-semibold',
-            'focus-visible:ring-ring focus-visible:ring-2',
-            'disabled:cursor-not-allowed',
+            'btn-base focus-ring relative',
             variantClasses[resolvedVariant],
             className
           )}

@@ -1,6 +1,7 @@
 import type { PermissionItem } from '@/entities';
 import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
+import { Card } from '@/shared/ui';
 import { Shield, Trash2 } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
 import { createFriendlyTargetName, kindLabelKey } from '../../../lib/utils';
@@ -64,13 +65,11 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
   );
 
   return (
-    <article
-      className={cn('border-border bg-bg/90 rounded-xl border p-4 shadow-sm')}
-    >
-      <div className={cn('mb-4 flex items-start justify-between gap-3')}>
-        <div className={cn('inline-flex items-center gap-2')}>
-          <Shield className={cn('text-primary h-4 w-4')} />
-          <span className={cn('text-sm font-semibold')}>
+    <Card className='permission-card'>
+      <div className='mb-4 flex items-start justify-between gap-3'>
+        <div className='inline-flex items-center gap-2'>
+          <Shield className='text-primary h-4 w-4' />
+          <span className='text-sm font-semibold'>
             {t(kindLabelKey(permission.kind))}
           </span>
         </div>
@@ -81,41 +80,32 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
             handleDelete(event);
           }}
           disabled={disabledDelete}
-          className={cn(
-            'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium',
-            'border-border',
-            'text-danger hover:bg-danger/10 disabled:opacity-50',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-          )}
+          className='danger-outline-btn-xs'
         >
-          <Trash2 className={cn('h-3.5 w-3.5')} />
+          <Trash2 className='h-3.5 w-3.5' />
           {t('share:permissionsDashboard.actions.revokeShared')}
         </button>
       </div>
 
-      <div className={cn('min-w-0')}>
-        <p className={cn('muted-text text-xs')}>
+      <div className='min-w-0'>
+        <p className='muted-text text-xs'>
           {t('share:permissionsDashboard.sharedTo')}
         </p>
       </div>
 
-      <div className={cn('mb-4 flex items-center gap-3')}>
+      <div className='mb-4 flex items-center gap-3'>
         <PermissionAvatar
           name={toUserName || t('share:permissionsDashboard.user.unknown')}
           avatarUrl={toUserAvatar}
         />
-        <div className={cn('min-w-0')}>
-          <p className={cn('truncate text-sm font-medium')}>
+        <div className='min-w-0'>
+          <p className='truncate text-sm font-medium'>
             {toUserName || t('share:permissionsDashboard.user.unknown')}
           </p>
         </div>
       </div>
 
-      <div
-        className={cn(
-          'border-border mb-4 rounded-lg border bg-gray-50 p-3 dark:bg-gray-900/40'
-        )}
-      >
+      <div className='permission-target-box'>
         <p className={cn('muted-text text-xs')}>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
@@ -138,15 +128,11 @@ export const SharedPermissionCard: FC<SharedPermissionCardProps> = ({
           type='button'
           onClick={() => onUpdate(permission.id, draft)}
           disabled={disabledUpdate || !canUpdate}
-          className={cn(
-            'border-primary bg-primary text-primary-foreground rounded-lg border px-3 py-2 text-sm font-medium',
-            'hover:bg-primary/90 disabled:border-border disabled:bg-muted/40 disabled:text-muted-foreground disabled:opacity-100',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-          )}
+          className='primary-btn-sm'
         >
           {t('share:permissionsDashboard.actions.update')}
         </button>
       </div>
-    </article>
+    </Card>
   );
 };

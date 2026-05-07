@@ -8,6 +8,7 @@ import '@/shared/config';
 import '@/styles/base.css';
 import '@/styles/theme.css';
 import '@/styles/tokens.css';
+import '@/styles/utilities.css';
 
 const waitForPrimaryFont = async () => {
   const timeoutMs = 2500;

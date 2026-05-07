@@ -10,3 +10,11 @@ export { RenderWithState } from './components/RenderWithState';
 export { Textarea } from './components/Textarea';
 export type { TextareaProps } from './components/Textarea';
 export { Tooltip } from './components/Tooltip';
+
+// New base components (Phase 0)
+export { IconButton } from './components/IconButton';
+export type { IconButtonProps } from './components/IconButton';
+export { Card } from './components/Card';
+export type { CardProps } from './components/Card';
+export { FormInput } from './components/FormInput';
+export type { FormInputProps } from './components/FormInput';

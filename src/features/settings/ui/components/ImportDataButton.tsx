@@ -60,18 +60,10 @@ export const ImportDataButton: FC = () => {
     };
 
     return (
-      <div className={cn('p-4', 'space-y-4')}>
+      <div className='space-y-4 p-4'>
         <div
           className={cn(
-            'border-2',
-            'border-dashed',
-            'rounded-lg',
-            'p-8',
-            'text-center',
-            'cursor-pointer',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-            'transition-all',
-            'duration-200',
+            'focus-ring cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-all duration-200',
             isDragOver
               ? cn(
                   'border-primary',
@@ -79,16 +71,7 @@ export const ImportDataButton: FC = () => {
                   'dark:border-primary-dark',
                   'dark:bg-primary-dark/5'
                 )
-              : cn(
-                  'border-gray-300',
-                  'dark:border-gray-600',
-                  'bg-gray-50',
-                  'dark:bg-gray-800',
-                  'hover:border-primary',
-                  'dark:hover:border-primary-dark',
-                  'hover:bg-primary/3',
-                  'dark:hover:bg-primary-dark/3'
-                )
+              : 'hover:border-primary hover:bg-primary/3 dark:hover:border-primary-dark dark:hover:bg-primary-dark/3 border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-800'
           )}
           onDrop={handleDropInModal}
           onDragOver={handleDragOver}
@@ -103,10 +86,10 @@ export const ImportDataButton: FC = () => {
             type='file'
             accept='application/json'
             onChange={handleFileChangeInModal}
-            className={cn('hidden')}
+            className='hidden'
             disabled={isLoading}
           />
-          <div className={cn('text-sm', 'text-gray-600', 'dark:text-gray-400')}>
+          <div className='text-sm text-gray-600 dark:text-gray-400'>
             {isLoading
               ? t('settings:backup.import.loading')
               : t('settings:backup.import.dropOrClick') ||
@@ -114,25 +97,8 @@ export const ImportDataButton: FC = () => {
           </div>
         </div>
 
-        <div
-          className={cn(
-            'rounded-lg',
-            'border',
-            'border-yellow-200',
-            'dark:border-yellow-900',
-            'bg-yellow-50',
-            'dark:bg-yellow-950',
-            'p-3'
-          )}
-        >
-          <p
-            className={cn(
-              'text-sm',
-              'text-yellow-800',
-              'dark:text-yellow-200',
-              'text-center'
-            )}
-          >
+        <div className='rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-900 dark:bg-yellow-950'>
+          <p className='text-center text-sm text-yellow-800 dark:text-yellow-200'>
             {t('settings:backup.import.warningText')}
           </p>
         </div>
@@ -151,15 +117,7 @@ export const ImportDataButton: FC = () => {
     <Button
       onClick={openModal}
       disabled={isLoading}
-      className={cn(
-        'flex',
-        'h-10',
-        'w-30',
-        'items-center',
-        'justify-center',
-        'px-7',
-        'py-2'
-      )}
+      className='flex-center h-10 w-30 px-7 py-2'
       title={t('settings:backup.import.helper')}
     >
       {isLoading

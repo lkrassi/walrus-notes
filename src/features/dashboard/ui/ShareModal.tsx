@@ -1,6 +1,6 @@
 import { Button } from '@/shared';
 import { cn } from '@/shared/lib/core';
-import { Tooltip } from '@/shared/ui';
+import { FormInput, Tooltip } from '@/shared/ui';
 import { Form, Formik } from 'formik';
 import { Check, Copy, LockKeyhole } from 'lucide-react';
 import { memo } from 'react';
@@ -40,8 +40,7 @@ const PermissionOption = ({
   const block = (
     <div
       className={cn(
-        'flex items-center justify-between gap-2 rounded-lg border px-2 py-1.5 text-xs transition-colors',
-        'border-border dark:border-dark-border dark:bg-dark-bg/60 bg-white/80',
+        'permission-rights-block',
         checked
           ? permissionBlockStyleByRight[field]
           : 'opacity-45 grayscale-[0.15]'
@@ -52,19 +51,13 @@ const PermissionOption = ({
       </span>
 
       {locked ? (
-        <div
-          className={cn(
-            'border-border dark:border-dark-border text-muted-foreground flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
-            'bg-muted/60 dark:bg-dark-bg/40'
-          )}
-          aria-hidden='true'
-        >
+        <div className={cn('permission-rights-lock')} aria-hidden='true'>
           <LockKeyhole className='h-2.5 w-2.5' />
         </div>
       ) : (
         <div
           className={cn(
-            'border-border dark:border-dark-border flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border',
+            'permission-rights-checkbox',
             checked
               ? 'bg-primary text-primary-foreground border-primary'
               : 'bg-transparent'
@@ -112,40 +105,34 @@ export const ShareModal = memo(function ShareModal({
 
   if (generatedLink) {
     return (
-      <form className={cn('space-y-6', 'p-6')}>
-        <div className={cn('text-center')}>
-          <p className={cn('muted-text', 'mb-4', 'text-sm')}>
+      <form className='space-y-6 p-6'>
+        <div className='text-center'>
+          <p className='muted-text mb-4 text-sm'>
             {t('share:modal.success.description')}
           </p>
 
-          <div
-            className={cn(
-              'mb-4 overflow-auto rounded-lg p-3',
-              'border-border border',
-              'bg-surface-2'
-            )}
-          >
-            <p className={cn('font-mono text-xs break-all', 'text-foreground')}>
+          <div className='border-border bg-surface-2 mb-4 overflow-auto rounded-lg border p-3'>
+            <p className='text-foreground font-mono text-xs break-all'>
               {generatedLink.fullUrl}
             </p>
           </div>
         </div>
 
-        <div className={cn('flex justify-center gap-3')}>
+        <div className='flex justify-center gap-3'>
           <Button
             type='button'
             onClick={handleCopy}
             variant='submit'
-            className={cn('btn', 'gap-2', 'flex items-center')}
+            className='btn flex-center gap-2'
           >
             {copied ? (
               <>
-                <Check className={cn('h-4 w-4')} />
+                <Check className='h-4 w-4' />
                 {t('share:modal.success.copied')}
               </>
             ) : (
               <>
-                <Copy className={cn('h-4 w-4')} />
+                <Copy className='h-4 w-4' />
                 {t('share:modal.success.copy')}
               </>
             )}
@@ -154,7 +141,7 @@ export const ShareModal = memo(function ShareModal({
             type='button'
             onClick={handleClose}
             variant='escape'
-            className={cn('btn')}
+            className='btn'
           >
             {t('share:modal.cancel')}
           </Button>
@@ -170,7 +157,7 @@ export const ShareModal = memo(function ShareModal({
       onSubmit={handleSubmit}
     >
       {({ values, errors, touched, setFieldValue, isSubmitting }) => (
-        <Form className={cn('space-y-6', 'p-6')}>
+        <Form className='space-y-6 p-6'>
           <div>
             <div className='flex flex-col gap-y-5'>
               <PermissionOption
@@ -214,21 +201,14 @@ export const ShareModal = memo(function ShareModal({
                 }}
               />
             </div>
-            <div className={cn('mt-5')}>
-              <label
-                className={cn(
-                  'mb-3 block text-sm font-medium',
-                  'text-text dark:text-dark-text'
-                )}
-              >
+            <div className='mt-5'>
+              <label className='text-text dark:text-dark-text mb-3 block text-sm font-medium'>
                 {t('share:modal.expiration.label')}
               </label>
 
-              <div className={cn('space-y-3')}>
+              <div className='space-y-3'>
                 <div className='flex max-sm:flex-col max-sm:gap-y-3 sm:gap-x-5'>
-                  <label
-                    className={cn('flex cursor-pointer items-center gap-3')}
-                  >
+                  <label className='flex cursor-pointer items-center gap-3'>
                     <input
                       type='radio'
                       name='expirationOption'
@@ -237,21 +217,14 @@ export const ShareModal = memo(function ShareModal({
                       onChange={e =>
                         setFieldValue('expirationOption', e.target.value)
                       }
-                      className={cn(
-                        'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
-                        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-                      )}
+                      className='radio-base'
                     />
-                    <span
-                      className={cn('text-sm', 'text-text dark:text-dark-text')}
-                    >
+                    <span className='text-text dark:text-dark-text text-sm'>
                       {t('share:modal.expiration.options.fiveMinutes')}
                     </span>
                   </label>
 
-                  <label
-                    className={cn('flex cursor-pointer items-center gap-3')}
-                  >
+                  <label className='flex cursor-pointer items-center gap-3'>
                     <input
                       type='radio'
                       name='expirationOption'
@@ -260,21 +233,14 @@ export const ShareModal = memo(function ShareModal({
                       onChange={e =>
                         setFieldValue('expirationOption', e.target.value)
                       }
-                      className={cn(
-                        'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
-                        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-                      )}
+                      className='radio-base'
                     />
-                    <span
-                      className={cn('text-sm', 'text-text dark:text-dark-text')}
-                    >
+                    <span className='text-text dark:text-dark-text text-sm'>
                       {t('share:modal.expiration.options.thirtyMinutes')}
                     </span>
                   </label>
 
-                  <label
-                    className={cn('flex cursor-pointer items-center gap-3')}
-                  >
+                  <label className='flex cursor-pointer items-center gap-3'>
                     <input
                       type='radio'
                       name='expirationOption'
@@ -283,21 +249,14 @@ export const ShareModal = memo(function ShareModal({
                       onChange={e =>
                         setFieldValue('expirationOption', e.target.value)
                       }
-                      className={cn(
-                        'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
-                        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-                      )}
+                      className='radio-base'
                     />
-                    <span
-                      className={cn('text-sm', 'text-text dark:text-dark-text')}
-                    >
+                    <span className='text-text dark:text-dark-text text-sm'>
                       {t('share:modal.expiration.options.oneHour')}
                     </span>
                   </label>
 
-                  <label
-                    className={cn('flex cursor-pointer items-center gap-3')}
-                  >
+                  <label className='flex cursor-pointer items-center gap-3'>
                     <input
                       type='radio'
                       name='expirationOption'
@@ -306,22 +265,17 @@ export const ShareModal = memo(function ShareModal({
                       onChange={e =>
                         setFieldValue('expirationOption', e.target.value)
                       }
-                      className={cn(
-                        'border-border text-primary accent-primary h-4 w-4 cursor-pointer',
-                        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-                      )}
+                      className='radio-base'
                     />
-                    <span
-                      className={cn('text-sm', 'text-text dark:text-dark-text')}
-                    >
+                    <span className='text-text dark:text-dark-text text-sm'>
                       {t('share:modal.expiration.options.custom')}
                     </span>
                   </label>
                 </div>
 
                 {values.expirationOption === 'custom' && (
-                  <div className={cn('ml-7')}>
-                    <input
+                  <div className='ml-7'>
+                    <FormInput
                       type='number'
                       value={values.customMinutes}
                       onChange={e =>
@@ -330,25 +284,20 @@ export const ShareModal = memo(function ShareModal({
                       placeholder={t(
                         'share:modal.expiration.customPlaceholder'
                       )}
-                      className={cn(
-                        'form-input w-full',
+                      error={
                         touched.customMinutes && errors.customMinutes
-                          ? 'border-red-500'
-                          : ''
-                      )}
+                          ? errors.customMinutes
+                          : undefined
+                      }
+                      className='w-full'
                       min='5'
                       max='43200'
                     />
-                    {touched.customMinutes && errors.customMinutes && (
-                      <p className={cn('mt-1 text-xs text-red-500')}>
-                        {errors.customMinutes}
-                      </p>
-                    )}
                   </div>
                 )}
 
                 {errors.expirationOption && (
-                  <p className={cn('text-xs text-red-500')}>
+                  <p className='text-danger text-xs'>
                     {errors.expirationOption}
                   </p>
                 )}
@@ -356,12 +305,12 @@ export const ShareModal = memo(function ShareModal({
             </div>
           </div>
 
-          <div className={cn('flex justify-center gap-3')}>
+          <div className='flex justify-center gap-3'>
             <Button
               type='button'
               onClick={handleClose}
               variant='escape'
-              className={cn('btn')}
+              className='btn'
               disabled={isSubmitting}
             >
               {t('share:modal.cancel')}
@@ -374,7 +323,7 @@ export const ShareModal = memo(function ShareModal({
                   ? 'disabled'
                   : 'submit'
               }
-              className={cn('btn')}
+              className='btn'
               disabled={
                 isSubmitting ||
                 (!values.canRead && !values.canWrite && !values.canEdit)

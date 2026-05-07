@@ -1,6 +1,6 @@
 import type { PermissionItem } from '@/entities';
-import { cn } from '@/shared/lib/core';
 import { MODAL_SIZE_PRESETS, useModalActions } from '@/shared/lib/react';
+import { Card } from '@/shared/ui';
 import { Shield, Undo2 } from 'lucide-react';
 import { type FC, type MouseEvent } from 'react';
 import {
@@ -57,15 +57,11 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
   );
 
   return (
-    <article
-      className={cn(
-        'border-border dark:border-dark-border bg-bg/90 dark:bg-dark-bg/70 rounded-xl border p-4 shadow-sm backdrop-blur-sm'
-      )}
-    >
-      <div className={cn('mb-4 flex items-start justify-between gap-3')}>
-        <div className={cn('inline-flex items-center gap-2')}>
-          <Shield className={cn('text-primary h-4 w-4')} />
-          <span className={cn('text-sm font-semibold')}>
+    <Card className='permission-card backdrop-blur-sm'>
+      <div className='mb-4 flex items-start justify-between gap-3'>
+        <div className='inline-flex items-center gap-2'>
+          <Shield className='text-primary h-4 w-4' />
+          <span className='text-sm font-semibold'>
             {t(kindLabelKey(permission.kind))}
           </span>
         </div>
@@ -76,45 +72,37 @@ export const ReceivedPermissionCard: FC<ReceivedPermissionCardProps> = ({
             handleDelete(event);
           }}
           disabled={disabledDelete}
-          className={cn(
-            'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium',
-            'border-border text-danger hover:bg-danger/10 disabled:opacity-50',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none'
-          )}
+          className='danger-outline-btn-xs'
         >
           <Undo2 className='h-3.5 w-3.5' />
           {t('share:permissionsDashboard.actions.revokeReceived')}
         </button>
       </div>
 
-      <div className={cn('min-w-0')}>
-        <p className={cn('muted-text text-xs')}>
+      <div className='min-w-0'>
+        <p className='muted-text text-xs'>
           {t('share:permissionsDashboard.receivedFrom')}
         </p>
       </div>
 
-      <div className={cn('mb-4 flex items-center gap-3')}>
+      <div className='mb-4 flex items-center gap-3'>
         <PermissionAvatar
           name={userName}
           avatarUrl={permission.fromUserAvatar}
         />
-        <div className={cn('min-w-0')}>
-          <p className={cn('truncate text-sm font-medium')}>{userName}</p>
+        <div className='min-w-0'>
+          <p className='truncate text-sm font-medium'>{userName}</p>
         </div>
       </div>
 
-      <div
-        className={cn(
-          'border-border mb-4 rounded-lg border bg-gray-50 p-3 dark:bg-gray-900/40'
-        )}
-      >
-        <p className={cn('muted-text text-xs')}>
+      <div className='permission-target-box'>
+        <p className='muted-text text-xs'>
           {t('share:permissionsDashboard.targetLabel')}
         </p>
-        <p className={cn('mt-1 text-sm font-medium break-all')}>{targetName}</p>
+        <p className='mt-1 text-sm font-medium break-all'>{targetName}</p>
       </div>
 
       <PermissionAccessBlocks rights={rights} t={t} showCheckbox={false} />
-    </article>
+    </Card>
   );
 };

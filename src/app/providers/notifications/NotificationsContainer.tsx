@@ -29,10 +29,7 @@ export const NotificationsContainer: FC = () => {
   }
 
   return (
-    <div
-      className='pointer-events-none fixed right-4 bottom-4 z-250 flex max-h-[60vh] w-[min(420px,calc(100vw-2rem))] flex-col-reverse gap-2 overflow-hidden'
-      aria-live='polite'
-    >
+    <div className='notifications-stack' aria-live='polite'>
       {notifications.map(notification => (
         <Transition
           key={notification.id}

@@ -204,7 +204,7 @@ export const ResetPasswordModal: FC<ResetPasswordModalProps> = ({
                     <button
                       type='button'
                       onClick={() => setShowPassword(!showPassword)}
-                      className='text-muted-foreground hover:bg-interactive-hover hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 focus-visible:ring-2 focus-visible:outline-none'
+                      className='password-toggle-btn'
                       aria-label={
                         showPassword
                           ? t('common:password.hide')

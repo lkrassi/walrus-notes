@@ -41,9 +41,12 @@ export type {
 } from './model';
 export {
   Button,
+  Card,
   Dropdown,
   DropdownContent,
   DropdownTrigger,
+  FormInput,
+  IconButton,
   Input,
   Loader,
   Textarea,

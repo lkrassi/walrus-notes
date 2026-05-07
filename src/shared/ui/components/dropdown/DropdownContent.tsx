@@ -18,6 +18,22 @@ interface DropdownContentProps {
   reachDebounceMs?: number;
 }
 
+const findScrollParent = (el: Element | null): Element | null => {
+  let node: Element | null = el?.parentElement ?? null;
+  while (node) {
+    const style = window.getComputedStyle(node);
+    const overflowY = style.overflowY;
+    if (
+      (overflowY === 'auto' || overflowY === 'scroll') &&
+      node.scrollHeight > node.clientHeight
+    ) {
+      return node;
+    }
+    node = node.parentElement;
+  }
+  return null;
+};
+
 export const DropdownContent: FC<DropdownContentProps> = ({
   isOpen,
   state,
@@ -34,12 +50,15 @@ export const DropdownContent: FC<DropdownContentProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const isThrottledRef = useRef(false);
+  const throttleResetTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!onReachEnd) return;
+    if (!onReachEnd || !isOpen || state !== 'content') return;
 
     let io: IntersectionObserver | null = null;
     let retryTimer: number | null = null;
+
+    isThrottledRef.current = false;
 
     const setupObserver = () => {
       const container = containerRef.current;
@@ -48,26 +67,6 @@ export const DropdownContent: FC<DropdownContentProps> = ({
       if (!container || !sentinel) {
         return false;
       }
-
-      const findScrollParent = (el: Element | null): Element | null => {
-        let node: Element | null = el?.parentElement ?? null;
-        while (node) {
-          try {
-            const style = window.getComputedStyle(node);
-            const overflowY = style.overflowY;
-            if (
-              (overflowY === 'auto' || overflowY === 'scroll') &&
-              node.scrollHeight > node.clientHeight
-            ) {
-              return node;
-            }
-          } catch (e) {
-            console.warn('Failed to inspect dropdown scroll parent', e);
-          }
-          node = node.parentElement;
-        }
-        return null;
-      };
 
       const rootForObserver = findScrollParent(container) ?? null;
 
@@ -82,8 +81,13 @@ export const DropdownContent: FC<DropdownContentProps> = ({
               isThrottledRef.current = true;
               onReachEnd();
 
-              window.setTimeout(() => {
+              if (throttleResetTimerRef.current) {
+                clearTimeout(throttleResetTimerRef.current);
+              }
+
+              throttleResetTimerRef.current = window.setTimeout(() => {
                 isThrottledRef.current = false;
+                throttleResetTimerRef.current = null;
               }, reachDebounceMs);
             }
           });
@@ -98,15 +102,8 @@ export const DropdownContent: FC<DropdownContentProps> = ({
     const ok = setupObserver();
     if (!ok) {
       retryTimer = window.setTimeout(() => {
-        try {
-          setupObserver();
-        } catch (e) {
-          console.warn(
-            'Failed to initialize dropdown intersection observer',
-            e
-          );
-        }
-      }, 60) as unknown as number;
+        setupObserver();
+      }, 60);
     }
 
     return () => {
@@ -114,10 +111,13 @@ export const DropdownContent: FC<DropdownContentProps> = ({
       if (retryTimer) {
         clearTimeout(retryTimer);
       }
+      if (throttleResetTimerRef.current) {
+        clearTimeout(throttleResetTimerRef.current);
+      }
+      throttleResetTimerRef.current = null;
+      isThrottledRef.current = false;
     };
   }, [onReachEnd, reachMargin, isOpen, state, reachDebounceMs]);
-
-  useEffect(() => {}, [isOpen, state]);
 
   const renderContent = () => {
     switch (state) {
