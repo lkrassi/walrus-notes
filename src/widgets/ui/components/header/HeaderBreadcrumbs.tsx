@@ -44,43 +44,43 @@ export const HeaderBreadcrumbs = () => {
   }
 
   return (
-    <div className={cn('mt-3', 'flex', 'justify-center', 'px-2')}>
+    <div className={cn('mt-4', 'flex', 'justify-center', 'px-4')}>
       <nav
         aria-label={t('common:breadcrumbs.ariaLabel')}
         className={cn(
           'inline-flex',
           'max-w-full',
           'items-center',
-          'gap-1.5',
-          'rounded-full',
+          'gap-2',
+          'rounded-md',
           'border',
-          'border-border/80',
-          'bg-surface/80',
+          'border-border/60',
+          'bg-surface/90',
           'px-3',
-          'py-1.5',
+          'py-1',
           'text-sm',
-          'backdrop-blur'
+          'shadow-sm',
+          'backdrop-blur-sm'
         )}
       >
         {items.map((item, index) => {
           const label = t(`common:navigation.${item.key}`);
 
           return (
-            <div
-              key={item.key}
-              className={cn('flex', 'items-center', 'gap-1.5')}
-            >
+            <div key={item.key} className={cn('flex', 'items-center', 'gap-2')}>
               {item.to && !item.isCurrent ? (
                 <Link
                   to={item.to}
                   className={cn(
                     'text-muted-foreground',
                     'transition-colors',
-                    'hover:text-text',
+                    'hover:text-primary',
                     'focus-visible:ring-ring',
-                    'rounded-sm',
+                    'rounded-md',
                     'focus-visible:ring-2',
-                    'focus-visible:outline-none'
+                    'focus-visible:outline-none',
+                    'px-1',
+                    'py-0.5'
                   )}
                 >
                   {label}
@@ -88,9 +88,7 @@ export const HeaderBreadcrumbs = () => {
               ) : (
                 <span
                   className={cn(
-                    item.isCurrent
-                      ? 'text-primary font-semibold'
-                      : 'text-muted-foreground'
+                    item.isCurrent ? 'text-primary font-semibold' : 'text-muted-foreground'
                   )}
                   aria-current={item.isCurrent ? 'page' : undefined}
                 >
@@ -99,11 +97,10 @@ export const HeaderBreadcrumbs = () => {
               )}
 
               {index < items.length - 1 && (
-                <span
-                  className={cn('text-muted-foreground/80')}
-                  aria-hidden='true'
-                >
-                  {'>'}
+                <span className={cn('text-muted-foreground/70')} aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cn('opacity-80')}>
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
                 </span>
               )}
             </div>
